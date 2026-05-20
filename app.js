@@ -83,12 +83,8 @@ const setupListingsPage = () => {
   };
 
   const mapEl = document.getElementById('map');
-  console.log('mapEl:', mapEl);
-  console.log('kakao 타입:', typeof kakao);
-  if (mapEl && typeof kakao !== 'undefined') {
-    console.log('kakao.maps:', kakao.maps);
+  if (window.kakao && window.kakao.maps) {
     kakao.maps.load(() => {
-      console.log('kakao.maps.load 콜백 실행됨!');
       mapEl.innerHTML = '';
       map = new kakao.maps.Map(mapEl, {
         center: new kakao.maps.LatLng(37.7512, 126.7820),
@@ -96,8 +92,6 @@ const setupListingsPage = () => {
       });
       placeMarkers(current);
     });
-  } else {
-    console.log('초기화 건너뜀 - kakao 없음');
   }
 
   const render = (items) => {
