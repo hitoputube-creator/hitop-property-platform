@@ -82,17 +82,17 @@ const setupListingsPage = () => {
     });
   };
 
-  const mapEl = document.getElementById('map');
-  if (window.kakao && window.kakao.maps) {
-    kakao.maps.load(() => {
-      mapEl.innerHTML = '';
-      map = new kakao.maps.Map(mapEl, {
-        center: new kakao.maps.LatLng(37.7512, 126.7820),
-        level: 7,
-      });
-      placeMarkers(current);
+  window.addEventListener('load', function() {
+    var mapEl = document.getElementById('map');
+    if (!mapEl) return;
+    if (typeof kakao === 'undefined') { console.log('kakao 없음'); return; }
+    mapEl.innerHTML = '';
+    map = new kakao.maps.Map(mapEl, {
+      center: new kakao.maps.LatLng(37.7512, 126.7820),
+      level: 7
     });
-  }
+    placeMarkers(current);
+  });
 
   const render = (items) => {
     cardsEl.innerHTML = items.map((item) => `
