@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하이탑부동산 | 하이탑소개</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f"></script>
+    <style>
+      .top-bar { background: #0A1F5C; padding: 6px 0; }
+      .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+      .top-bar-hours { font-size: 12px; color: #aab8d8; }
+      .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
+      .top-bar-phone:hover { color: #e0c070; }
+
+      /* 페이지 타이틀 배너 */
+      .about-hero {
+        background: linear-gradient(135deg, #0A1F5C 0%, #15376f 100%);
+        padding: 52px 0 44px;
+        text-align: center;
+      }
+      .about-hero h1 { font-size: 28px; font-weight: 700; color: #fff; margin: 0 0 10px; }
+      .about-hero p { font-size: 15px; color: #aab8d8; margin: 0; }
+
+      /* 강점 카드 */
+      .strength-section { background: #f2f4f7; padding: 56px 0; }
+      .strength-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 28px;
+      }
+      .strength-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px 20px;
+        text-align: center;
+        border: 0.5px solid #e2e6ed;
+      }
+      .strength-icon { font-size: 34px; margin-bottom: 12px; display: block; }
+      .strength-num { font-size: 26px; font-weight: 700; color: #0A1F5C; display: block; margin-bottom: 4px; }
+      .strength-label { font-size: 13px; color: #666; line-height: 1.6; }
+
+      /* 소개 섹션 */
+      .intro-section { padding: 60px 0; background: #fff; }
+      .intro-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+      }
+      .intro-text h2 {
+        font-size: 21px; font-weight: 700; color: #0A1F5C;
+        margin: 0 0 20px; line-height: 1.5;
+      }
+      .intro-text p { font-size: 14px; color: #444; line-height: 2.0; margin: 0; }
+      .intro-img { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+      .intro-img img { width: 100%; height: 320px; object-fit: cover; display: block; }
+
+      /* 오시는 길 */
+      .location-section { background: #f2f4f7; padding: 60px 0; }
+      .location-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 40px;
+        align-items: start;
+        margin-top: 28px;
+      }
+      .location-info { display: flex; flex-direction: column; gap: 20px; }
+      .location-item { display: flex; gap: 14px; align-items: flex-start; }
+      .location-item-icon {
+        width: 42px; height: 42px; border-radius: 10px;
+        background: #0A1F5C; display: flex; align-items: center;
+        justify-content: center; flex-shrink: 0; font-size: 20px;
+      }
+      .location-item-text strong { display: block; font-size: 13px; font-weight: 700; color: #222; margin-bottom: 4px; }
+      .location-item-text span { font-size: 13px; color: #555; line-height: 1.7; }
+      #kakaoMap {
+        width: 100%; height: 320px;
+        border-radius: 12px;
+        border: 0.5px solid #e2e6ed;
+      }
+
+      .section-title { font-size: 22px; font-weight: 700; color: #0A1F5C; margin: 0 0 6px; }
+      .section-sub { font-size: 14px; color: #999; margin: 0; }
+
+      @media (max-width: 768px) {
+        .strength-grid { grid-template-columns: repeat(2, 1fr); }
+        .intro-wrap, .location-wrap { grid-template-columns: 1fr; }
+        .top-bar-hours { display: none; }
+      }
+    </style>
+  </head>
+  <body data-page="about">
+
+    <!-- 탑바 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html">매물보기</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="index.html#contact">고객센터</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- 타이틀 배너 -->
+      <section class="about-hero">
+        <h1>하이탑부동산을 소개합니다</h1>
+        <p>파주를 가장 잘 아는 부동산 전문가</p>
+      </section>
+
+      <!-- 강점 카드 -->
+      <section class="strength-section">
+        <div class="container">
+          <p class="section-title">왜 하이탑부동산인가요?</p>
+          <p class="section-sub">23년 현장 경험이 만든 신뢰</p>
+          <div class="strength-grid">
+            <div class="strength-card">
+              <span class="strength-icon">📅</span>
+              <span class="strength-num">23년</span>
+              <span class="strength-label">파주 현장 경험<br>2001년부터 함께</span>
+            </div>
+            <div class="strength-card">
+              <span class="strength-icon">👫</span>
+              <span class="strength-num">부부 중개사</span>
+              <span class="strength-label">제13회 · 제15회<br>공인중개사 자격 취득</span>
+            </div>
+            <div class="strength-card">
+              <span class="strength-icon">🏭</span>
+              <span class="strength-num">산업 특화</span>
+              <span class="strength-label">공장·창고·토지<br>상업용 부동산 전문</span>
+            </div>
+            <div class="strength-card">
+              <span class="strength-icon">🤝</span>
+              <span class="strength-num">신뢰 최우선</span>
+              <span class="strength-label">투명한 거래 안내<br>고객 이익 최우선</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 소개글 + 사무소 사진 -->
+      <section class="intro-section">
+        <div class="container">
+          <div class="intro-wrap">
+            <div class="intro-text">
+              <h2>파주 부동산에 관해서는<br>누구보다 잘 알고 있습니다</h2>
+              <p>
+                저희는 제13회·제15회 공인중개사 자격을 취득한 부부 중개사입니다.<br><br>
+                23년간 파주에서 함께 발로 뛰며 쌓아온 현장 경험으로,
+                파주 부동산에 관해서는 누구보다 잘 알고 있다고 자부합니다.<br><br>
+                공장·창고·토지·상가까지, 복잡한 거래도 투명하고 정직하게
+                안내해 드리겠습니다. 하이탑부동산이 고객님 곁에 있겠습니다.
+              </p>
+            </div>
+            <div class="intro-img">
+              <img src="images/하이탑부동산.jpg" alt="하이탑부동산 사무소 전경" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 오시는 길 -->
+      <section class="location-section">
+        <div class="container">
+          <p class="section-title">오시는 길</p>
+          <p class="section-sub">언제든지 방문해 주세요</p>
+          <div class="location-wrap">
+            <div class="location-info">
+              <div class="location-item">
+                <div class="location-item-icon">📍</div>
+                <div class="location-item-text">
+                  <strong>주소</strong>
+                  <span>경기도 파주시 책향기로 830, 1층<br>하이탑부동산공인중개사사무소</span>
+                </div>
+              </div>
+              <div class="location-item">
+                <div class="location-item-icon">📞</div>
+                <div class="location-item-text">
+                  <strong>전화</strong>
+                  <span>031-949-8969</span>
+                </div>
+              </div>
+              <div class="location-item">
+                <div class="location-item-icon">🕐</div>
+                <div class="location-item-text">
+                  <strong>영업시간</strong>
+                  <span>평일 10:00 ~ 19:00<br>주말·공휴일 휴무</span>
+                </div>
+              </div>
+              <div class="location-item">
+                <div class="location-item-icon">🚇</div>
+                <div class="location-item-text">
+                  <strong>교통</strong>
+                  <span>GTX-A 운정역 인근<br>운정신도시 중심가</span>
+                </div>
+              </div>
+            </div>
+            <div id="kakaoMap"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer compact-footer">
+      <div class="container footer-inner">
+        <p class="footer-main">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로830, 1층</span>
+          <span>전화: 031-949-8969</span>
+        </p>
+        <p class="footer-sub">
+          <span>중개사무소 등록번호: 41480-2016-00026</span>
+          <span>사업자등록번호: 305-48-62183</span>
+          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+        </p>
+        <p class="footer-links">
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // 카카오맵 - 하이탑부동산 위치
+      window.addEventListener('load', function () {
+        var container = document.getElementById('kakaoMap');
+        var options = {
+          center: new kakao.maps.LatLng(37.7256, 126.7763),
+          level: 4
+        };
+        var map = new kakao.maps.Map(container, options);
+        var markerPosition = new kakao.maps.LatLng(37.7256, 126.7763);
+        var marker = new kakao.maps.Marker({ position: markerPosition });
+        marker.setMap(map);
+        var iwContent = '<div style="padding:8px 12px; font-size:13px; font-weight:600; color:#0A1F5C;">📍 하이탑부동산</div>';
+        var infowindow = new kakao.maps.InfoWindow({ content: iwContent });
+        infowindow.open(map, marker);
+      });
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>
