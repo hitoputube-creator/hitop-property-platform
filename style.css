@@ -199,7 +199,7 @@ body {
 }
 
 /* === listings.html 지도형 full-width 레이아웃 === */
-.brand-logo { height: 54px; width: auto; vertical-align: middle; }
+.brand-logo { height: 50px; width: auto; vertical-align: middle; }
 .brand-text { font-size: inherit; font-weight: inherit; }
 
 .listings-filter-bar {
