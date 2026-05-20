@@ -6,77 +6,57 @@
     <title>하이탑부동산 | 신뢰할 수 있는 상업용 부동산 파트너</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-      /* 탑바 */
       .top-bar { background: #0A1F5C; padding: 6px 0; }
       .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
       .top-bar-hours { font-size: 12px; color: #aab8d8; }
       .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
       .top-bar-phone:hover { color: #e0c070; }
 
-      /* 주요 취급 매물 카드 */
-      .property-card-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 12px;
-      }
-      .property-card {
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-        height: 170px;
+      /* 카테고리 탭 */
+      .category-tab-bar { background: #fff; border-bottom: 1px solid #e5e8ed; }
+      .category-tab-bar .container { display: flex; align-items: center; gap: 0; overflow-x: auto; }
+      .cat-tab {
+        font-size: 14px; font-weight: 500; color: #666;
+        padding: 14px 18px 11px; border-bottom: 3px solid transparent;
+        text-decoration: none; white-space: nowrap; transition: color 0.15s;
         cursor: pointer;
-        text-decoration: none;
-        display: block;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-      .property-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      .cat-tab:hover { color: #0A1F5C; }
+      .cat-tab.active { font-weight: 700; color: #0A1F5C; border-bottom: 3px solid #C9A84C; }
+
+      /* 매물 카드 */
+      .property-card-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+      .property-card {
+        border-radius: 12px; overflow: hidden; position: relative;
+        height: 170px; cursor: pointer; text-decoration: none;
+        display: block; transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-      .property-card-bg {
-        position: absolute; inset: 0;
-        display: flex; align-items: center; justify-content: center;
-      }
+      .property-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+      .property-card-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
       .property-card-bg svg { width: 60px; height: 60px; opacity: 0.22; fill: #fff; }
-      .property-card-overlay {
-        position: absolute; inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
-      }
+      .property-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%); }
       .property-card-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px; }
       .property-card-title { font-size: 17px; font-weight: 700; color: #fff; margin: 0 0 4px; }
       .property-card-sub { font-size: 12px; color: rgba(255,255,255,0.78); margin: 0; }
-
       .card-factory   { background: linear-gradient(135deg, #4a6fa5 0%, #2d4a6e 100%); }
       .card-store     { background: linear-gradient(135deg, #5a7a5a 0%, #2e4e2e 100%); }
       .card-land      { background: linear-gradient(135deg, #8a7040 0%, #5a4820 100%); }
       .card-officetel { background: linear-gradient(135deg, #5a4a7a 0%, #2e2050 100%); }
       .card-apt       { background: linear-gradient(135deg, #4a6a7a 0%, #1e3a4e 100%); }
 
-      /* 소개 + 고객센터 합친 섹션 */
+      /* 소개+고객센터 */
       .info-contact-section { background: #f2f4f7; padding: 56px 0; }
-      .info-contact-wrap {
-        display: grid;
-        grid-template-columns: 1fr 1px 1fr;
-        gap: 0 48px;
-        align-items: center;
-      }
+      .info-contact-wrap { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0 48px; align-items: center; }
       .divider-line { background: #d0d5de; align-self: stretch; }
       .info-block h2 { font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0 0 14px; }
       .info-block p { font-size: 14px; color: #555; line-height: 1.9; margin: 0; }
       .contact-block { display: flex; flex-direction: column; gap: 12px; }
       .contact-block h2 { font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0; }
-      .contact-phone {
-        font-size: 28px; font-weight: 700; color: #0A1F5C;
-        text-decoration: none; letter-spacing: 1px;
-      }
+      .contact-phone { font-size: 28px; font-weight: 700; color: #0A1F5C; text-decoration: none; letter-spacing: 1px; }
       .contact-phone:hover { color: #C9A84C; }
       .contact-hours { font-size: 12px; color: #999; margin: -4px 0 0; }
       .contact-btns { display: flex; gap: 10px; margin-top: 4px; }
-      .contact-btns a {
-        padding: 11px 22px; border-radius: 8px;
-        font-size: 14px; font-weight: 600;
-        text-decoration: none; transition: opacity 0.2s;
-      }
+      .contact-btns a { padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
       .contact-btns a:hover { opacity: 0.85; }
       .btn-tel { background: #0A1F5C; color: #fff; }
       .btn-kakao-new { background: #FEE500; color: #3a1d1d; }
@@ -91,7 +71,6 @@
   </head>
   <body data-page="home">
 
-    <!-- 탑바 -->
     <div class="top-bar">
       <div class="container">
         <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
@@ -116,8 +95,19 @@
       </div>
     </header>
 
+    <!-- 카테고리 탭 -->
+    <div class="category-tab-bar">
+      <div class="container">
+        <a class="cat-tab active" href="listings.html">전체</a>
+        <a class="cat-tab" href="listings.html?category=공장창고">공장·창고</a>
+        <a class="cat-tab" href="listings.html?category=상가">상가·빌딩</a>
+        <a class="cat-tab" href="listings.html?category=토지">토지·개발</a>
+        <a class="cat-tab" href="listings.html?category=오피스텔">오피스텔</a>
+        <a class="cat-tab" href="listings.html?category=힐스테이트더운정">힐스테이트더운정</a>
+      </div>
+    </div>
+
     <main>
-      <!-- 히어로 -->
       <section class="hero">
         <div class="container hero-content">
           <h1>하이탑부동산과 함께<br />정확하고 빠른 부동산 의사결정</h1>
@@ -129,86 +119,47 @@
         </div>
       </section>
 
-      <!-- 주요 취급 매물 -->
       <section class="section section-alt">
         <div class="container">
           <h2>주요 취급 매물</h2>
           <div class="property-card-grid">
-
-            <a class="property-card card-factory" href="listings.html">
-              <div class="property-card-bg">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 20V8l6-4v4l6-4v4l6-4v16H2zm2-2h16V7.6l-6 4V8.2l-6 4V6.6L4 9.6V18zm2-2h2v-4H8v4zm4 0h2v-4h-2v4zm4 0h2v-4h-2v4z"/></svg>
-              </div>
+            <a class="property-card card-factory" href="listings.html?category=공장창고">
+              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M2 20V8l6-4v4l6-4v4l6-4v16H2zm2-2h16V7.6l-6 4V8.2l-6 4V6.6L4 9.6V18zm2-2h2v-4H8v4zm4 0h2v-4h-2v4zm4 0h2v-4h-2v4z"/></svg></div>
               <div class="property-card-overlay"></div>
-              <div class="property-card-text">
-                <p class="property-card-title">공장·창고</p>
-                <p class="property-card-sub">산업용 부동산 전문</p>
-              </div>
+              <div class="property-card-text"><p class="property-card-title">공장·창고</p><p class="property-card-sub">산업용 부동산 전문</p></div>
             </a>
-
-            <a class="property-card card-store" href="listings.html">
-              <div class="property-card-bg">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5.3 7l1.5-4H17l1.7 4H5.3zM2 8h20v2h-1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V10H2V8zm3 2v8h14v-8H5zm3 2h2v4H8v-4zm3 0h2v4h-2v-4z"/></svg>
-              </div>
+            <a class="property-card card-store" href="listings.html?category=상가">
+              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M5.3 7l1.5-4H17l1.7 4H5.3zM2 8h20v2h-1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V10H2V8zm3 2v8h14v-8H5zm3 2h2v4H8v-4zm3 0h2v4h-2v-4z"/></svg></div>
               <div class="property-card-overlay"></div>
-              <div class="property-card-text">
-                <p class="property-card-title">상가·빌딩</p>
-                <p class="property-card-sub">수익형 상업 매물</p>
-              </div>
+              <div class="property-card-text"><p class="property-card-title">상가·빌딩</p><p class="property-card-sub">수익형 상업 매물</p></div>
             </a>
-
-            <a class="property-card card-land" href="listings.html">
-              <div class="property-card-bg">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              </div>
+            <a class="property-card card-land" href="listings.html?category=토지">
+              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
               <div class="property-card-overlay"></div>
-              <div class="property-card-text">
-                <p class="property-card-title">토지·개발</p>
-                <p class="property-card-sub">개발가능 토지 매물</p>
-              </div>
+              <div class="property-card-text"><p class="property-card-title">토지·개발</p><p class="property-card-sub">개발가능 토지 매물</p></div>
             </a>
-
-            <a class="property-card card-officetel" href="listings.html">
-              <div class="property-card-bg">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h14a1 1 0 011 1v16a1 1 0 01-1 1h-5v-3h-4v3H5a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h3v-3h6v3h3V5H6zm2 2h2v2H8V7zm4 0h2v2h-2V7zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z"/></svg>
-              </div>
+            <a class="property-card card-officetel" href="listings.html?category=오피스텔">
+              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M5 3h14a1 1 0 011 1v16a1 1 0 01-1 1h-5v-3h-4v3H5a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h3v-3h6v3h3V5H6zm2 2h2v2H8V7zm4 0h2v2h-2V7zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z"/></svg></div>
               <div class="property-card-overlay"></div>
-              <div class="property-card-text">
-                <p class="property-card-title">오피스텔</p>
-                <p class="property-card-sub">업무·주거 복합 매물</p>
-              </div>
+              <div class="property-card-text"><p class="property-card-title">오피스텔</p><p class="property-card-sub">업무·주거 복합 매물</p></div>
             </a>
-
             <a class="property-card card-apt" href="listings.html">
-              <div class="property-card-bg">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-              </div>
+              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
               <div class="property-card-overlay"></div>
-              <div class="property-card-text">
-                <p class="property-card-title">아파트·주택</p>
-                <p class="property-card-sub">주거용 부동산 매물</p>
-              </div>
+              <div class="property-card-text"><p class="property-card-title">아파트·주택</p><p class="property-card-sub">주거용 부동산 매물</p></div>
             </a>
-
           </div>
         </div>
       </section>
 
-      <!-- 소개 + 고객센터 합친 섹션 -->
       <section id="about" class="info-contact-section">
         <div class="container">
           <div class="info-contact-wrap">
-
-            <!-- 좌측: 소개 -->
             <div class="info-block">
               <h2>하이탑부동산 소개</h2>
               <p>하이탑부동산은 산업·상업 부동산 중개 경험을 바탕으로 고객 중심의 맞춤형 컨설팅을 제공합니다. 복잡한 거래 과정을 투명하게 안내하고, 신뢰를 최우선으로 합니다.</p>
             </div>
-
-            <!-- 구분선 -->
             <div class="divider-line"></div>
-
-            <!-- 우측: 고객센터 -->
             <div id="contact" class="contact-block">
               <h2>고객센터</h2>
               <a class="contact-phone" href="tel:031-949-8969">031-949-8969</a>
@@ -218,7 +169,6 @@
                 <a class="btn-kakao-new" href="https://open.kakao.com" target="_blank" rel="noreferrer">카카오톡 문의</a>
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -244,7 +194,6 @@
         </p>
       </div>
     </footer>
-
     <script src="app.js"></script>
   </body>
 </html>
