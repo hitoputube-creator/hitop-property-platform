@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하이탑부동산 | 관리자 매물등록</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="admin">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">하이탑부동산</a>
+        <nav class="nav-menu"><a href="index.html">홈</a><a href="listings.html">매물보기</a></nav>
+      </div>
+    </header>
+
+    <main class="section">
+      <div class="container admin-auth-wrap" id="adminAuthWrap">
+        <section class="admin-auth-card">
+          <h1>관리자 로그인</h1>
+          <p>관리자 비밀번호를 입력하세요.</p>
+          <form id="adminLoginForm" class="admin-form">
+            <input type="password" name="password" placeholder="비밀번호 입력" required />
+            <button type="submit" class="btn btn-primary">로그인</button>
+          </form>
+          <p id="adminLoginMessage" class="error-text hidden">비밀번호가 올바르지 않습니다.</p>
+        </section>
+      </div>
+
+      <div class="container admin-grid hidden" id="adminPanel">
+        <section>
+          <div class="admin-panel-head">
+            <h1>매물 등록/수정</h1>
+            <button id="adminLogoutBtn" type="button" class="btn btn-outline small">로그아웃</button>
+          </div>
+          <form id="adminForm" class="admin-form">
+            <input type="hidden" name="id" />
+            <select name="propertyType" required><option value="">매물종류 선택</option><option>공장창고</option><option>상가</option><option>오피스텔</option><option>토지</option><option>힐스테이트더운정</option></select>
+            <select name="dealType" required><option value="">거래유형 선택</option><option>매매</option><option>전세</option><option>월세</option></select>
+            <input name="address" placeholder="주소" required />
+            <input type="number" name="price" min="0" placeholder="가격(만원)" required />
+            <input type="number" name="area" min="0" placeholder="면적(㎡)" required />
+            <input name="title" placeholder="제목" required />
+            <textarea name="description" rows="4" placeholder="설명" required></textarea>
+            <input name="imageUrl" type="url" placeholder="사진 URL" required />
+            <button type="submit" class="btn btn-primary">저장</button>
+          </form>
+        </section>
+
+        <section>
+          <h2>저장된 매물</h2>
+          <div id="adminListings" class="admin-list"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer data-shared-footer></footer>
+
+    <script src="js/common.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>
