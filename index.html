@@ -7,29 +7,11 @@
     <link rel="stylesheet" href="style.css" />
     <style>
       /* 탑바 */
-      .top-bar {
-        background: #0A1F5C;
-        padding: 6px 0;
-      }
-      .top-bar .container {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 20px;
-      }
-      .top-bar-hours {
-        font-size: 12px;
-        color: #aab8d8;
-      }
-      .top-bar-phone {
-        font-size: 12px;
-        font-weight: 600;
-        color: #C9A84C;
-        text-decoration: none;
-      }
-      .top-bar-phone:hover {
-        color: #e0c070;
-      }
+      .top-bar { background: #0A1F5C; padding: 6px 0; }
+      .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+      .top-bar-hours { font-size: 12px; color: #aab8d8; }
+      .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
+      .top-bar-phone:hover { color: #e0c070; }
 
       /* 주요 취급 매물 카드 */
       .property-card-grid {
@@ -52,54 +34,58 @@
         box-shadow: 0 8px 24px rgba(0,0,0,0.18);
       }
       .property-card-bg {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
       }
-      .property-card-bg svg {
-        width: 56px;
-        height: 56px;
-        opacity: 0.22;
-        fill: #fff;
-      }
+      .property-card-bg svg { width: 60px; height: 60px; opacity: 0.22; fill: #fff; }
       .property-card-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
       }
-      .property-card-text {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 14px;
-      }
-      .property-card-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #fff;
-        margin: 0 0 3px;
-      }
-      .property-card-sub {
-        font-size: 11px;
-        color: rgba(255,255,255,0.75);
-        margin: 0;
-      }
+      .property-card-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px; }
+      .property-card-title { font-size: 17px; font-weight: 700; color: #fff; margin: 0 0 4px; }
+      .property-card-sub { font-size: 12px; color: rgba(255,255,255,0.78); margin: 0; }
 
-      /* 카드 색상 */
       .card-factory   { background: linear-gradient(135deg, #4a6fa5 0%, #2d4a6e 100%); }
       .card-store     { background: linear-gradient(135deg, #5a7a5a 0%, #2e4e2e 100%); }
       .card-land      { background: linear-gradient(135deg, #8a7040 0%, #5a4820 100%); }
       .card-officetel { background: linear-gradient(135deg, #5a4a7a 0%, #2e2050 100%); }
       .card-apt       { background: linear-gradient(135deg, #4a6a7a 0%, #1e3a4e 100%); }
 
+      /* 소개 + 고객센터 합친 섹션 */
+      .info-contact-section { background: #f2f4f7; padding: 56px 0; }
+      .info-contact-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1px 1fr;
+        gap: 0 48px;
+        align-items: center;
+      }
+      .divider-line { background: #d0d5de; align-self: stretch; }
+      .info-block h2 { font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0 0 14px; }
+      .info-block p { font-size: 14px; color: #555; line-height: 1.9; margin: 0; }
+      .contact-block { display: flex; flex-direction: column; gap: 12px; }
+      .contact-block h2 { font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0; }
+      .contact-phone {
+        font-size: 28px; font-weight: 700; color: #0A1F5C;
+        text-decoration: none; letter-spacing: 1px;
+      }
+      .contact-phone:hover { color: #C9A84C; }
+      .contact-hours { font-size: 12px; color: #999; margin: -4px 0 0; }
+      .contact-btns { display: flex; gap: 10px; margin-top: 4px; }
+      .contact-btns a {
+        padding: 11px 22px; border-radius: 8px;
+        font-size: 14px; font-weight: 600;
+        text-decoration: none; transition: opacity 0.2s;
+      }
+      .contact-btns a:hover { opacity: 0.85; }
+      .btn-tel { background: #0A1F5C; color: #fff; }
+      .btn-kakao-new { background: #FEE500; color: #3a1d1d; }
+
       @media (max-width: 768px) {
-        .property-card-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
+        .property-card-grid { grid-template-columns: repeat(2, 1fr); }
         .top-bar-hours { display: none; }
+        .info-contact-wrap { grid-template-columns: 1fr; gap: 32px 0; }
+        .divider-line { height: 1px; width: 100%; }
       }
     </style>
   </head>
@@ -135,10 +121,7 @@
       <section class="hero">
         <div class="container hero-content">
           <h1>하이탑부동산과 함께<br />정확하고 빠른 부동산 의사결정</h1>
-          <p>
-            지역 분석과 실매물 데이터 기반으로 기업과 개인의 니즈에 맞춘 최적의 매물을
-            제안합니다.
-          </p>
+          <p>지역 분석과 실매물 데이터 기반으로 기업과 개인의 니즈에 맞춘 최적의 매물을 제안합니다.</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="listings.html">매물보기</a>
             <a class="btn btn-outline" href="#contact">상담문의</a>
@@ -146,7 +129,7 @@
         </div>
       </section>
 
-      <!-- 주요 취급 매물 (위로 이동) -->
+      <!-- 주요 취급 매물 -->
       <section class="section section-alt">
         <div class="container">
           <h2>주요 취급 매물</h2>
@@ -211,25 +194,31 @@
         </div>
       </section>
 
-      <!-- 하이탑부동산 소개 (아래로 이동) -->
-      <section id="about" class="section">
+      <!-- 소개 + 고객센터 합친 섹션 -->
+      <section id="about" class="info-contact-section">
         <div class="container">
-          <h2>하이탑부동산 소개</h2>
-          <p class="section-description">
-            하이탑부동산은 산업·상업 부동산 중개 경험을 바탕으로 고객 중심의 맞춤형 컨설팅을
-            제공합니다. 복잡한 거래 과정을 투명하게 안내하고, 신뢰를 최우선으로 합니다.
-          </p>
-        </div>
-      </section>
+          <div class="info-contact-wrap">
 
-      <!-- 고객센터 -->
-      <section id="contact" class="section">
-        <div class="container contact-box">
-          <h2>고객센터</h2>
-          <p class="section-description">하이탑부동산 매물 상담 및 문의</p>
-          <div class="button-row" style="margin-top:16px;">
-            <a class="btn btn-primary" href="tel:031-949-8969">전화문의 031-949-8969</a>
-            <a class="btn btn-kakao" href="https://open.kakao.com" target="_blank" rel="noreferrer">카카오톡 문의</a>
+            <!-- 좌측: 소개 -->
+            <div class="info-block">
+              <h2>하이탑부동산 소개</h2>
+              <p>하이탑부동산은 산업·상업 부동산 중개 경험을 바탕으로 고객 중심의 맞춤형 컨설팅을 제공합니다. 복잡한 거래 과정을 투명하게 안내하고, 신뢰를 최우선으로 합니다.</p>
+            </div>
+
+            <!-- 구분선 -->
+            <div class="divider-line"></div>
+
+            <!-- 우측: 고객센터 -->
+            <div id="contact" class="contact-block">
+              <h2>고객센터</h2>
+              <a class="contact-phone" href="tel:031-949-8969">031-949-8969</a>
+              <p class="contact-hours">📅 평일 10:00 ~ 19:00 · 주말·공휴일 휴무</p>
+              <div class="contact-btns">
+                <a class="btn-tel" href="tel:031-949-8969">전화 문의</a>
+                <a class="btn-kakao-new" href="https://open.kakao.com" target="_blank" rel="noreferrer">카카오톡 문의</a>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
