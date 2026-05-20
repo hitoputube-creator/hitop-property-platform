@@ -13,89 +13,36 @@
       .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
       .top-bar-phone:hover { color: #e0c070; }
 
-      /* 페이지 타이틀 배너 */
-      .about-hero {
-        background: linear-gradient(135deg, #0A1F5C 0%, #15376f 100%);
-        padding: 52px 0 44px;
-        text-align: center;
-      }
-      .about-hero h1 { font-size: 28px; font-weight: 700; color: #fff; margin: 0 0 10px; }
-      .about-hero p { font-size: 15px; color: #aab8d8; margin: 0; }
+      .about-hero { background: linear-gradient(135deg, #0A1F5C 0%, #15376f 100%); padding: 52px 0 44px; text-align: center; }
+      .about-hero h1 { font-size: 26px; font-weight: 700; color: #fff; margin: 0 0 10px; }
+      .about-hero p { font-size: 14px; color: #aab8d8; margin: 0; }
 
-      /* 강점 카드 */
-      .strength-section { background: #f2f4f7; padding: 56px 0; }
-      .strength-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin-top: 28px;
-      }
-      .strength-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 28px 20px;
-        text-align: center;
-        border: 0.5px solid #e2e6ed;
-      }
-      .strength-icon { font-size: 34px; margin-bottom: 12px; display: block; }
-      .strength-num { font-size: 26px; font-weight: 700; color: #0A1F5C; display: block; margin-bottom: 4px; }
-      .strength-label { font-size: 13px; color: #666; line-height: 1.6; }
+      .strength-section { background: #f2f4f7; padding: 52px 0; }
+      .strength-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
+      .strength-card { background: #fff; border-radius: 12px; padding: 24px 18px; text-align: center; border: 0.5px solid #e2e6ed; }
+      .strength-num { font-size: 18px; font-weight: 700; color: #0A1F5C; display: block; margin-bottom: 8px; }
+      .strength-label { font-size: 12px; color: #666; line-height: 1.7; }
 
-      /* 소개 섹션 */
-      .intro-section { padding: 60px 0; background: #fff; }
-      .intro-wrap {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 48px;
-        align-items: center;
-      }
-      .intro-text h2 {
-        font-size: 21px; font-weight: 700; color: #0A1F5C;
-        margin: 0 0 20px; line-height: 1.5;
-      }
+      .intro-section { padding: 56px 0; background: #fff; }
+      .intro-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+      .intro-text h2 { font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0 0 18px; line-height: 1.5; }
       .intro-text p { font-size: 14px; color: #444; line-height: 2.0; margin: 0; }
-      .intro-img { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
-      .intro-img img { width: 100%; height: 320px; object-fit: cover; display: block; }
+      .intro-img { border-radius: 12px; overflow: hidden; }
+      .intro-img img { width: 100%; height: 300px; object-fit: cover; display: block; }
 
-      /* 오시는 길 */
-<section class="location-section">
-  <div class="container">
-    <p class="section-title">오시는 길</p>
-    <p class="section-sub">언제든지 방문해 주세요</p>
-    <div class="location-wrap">
-      <div class="location-info">
-        <div class="location-row">
-          <span class="location-row-label">주소</span>
-          <span class="location-row-value">경기도 파주시 책향기로 830, 1층<br>하이탑부동산공인중개사사무소</span>
-        </div>
-        <div class="location-row">
-          <span class="location-row-label">전화</span>
-          <span class="location-row-value"><a href="tel:031-949-8969">031-949-8969</a></span>
-        </div>
-        <div class="location-row">
-          <span class="location-row-label">팩스</span>
-          <span class="location-row-value">031-944-1108</span>
-        </div>
-        <div class="location-row">
-          <span class="location-row-label">이메일</span>
-          <span class="location-row-value"><a href="mailto:newpajucity@naver.com">newpajucity@naver.com</a></span>
-        </div>
-        <div class="location-row">
-          <span class="location-row-label">영업시간</span>
-          <span class="location-row-value">평일 10:00 ~ 19:00<br>주말·공휴일 휴무</span>
-        </div>
-        <div class="location-row">
-          <span class="location-row-label">교통</span>
-          <span class="location-row-value">GTX-A 운정역 인근 · 운정신도시 중심가</span>
-        </div>
-      </div>
-      <div id="kakaoMap"></div>
-    </div>
-  </div>
-</section>
+      .location-section { background: #f2f4f7; padding: 56px 0; }
+      .location-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; align-items: start; margin-top: 24px; }
+      .location-info { background: #fff; border-radius: 12px; border: 0.5px solid #e2e6ed; overflow: hidden; }
+      .location-row { padding: 14px 20px; border-bottom: 0.5px solid #eaecef; display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: start; }
+      .location-row:last-child { border-bottom: none; }
+      .location-row-label { font-size: 12px; color: #999; padding-top: 1px; }
+      .location-row-value { font-size: 13px; color: #222; line-height: 1.7; }
+      .location-row-value a { color: #0A1F5C; text-decoration: none; }
+      .location-row-value a:hover { color: #C9A84C; }
+      #kakaoMap { width: 100%; height: 360px; border-radius: 12px; border: 0.5px solid #e2e6ed; display: block; }
 
-      .section-title { font-size: 22px; font-weight: 700; color: #0A1F5C; margin: 0 0 6px; }
-      .section-sub { font-size: 14px; color: #999; margin: 0; }
+      .section-title { font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0 0 4px; }
+      .section-sub { font-size: 13px; color: #999; margin: 0; }
 
       @media (max-width: 768px) {
         .strength-grid { grid-template-columns: repeat(2, 1fr); }
@@ -106,15 +53,13 @@
   </head>
   <body data-page="about">
 
-    <!-- 탑바 -->
     <div class="top-bar">
       <div class="container">
-        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
-        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+        <span class="top-bar-hours">평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">031-949-8969</a>
       </div>
     </div>
 
-    <!-- 헤더 -->
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="brand" href="index.html">
@@ -134,35 +79,29 @@
 
     <main>
 
-      <!-- 타이틀 배너 -->
       <section class="about-hero">
         <h1>하이탑부동산을 소개합니다</h1>
         <p>파주를 가장 잘 아는 부동산 전문가</p>
       </section>
 
-      <!-- 강점 카드 -->
       <section class="strength-section">
         <div class="container">
           <p class="section-title">왜 하이탑부동산인가요?</p>
           <p class="section-sub">23년 현장 경험이 만든 신뢰</p>
           <div class="strength-grid">
             <div class="strength-card">
-              <span class="strength-icon">📅</span>
-              <span class="strength-num">23년</span>
-              <span class="strength-label">파주본토박이 남편과 함께<br>2001년부터 현장경험</span>
+              <span class="strength-num">23년 경력</span>
+              <span class="strength-label">파주 본토박이 남편과 함께<br>2001년부터 현장 경험</span>
             </div>
             <div class="strength-card">
-              <span class="strength-icon">👫</span>
               <span class="strength-num">부부 중개사</span>
               <span class="strength-label">제13회 · 제15회<br>공인중개사 자격 취득</span>
             </div>
             <div class="strength-card">
-              <span class="strength-icon">🏭</span>
               <span class="strength-num">산업 특화</span>
               <span class="strength-label">공장·창고·토지<br>상업용 부동산 전문</span>
             </div>
             <div class="strength-card">
-              <span class="strength-icon">🤝</span>
               <span class="strength-num">신뢰 최우선</span>
               <span class="strength-label">투명한 거래 안내<br>고객 이익 최우선</span>
             </div>
@@ -170,20 +109,14 @@
         </div>
       </section>
 
-      <!-- 소개글 + 사무소 사진 -->
       <section class="intro-section">
         <div class="container">
           <div class="intro-wrap">
             <div class="intro-text">
               <h2>파주 부동산에 관해서는<br>누구보다 잘 알고 있습니다</h2>
-              <p>
-                저희는 제13회·제15회 공인중개사 자격을 취득한 부부 중개사입니다.<br><br>
-                파주에서 태어나 파주에서 자란 본토박이인 남편과 함께 
-                23년간 파주에서 함께 발로 뛰며 쌓아온 현장 경험으로,
-                파주 부동산에 관해서는 누구보다 잘 알고 있다고 자부합니다.<br><br>
-                공장·창고·토지·상가까지, 복잡한 거래도 투명하고 정직하게
-                안내해 드리겠습니다. 하이탑부동산이 고객님 곁에 있겠습니다.
-              </p>
+              <p>저희는 제13회·제15회 공인중개사 자격을 취득한 부부 중개사입니다.<br><br>
+              파주에서 태어나 파주에서 자란 본토박이인 남편과 함께 23년간 파주에서 함께 발로 뛰며 쌓아온 현장 경험으로, 파주 부동산에 관해서는 누구보다 잘 알고 있다고 자부합니다.<br><br>
+              공장·창고·토지·상가까지, 복잡한 거래도 투명하고 정직하게 안내해 드리겠습니다. 하이탑부동산이 고객님 곁에 있겠습니다.</p>
             </div>
             <div class="intro-img">
               <img src="images/하이탑부동산.jpg" alt="하이탑부동산 사무소 전경" />
@@ -192,40 +125,35 @@
         </div>
       </section>
 
-      <!-- 오시는 길 -->
       <section class="location-section">
         <div class="container">
           <p class="section-title">오시는 길</p>
           <p class="section-sub">언제든지 방문해 주세요</p>
           <div class="location-wrap">
             <div class="location-info">
-              <div class="location-item">
-                <div class="location-item-icon">📍</div>
-                <div class="location-item-text">
-                  <strong>주소</strong>
-                  <span>경기도 파주시 책향기로 830, 1층<br>하이탑부동산공인중개사사무소</span>
-                </div>
+              <div class="location-row">
+                <span class="location-row-label">주소</span>
+                <span class="location-row-value">경기도 파주시 책향기로 830, 1층<br>하이탑부동산공인중개사사무소</span>
               </div>
-              <div class="location-item">
-                <div class="location-item-icon">📞</div>
-                <div class="location-item-text">
-                  <strong>전화</strong>
-                  <span>031-949-8969</span>
-                </div>
+              <div class="location-row">
+                <span class="location-row-label">전화</span>
+                <span class="location-row-value"><a href="tel:031-949-8969">031-949-8969</a></span>
               </div>
-              <div class="location-item">
-                <div class="location-item-icon">🕐</div>
-                <div class="location-item-text">
-                  <strong>영업시간</strong>
-                  <span>평일 10:00 ~ 19:00<br>주말·공휴일 휴무</span>
-                </div>
+              <div class="location-row">
+                <span class="location-row-label">팩스</span>
+                <span class="location-row-value">031-944-1108</span>
               </div>
-              <div class="location-item">
-                <div class="location-item-icon">🚇</div>
-                <div class="location-item-text">
-                  <strong>교통</strong>
-                  <span>GTX-A 운정역 인근<br>운정신도시 중심가</span>
-                </div>
+              <div class="location-row">
+                <span class="location-row-label">이메일</span>
+                <span class="location-row-value"><a href="mailto:newpajucity@naver.com">newpajucity@naver.com</a></span>
+              </div>
+              <div class="location-row">
+                <span class="location-row-label">영업시간</span>
+                <span class="location-row-value">평일 10:00 ~ 19:00<br>주말·공휴일 휴무</span>
+              </div>
+              <div class="location-row">
+                <span class="location-row-label">교통</span>
+                <span class="location-row-value">GTX-A 운정역 인근 · 운정신도시 중심가</span>
               </div>
             </div>
             <div id="kakaoMap"></div>
@@ -258,31 +186,31 @@
       </div>
     </footer>
 
-<script>
-  window.addEventListener('load', function () {
-    kakao.maps.load(function() {
-      var container = document.getElementById('kakaoMap');
-      var geocoder = new kakao.maps.services.Geocoder();
-      geocoder.addressSearch('경기도 파주시 책향기로 830', function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-          var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          var map = new kakao.maps.Map(container, { center: coords, level: 3 });
-          var marker = new kakao.maps.Marker({ position: coords });
-          marker.setMap(map);
-          var infowindow = new kakao.maps.InfoWindow({
-            content: '<div style="padding:8px 12px; font-size:13px; font-weight:600; color:#0A1F5C;">📍 하이탑부동산</div>'
+    <script>
+      window.addEventListener('load', function() {
+        kakao.maps.load(function() {
+          var container = document.getElementById('kakaoMap');
+          var geocoder = new kakao.maps.services.Geocoder();
+          geocoder.addressSearch('경기도 파주시 책향기로 830', function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+              var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+              var map = new kakao.maps.Map(container, { center: coords, level: 3 });
+              var marker = new kakao.maps.Marker({ position: coords });
+              marker.setMap(map);
+              var infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="padding:8px 12px;font-size:13px;font-weight:600;color:#0A1F5C;">하이탑부동산</div>'
+              });
+              infowindow.open(map, marker);
+            } else {
+              var coords = new kakao.maps.LatLng(37.7094, 126.7693);
+              var map = new kakao.maps.Map(container, { center: coords, level: 3 });
+              var marker = new kakao.maps.Marker({ position: coords });
+              marker.setMap(map);
+            }
           });
-          infowindow.open(map, marker);
-        } else {
-          var coords = new kakao.maps.LatLng(37.7094, 126.7693);
-          var map = new kakao.maps.Map(container, { center: coords, level: 3 });
-          var marker = new kakao.maps.Marker({ position: coords });
-          marker.setMap(map);
-        }
+        });
       });
-    });
-  });
-</script>
+    </script>
     <script src="app.js"></script>
   </body>
 </html>
