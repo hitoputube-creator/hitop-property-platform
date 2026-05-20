@@ -1,0 +1,50 @@
+<!-- 아래 코드를 listings.html의 </main> 바로 앞에 추가하세요 -->
+
+<!-- 매물 상세 모달 -->
+<div id="listingModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-id">매물번호: <strong id="modalId"></strong></span>
+      <button class="modal-close" id="modalClose" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-left">
+        <div class="modal-main-img">
+          <img id="modalMainImg" src="" alt="매물사진" />
+        </div>
+        <div class="modal-thumbs" id="modalThumbs"></div>
+        <div class="modal-desc-section">
+          <h4>매물 설명</h4>
+          <div id="modalDesc" class="modal-desc"></div>
+        </div>
+      </div>
+      <div class="modal-right">
+        <div>
+          <span class="modal-badge" id="modalBadge"></span>
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <p class="modal-address" id="modalAddress"></p>
+        </div>
+        <div class="modal-price-area" id="modalPriceArea"></div>
+        <table class="modal-info-table" id="modalInfoTable"></table>
+        <div class="modal-contact">
+          <a href="tel:031-949-8969" class="btn modal-tel">📞 전화문의 031-949-8969</a>
+          <a href="https://open.kakao.com" target="_blank" rel="noreferrer" class="modal-kakao-btn">카카오톡 문의</a>
+        </div>
+        <div class="modal-agent">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>031-949-8969</span>
+          <span>경기도 파주시 책향기로 830, 1층</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 라이트박스 -->
+<div id="lightbox" class="lightbox-overlay hidden">
+  <button class="lightbox-close" id="lightboxClose" type="button">✕</button>
+  <button class="lightbox-prev" id="lightboxPrev" type="button">‹</button>
+  <img id="lightboxImg" src="" alt="사진 크게보기" />
+  <button class="lightbox-next" id="lightboxNext" type="button">›</button>
+</div>
