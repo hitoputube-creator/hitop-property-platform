@@ -83,11 +83,14 @@ const setupListingsPage = () => {
   };
 
   const mapEl = document.getElementById('map');
-  if (mapEl && typeof kakao !== 'undefined' && kakao.maps) {
-    mapEl.innerHTML = '';
-    map = new kakao.maps.Map(mapEl, {
-      center: new kakao.maps.LatLng(37.7512, 126.7820),
-      level: 7,
+  if (mapEl && typeof kakao !== 'undefined') {
+    kakao.maps.load(() => {
+      mapEl.innerHTML = '';
+      map = new kakao.maps.Map(mapEl, {
+        center: new kakao.maps.LatLng(37.7512, 126.7820),
+        level: 7,
+      });
+      placeMarkers(current);
     });
   }
 
