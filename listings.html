@@ -6,25 +6,69 @@
     <title>하이탑부동산 | 매물보기</title>
     <link rel="stylesheet" href="style.css" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
+    <style>
+      .top-bar { background: #0A1F5C; padding: 6px 0; }
+      .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+      .top-bar-hours { font-size: 12px; color: #aab8d8; }
+      .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
+      .top-bar-phone:hover { color: #e0c070; }
+
+      /* 카테고리 탭 */
+      .category-tab-bar { background: #fff; border-bottom: 1px solid #e5e8ed; }
+      .category-tab-bar .container { display: flex; align-items: center; gap: 0; overflow-x: auto; }
+      .cat-tab {
+        font-size: 14px; font-weight: 500; color: #666;
+        padding: 14px 18px 11px; border-bottom: 3px solid transparent;
+        text-decoration: none; white-space: nowrap; transition: color 0.15s;
+        cursor: pointer;
+      }
+      .cat-tab:hover { color: #0A1F5C; }
+      .cat-tab.active { font-weight: 700; color: #0A1F5C; border-bottom: 3px solid #C9A84C; }
+
+      @media (max-width: 768px) {
+        .top-bar-hours { display: none; }
+      }
+    </style>
   </head>
   <body data-page="listings">
+
+    <!-- 탑바 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <!-- 헤더: 메인과 동일 -->
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="brand" href="index.html">
-          <!-- 로고: <img src="images/logo.png" alt="하이탑부동산" class="brand-logo" /> -->
-          <span class="brand-text">하이탑부동산</span>
+          <img src="images/hitoplogo.png" alt="" class="brand-logo" />
         </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
-        <nav class="nav-menu" aria-label="매물 카테고리">
-          <a href="#" data-category="공장창고">공장·창고</a>
-          <a href="#" data-category="상가">상가</a>
-          <a href="#" data-category="오피스텔">오피스텔</a>
-          <a href="#" data-category="토지">토지</a>
-          <a href="#" data-category="힐스테이트더운정">힐스테이트더운정</a>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="index.html#about">하이탑소개</a>
+          <a href="listings.html">매물보기</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
           <a href="index.html#contact">고객센터</a>
         </nav>
       </div>
     </header>
+
+    <!-- 카테고리 탭 -->
+    <div class="category-tab-bar">
+      <div class="container">
+        <a class="cat-tab active" href="listings.html" data-category="">전체</a>
+        <a class="cat-tab" href="#" data-category="공장창고">공장·창고</a>
+        <a class="cat-tab" href="#" data-category="상가">상가·빌딩</a>
+        <a class="cat-tab" href="#" data-category="토지">토지·개발</a>
+        <a class="cat-tab" href="#" data-category="오피스텔">오피스텔</a>
+        <a class="cat-tab" href="#" data-category="힐스테이트더운정">힐스테이트더운정</a>
+      </div>
+    </div>
 
     <div class="listings-filter-bar">
       <form id="filterForm" class="listing-filter-grid">
@@ -71,7 +115,7 @@
       <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao">카카오<br>채팅</a>
     </div>
 
-    <footer class="site-footer">
+    <footer class="site-footer compact-footer">
       <div class="container footer-inner">
         <p class="footer-main">
           <strong>하이탑부동산공인중개사사무소</strong>
@@ -92,6 +136,25 @@
         </p>
       </div>
     </footer>
+
     <script src="app.js?v=20260520"></script>
+    <script>
+      // 카테고리 탭 클릭 처리
+      document.querySelectorAll('.cat-tab').forEach(tab => {
+        tab.addEventListener('click', function(e) {
+          if (this.dataset.category !== undefined && this.getAttribute('href') === '#') {
+            e.preventDefault();
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            const category = this.dataset.category;
+            const select = document.querySelector('select[name="propertyType"]');
+            if (select) {
+              select.value = category;
+              document.getElementById('filterForm').dispatchEvent(new Event('submit'));
+            }
+          }
+        });
+      });
+    </script>
   </body>
 </html>
