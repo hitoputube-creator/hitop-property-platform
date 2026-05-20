@@ -3,19 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>하이탑부동산 | 관리자 매물등록</title>
+    <title>하이탑부동산 | 관리자</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-      .admin-field-group { display: contents; }
-      .price-field-group { display: contents; }
-      .field-section-title {
-        grid-column: 1/-1; font-size: 12px; font-weight: 700;
-        color: #12335a; background: #f0f4f8; padding: 6px 10px;
-        border-radius: 6px; margin-top: 4px;
+      body { font-size: 13px; }
+      .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 16px 12px; }
+      .admin-top { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+
+      /* 목록 */
+      .admin-list-section h2 { font-size: 14px; font-weight: 700; color: #12335a; margin: 0 0 8px; }
+      .admin-list { display: flex; flex-direction: column; gap: 6px; max-height: 70vh; overflow-y: auto; }
+      .admin-item {
+        background: #fff; border: 1px solid #e5e9f0; border-radius: 8px;
+        padding: 8px 12px; display: flex; align-items: center; gap: 8px;
       }
+      .admin-item-done { opacity: 0.55; border-left: 3px solid #dc2626; }
+      .admin-item-info { flex: 1; min-width: 0; }
+      .admin-item-title { font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .admin-item-meta { font-size: 11px; color: #64748b; margin-top: 2px; }
+      .admin-item-price { font-size: 12px; font-weight: 700; color: #1f8f63; white-space: nowrap; }
+      .admin-item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+      .admin-item-actions button { font-size: 11px; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; color: #475569; }
+      .admin-item-actions .btn-del { border-color: #fca5a5; color: #dc2626; }
+      .admin-item-actions .btn-done { border-color: #86efac; color: #16a34a; }
+      .admin-item-actions .btn-edit { border-color: #93c5fd; color: #2563eb; }
+
+      /* 폼 */
+      .admin-form-section h2 { font-size: 14px; font-weight: 700; color: #12335a; margin: 0 0 8px; }
+      .admin-form { display: flex; flex-direction: column; gap: 0; }
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px; }
+      .form-row.full { grid-template-columns: 1fr; }
+      .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+      .admin-form input, .admin-form select, .admin-form textarea {
+        width: 100%; padding: 5px 8px; border-radius: 5px;
+        border: 1px solid #cbd5e1; font: inherit; font-size: 12px;
+        background: #fff;
+      }
+      .admin-form textarea { resize: vertical; min-height: 60px; }
+      .form-section-label {
+        font-size: 11px; font-weight: 700; color: #12335a;
+        background: #f0f4f8; padding: 3px 8px; border-radius: 4px;
+        margin: 6px 0 4px; grid-column: 1/-1;
+      }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px; }
+      .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+      .form-actions { display: flex; gap: 6px; margin-top: 8px; }
+      .form-actions button { font-size: 12px; padding: 7px 16px; border-radius: 6px; }
+      .image-url-row { display: flex; gap: 4px; margin-bottom: 4px; }
+      .image-url-row input { flex: 1; font-size: 12px; padding: 5px 8px; border-radius: 5px; border: 1px solid #cbd5e1; }
+      .img-remove-btn { font-size: 11px; padding: 4px 8px; border: 1px solid #fca5a5; color: #dc2626; background: #fff; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+      #addImageBtn { font-size: 11px; padding: 4px 10px; margin-bottom: 4px; }
+
+      .type-fields { display: none; }
+      .type-fields.active { display: contents; }
     </style>
   </head>
   <body data-page="admin">
+
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="brand" href="index.html">
@@ -25,7 +69,6 @@
         <nav class="nav-menu">
           <a href="index.html">홈</a>
           <a href="listings.html">매물보기</a>
-          <a href="index.html#contact">고객센터</a>
           <a href="admin.html" aria-current="page">관리자</a>
           <button class="btn btn-outline" id="logoutBtn" type="button" style="font-size:0.85rem;padding:6px 12px;display:none;">로그아웃</button>
         </nav>
@@ -41,153 +84,150 @@
       </div>
     </div>
 
-    <main class="section hidden" id="adminMain">
-      <div class="container admin-grid">
-        <section>
-          <h1>매물 등록/수정</h1>
-          <form id="adminForm" class="admin-form">
-            <input type="hidden" name="id" />
+    <main id="adminMain" class="hidden">
+      <div class="admin-wrap">
+        <div class="admin-top">
 
-            <!-- 기본 공통 필드 -->
-            <div class="field-section-title">기본 정보</div>
-            <select name="propertyType" required>
-              <option value="">매물종류 선택</option>
-              <option>공장창고</option>
-              <option>상가</option>
-              <option>오피스텔</option>
-              <option>토지</option>
-              <option>힐스테이트더운정</option>
-              <option>단독주택전원주택</option>
-            </select>
-            <select name="dealType" required>
-              <option value="">거래유형 선택</option>
-              <option>매매</option>
-              <option>임대</option>
-              <option>전세</option>
-              <option>월세</option>
-            </select>
-            <input name="title" placeholder="매물 제목" required />
-            <input name="address" placeholder="정확한 주소 (지도 마커용 - 비공개)" required />
-            <input name="displayAddress" placeholder="표시용 주소 (예: 파주시 탄현면)" required />
-            <input type="number" name="area" min="0" placeholder="대표 면적(㎡)" required />
+          <!-- 왼쪽: 매물 목록 -->
+          <div class="admin-list-section">
+            <h2>📋 저장된 매물 <span id="listCount" style="font-size:11px;color:#64748b;font-weight:400;"></span></h2>
+            <div id="adminListings" class="admin-list"></div>
+          </div>
 
-            <!-- 가격 필드 -->
-            <div class="field-section-title">가격 정보</div>
-            <div class="price-field-group" data-deals="매매">
-              <input type="number" name="salePrice" min="0" placeholder="매매가 (만원)" />
-            </div>
-            <div class="price-field-group" data-deals="임대,월세">
-              <input type="number" name="deposit" min="0" placeholder="보증금 (만원)" />
-              <input type="number" name="monthlyRent" min="0" placeholder="월세 (만원)" />
-              <input name="managementFee" placeholder="관리비 (예: 15만원, 없음)" />
-            </div>
-            <div class="price-field-group" data-deals="전세">
-              <input type="number" name="deposit" min="0" placeholder="보증금 (만원)" />
-            </div>
+          <!-- 오른쪽: 등록/수정 폼 -->
+          <div class="admin-form-section">
+            <h2 id="formTitle">✏️ 매물 등록</h2>
+            <form id="adminForm" class="admin-form">
+              <input type="hidden" name="id" />
 
-            <!-- 공장창고 전용 -->
-            <div class="admin-field-group" data-types="공장창고">
-              <div class="field-section-title">공장/창고 상세</div>
-              <input type="number" name="landArea" min="0" placeholder="대지면적 (㎡)" />
-              <input type="number" name="buildingArea" min="0" placeholder="건축면적 (㎡)" />
-              <input type="number" name="totalArea" min="0" placeholder="연면적 (㎡)" />
-              <input name="floor" placeholder="층정보 (예: 지상1층/총1층)" />
-              <input name="direction" placeholder="방향 (예: 남향)" />
-              <input name="mainUse" placeholder="주용도 (예: 창고시설)" />
-              <input name="office" placeholder="사무실/화장실 (예: 1개/1개)" />
-              <input name="parking" placeholder="주차 (예: 가능 5대)" />
-              <input name="elevator" placeholder="엘리베이터 (예: 없음, 화물1대)" />
-              <input name="approvalDate" placeholder="사용승인일 (예: 2010-03-15)" />
-            </div>
+              <!-- 기본 정보 -->
+              <div class="form-section-label">기본 정보</div>
+              <div class="form-grid">
+                <select name="propertyType" required id="ptSelect">
+                  <option value="">종류 선택</option>
+                  <option>공장창고</option><option>상가</option>
+                  <option>오피스텔</option><option>토지</option>
+                  <option>힐스테이트더운정</option><option>단독주택전원주택</option>
+                </select>
+                <select name="dealType" required id="dtSelect">
+                  <option value="">거래유형</option>
+                  <option>매매</option><option>임대</option>
+                  <option>전세</option><option>월세</option>
+                </select>
+                <input name="title" placeholder="매물 제목" required style="grid-column:1/-1" />
+                <input name="address" placeholder="정확한 주소 (지도용, 비공개)" required style="grid-column:1/-1" />
+                <input name="displayAddress" placeholder="표시용 주소" required />
+                <input type="number" name="area" min="0" placeholder="면적(㎡)" required />
+              </div>
 
-            <!-- 상가 전용 -->
-            <div class="admin-field-group" data-types="상가">
-              <div class="field-section-title">상가 상세</div>
-              <input type="number" name="contractArea" min="0" placeholder="계약면적 (㎡)" />
-              <input type="number" name="exclusiveArea" min="0" placeholder="전용면적 (㎡)" />
-              <input name="floor" placeholder="해당층/총층 (예: 1층/5층)" />
-              <input name="moveInDate" placeholder="입주가능일 (예: 즉시입주)" />
-              <input name="direction" placeholder="방향 (예: 남향)" />
-              <input name="currentBusiness" placeholder="현재업종" />
-              <input name="recommendBusiness" placeholder="추천업종" />
-              <input name="parking" placeholder="주차" />
-              <input name="heating" placeholder="난방 (예: 개별난방)" />
-              <input name="buildingUse" placeholder="건축물용도 (예: 근린생활시설)" />
-              <input name="approvalDate" placeholder="사용승인일" />
-            </div>
+              <!-- 가격 -->
+              <div class="form-section-label">가격 정보</div>
+              <div class="form-grid" id="priceFields">
+                <input type="number" name="salePrice" min="0" placeholder="매매가(만원)" class="pf-매매" />
+                <input type="number" name="deposit" min="0" placeholder="보증금(만원)" class="pf-임대 pf-전세 pf-월세" />
+                <input type="number" name="monthlyRent" min="0" placeholder="월세(만원)" class="pf-임대 pf-월세" />
+                <input name="managementFee" placeholder="관리비" class="pf-임대 pf-월세 pf-오피스텔 pf-힐스테이트더운정" />
+              </div>
 
-            <!-- 오피스텔 전용 -->
-            <div class="admin-field-group" data-types="오피스텔">
-              <div class="field-section-title">오피스텔 상세</div>
-              <input type="number" name="contractArea" min="0" placeholder="계약면적 (㎡)" />
-              <input type="number" name="exclusiveArea" min="0" placeholder="전용면적 (㎡)" />
-              <input name="floor" placeholder="해당층/총층 (예: 15층/25층)" />
-              <input name="rooms" placeholder="방수/욕실수 (예: 1/1)" />
-              <input name="direction" placeholder="방향 (예: 동향)" />
-              <input name="heating" placeholder="난방 (예: 개별난방)" />
-              <input name="moveInDate" placeholder="입주가능일" />
-              <input name="parking" placeholder="주차" />
-              <input name="buildingUse" placeholder="건축물용도" />
-            </div>
+              <!-- 공장창고 -->
+              <div class="type-fields" id="tf-공장창고">
+                <div class="form-section-label" style="grid-column:1/-1">공장/창고 상세</div>
+                <input type="number" name="landArea" min="0" placeholder="대지면적(㎡)" />
+                <input type="number" name="buildingArea" min="0" placeholder="건축면적(㎡)" />
+                <input type="number" name="totalArea" min="0" placeholder="연면적(㎡)" />
+                <input name="floor" placeholder="층정보" />
+                <input name="direction" placeholder="방향" />
+                <input name="mainUse" placeholder="주용도" />
+                <input name="office" placeholder="사무실/화장실" />
+                <input name="parking" placeholder="주차" />
+                <input name="elevator" placeholder="엘리베이터" />
+                <input name="approvalDate" placeholder="사용승인일" />
+              </div>
 
-            <!-- 토지 전용 -->
-            <div class="admin-field-group" data-types="토지">
-              <div class="field-section-title">토지 상세</div>
-              <input type="number" name="landArea" min="0" placeholder="대지면적 (㎡)" />
-              <input name="zoningArea" placeholder="용도지역 (예: 중심상업지역)" />
-              <input name="currentUse" placeholder="현재용도" />
-              <input name="recommendedUse" placeholder="추천용도" />
-              <input name="landUse" placeholder="국토이용" />
-              <input name="urbanPlanning" placeholder="도시계획" />
-              <input name="buildingPermit" placeholder="건축허가 (예: 있음)" />
-              <input name="landTransactionPermit" placeholder="토지거래허가" />
-              <input name="accessRoad" placeholder="진입도로 (예: 있음)" />
-            </div>
+              <!-- 상가 -->
+              <div class="type-fields" id="tf-상가">
+                <div class="form-section-label" style="grid-column:1/-1">상가 상세</div>
+                <input type="number" name="contractArea" min="0" placeholder="계약면적(㎡)" />
+                <input type="number" name="exclusiveArea" min="0" placeholder="전용면적(㎡)" />
+                <input name="floor" placeholder="해당층/총층" />
+                <input name="moveInDate" placeholder="입주가능일" />
+                <input name="direction" placeholder="방향" />
+                <input name="parking" placeholder="주차" />
+                <input name="currentBusiness" placeholder="현재업종" />
+                <input name="recommendBusiness" placeholder="추천업종" />
+                <input name="heating" placeholder="난방" />
+                <input name="buildingUse" placeholder="건축물용도" />
+                <input name="approvalDate" placeholder="사용승인일" />
+              </div>
 
-            <!-- 힐스테이트더운정 전용 -->
-            <div class="admin-field-group" data-types="힐스테이트더운정">
-              <div class="field-section-title">힐스테이트더운정 상세</div>
-              <select name="subType">
-                <option value="">구분 선택</option>
-                <option>아파트</option>
-                <option>오피스텔</option>
-              </select>
-              <input type="number" name="contractArea" min="0" placeholder="계약면적 (㎡)" />
-              <input type="number" name="exclusiveArea" min="0" placeholder="전용면적 (㎡)" />
-              <input name="floor" placeholder="해당층/총층" />
-              <input name="rooms" placeholder="방수/욕실수" />
-              <input name="direction" placeholder="방향" />
-              <input name="heating" placeholder="난방" />
-              <input name="moveInDate" placeholder="입주가능일" />
-              <input name="parking" placeholder="주차" />
-            </div>
+              <!-- 오피스텔 -->
+              <div class="type-fields" id="tf-오피스텔">
+                <div class="form-section-label" style="grid-column:1/-1">오피스텔 상세</div>
+                <input type="number" name="contractArea" min="0" placeholder="계약면적(㎡)" />
+                <input type="number" name="exclusiveArea" min="0" placeholder="전용면적(㎡)" />
+                <input name="floor" placeholder="해당층/총층" />
+                <input name="rooms" placeholder="방수/욕실수" />
+                <input name="direction" placeholder="방향" />
+                <input name="heating" placeholder="난방" />
+                <input name="moveInDate" placeholder="입주가능일" />
+                <input name="parking" placeholder="주차" />
+                <input name="buildingUse" placeholder="건축물용도" />
+              </div>
 
-            <!-- 단독주택/전원주택 전용 -->
-            <div class="admin-field-group" data-types="단독주택전원주택">
-              <div class="field-section-title">단독주택/전원주택 상세</div>
-              <input type="number" name="landArea" min="0" placeholder="대지면적 (㎡)" />
-              <input type="number" name="buildingArea" min="0" placeholder="건축면적 (㎡)" />
-              <input name="floor" placeholder="층수 (예: 지상2층)" />
-              <input name="rooms" placeholder="방수/욕실수 (예: 3/2)" />
-              <input name="parking" placeholder="주차" />
-              <input name="heating" placeholder="난방" />
-              <input name="buildYear" placeholder="준공년도 (예: 2015)" />
-              <input name="moveInDate" placeholder="입주가능일" />
-            </div>
+              <!-- 토지 -->
+              <div class="type-fields" id="tf-토지">
+                <div class="form-section-label" style="grid-column:1/-1">토지 상세</div>
+                <input type="number" name="landArea" min="0" placeholder="대지면적(㎡)" />
+                <input name="zoningArea" placeholder="용도지역" />
+                <input name="currentUse" placeholder="현재용도" />
+                <input name="recommendedUse" placeholder="추천용도" />
+                <input name="landUse" placeholder="국토이용" />
+                <input name="urbanPlanning" placeholder="도시계획" />
+                <input name="buildingPermit" placeholder="건축허가" />
+                <input name="accessRoad" placeholder="진입도로" />
+              </div>
 
-            <!-- 공통 하단 -->
-            <div class="field-section-title">사진 및 설명</div>
-            <textarea name="description" rows="4" placeholder="매물 설명 (줄바꿈 가능)"></textarea>
-            <div id="imageUrlContainer"></div>
-            <button type="button" id="addImageBtn" class="btn btn-outline" style="font-size:0.85rem;">사진 추가 +</button>
-            <button type="submit" class="btn btn-primary">저장</button>
-          </form>
-        </section>
+              <!-- 힐스테이트더운정 -->
+              <div class="type-fields" id="tf-힐스테이트더운정">
+                <div class="form-section-label" style="grid-column:1/-1">힐스테이트더운정 상세</div>
+                <select name="subType"><option value="">아파트/오피스텔</option><option>아파트</option><option>오피스텔</option></select>
+                <input type="number" name="contractArea" min="0" placeholder="계약면적(㎡)" />
+                <input type="number" name="exclusiveArea" min="0" placeholder="전용면적(㎡)" />
+                <input name="floor" placeholder="해당층/총층" />
+                <input name="rooms" placeholder="방수/욕실수" />
+                <input name="direction" placeholder="방향" />
+                <input name="heating" placeholder="난방" />
+                <input name="moveInDate" placeholder="입주가능일" />
+                <input name="parking" placeholder="주차" />
+              </div>
 
-        <section>
-          <h2>저장된 매물</h2>
-          <div id="adminListings" class="admin-list"></div>
-        </section>
+              <!-- 단독/전원주택 -->
+              <div class="type-fields" id="tf-단독주택전원주택">
+                <div class="form-section-label" style="grid-column:1/-1">단독/전원주택 상세</div>
+                <input type="number" name="landArea" min="0" placeholder="대지면적(㎡)" />
+                <input type="number" name="buildingArea" min="0" placeholder="건축면적(㎡)" />
+                <input name="floor" placeholder="층수" />
+                <input name="rooms" placeholder="방수/욕실수" />
+                <input name="parking" placeholder="주차" />
+                <input name="heating" placeholder="난방" />
+                <input name="buildYear" placeholder="준공년도" />
+                <input name="moveInDate" placeholder="입주가능일" />
+              </div>
+
+              <!-- 사진/설명 -->
+              <div class="form-section-label">사진 및 설명</div>
+              <textarea name="description" rows="3" placeholder="매물 설명"></textarea>
+              <div id="imageUrlContainer" style="margin-top:4px;"></div>
+              <button type="button" id="addImageBtn" class="btn btn-outline">＋ 사진 URL 추가</button>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" style="flex:1;">저장</button>
+                <button type="button" id="formResetBtn" class="btn btn-outline">초기화</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
       </div>
     </main>
 
@@ -195,14 +235,45 @@
       <div class="container footer-inner">
         <p class="footer-main">
           <strong>하이탑부동산공인중개사사무소</strong>
-          <span>대표: 주현희</span>
-          <span>전화: 031-949-8969</span>
-        </p>
-        <p class="footer-sub">
-          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+          <span>대표: 주현희</span><span>031-949-8969</span>
         </p>
       </div>
     </footer>
     <script src="app.js"></script>
+    <script>
+      const ptSelect = document.getElementById('ptSelect');
+      const dtSelect = document.getElementById('dtSelect');
+
+      const updateFields = () => {
+        const pt = ptSelect.value;
+        const dt = dtSelect.value;
+        document.querySelectorAll('.type-fields').forEach(el => {
+          el.classList.toggle('active', el.id === 'tf-' + pt);
+        });
+        document.querySelectorAll('[class*="pf-"]').forEach(el => {
+          const classes = el.className.split(' ');
+          const pfClasses = classes.filter(c => c.startsWith('pf-'));
+          const show = pfClasses.some(c => c === 'pf-' + dt || c === 'pf-' + pt);
+          el.style.display = show ? '' : 'none';
+        });
+        // 매매는 보증금/월세 숨김
+        if (dt === '매매') {
+          document.querySelector('.pf-임대.pf-전세.pf-월세')?.style && (document.querySelector('.pf-임대.pf-전세.pf-월세').style.display = 'none');
+          document.querySelector('.pf-임대.pf-월세')?.style && (document.querySelector('.pf-임대.pf-월세').style.display = 'none');
+        }
+      };
+
+      ptSelect?.addEventListener('change', updateFields);
+      dtSelect?.addEventListener('change', updateFields);
+
+      document.getElementById('formResetBtn')?.addEventListener('click', () => {
+        document.getElementById('adminForm').reset();
+        document.getElementById('adminForm').elements['id'].value = '';
+        document.getElementById('formTitle').textContent = '✏️ 매물 등록';
+        updateFields();
+      });
+
+      updateFields();
+    </script>
   </body>
 </html>
