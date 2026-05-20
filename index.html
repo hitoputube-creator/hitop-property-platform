@@ -5,13 +5,119 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>하이탑부동산 | 신뢰할 수 있는 상업용 부동산 파트너</title>
     <link rel="stylesheet" href="style.css" />
+    <style>
+      /* 탑바 */
+      .top-bar {
+        background: #0A1F5C;
+        padding: 6px 0;
+      }
+      .top-bar .container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 20px;
+      }
+      .top-bar-hours {
+        font-size: 12px;
+        color: #aab8d8;
+      }
+      .top-bar-phone {
+        font-size: 12px;
+        font-weight: 600;
+        color: #C9A84C;
+        text-decoration: none;
+      }
+      .top-bar-phone:hover {
+        color: #e0c070;
+      }
+
+      /* 주요 취급 매물 카드 */
+      .property-card-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+      }
+      .property-card {
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        height: 170px;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .property-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      }
+      .property-card-bg {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .property-card-bg svg {
+        width: 56px;
+        height: 56px;
+        opacity: 0.22;
+        fill: #fff;
+      }
+      .property-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+      }
+      .property-card-text {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 14px;
+      }
+      .property-card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0 0 3px;
+      }
+      .property-card-sub {
+        font-size: 11px;
+        color: rgba(255,255,255,0.75);
+        margin: 0;
+      }
+
+      /* 카드 색상 */
+      .card-factory { background: linear-gradient(135deg, #4a6fa5 0%, #2d4a6e 100%); }
+      .card-store   { background: linear-gradient(135deg, #5a7a5a 0%, #2e4e2e 100%); }
+      .card-land    { background: linear-gradient(135deg, #8a7040 0%, #5a4820 100%); }
+      .card-officetel { background: linear-gradient(135deg, #5a4a7a 0%, #2e2050 100%); }
+      .card-apt     { background: linear-gradient(135deg, #4a6a7a 0%, #1e3a4e 100%); }
+
+      @media (max-width: 768px) {
+        .property-card-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .top-bar-hours { display: none; }
+      }
+    </style>
   </head>
   <body data-page="home">
+
+    <!-- 탑바 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
     <header class="site-header">
       <div class="container nav-wrap">
-       <a class="brand" href="index.html">
-      <img src="images/hitoplogo.png" alt="" class="brand-logo" />
-      </a>
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="" class="brand-logo" />
+        </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
         <nav class="nav-menu" aria-label="메인 메뉴">
           <a href="#about">하이탑소개</a>
@@ -27,7 +133,6 @@
     <main>
       <section class="hero">
         <div class="container hero-content">
-        
           <h1>하이탑부동산과 함께<br />정확하고 빠른 부동산 의사결정</h1>
           <p>
             지역 분석과 실매물 데이터 기반으로 기업과 개인의 니즈에 맞춘 최적의 매물을
@@ -45,8 +150,7 @@
           <h2>하이탑부동산 소개</h2>
           <p class="section-description">
             하이탑부동산은 산업·상업 부동산 중개 경험을 바탕으로 고객 중심의 맞춤형 컨설팅을
-            제공합니다. 
-            복잡한 거래 과정을 투명하게 안내하고, 신뢰를 최우선으로 합니다.
+            제공합니다. 복잡한 거래 과정을 투명하게 안내하고, 신뢰를 최우선으로 합니다.
           </p>
         </div>
       </section>
@@ -54,12 +158,63 @@
       <section class="section section-alt">
         <div class="container">
           <h2>주요 취급 매물</h2>
-          <div class="card-grid">
-            <article class="info-card">공장·창고</article>
-            <article class="info-card">상가·빌딩</article>
-            <article class="info-card">토지·개발</article>
-            <article class="info-card">오피스텔</article>
-            <article class="info-card">아파트·주택</article>
+          <div class="property-card-grid">
+
+            <a class="property-card card-factory" href="listings.html">
+              <div class="property-card-bg">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 20V8l6-4v4l6-4v4l6-4v16H2zm2-2h16V7.6l-6 4V8.2l-6 4V6.6L4 9.6V18zm2-2h2v-4H8v4zm4 0h2v-4h-2v4zm4 0h2v-4h-2v4z"/></svg>
+              </div>
+              <div class="property-card-overlay"></div>
+              <div class="property-card-text">
+                <p class="property-card-title">공장·창고</p>
+                <p class="property-card-sub">산업용 부동산 전문</p>
+              </div>
+            </a>
+
+            <a class="property-card card-store" href="listings.html">
+              <div class="property-card-bg">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5.3 7l1.5-4H17l1.7 4H5.3zM2 8h20v2h-1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V10H2V8zm3 2v8h14v-8H5zm3 2h2v4H8v-4zm3 0h2v4h-2v-4z"/></svg>
+              </div>
+              <div class="property-card-overlay"></div>
+              <div class="property-card-text">
+                <p class="property-card-title">상가·빌딩</p>
+                <p class="property-card-sub">수익형 상업 매물</p>
+              </div>
+            </a>
+
+            <a class="property-card card-land" href="listings.html">
+              <div class="property-card-bg">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              </div>
+              <div class="property-card-overlay"></div>
+              <div class="property-card-text">
+                <p class="property-card-title">토지·개발</p>
+                <p class="property-card-sub">개발가능 토지 매물</p>
+              </div>
+            </a>
+
+            <a class="property-card card-officetel" href="listings.html">
+              <div class="property-card-bg">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h14a1 1 0 011 1v16a1 1 0 01-1 1h-5v-3h-4v3H5a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h3v-3h6v3h3V5H6zm2 2h2v2H8V7zm4 0h2v2h-2V7zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z"/></svg>
+              </div>
+              <div class="property-card-overlay"></div>
+              <div class="property-card-text">
+                <p class="property-card-title">오피스텔</p>
+                <p class="property-card-sub">업무·주거 복합 매물</p>
+              </div>
+            </a>
+
+            <a class="property-card card-apt" href="listings.html">
+              <div class="property-card-bg">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              </div>
+              <div class="property-card-overlay"></div>
+              <div class="property-card-text">
+                <p class="property-card-title">아파트·주택</p>
+                <p class="property-card-sub">주거용 부동산 매물</p>
+              </div>
+            </a>
+
           </div>
         </div>
       </section>
@@ -74,34 +229,28 @@
           </div>
         </div>
       </section>
-
-      
     </main>
 
-
-
-<footer class="site-footer compact-footer">
-  <div class="container footer-inner">
-    <p class="footer-main">
-      <strong>하이탑부동산공인중개사사무소</strong>
-      <span>대표: 주현희</span>
-      <span>주소: 경기도 파주시 책향기로830, 1층</span>
-      <span>전화: 031-949-8969</span>
-    </p>
-
-    <p class="footer-sub">
-      <span>중개사무소 등록번호: 41480-2016-00026</span>
-      <span>사업자등록번호: 305-48-62183</span>
-      <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
-    </p>
-
-    <p class="footer-links">
-      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
-      <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
-      <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-    </p>
-  </div>
-</footer>
+    <footer class="site-footer compact-footer">
+      <div class="container footer-inner">
+        <p class="footer-main">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로830, 1층</span>
+          <span>전화: 031-949-8969</span>
+        </p>
+        <p class="footer-sub">
+          <span>중개사무소 등록번호: 41480-2016-00026</span>
+          <span>사업자등록번호: 305-48-62183</span>
+          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+        </p>
+        <p class="footer-links">
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+        </p>
+      </div>
+    </footer>
 
     <script src="app.js"></script>
   </body>
