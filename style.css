@@ -75,3 +75,50 @@ body {
   .hero { padding: 62px 0; }
   .card-grid { grid-template-columns: 1fr; }
 }
+.site-footer {
+  margin-top: 60px;
+  padding: 36px 0;
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 14px;
+}
+
+.footer-inner {
+  display: grid;
+  gap: 16px;
+}
+
+.footer-brand strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 18px;
+}
+
+.footer-brand p,
+.footer-info p,
+.footer-copy {
+  margin: 4px 0;
+  color: #d1d5db;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-copy {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #9ca3af;
+}
