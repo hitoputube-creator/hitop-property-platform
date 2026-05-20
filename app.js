@@ -1,3 +1,4 @@
+console.log('app.js 로드됨!');
 const STORAGE_KEY = 'hitop_listings_v1';
 
 const sampleListings = [
