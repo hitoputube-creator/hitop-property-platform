@@ -2,9 +2,9 @@ console.log('app.js 로드됨!');
 const STORAGE_KEY = 'hitop_listings_v1';
 
 const sampleListings = [
-  { id: 's1', propertyType: '공장창고', dealType: '매매', address: '파주시 탄현면', price: 125000, area: 860, title: '대형 물류창고', description: 'IC 접근성 우수, 층고 높음', imageUrl: 'https://picsum.photos/seed/factory/640/360' },
-  { id: 's2', propertyType: '상가', dealType: '월세', address: '고양시 일산동구', price: 250, area: 82, title: '대로변 1층 상가', description: '유동인구 풍부, 주차 가능', imageUrl: 'https://picsum.photos/seed/store/640/360' },
-  { id: 's3', propertyType: '오피스텔', dealType: '전세', address: '운정신도시', price: 23000, area: 49, title: '신축 오피스텔', description: '역세권, 풀옵션', imageUrl: 'https://picsum.photos/seed/officetel/640/360' },
+  { id: 's1', propertyType: '공장창고', dealType: '매매', address: '파주시 탄현면', displayAddress: '파주시 탄현면', price: 125000, area: 860, title: '대형 물류창고', description: 'IC 접근성 우수, 층고 높음', imageUrls: ['https://picsum.photos/seed/factory/640/360'] },
+  { id: 's2', propertyType: '상가', dealType: '월세', address: '고양시 일산동구', displayAddress: '고양시 일산동구', price: 250, area: 82, title: '대로변 1층 상가', description: '유동인구 풍부, 주차 가능', imageUrls: ['https://picsum.photos/seed/store/640/360'] },
+  { id: 's3', propertyType: '오피스텔', dealType: '전세', address: '운정신도시', displayAddress: '운정신도시', price: 23000, area: 49, title: '신축 오피스텔', description: '역세권, 풀옵션', imageUrls: ['https://picsum.photos/seed/officetel/640/360'] },
 ];
 
 const readListings = () => {
@@ -18,6 +18,8 @@ const readListings = () => {
 
 const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
 const formatPrice = (n) => Number(n).toLocaleString('ko-KR');
+const getThumbnail = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
+const getDisplayAddress = (item) => item.displayAddress || item.address;
 
 const setupMobileNav = () => {
   const toggle = document.querySelector('.nav-toggle');
@@ -47,10 +49,10 @@ const setupListingsPage = () => {
         onclick="this.closest('#listingDetail').classList.add('hidden')">✕ 닫기</button>
       <h3>${item.title}</h3>
       <p><strong>${item.propertyType} / ${item.dealType}</strong></p>
-      <p>주소: ${item.address}</p>
+      <p>주소: ${getDisplayAddress(item)}</p>
       <p>금액: <strong style="color:var(--green)">${formatPrice(item.price)}만원</strong> | 면적: ${item.area}㎡</p>
       <p>${item.description}</p>
-      <img src="${item.imageUrl}" alt="${item.title}"
+      <img src="${getThumbnail(item)}" alt="${item.title}"
         style="width:100%;max-width:480px;border-radius:10px;margin-top:8px;" />
     `;
   };
@@ -99,12 +101,13 @@ const setupListingsPage = () => {
     cardsEl.innerHTML = items.map((item) => `
       <article class="listing-card" data-id="${item.id}">
         <div class="card-img">
-          <img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />
+          <img src="${getThumbnail(item)}" alt="${item.title}" loading="lazy" />
           <span class="card-badge">${item.propertyType}</span>
+          ${item.status === 'done' ? '<div class="sold-badge">거래완료</div>' : ''}
         </div>
         <div class="card-body">
           <div>
-            <span class="card-address">${item.address}</span>
+            <span class="card-address">${getDisplayAddress(item)}</span>
             <div class="card-title">${item.title}</div>
             <div class="card-desc">${item.description}</div>
           </div>
@@ -132,10 +135,13 @@ const setupListingsPage = () => {
     const criteria = Object.fromEntries(formData.entries());
     const kw = (criteria.keyword || '').toLowerCase();
     current = readListings().filter((item) => {
-      if (kw && !item.title.toLowerCase().includes(kw) && !item.address.toLowerCase().includes(kw)) return false;
+      if (kw && !item.title.toLowerCase().includes(kw)
+        && !item.address.toLowerCase().includes(kw)
+        && !(item.displayAddress || '').toLowerCase().includes(kw)) return false;
       if (criteria.dealType && item.dealType !== criteria.dealType) return false;
       if (criteria.propertyType && item.propertyType !== criteria.propertyType) return false;
-      if (criteria.region && !item.address.includes(criteria.region)) return false;
+      if (criteria.region && !item.address.includes(criteria.region)
+        && !(item.displayAddress || '').includes(criteria.region)) return false;
       if (criteria.maxPrice && Number(item.price) > Number(criteria.maxPrice)) return false;
       if (criteria.minArea && Number(item.area) < Number(criteria.minArea)) return false;
       return true;
@@ -204,16 +210,64 @@ const setupAdminPage = () => {
   const listEl = document.getElementById('adminListings');
   if (!form || !listEl) return;
 
+  // === 다중 이미지 URL 관리 ===
+  const imageContainer = document.getElementById('imageUrlContainer');
+  const addImageBtn = document.getElementById('addImageBtn');
+  const MAX_IMAGES = 5;
+
+  const addImageRow = (value = '') => {
+    if (!imageContainer) return;
+    const count = imageContainer.querySelectorAll('.image-url-row').length;
+    if (count >= MAX_IMAGES) return;
+
+    const row = document.createElement('div');
+    row.className = 'image-url-row';
+
+    const input = document.createElement('input');
+    input.name = 'imageUrls';
+    input.type = 'url';
+    input.placeholder = `사진 URL ${count + 1}`;
+    input.value = value;
+    if (count === 0) input.required = true;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn btn-outline img-remove-btn';
+    removeBtn.textContent = '삭제 X';
+    removeBtn.addEventListener('click', () => {
+      if (imageContainer.querySelectorAll('.image-url-row').length > 1) {
+        row.remove();
+      } else {
+        input.value = '';
+      }
+    });
+
+    row.appendChild(input);
+    row.appendChild(removeBtn);
+    imageContainer.appendChild(row);
+  };
+
+  const resetImageFields = () => {
+    if (!imageContainer) return;
+    imageContainer.innerHTML = '';
+    addImageRow();
+  };
+
+  resetImageFields();
+  if (addImageBtn) addImageBtn.addEventListener('click', () => addImageRow());
+
+  // === 저장된 매물 렌더 ===
   const render = () => {
     const listings = readListings();
     listEl.innerHTML = listings.map((item) => `
-      <article class="admin-item">
-        <strong>${item.title}</strong>
-        <p>${item.propertyType} / ${item.dealType} · ${item.address}</p>
+      <article class="admin-item${item.status === 'done' ? ' admin-item-done' : ''}">
+        <strong>${item.title}${item.status === 'done' ? ' <span style="color:#dc2626;font-size:11px;">[거래완료]</span>' : ''}</strong>
+        <p>${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
         <p>${formatPrice(item.price)}만원 · ${item.area}㎡</p>
         <div class="admin-item-actions">
           <button class="btn btn-outline" data-action="edit" data-id="${item.id}" type="button">수정</button>
           <button class="btn btn-primary" data-action="delete" data-id="${item.id}" type="button">삭제</button>
+          <button class="btn btn-outline" data-action="done" data-id="${item.id}" type="button">${item.status === 'done' ? '완료취소' : '완료'}</button>
         </div>
       </article>
     `).join('');
@@ -222,13 +276,18 @@ const setupAdminPage = () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(form);
-    const payload = Object.fromEntries(fd.entries());
+    const payload = {};
+    for (const [key, value] of fd.entries()) {
+      if (key !== 'imageUrls') payload[key] = value;
+    }
+    payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
+      .map((el) => el.value.trim()).filter((v) => v);
     payload.price = Number(payload.price);
     payload.area = Number(payload.area);
     let listings = readListings();
 
     if (payload.id) {
-      listings = listings.map((item) => (item.id === payload.id ? payload : item));
+      listings = listings.map((item) => (item.id === payload.id ? { ...item, ...payload } : item));
     } else {
       payload.id = `id_${Date.now()}`;
       listings.unshift(payload);
@@ -237,6 +296,7 @@ const setupAdminPage = () => {
     writeListings(listings);
     form.reset();
     form.elements['id'].value = '';
+    resetImageFields();
     render();
   });
 
@@ -253,11 +313,26 @@ const setupAdminPage = () => {
       render();
     }
 
+    if (action === 'done') {
+      writeListings(listings.map((item) =>
+        item.id === id ? { ...item, status: item.status === 'done' ? '' : 'done' } : item
+      ));
+      render();
+    }
+
     if (action === 'edit') {
       Object.entries(target).forEach(([key, value]) => {
+        if (key === 'imageUrls') return;
         const el = form.elements[key];
         if (el) el.value = value;
       });
+      // 이미지 URL 필드 복원
+      imageContainer.innerHTML = '';
+      const urls = (target.imageUrls && target.imageUrls.length)
+        ? target.imageUrls
+        : (target.imageUrl ? [target.imageUrl] : []);
+      urls.forEach((url) => addImageRow(url));
+      if (!urls.length) addImageRow();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });

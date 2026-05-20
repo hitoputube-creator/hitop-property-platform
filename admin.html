@@ -53,12 +53,14 @@
               <option>전세</option>
               <option>월세</option>
             </select>
-            <input name="address" placeholder="주소" required />
+            <input name="address" placeholder="정확한 주소 (지도 마커용 - 비공개)" required />
+            <input name="displayAddress" placeholder="표시용 주소 (예: 파주시 탄현면)" required />
             <input type="number" name="price" min="0" placeholder="가격(만원)" required />
             <input type="number" name="area" min="0" placeholder="면적(㎡)" required />
             <input name="title" placeholder="제목" required />
             <textarea name="description" rows="4" placeholder="설명" required></textarea>
-            <input name="imageUrl" type="url" placeholder="사진 URL" required />
+            <div id="imageUrlContainer"></div>
+            <button type="button" id="addImageBtn" class="btn btn-outline" style="font-size:0.85rem;">사진 추가 +</button>
             <button type="submit" class="btn btn-primary">저장</button>
           </form>
         </section>
