@@ -22,6 +22,9 @@ body {
 .nav-menu { display: flex; gap: 14px; align-items: center; }
 .nav-menu a { color: var(--gray-700); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
 .nav-menu a:hover { color: var(--navy); }
+.nav-menu button { color: var(--gray-700); text-decoration: none; font-weight: 600; font-size: 0.95rem; background:none; border:0; padding:0; cursor:pointer; }
+.nav-menu button:hover { color: var(--navy); }
+
 .nav-toggle { display: none; border: 1px solid var(--gray-200); background: var(--white); border-radius: 8px; padding: 6px 8px; }
 
 .hero { background: linear-gradient(125deg, var(--navy-dark), var(--navy)); color: var(--white); padding: 88px 0; }
