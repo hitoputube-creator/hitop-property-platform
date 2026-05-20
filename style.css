@@ -144,39 +144,64 @@ body {
 }
 
 /* === listings.html 지도형 full-width 레이아웃 === */
+.brand-logo { height: 36px; width: auto; vertical-align: middle; }
+.brand-text { font-size: inherit; font-weight: inherit; }
+
 .listings-filter-bar {
   background: var(--white);
   border-bottom: 1px solid var(--gray-200);
-  padding: 10px 0;
+  padding: 8px 12px;
 }
-.listings-filter-bar .filter-grid {
-  margin-bottom: 0;
+.listing-filter-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 7px;
+  align-items: center;
+}
+.listing-filter-grid input,
+.listing-filter-grid select {
+  flex: 1 1 0;
+  min-width: 80px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font: inherit;
+  font-size: 0.88rem;
+}
+.listing-filter-grid .btn {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  white-space: nowrap;
 }
 .listings-body {
   display: grid;
   grid-template-columns: 60% 40%;
+  height: calc(100vh - 120px);
+  min-height: 650px;
 }
 .map-section {
   border-right: 1px solid var(--gray-200);
+  overflow: hidden;
 }
 #map {
   width: 100%;
-  height: 650px;
-  background: #dce8f5;
-  border: 2px dashed #7292b6;
+  height: 100%;
+  background: #e8f0f8;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #334155;
-  font-size: 0.95rem;
-  line-height: 1.9;
+  color: #4a6785;
+  font-size: 0.92rem;
+  line-height: 2;
 }
 .listings-panel {
-  padding: 14px;
-  background: var(--gray-100);
+  height: 100%;
   overflow-y: auto;
-  max-height: 650px;
+  padding: 12px;
+  background: var(--gray-100);
 }
 .listings-panel .listing-cards {
   max-height: none;
@@ -185,20 +210,25 @@ body {
 .listings-panel .listing-detail {
   margin-top: 12px;
 }
+@media (max-width: 980px) {
+  .listing-filter-grid { flex-wrap: wrap; }
+  .listing-filter-grid input,
+  .listing-filter-grid select { flex: 1 1 120px; }
+}
 @media (max-width: 760px) {
   .listings-body {
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: auto;
   }
-  #map {
-    height: 320px;
-  }
+  #map { height: 320px; }
   .map-section {
     border-right: none;
     border-bottom: 1px solid var(--gray-200);
   }
-  .listings-panel {
-    max-height: none;
-  }
+  .listings-panel { height: auto; }
+  .listing-filter-grid input,
+  .listing-filter-grid select { flex: 1 1 calc(50% - 4px); }
 }
 
 .login-overlay {

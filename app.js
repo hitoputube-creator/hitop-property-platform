@@ -68,7 +68,9 @@ const setupListingsPage = () => {
     e.preventDefault();
     const formData = new FormData(filterForm);
     const criteria = Object.fromEntries(formData.entries());
+    const kw = (criteria.keyword || '').toLowerCase();
     current = readListings().filter((item) => {
+      if (kw && !item.title.toLowerCase().includes(kw) && !item.address.toLowerCase().includes(kw)) return false;
       if (criteria.dealType && item.dealType !== criteria.dealType) return false;
       if (criteria.propertyType && item.propertyType !== criteria.propertyType) return false;
       if (criteria.region && !item.address.includes(criteria.region)) return false;
@@ -80,6 +82,14 @@ const setupListingsPage = () => {
   };
 
   filterForm.addEventListener('submit', applyFilters);
+  const resetBtn = document.getElementById('filterReset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      filterForm.reset();
+      current = readListings();
+      render(current);
+    });
+  }
   document.querySelectorAll('[data-category]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
