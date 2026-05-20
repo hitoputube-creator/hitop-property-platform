@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하이탑부동산 | 매물보기</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="listings">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">하이탑부동산</a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="매물 카테고리">
+          <a href="#" data-category="공장창고">공장·창고</a>
+          <a href="#" data-category="상가">상가</a>
+          <a href="#" data-category="오피스텔">오피스텔</a>
+          <a href="#" data-category="토지">토지</a>
+          <a href="#" data-category="힐스테이트더운정">힐스테이트더운정</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section">
+      <div class="container">
+        <h1>매물보기</h1>
+        <form id="filterForm" class="filter-grid">
+          <select name="dealType">
+            <option value="">거래유형 전체</option>
+            <option>매매</option>
+            <option>전세</option>
+            <option>월세</option>
+          </select>
+          <select name="propertyType">
+            <option value="">매물종류 전체</option>
+            <option>공장창고</option>
+            <option>상가</option>
+            <option>오피스텔</option>
+            <option>토지</option>
+            <option>힐스테이트더운정</option>
+          </select>
+          <input type="text" name="region" placeholder="지역" />
+          <input type="number" name="maxPrice" placeholder="최대 금액(만원)" min="0" />
+          <input type="number" name="minArea" placeholder="최소 면적(㎡)" min="0" />
+          <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+
+        <div class="listing-layout">
+          <section class="map-placeholder" aria-label="지도 영역">
+            <div>
+              <h3>지도 자리</h3>
+              <p>카카오맵 API 연동 예정 영역</p>
+            </div>
+          </section>
+
+          <section>
+            <div id="listingCards" class="listing-cards"></div>
+          </section>
+        </div>
+
+        <section id="listingDetail" class="listing-detail hidden" aria-live="polite"></section>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
