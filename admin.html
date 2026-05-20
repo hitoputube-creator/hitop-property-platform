@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하이탑부동산 | 관리자 매물등록</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="admin">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">하이탑부동산</a>
+        <nav class="nav-menu">
+          <a href="index.html">홈</a>
+          <a href="listings.html">매물보기</a>
+          <a href="admin.html" aria-current="page">관리자</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section">
+      <div class="container admin-grid">
+        <section>
+          <h1>매물 등록/수정</h1>
+          <form id="adminForm" class="admin-form">
+            <input type="hidden" name="id" />
+            <select name="propertyType" required>
+              <option value="">매물종류 선택</option>
+              <option>공장창고</option>
+              <option>상가</option>
+              <option>오피스텔</option>
+              <option>토지</option>
+              <option>힐스테이트더운정</option>
+            </select>
+            <select name="dealType" required>
+              <option value="">거래유형 선택</option>
+              <option>매매</option>
+              <option>전세</option>
+              <option>월세</option>
+            </select>
+            <input name="address" placeholder="주소" required />
+            <input type="number" name="price" min="0" placeholder="가격(만원)" required />
+            <input type="number" name="area" min="0" placeholder="면적(㎡)" required />
+            <input name="title" placeholder="제목" required />
+            <textarea name="description" rows="4" placeholder="설명" required></textarea>
+            <input name="imageUrl" type="url" placeholder="사진 URL" required />
+            <button type="submit" class="btn btn-primary">저장</button>
+          </form>
+        </section>
+
+        <section>
+          <h2>저장된 매물</h2>
+          <div id="adminListings" class="admin-list"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
