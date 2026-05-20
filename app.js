@@ -36,13 +36,20 @@ const setupListingsPage = () => {
   const render = (items) => {
     cardsEl.innerHTML = items.map((item) => `
       <article class="listing-card" data-id="${item.id}">
-        <h3>${item.title}</h3>
-        <div class="listing-meta">
-          <span>${item.propertyType}</span>
-          <span>${item.dealType}</span>
-          <span>${item.address}</span>
-          <span>${formatPrice(item.price)}만원</span>
-          <span>${item.area}㎡</span>
+        <div class="card-img">
+          <img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />
+          <span class="card-badge">${item.propertyType}</span>
+        </div>
+        <div class="card-body">
+          <div>
+            <span class="card-address">${item.address}</span>
+            <div class="card-title">${item.title}</div>
+            <div class="card-desc">${item.description}</div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">${item.dealType} ${formatPrice(item.price)}만원</span>
+            <span class="card-area">${item.area}㎡</span>
+          </div>
         </div>
       </article>
     `).join('');
