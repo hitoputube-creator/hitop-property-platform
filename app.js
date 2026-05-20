@@ -82,17 +82,15 @@ const setupListingsPage = () => {
     });
   };
 
-  window.onload = function() {
-    const mapEl = document.getElementById('map');
-    if (mapEl && typeof kakao !== 'undefined') {
-      mapEl.innerHTML = '';
-      map = new kakao.maps.Map(mapEl, {
-        center: new kakao.maps.LatLng(37.7512, 126.7820),
-        level: 7,
-      });
-      placeMarkers(current);
-    }
-  };
+  const mapEl = document.getElementById('map');
+  if (mapEl && typeof kakao !== 'undefined') {
+    mapEl.innerHTML = '';
+    map = new kakao.maps.Map(mapEl, {
+      center: new kakao.maps.LatLng(37.7512, 126.7820),
+      level: 7,
+    });
+    placeMarkers(current);
+  }
 
   const render = (items) => {
     cardsEl.innerHTML = items.map((item) => `
