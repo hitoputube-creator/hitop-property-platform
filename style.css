@@ -76,49 +76,69 @@ body {
   .card-grid { grid-template-columns: 1fr; }
 }
 .site-footer {
-  margin-top: 60px;
-  padding: 36px 0;
+  margin-top: 32px;
+  padding: 18px 20px;
   background: #1f2937;
   color: #f9fafb;
-  font-size: 14px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.site-footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .footer-inner {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.footer-brand strong {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 18px;
+.footer-main,
+.footer-sub,
+.footer-links {
+  margin: 0;
+  line-height: 1.6;
 }
 
-.footer-brand p,
-.footer-info p,
-.footer-copy {
-  margin: 4px 0;
+.footer-main strong {
+  color: #ffffff;
+  margin-right: 12px;
+}
+
+.footer-main span,
+.footer-sub span {
+  display: inline-block;
+  margin: 0 6px;
   color: #d1d5db;
 }
 
 .footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  margin-top: 4px;
 }
 
 .footer-links a {
   color: #ffffff;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
+  margin: 0 6px;
 }
 
 .footer-links a:hover {
   text-decoration: underline;
 }
 
-.footer-copy {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #9ca3af;
+@media (max-width: 768px) {
+  .footer-main span,
+  .footer-sub span {
+    display: block;
+    margin: 2px 0;
+  }
+
+  .footer-main strong {
+    display: block;
+    margin: 0 0 4px;
+  }
 }
