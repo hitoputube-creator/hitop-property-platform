@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>하이탑부동산 | 매물보기</title>
     <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
     <header class="site-header">
@@ -53,7 +54,9 @@
     <div class="listings-body">
       <section class="map-section" aria-label="지도 영역">
         <div id="map">
-          <span>지도 영역<br />추후 카카오맵 또는 네이버지도 연동 예정</span>
+          <div class="map-placeholder-text">
+            <span>지도 영역<br />카카오맵 로딩 중...</span>
+          </div>
         </div>
       </section>
       <aside class="listings-panel">

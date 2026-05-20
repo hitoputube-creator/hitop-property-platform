@@ -33,6 +33,64 @@ const setupListingsPage = () => {
 
   let current = readListings();
 
+  // === 카카오맵 ===
+  let map = null;
+  let openIw = null;
+  const activeMarkers = [];
+
+  const showDetail = (item) => {
+    if (!detailEl) return;
+    detailEl.classList.remove('hidden');
+    detailEl.innerHTML = `
+      <button class="btn btn-outline detail-close" type="button"
+        onclick="this.closest('#listingDetail').classList.add('hidden')">✕ 닫기</button>
+      <h3>${item.title}</h3>
+      <p><strong>${item.propertyType} / ${item.dealType}</strong></p>
+      <p>주소: ${item.address}</p>
+      <p>금액: <strong style="color:var(--green)">${formatPrice(item.price)}만원</strong> | 면적: ${item.area}㎡</p>
+      <p>${item.description}</p>
+      <img src="${item.imageUrl}" alt="${item.title}"
+        style="width:100%;max-width:480px;border-radius:10px;margin-top:8px;" />
+    `;
+  };
+
+  const placeMarkers = (items) => {
+    if (!map) return;
+    activeMarkers.forEach((m) => m.setMap(null));
+    activeMarkers.length = 0;
+    if (openIw) { openIw.close(); openIw = null; }
+    const geocoder = new kakao.maps.services.Geocoder();
+    items.forEach((item) => {
+      geocoder.addressSearch(item.address, (result, status) => {
+        if (status !== kakao.maps.services.Status.OK) return;
+        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        const marker = new kakao.maps.Marker({ map, position: coords, title: item.title });
+        const iw = new kakao.maps.InfoWindow({
+          content: `<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:220px">
+            ${item.title}<br>
+            <span style="color:#1f8f63;font-weight:700">${item.dealType} ${formatPrice(item.price)}만원</span>
+          </div>`,
+        });
+        kakao.maps.event.addListener(marker, 'click', () => {
+          if (openIw) openIw.close();
+          iw.open(map, marker);
+          openIw = iw;
+          showDetail(item);
+        });
+        activeMarkers.push(marker);
+      });
+    });
+  };
+
+  const mapEl = document.getElementById('map');
+  if (mapEl && typeof kakao !== 'undefined' && kakao.maps) {
+    mapEl.innerHTML = '';
+    map = new kakao.maps.Map(mapEl, {
+      center: new kakao.maps.LatLng(37.7512, 126.7820),
+      level: 7,
+    });
+  }
+
   const render = (items) => {
     cardsEl.innerHTML = items.map((item) => `
       <article class="listing-card" data-id="${item.id}">
@@ -57,18 +115,11 @@ const setupListingsPage = () => {
     cardsEl.querySelectorAll('.listing-card').forEach((card) => {
       card.addEventListener('click', () => {
         const selected = current.find((x) => x.id === card.dataset.id);
-        if (!selected) return;
-        detailEl.classList.remove('hidden');
-        detailEl.innerHTML = `
-          <h3>${selected.title}</h3>
-          <p><strong>${selected.propertyType} / ${selected.dealType}</strong></p>
-          <p>주소: ${selected.address}</p>
-          <p>금액: ${formatPrice(selected.price)}만원 | 면적: ${selected.area}㎡</p>
-          <p>${selected.description}</p>
-          <img src="${selected.imageUrl}" alt="${selected.title}" style="width:100%;max-width:480px;border-radius:10px;" />
-        `;
+        if (selected) showDetail(selected);
       });
     });
+
+    placeMarkers(items);
   };
 
   const applyFilters = (e) => {
