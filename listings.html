@@ -37,7 +37,7 @@
       </div>
     </header>
 
-    <!-- 3단 본문: 사이드바 | 지도 | 매물카드 -->
+    <!-- 3단 본문: 사이드바 | 지도 | 카드패널 -->
     <div class="lp-body">
 
       <!-- 왼쪽 사이드바 -->
@@ -117,7 +117,7 @@
         </div>
       </aside>
 
-      <!-- 오른쪽: 검색 + 카드 -->
+      <!-- 오른쪽: 검색 + 추천/최신 + 전체카드 -->
       <main class="lp-main" id="lpMain">
 
         <!-- 검색바 -->
@@ -147,6 +147,35 @@
           <button type="submit" class="lp-search-submit">검색</button>
           <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
         </form>
+
+        <!-- ⭐ 추천매물 섹션 -->
+        <section class="lp-preview-section" id="sectionFeatured">
+          <div class="lp-preview-header">
+            <span class="lp-preview-icon">⭐</span>
+            <span class="lp-preview-title">추천매물</span>
+            <button class="lp-preview-more" type="button" id="btnShowFeatured">전체보기</button>
+          </div>
+          <div id="featuredCards" class="lp-preview-cards">
+            <div class="lp-preview-empty">등록된 추천매물이 없습니다.</div>
+          </div>
+        </section>
+
+        <!-- 🔥 최신등록 섹션 -->
+        <section class="lp-preview-section" id="sectionLatest">
+          <div class="lp-preview-header">
+            <span class="lp-preview-icon">🔥</span>
+            <span class="lp-preview-title">최신등록</span>
+            <button class="lp-preview-more" type="button" id="btnShowLatest">전체보기</button>
+          </div>
+          <div id="latestCards" class="lp-preview-cards">
+            <div class="lp-preview-empty">등록된 매물이 없습니다.</div>
+          </div>
+        </section>
+
+        <!-- 전체 매물 구분선 -->
+        <div class="lp-all-divider">
+          <span>전체 매물</span>
+        </div>
 
         <!-- 결과 헤더 -->
         <div class="lp-results-hd">
@@ -179,9 +208,7 @@
         </div>
         <div class="modal-body">
           <div class="modal-left">
-            <div class="modal-main-img">
-              <img id="modalMainImg" src="" alt="매물사진" />
-            </div>
+            <div class="modal-main-img"><img id="modalMainImg" src="" alt="매물사진" /></div>
             <div class="modal-thumbs" id="modalThumbs"></div>
             <div class="modal-desc-section">
               <h4>매물 설명</h4>
@@ -251,6 +278,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260521b"></script>
+    <script src="app.js?v=20260521c"></script>
   </body>
 </html>
