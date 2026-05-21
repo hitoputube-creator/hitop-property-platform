@@ -37,15 +37,11 @@
       </div>
     </header>
 
-    <!-- ══════════════════════════════════════
-         3단 본문: 사이드바 | 매물영역 | 지도
-         ══════════════════════════════════════ -->
+    <!-- 3단 본문: 사이드바 | 지도 | 매물카드 -->
     <div class="lp-body">
 
-      <!-- ── 왼쪽 사이드바 ── -->
+      <!-- 왼쪽 사이드바 -->
       <aside class="lp-sidebar" aria-label="필터 사이드바">
-
-        <!-- 섹션 1: 매물 종류 -->
         <div class="lp-sidebar-section">
           <div class="lp-sidebar-header">매물 종류</div>
 
@@ -53,7 +49,6 @@
             <span class="lp-cat-name">전체 매물</span>
             <span class="lp-cat-count" id="cnt-all">(0)</span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="공장창고">
             <span class="lp-cat-name">공장·창고</span>
             <span class="lp-cat-count" id="cnt-공장창고">(0)</span>
@@ -62,7 +57,6 @@
               <span class="lp-deal-badge lbdg-im"  data-cat="공장창고" data-deal="임대">임</span>
             </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="상가">
             <span class="lp-cat-name">상가·빌딩</span>
             <span class="lp-cat-count" id="cnt-상가">(0)</span>
@@ -71,7 +65,6 @@
               <span class="lp-deal-badge lbdg-im"  data-cat="상가" data-deal="임대">임</span>
             </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="토지">
             <span class="lp-cat-name">토지·개발</span>
             <span class="lp-cat-count" id="cnt-토지">(0)</span>
@@ -80,7 +73,6 @@
               <span class="lp-deal-badge lbdg-im"  data-cat="토지" data-deal="임대">임</span>
             </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="오피스텔">
             <span class="lp-cat-name">오피스텔</span>
             <span class="lp-cat-count" id="cnt-오피스텔">(0)</span>
@@ -89,7 +81,6 @@
               <span class="lp-deal-badge lbdg-wol"  data-cat="오피스텔" data-deal="월세">월</span>
             </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="힐스테이트더운정">
             <span class="lp-cat-name">힐스테이트더운정</span>
             <span class="lp-cat-count" id="cnt-힐스테이트더운정">(0)</span>
@@ -99,7 +90,6 @@
               <span class="lp-deal-badge lbdg-wol"  data-cat="힐스테이트더운정" data-deal="월세">월</span>
             </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="단독주택">
             <span class="lp-cat-name">단독·전원주택</span>
             <span class="lp-cat-count" id="cnt-단독주택">(0)</span>
@@ -110,42 +100,29 @@
           </a>
         </div>
 
-        <!-- 섹션 2: 거래 유형 -->
-        <div class="lp-sidebar-section">
-          <div class="lp-sidebar-header">거래 유형</div>
-          <div class="lp-deal-btns">
-            <button class="lp-deal-btn active" type="button" data-deal="">전체</button>
-            <button class="lp-deal-btn" type="button" data-deal="매매">매매</button>
-            <button class="lp-deal-btn" type="button" data-deal="임대">임대</button>
-          </div>
-        </div>
-
-        <!-- 섹션 3: 가격대 -->
-        <div class="lp-sidebar-section">
-          <div class="lp-sidebar-header">가격대</div>
-          <div class="lp-price-grid">
-            <button class="lp-price-btn" type="button" data-price="under1">1억 이하</button>
-            <button class="lp-price-btn" type="button" data-price="1to5">1억~5억</button>
-            <button class="lp-price-btn" type="button" data-price="5to10">5억~10억</button>
-            <button class="lp-price-btn" type="button" data-price="over10">10억 이상</button>
-          </div>
-        </div>
-
         <!-- 하단 문의 박스 -->
         <div class="lp-contact-box">
           <div class="cb-label">매물 문의</div>
           <a href="tel:031-949-8969" class="cb-phone">031-949-8969</a>
           <p class="cb-hours">평일 10:00 ~ 19:00</p>
         </div>
-
       </aside>
 
-      <!-- ── 가운데: 검색 + 카드 ── -->
+      <!-- 가운데: 카카오맵 -->
+      <aside class="lp-map" aria-label="지도 영역">
+        <div id="map">
+          <div class="map-placeholder-text">
+            <span>📍 카카오맵 로딩 중...</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 오른쪽: 검색 + 카드 -->
       <main class="lp-main" id="lpMain">
 
         <!-- 검색바 -->
         <form id="filterForm" class="lp-search-bar" novalidate>
-          <input type="text" name="keyword" id="kwInput" placeholder="제목·주소 검색" autocomplete="off" />
+          <input type="text" name="keyword" id="kwInput" placeholder="🔍 제목·주소 검색" autocomplete="off" />
           <select name="formCat" id="formCatSelect">
             <option value="">매물종류 전체</option>
             <option value="공장창고">공장·창고</option>
@@ -161,6 +138,11 @@
             <option value="전세">전세</option>
             <option value="월세">월세</option>
             <option value="임대">임대</option>
+          </select>
+          <select name="formSpecial" id="formSpecialSelect">
+            <option value="">전체 매물</option>
+            <option value="추천">⭐ 추천매물</option>
+            <option value="급매">🔥 급매물</option>
           </select>
           <button type="submit" class="lp-search-submit">검색</button>
           <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
@@ -183,18 +165,9 @@
 
       </main>
 
-      <!-- ── 오른쪽: 카카오맵 ── -->
-      <aside class="lp-map" aria-label="지도 영역">
-        <div id="map">
-          <div class="map-placeholder-text">
-            <span>📍 카카오맵 로딩 중...</span>
-          </div>
-        </div>
-      </aside>
-
     </div><!-- .lp-body -->
 
-    <!-- ══ 매물 상세 모달 ══ -->
+    <!-- 매물 상세 모달 -->
     <div id="listingModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="매물 상세보기">
       <div class="modal-box">
         <div class="modal-header">
@@ -205,7 +178,6 @@
           </div>
         </div>
         <div class="modal-body">
-          <!-- 왼쪽: 이미지 -->
           <div class="modal-left">
             <div class="modal-main-img">
               <img id="modalMainImg" src="" alt="매물사진" />
@@ -216,7 +188,6 @@
               <div id="modalDesc" class="modal-desc"></div>
             </div>
           </div>
-          <!-- 오른쪽: 요약 + 문의 -->
           <div class="modal-right">
             <div>
               <span class="modal-badge" id="modalBadge"></span>
@@ -243,7 +214,7 @@
       </div>
     </div>
 
-    <!-- ══ 라이트박스 ══ -->
+    <!-- 라이트박스 -->
     <div id="lightbox" class="lightbox-overlay hidden" role="dialog" aria-modal="true">
       <button class="lightbox-close" id="lightboxClose" type="button" aria-label="닫기">✕</button>
       <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="이전">‹</button>
