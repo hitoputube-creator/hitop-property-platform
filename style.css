@@ -466,3 +466,285 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .home-listing-grid { grid-template-columns: repeat(2, 1fr); }
   .listings-body { grid-template-columns: 160px 1fr 300px; }
 }
+
+/* ================================================================
+   listings.html 전면 개편 — lp- 네임스페이스
+   ================================================================ */
+:root { --orange: #F97316; --dark-navy: #1E3A5F; }
+
+/* 전체 레이아웃 */
+.lp-body {
+  display: grid;
+  grid-template-columns: 240px 1fr 380px;
+  height: calc(100vh - 96px);
+  min-height: 500px;
+  background: #F3F4F6;
+}
+
+/* ── 왼쪽 사이드바 ── */
+.lp-sidebar {
+  background: #fff;
+  border-right: 1px solid #E5E7EB;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.lp-sidebar-header {
+  background: #1E3A5F;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 14px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+/* 매물 종류 항목 */
+.lp-cat-item {
+  display: flex;
+  align-items: center;
+  padding: 9px 12px 9px 14px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+  gap: 4px;
+  text-decoration: none;
+  border-bottom: 1px solid #F3F4F6;
+}
+.lp-cat-item:hover { background: #F9FAFB; }
+.lp-cat-item.active {
+  border-left-color: #F97316;
+  font-weight: 700;
+  background: #FFF7ED;
+  color: #1E3A5F;
+}
+.lp-cat-name { flex: 1; font-size: 13px; }
+.lp-cat-count { font-size: 11px; color: #9CA3AF; flex-shrink: 0; margin-right: 4px; }
+.lp-cat-badges { display: flex; gap: 3px; flex-shrink: 0; }
+.lp-deal-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 5px; border-radius: 3px;
+  cursor: pointer; color: #fff; line-height: 1.5;
+  transition: opacity 0.12s;
+}
+.lp-deal-badge:hover { opacity: 0.75; }
+.lbdg-mae  { background: #2563EB; }
+.lbdg-im   { background: #7C3AED; }
+.lbdg-jeon { background: #059669; }
+.lbdg-wol  { background: #F97316; }
+
+/* 거래 유형 버튼 */
+.lp-deal-btns { display: flex; gap: 5px; padding: 10px 12px; }
+.lp-deal-btn {
+  flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 600;
+  border: 1px solid #E5E7EB; border-radius: 6px;
+  background: #fff; color: #374151; cursor: pointer;
+  transition: all 0.12s; text-align: center;
+}
+.lp-deal-btn:hover { border-color: #1E3A5F; color: #1E3A5F; }
+.lp-deal-btn.active { background: #1E3A5F; color: #fff; border-color: #1E3A5F; }
+
+/* 가격대 버튼 */
+.lp-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px 12px; }
+.lp-price-btn {
+  padding: 8px 4px; font-size: 11px; font-weight: 600;
+  border: 1px solid #E5E7EB; border-radius: 6px;
+  background: #fff; color: #374151; cursor: pointer;
+  transition: all 0.12s; text-align: center;
+}
+.lp-price-btn:hover { border-color: #F97316; color: #F97316; }
+.lp-price-btn.active { background: #F97316; color: #fff; border-color: #F97316; }
+
+/* 문의 박스 (하단 고정) */
+.lp-contact-box {
+  margin: auto 12px 14px;
+  padding: 14px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+.cb-label { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.cb-phone { font-size: 16px; font-weight: 800; color: #F97316; display: block; text-decoration: none; line-height: 1.3; }
+.cb-phone:hover { color: #ea6c10; }
+.cb-hours { font-size: 11px; color: #9CA3AF; margin: 4px 0 0; }
+
+/* ── 가운데 영역 ── */
+.lp-main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 12px;
+  gap: 10px;
+  background: #F3F4F6;
+}
+
+/* 검색바 */
+.lp-search-bar {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 11px 14px;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.lp-search-bar input[type="text"] {
+  flex: 1; min-width: 100px;
+  padding: 7px 11px; border: 1px solid #E5E7EB;
+  border-radius: 6px; font: inherit; font-size: 13px;
+  outline: none; transition: border-color 0.12s;
+}
+.lp-search-bar input[type="text"]:focus { border-color: #1E3A5F; }
+.lp-search-bar select {
+  padding: 7px 9px; border: 1px solid #E5E7EB;
+  border-radius: 6px; font: inherit; font-size: 13px;
+  background: #fff; cursor: pointer;
+  outline: none; min-width: 90px;
+}
+.lp-search-submit {
+  padding: 7px 18px; background: #1E3A5F; color: #fff;
+  border: none; border-radius: 6px; font: inherit;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  white-space: nowrap; transition: background 0.12s;
+}
+.lp-search-submit:hover { background: #162f50; }
+.lp-search-reset {
+  padding: 7px 11px; background: none; border: none;
+  color: #9CA3AF; font: inherit; font-size: 13px;
+  cursor: pointer; white-space: nowrap; border-radius: 6px;
+  transition: color 0.12s;
+}
+.lp-search-reset:hover { color: #374151; }
+
+/* 결과 헤더 (카운트 + 정렬) */
+.lp-results-hd {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0; padding: 0 2px;
+}
+.lp-result-count { font-size: 13px; color: #6B7280; }
+.lp-result-count strong { color: #111827; font-weight: 700; }
+.lp-sort-btns { display: flex; gap: 4px; }
+.lp-sort-btn {
+  padding: 5px 12px; font-size: 12px; font-weight: 600;
+  border: 1px solid #E5E7EB; border-radius: 6px;
+  background: #fff; color: #6B7280; cursor: pointer;
+  transition: all 0.12s;
+}
+.lp-sort-btn.active { background: #1E3A5F; color: #fff; border-color: #1E3A5F; }
+.lp-sort-btn:hover:not(.active) { border-color: #1E3A5F; color: #1E3A5F; }
+
+/* 카드 그리드 (2열) */
+.lp-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+/* 세로형 카드 */
+.lp-card {
+  background: #fff; border: 1px solid #E5E7EB;
+  border-radius: 8px; overflow: hidden;
+  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  display: flex; flex-direction: column;
+}
+.lp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.lp-card.is-done { opacity: 0.6; }
+
+.lp-card-img {
+  position: relative; height: 170px;
+  overflow: hidden; background: #E5E7EB; flex-shrink: 0;
+}
+.lp-card-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.2s;
+}
+.lp-card:hover .lp-card-img img { transform: scale(1.03); }
+
+.lp-listing-no {
+  position: absolute; top: 8px; left: 8px;
+  background: rgba(0,0,0,0.52); color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px; letter-spacing: 0.4px;
+}
+.lp-sold-overlay {
+  position: absolute; inset: 0;
+  background: rgba(153,0,0,0.72);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; color: #fff; letter-spacing: 2px;
+}
+
+.lp-card-body {
+  padding: 11px 13px;
+  display: flex; flex-direction: column; gap: 5px;
+  flex: 1;
+}
+.lp-card-badges { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.lp-cat-tag {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 4px; color: #fff;
+}
+.lp-deal-tag {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 4px;
+  border: 1px solid #E5E7EB; color: #6B7280; background: #F9FAFB;
+}
+.lp-card-title {
+  font-size: 14px; font-weight: 700; color: #111827;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lp-card-area { font-size: 12px; color: #6B7280; }
+.lp-card-addr {
+  font-size: 11px; color: #9CA3AF;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lp-card-price { font-size: 15px; font-weight: 800; color: #F97316; margin-top: auto; padding-top: 4px; }
+
+/* 빈 상태 */
+.lp-empty { text-align: center; padding: 48px 16px; color: #9CA3AF; font-size: 14px; }
+
+/* 페이지네이션 */
+.lp-pagination {
+  display: flex; gap: 4px; justify-content: center;
+  flex-wrap: wrap; padding: 4px 0 8px; flex-shrink: 0;
+}
+.lp-page-btn {
+  min-width: 32px; height: 32px; padding: 0 6px;
+  border-radius: 6px; border: 1px solid #E5E7EB;
+  background: #fff; color: #374151; font: inherit; font-size: 13px;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.lp-page-btn:hover:not(.active) { border-color: #1E3A5F; color: #1E3A5F; }
+.lp-page-btn.active { background: #1E3A5F; color: #fff; border-color: #1E3A5F; font-weight: 700; }
+
+/* ── 오른쪽 지도 ── */
+.lp-map { overflow: hidden; position: relative; }
+.lp-map #map { width: 100%; height: 100%; background: #e8f0f8; }
+
+/* ── 모바일 반응형 (768px 이하) ── */
+@media (max-width: 768px) {
+  .lp-body {
+    grid-template-columns: 1fr;
+    height: auto; min-height: auto;
+    grid-template-rows: 250px auto auto;
+  }
+  .lp-sidebar { display: none; }        /* 사이드바 숨김 */
+  .lp-map { height: 250px; grid-row: 1; } /* 지도 최상단 */
+  .lp-main { grid-row: 2; padding: 10px; }
+  .lp-cards-grid { grid-template-columns: 1fr; }
+  .lp-search-bar { flex-direction: column; align-items: stretch; gap: 6px; }
+  .lp-search-bar input[type="text"],
+  .lp-search-bar select { min-width: auto; }
+  .lp-search-submit, .lp-search-reset { width: 100%; text-align: center; padding: 10px; }
+  .lp-card-img { height: 180px; }
+  /* 모달 전체화면 */
+  .modal-box { border-radius: 0; max-height: 100vh; height: 100%; }
+  .modal-body { grid-template-columns: 1fr; }
+  .modal-left { border-right: none; border-bottom: 1px solid #e5e9f0; max-height: 260px; }
+}
+@media (min-width: 769px) and (max-width: 1100px) {
+  .lp-body { grid-template-columns: 200px 1fr 300px; }
+}
