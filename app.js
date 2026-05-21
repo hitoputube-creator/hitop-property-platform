@@ -350,11 +350,14 @@ const setupListingsPage = () => {
   const filterForm = document.getElementById('filterForm');
   if (!cardsEl || !filterForm) return;
 
-  let current = readListings();
+  let sortMode = 'date';   // 'date' | 'price'
+  let hideSold = false;
   let map = null;
+  let miniMap = null;
   let openIw = null;
   const activeMarkers = [];
 
+  // ── 지도 마커 배치 ──
   const placeMarkers = (items) => {
     if (!map) return;
     activeMarkers.forEach(m => m.setMap(null));
@@ -384,6 +387,7 @@ const setupListingsPage = () => {
     });
   };
 
+  // ── 카카오맵 초기화 ──
   window.addEventListener('load', function () {
     const mapEl = document.getElementById('map');
     if (!mapEl) return;
@@ -393,68 +397,202 @@ const setupListingsPage = () => {
       center: new kakao.maps.LatLng(37.7512, 126.7820),
       level: 7,
     });
-    placeMarkers(current);
+    applyFilters();
   });
 
+  // ── 카드 렌더링 ──
   const render = (items) => {
-    cardsEl.innerHTML = items.map(item => `
-      <article class="listing-card" data-id="${item.id}">
-        <div class="card-img">
-          <img src="${getThumbnail(item)}" alt="${item.title}" loading="lazy" />
-          <span class="card-badge">${item.propertyType}</span>
-          ${item.status === 'done' ? '<div class="sold-badge">거래완료</div>' : ''}
-        </div>
-        <div class="card-body">
-          <div>
-            <span class="card-address">${getDisplayAddress(item)}</span>
-            <div class="card-title">${item.title}</div>
-            <div class="card-desc">${item.description ? item.description.replace(/\n/g, ' ') : ''}</div>
+    const countEl = document.getElementById('listCount');
+    if (countEl) countEl.textContent = `총 ${items.length}개 매물`;
+
+    if (!items.length) {
+      cardsEl.innerHTML = '<p style="padding:24px 12px;color:var(--gray-700);text-align:center;">조건에 맞는 매물이 없습니다.</p>';
+      placeMarkers([]);
+      return;
+    }
+
+    cardsEl.innerHTML = items.map(item => {
+      const isDone = item.status === 'done';
+      const pyeong = item.area ? ` / ${(Number(item.area) * 0.3025).toFixed(0)}평` : '';
+      return `
+        <article class="listing-card${isDone ? ' listing-card-done' : ''}" data-id="${item.id}" style="${isDone ? 'opacity:0.6;' : ''}">
+          <div class="card-img">
+            <img src="${getThumbnail(item)}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />
+            <span class="card-badge">${item.propertyType}</span>
+            ${isDone ? '<div class="sold-badge">거래완료</div>' : ''}
           </div>
-          <div class="card-footer">
-            <span class="card-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
-            <span class="card-area">${item.area}㎡</span>
+          <div class="card-body">
+            <div>
+              <span class="card-address">${getDisplayAddress(item)}</span>
+              <div class="card-title">${item.title}</div>
+              <div class="card-desc">${item.description ? item.description.replace(/\n/g, ' ') : ''}</div>
+            </div>
+            <div class="card-footer">
+              <span class="card-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
+              <span class="card-area">${item.area ? item.area + '㎡' + pyeong : '-'}</span>
+            </div>
           </div>
-        </div>
-      </article>
-    `).join('');
+        </article>
+      `;
+    }).join('');
+
     cardsEl.querySelectorAll('.listing-card').forEach(card => {
       card.addEventListener('click', () => {
-        const selected = current.find(x => x.id === card.dataset.id);
-        if (selected) openModal(selected);
+        const selected = items.find(x => x.id === card.dataset.id);
+        if (selected) openModalWithMiniMap(selected);
       });
     });
+
     placeMarkers(items);
   };
 
-  const applyFilters = (e) => {
-    e?.preventDefault();
-    const fd = new FormData(filterForm);
-    const c = Object.fromEntries(fd.entries());
-    const kw = (c.keyword || '').toLowerCase();
-    current = readListings().filter(item => {
-      if (kw && !item.title.toLowerCase().includes(kw) && !item.address.toLowerCase().includes(kw) && !(item.displayAddress || '').toLowerCase().includes(kw)) return false;
-      if (c.dealType && item.dealType !== c.dealType) return false;
-      if (c.propertyType && item.propertyType !== c.propertyType) return false;
-      if (c.region && !item.address.includes(c.region) && !(item.displayAddress || '').includes(c.region)) return false;
-      if (c.maxPrice && Number(getMainPrice(item)) > Number(c.maxPrice)) return false;
-      if (c.minArea && Number(item.area) < Number(c.minArea)) return false;
-      return true;
+  // ── 모달 + 미니맵 ──
+  const openModalWithMiniMap = (item) => {
+    openModal(item);
+    // 거래완료 태그
+    const doneTag = document.getElementById('modalDoneTag');
+    if (doneTag) doneTag.classList.toggle('hidden', item.status !== 'done');
+
+    // 미니맵
+    const minimapWrap = document.getElementById('modalMinimapWrap');
+    const minimapEl = document.getElementById('modalMiniMap');
+    if (!minimapWrap || !minimapEl) return;
+    minimapWrap.style.display = 'none';
+    if (typeof kakao === 'undefined' || !item.address) return;
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(item.address, (result, status) => {
+      if (status !== kakao.maps.services.Status.OK) return;
+      const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+      minimapWrap.style.display = 'block';
+      minimapEl.innerHTML = '';
+      miniMap = new kakao.maps.Map(minimapEl, { center: coords, level: 4 });
+      new kakao.maps.Marker({ map: miniMap, position: coords, title: item.title });
     });
-    render(current);
   };
 
-  filterForm.addEventListener('submit', applyFilters);
-  document.getElementById('filterReset')?.addEventListener('click', () => {
-    filterForm.reset(); current = readListings(); render(current);
+  // ── 필터 적용 ──
+  const applyFilters = () => {
+    const fd = new FormData(filterForm);
+    const kw = (fd.get('keyword') || '').toLowerCase();
+    const dealType = fd.get('dealType') || '';
+    const propertyType = fd.get('propertyType') || '';
+
+    let items = readListings();
+
+    if (hideSold) items = items.filter(i => i.status !== 'done');
+    if (kw) items = items.filter(i =>
+      i.title.toLowerCase().includes(kw) ||
+      i.address.toLowerCase().includes(kw) ||
+      (i.displayAddress || '').toLowerCase().includes(kw)
+    );
+    if (dealType) items = items.filter(i => i.dealType === dealType);
+    if (propertyType) items = items.filter(i => i.propertyType === propertyType);
+
+    if (sortMode === 'price') {
+      items.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
+    } else {
+      items.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
+    }
+
+    render(items);
+  };
+
+  // ── 정렬 버튼 ──
+  document.getElementById('sortDateBtn')?.addEventListener('click', () => {
+    sortMode = 'date';
+    document.getElementById('sortDateBtn')?.classList.add('active');
+    document.getElementById('sortPriceBtn')?.classList.remove('active');
+    applyFilters();
   });
-  document.querySelectorAll('[data-category]').forEach(link => {
-    link.addEventListener('click', e => {
+  document.getElementById('sortPriceBtn')?.addEventListener('click', () => {
+    sortMode = 'price';
+    document.getElementById('sortPriceBtn')?.classList.add('active');
+    document.getElementById('sortDateBtn')?.classList.remove('active');
+    applyFilters();
+  });
+
+  // ── 거래완료 토글 ──
+  document.getElementById('hideSoldToggle')?.addEventListener('change', (e) => {
+    hideSold = e.target.checked;
+    applyFilters();
+  });
+
+  // ── 초기화 버튼 ──
+  document.getElementById('filterResetBtn')?.addEventListener('click', () => {
+    filterForm.reset();
+    document.getElementById('hiddenCategory').value = '';
+    hideSold = false;
+    sortMode = 'date';
+    document.getElementById('sortDateBtn')?.classList.add('active');
+    document.getElementById('sortPriceBtn')?.classList.remove('active');
+    document.getElementById('hideSoldToggle').checked = false;
+    setActiveCategory('');
+    applyFilters();
+  });
+
+  // ── 카테고리 선택 (사이드바 + 모바일 탭) ──
+  const setActiveCategory = (cat) => {
+    document.getElementById('hiddenCategory').value = cat;
+    document.querySelectorAll('.sidebar-cat').forEach(el => {
+      el.classList.toggle('active', el.dataset.category === cat);
+    });
+    document.querySelectorAll('.cat-tab').forEach(el => {
+      el.classList.toggle('active', el.dataset.category === cat);
+    });
+  };
+
+  document.querySelectorAll('.sidebar-cat, .cat-tab').forEach(el => {
+    el.addEventListener('click', e => {
       e.preventDefault();
-      filterForm.propertyType.value = link.dataset.category;
-      filterForm.requestSubmit();
+      setActiveCategory(el.dataset.category);
+      applyFilters();
     });
   });
-  render(current);
+
+  // ── URL 파라미터 (index.html 카드 링크) ──
+  const urlCat = new URLSearchParams(window.location.search).get('category');
+  if (urlCat) {
+    setActiveCategory(urlCat);
+  }
+
+  // ── 폼 입력 실시간 반응 ──
+  filterForm.querySelector('input[name="keyword"]')?.addEventListener('input', applyFilters);
+  filterForm.querySelector('select[name="dealType"]')?.addEventListener('change', applyFilters);
+
+  // 초기 렌더 (맵이 없을 때도 카드는 보여야 함)
+  applyFilters();
+};
+
+// ─────────────────────────────────────────────
+// index.html — 메인 페이지
+// ─────────────────────────────────────────────
+const setupHomePage = () => {
+  const recentEl = document.getElementById('homeRecentListings');
+  if (!recentEl) return;
+
+  const listings = readListings()
+    .filter(i => i.status !== 'done')
+    .sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''))
+    .slice(0, 6);
+
+  if (!listings.length) {
+    recentEl.innerHTML = '<p style="color:var(--gray-700);">등록된 매물이 없습니다.</p>';
+    return;
+  }
+
+  recentEl.innerHTML = listings.map(item => `
+    <a class="home-listing-card" href="listings.html" title="${item.title}">
+      <div class="hlc-img">
+        <img src="${getThumbnail(item)}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />
+        <span class="card-badge">${item.propertyType}</span>
+      </div>
+      <div class="hlc-body">
+        <div class="hlc-address">${getDisplayAddress(item)}</div>
+        <div class="hlc-title">${item.title}</div>
+        <div class="hlc-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</div>
+      </div>
+    </a>
+  `).join('');
 };
 
 // ─────────────────────────────────────────────
@@ -804,7 +942,8 @@ const setupAdminListingsMgmt = () => {
 document.addEventListener('DOMContentLoaded', () => {
   setupMobileNav();
   const page = document.body.dataset.page;
-  if (page === 'listings') setupListingsPage();
+  if (page === 'home') setupHomePage();
+  else if (page === 'listings') setupListingsPage();
   else if (page === 'admin-dashboard') setupAdminDashboard();
   else if (page === 'admin-register') setupAdminRegister();
   else if (page === 'admin-listings') setupAdminListingsMgmt();

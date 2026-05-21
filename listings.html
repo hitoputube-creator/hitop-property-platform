@@ -6,29 +6,6 @@
     <title>하이탑부동산 | 매물보기</title>
     <link rel="stylesheet" href="style.css" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
-    <style>
-      .top-bar { background: #0A1F5C; padding: 6px 0; }
-      .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
-      .top-bar-hours { font-size: 12px; color: #aab8d8; }
-      .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
-      .top-bar-phone:hover { color: #e0c070; }
-
-      /* 카테고리 탭 */
-      .category-tab-bar { background: #fff; border-bottom: 1px solid #e5e8ed; }
-      .category-tab-bar .container { display: flex; align-items: center; gap: 0; overflow-x: auto; }
-      .cat-tab {
-        font-size: 14px; font-weight: 500; color: #666;
-        padding: 14px 18px 11px; border-bottom: 3px solid transparent;
-        text-decoration: none; white-space: nowrap; transition: color 0.15s;
-        cursor: pointer;
-      }
-      .cat-tab:hover { color: #0A1F5C; }
-      .cat-tab.active { font-weight: 700; color: #0A1F5C; border-bottom: 3px solid #C9A84C; }
-
-      @media (max-width: 768px) {
-        .top-bar-hours { display: none; }
-      }
-    </style>
   </head>
   <body data-page="listings">
 
@@ -40,16 +17,16 @@
       </div>
     </div>
 
-    <!-- 헤더: 메인과 동일 -->
+    <!-- 헤더 -->
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="brand" href="index.html">
-          <img src="images/hitoplogo.png" alt="" class="brand-logo" />
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
         </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
         <nav class="nav-menu" aria-label="메인 메뉴">
           <a href="about.html">하이탑소개</a>
-          <a href="listings.html">매물보기</a>
+          <a href="listings.html" aria-current="page">매물보기</a>
           <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
           <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
           <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
@@ -58,61 +35,143 @@
       </div>
     </header>
 
-    <!-- 카테고리 탭 -->
-    <div class="category-tab-bar">
+    <!-- 모바일 전용 카테고리 탭 -->
+    <div class="category-tab-bar" id="mobileCatTabs">
       <div class="container">
-        <a class="cat-tab active" href="listings.html" data-category="">전체</a>
+        <a class="cat-tab active" href="#" data-category="">전체</a>
         <a class="cat-tab" href="#" data-category="공장창고">공장·창고</a>
         <a class="cat-tab" href="#" data-category="상가">상가·빌딩</a>
         <a class="cat-tab" href="#" data-category="토지">토지·개발</a>
         <a class="cat-tab" href="#" data-category="오피스텔">오피스텔</a>
         <a class="cat-tab" href="#" data-category="힐스테이트더운정">힐스테이트더운정</a>
+        <a class="cat-tab" href="#" data-category="단독주택">단독주택</a>
       </div>
     </div>
 
-    <div class="listings-filter-bar">
-      <form id="filterForm" class="listing-filter-grid">
-        <input type="text" name="keyword" placeholder="검색어 (제목/주소)" />
+    <!-- 검색·필터 바 -->
+    <div class="listings-filter-top">
+      <form id="filterForm" class="filter-top-form">
+        <input type="text" name="keyword" placeholder="🔍 제목·주소 검색" autocomplete="off" />
         <select name="dealType">
           <option value="">거래유형 전체</option>
           <option>매매</option>
           <option>전세</option>
           <option>월세</option>
+          <option>임대</option>
         </select>
-        <select name="propertyType">
-          <option value="">매물종류 전체</option>
-          <option>공장창고</option>
-          <option>상가</option>
-          <option>오피스텔</option>
-          <option>토지</option>
-          <option>힐스테이트더운정</option>
-        </select>
-        <input type="text" name="region" placeholder="지역" />
-        <input type="number" name="maxPrice" placeholder="최대 금액(만원)" min="0" />
-        <input type="number" name="minArea" placeholder="최소 면적(㎡)" min="0" />
-        <button type="submit" class="btn btn-primary">검색</button>
-        <button type="button" id="filterReset" class="btn btn-outline">초기화</button>
+        <input type="hidden" name="propertyType" id="hiddenCategory" value="" />
+        <button type="button" class="sort-btn active" id="sortDateBtn">최신순</button>
+        <button type="button" class="sort-btn" id="sortPriceBtn">가격순</button>
+        <label class="sold-toggle-label">
+          <input type="checkbox" id="hideSoldToggle" /> 거래완료 숨기기
+        </label>
+        <button type="button" id="filterResetBtn" class="btn btn-outline" style="padding:7px 12px;font-size:0.85rem;">초기화</button>
       </form>
     </div>
 
+    <!-- 메인 바디 (3단) -->
     <div class="listings-body">
+
+      <!-- 왼쪽: 카테고리 사이드바 (데스크탑) -->
+      <aside class="listings-sidebar" aria-label="매물 카테고리">
+        <a class="sidebar-cat active" href="#" data-category=""><span class="sidebar-cat-icon">🏠</span>전체 매물</a>
+        <div class="sidebar-divider"></div>
+        <a class="sidebar-cat" href="#" data-category="공장창고"><span class="sidebar-cat-icon">🏭</span>공장·창고</a>
+        <a class="sidebar-cat" href="#" data-category="상가"><span class="sidebar-cat-icon">🏪</span>상가·빌딩</a>
+        <a class="sidebar-cat" href="#" data-category="토지"><span class="sidebar-cat-icon">🌿</span>토지·개발</a>
+        <a class="sidebar-cat" href="#" data-category="오피스텔"><span class="sidebar-cat-icon">🏢</span>오피스텔</a>
+        <a class="sidebar-cat" href="#" data-category="힐스테이트더운정"><span class="sidebar-cat-icon">🏙️</span>힐스테이트더운정</a>
+        <a class="sidebar-cat" href="#" data-category="단독주택"><span class="sidebar-cat-icon">🏡</span>단독주택</a>
+      </aside>
+
+      <!-- 가운데: 카카오맵 -->
       <section class="map-section" aria-label="지도 영역">
         <div id="map">
           <div class="map-placeholder-text">
-            <span>지도 영역<br />카카오맵 API 연결 전입니다.<br />추후 카카오맵 또는 네이버지도 연동 예정</span>
+            <span>📍 지도 로딩 중...<br/>카카오맵 API 인증 확인 후 표시됩니다</span>
           </div>
         </div>
       </section>
-      <aside class="listings-panel">
-        <div id="listingCards" class="listing-cards"></div>
-        <section id="listingDetail" class="listing-detail hidden" aria-live="polite"></section>
+
+      <!-- 오른쪽: 매물 목록 -->
+      <aside class="listings-panel" aria-label="매물 목록">
+        <div class="listings-list-header">
+          <span class="list-count" id="listCount">매물 로딩 중...</span>
+        </div>
+        <div class="listings-list-body">
+          <div id="listingCards" class="listing-cards"></div>
+        </div>
       </aside>
+
     </div>
 
+    <!-- 매물 상세 모달 -->
+    <div id="listingModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="매물 상세보기">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-id">매물번호: <strong id="modalId">-</strong></span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="modalDoneTag" class="badge-done hidden">거래완료</span>
+            <button class="modal-close" id="modalClose" type="button" aria-label="닫기">✕</button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <!-- 왼쪽: 이미지 + 설명 -->
+          <div class="modal-left">
+            <div class="modal-main-img">
+              <img id="modalMainImg" src="" alt="매물사진" />
+            </div>
+            <div class="modal-thumbs" id="modalThumbs"></div>
+            <div class="modal-desc-section">
+              <h4>매물 설명</h4>
+              <div id="modalDesc" class="modal-desc"></div>
+            </div>
+          </div>
+          <!-- 오른쪽: 핵심정보 + 문의 -->
+          <div class="modal-right">
+            <div>
+              <span class="modal-badge" id="modalBadge"></span>
+              <h2 class="modal-title" id="modalTitle" style="margin-top:8px;"></h2>
+              <p class="modal-address" id="modalAddress"></p>
+            </div>
+            <div class="modal-price-area" id="modalPriceArea"></div>
+            <table class="modal-info-table" id="modalInfoTable"></table>
+            <!-- 문의 버튼 -->
+            <div class="modal-contact">
+              <a href="tel:031-949-8969" class="btn modal-tel">📞 문의전화 031-949-8969</a>
+              <a href="https://open.kakao.com" target="_blank" rel="noreferrer" class="modal-kakao-btn">
+                💬 카카오톡 문의
+              </a>
+            </div>
+            <!-- 중개사 정보 -->
+            <div class="modal-agent">
+              <strong>하이탑부동산공인중개사사무소</strong>
+              <span>대표: 주현희 · 031-949-8969</span>
+              <span>경기도 파주시 책향기로 830, 1층</span>
+            </div>
+            <!-- 미니맵 -->
+            <div class="modal-minimap-wrap" id="modalMinimapWrap" style="display:none;">
+              <h4>📍 위치</h4>
+              <div id="modalMiniMap"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 라이트박스 -->
+    <div id="lightbox" class="lightbox-overlay hidden" role="dialog" aria-modal="true">
+      <button class="lightbox-close" id="lightboxClose" type="button" aria-label="닫기">✕</button>
+      <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="이전">‹</button>
+      <img id="lightboxImg" src="" alt="사진 크게보기" />
+      <button class="lightbox-next" id="lightboxNext" type="button" aria-label="다음">›</button>
+    </div>
+
+    <!-- 플로팅 문의 버튼 -->
     <div class="floating-contact">
-      <a href="tel:031-949-8969" class="float-btn float-call">전화<br>문의</a>
-      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-blog">네이버<br>블로그</a>
-      <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao">카카오<br>채팅</a>
+      <a href="tel:031-949-8969" class="float-btn float-call" title="전화문의">전화<br>문의</a>
+      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-blog" title="블로그">네이버<br>블로그</a>
+      <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao" title="카카오톡">카카오<br>채팅</a>
     </div>
 
     <footer class="site-footer compact-footer">
@@ -137,24 +196,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260520"></script>
-    <script>
-      // 카테고리 탭 클릭 처리
-      document.querySelectorAll('.cat-tab').forEach(tab => {
-        tab.addEventListener('click', function(e) {
-          if (this.dataset.category !== undefined && this.getAttribute('href') === '#') {
-            e.preventDefault();
-            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            const category = this.dataset.category;
-            const select = document.querySelector('select[name="propertyType"]');
-            if (select) {
-              select.value = category;
-              document.getElementById('filterForm').dispatchEvent(new Event('submit'));
-            }
-          }
-        });
-      });
-    </script>
+    <script src="app.js?v=20260521"></script>
   </body>
 </html>

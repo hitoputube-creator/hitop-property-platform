@@ -43,13 +43,73 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .listing-filter-grid .btn { flex: 0 0 auto; padding: 8px 14px; font-size: 0.88rem; white-space: nowrap; }
 
 .listings-filter-bar { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 8px 12px; }
-.listings-body { display: grid; grid-template-columns: 60% 40%; height: calc(100vh - 120px); min-height: 650px; }
-.map-section { border-right: 1px solid var(--gray-200); overflow: hidden; }
+/* ===== 매물보기 레이아웃 (3단) ===== */
+.listings-filter-top {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  padding: 8px 12px;
+}
+.filter-top-form {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  width: min(1120px, 92%); margin: 0 auto;
+}
+.filter-top-form input[type="text"],
+.filter-top-form select {
+  flex: 1 1 140px; min-width: 100px; max-width: 240px;
+  padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1;
+  font: inherit; font-size: 0.88rem;
+}
+.sort-btn {
+  padding: 7px 13px; border-radius: 8px; border: 1px solid var(--gray-200);
+  background: var(--white); color: var(--gray-700); font: inherit;
+  font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+}
+.sort-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.sold-toggle-label {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.85rem; color: var(--gray-700); cursor: pointer; white-space: nowrap;
+  user-select: none;
+}
+.sold-toggle-label input { accent-color: var(--navy); }
+
+.listings-body {
+  display: grid;
+  grid-template-columns: 180px 1fr 360px;
+  height: calc(100vh - 145px);
+  min-height: 600px;
+}
+
+/* 카테고리 사이드바 */
+.listings-sidebar {
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  overflow-y: auto;
+  padding: 12px 0;
+}
+.sidebar-cat {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 18px; font-size: 0.9rem; font-weight: 500;
+  color: var(--gray-700); text-decoration: none; cursor: pointer;
+  border-left: 3px solid transparent; transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.sidebar-cat:hover { background: var(--gray-100); color: var(--navy); }
+.sidebar-cat.active { color: var(--navy); font-weight: 700; border-left-color: #C9A84C; background: #fdf8ee; }
+.sidebar-cat-icon { font-size: 16px; flex-shrink: 0; }
+.sidebar-divider { height: 1px; background: var(--gray-200); margin: 8px 12px; }
+
+.map-section { overflow: hidden; border-right: 1px solid var(--gray-200); }
 #map { width: 100%; height: 100%; background: #e8f0f8; border: none; }
 .map-placeholder-text { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #4a6785; font-size: 0.92rem; line-height: 2; }
-.listings-panel { height: 100%; overflow-y: auto; padding: 12px; background: var(--gray-100); }
-.listings-panel .listing-cards { max-height: none; overflow: visible; }
-.listings-panel .listing-detail { margin-top: 12px; }
+
+.listings-panel { height: 100%; overflow-y: auto; background: var(--gray-100); display: flex; flex-direction: column; }
+.listings-list-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px 6px; flex-shrink: 0; background: var(--gray-100);
+  position: sticky; top: 0; z-index: 5;
+}
+.list-count { font-size: 0.82rem; color: var(--gray-700); }
+.listings-list-body { padding: 0 10px 12px; flex: 1; }
+.listing-cards { display: grid; gap: 10px; }
 
 .listing-cards { display: grid; gap: 12px; }
 .listing-card { display: flex; background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
@@ -182,10 +242,15 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .hero { padding: 62px 0; }
   .card-grid { grid-template-columns: 1fr; }
   .listings-body { grid-template-columns: 1fr; height: auto; min-height: auto; }
-  #map { height: 320px; }
+  .listings-sidebar { display: none; }
+  #map { height: 250px; }
   .map-section { border-right: none; border-bottom: 1px solid var(--gray-200); }
-  .listings-panel { height: auto; }
+  .listings-panel { height: auto; overflow-y: visible; }
+  .listings-list-header { position: static; }
+  .filter-top-form input[type="text"], .filter-top-form select { max-width: 100%; }
   .listing-filter-grid input, .listing-filter-grid select { flex: 1 1 calc(50% - 4px); }
+  .modal-box { border-radius: 0; max-height: 100vh; height: 100vh; }
+  .modal-body { grid-template-columns: 1fr; overflow-y: auto; }
   .floating-contact { bottom: 20px; right: 14px; }
   .float-btn { width: 48px; height: 48px; font-size: 10px; }
   .footer-main span, .footer-sub span { display: block; margin: 2px 0; }
@@ -358,7 +423,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 .done-btn.done-active { border-color: #dc2626; color: #dc2626; }
 
-/* 반응형 */
+/* 반응형 (관리자) */
 @media (max-width: 760px) {
   .dash-stats { grid-template-columns: 1fr 1fr; }
   .recent-title { min-width: calc(100% - 80px); }
@@ -367,4 +432,37 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 @media (max-width: 480px) {
   .dash-stats { grid-template-columns: 1fr; }
+}
+
+/* ===== 모달 미니맵 ===== */
+.modal-minimap-wrap { border-radius: 10px; overflow: hidden; border: 1px solid var(--gray-200); flex-shrink: 0; }
+.modal-minimap-wrap h4 { font-size: 12px; font-weight: 700; color: var(--navy); margin: 0; padding: 8px 10px 6px; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); }
+#modalMiniMap { width: 100%; height: 180px; background: #e8f0f8; }
+
+/* ===== 메인(index.html) 최신매물 섹션 ===== */
+.home-recent-section { padding: 56px 0; background: var(--gray-100); }
+.home-recent-section h2 { font-size: 1.5rem; font-weight: 800; color: var(--navy); margin: 0 0 6px; }
+.home-recent-section .section-sub { font-size: 0.92rem; color: var(--gray-700); margin: 0 0 24px; }
+.home-listing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.home-listing-card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s; text-decoration: none;
+}
+.home-listing-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.hlc-img { position: relative; aspect-ratio: 4/3; background: #dce8f5; overflow: hidden; }
+.hlc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hlc-body { padding: 12px 14px; }
+.hlc-address { font-size: 11px; color: var(--gray-700); margin-bottom: 3px; }
+.hlc-title { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hlc-price { font-size: 13px; font-weight: 700; color: var(--green); }
+.home-recent-footer { margin-top: 28px; text-align: center; }
+
+@media (max-width: 760px) {
+  .home-listing-grid { grid-template-columns: 1fr; }
+  .home-recent-section { padding: 40px 0; }
+}
+@media (min-width: 761px) and (max-width: 1060px) {
+  .home-listing-grid { grid-template-columns: repeat(2, 1fr); }
+  .listings-body { grid-template-columns: 160px 1fr 300px; }
 }
