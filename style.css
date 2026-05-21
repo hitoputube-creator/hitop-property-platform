@@ -194,3 +194,177 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .modal-left { border-right: none; border-bottom: 1px solid #e5e9f0; max-height: 280px; }
   .top-bar-hours { display: none; }
 }
+
+/* ======================================
+   관리자 대시보드 / 등록 / 관리 공통
+   ====================================== */
+:root { --gold: #C9A84C; }
+
+/* 대시보드 헤더 */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.dash-title { margin: 0; color: var(--navy); font-size: 1.5rem; }
+.dash-actions { display: flex; gap: 10px; }
+
+/* 통계 카드 */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+}
+.stat-card.stat-gold { border-top: 4px solid var(--gold); }
+.stat-card.stat-green { border-top: 4px solid var(--green); }
+.stat-card.stat-red   { border-top: 4px solid #dc2626; }
+.stat-num   { font-size: 2.2rem; font-weight: 800; color: var(--navy); }
+.stat-label { font-size: 0.88rem; color: var(--gray-700); margin-top: 6px; }
+
+/* 최근 매물 */
+.dash-recent h2 { color: var(--navy); margin-bottom: 12px; font-size: 1.1rem; }
+.recent-list { display: grid; gap: 8px; }
+.recent-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+.recent-no {
+  font-size: 11px; color: var(--gray-700);
+  background: var(--gray-100); padding: 2px 7px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.recent-title {
+  flex: 1; font-weight: 700; font-size: 0.9rem;
+  overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; min-width: 80px;
+}
+.recent-type {
+  font-size: 11px; color: #fff; background: var(--navy);
+  padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
+}
+.recent-price { font-size: 12px; color: var(--green); font-weight: 700; flex-shrink: 0; }
+.recent-status { font-size: 11px; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
+.status-done   { background: #fee2e2; color: #dc2626; }
+.status-public { background: var(--green-soft); color: var(--green); }
+.recent-date   { font-size: 11px; color: var(--gray-700); flex-shrink: 0; }
+
+/* 관리자 페이지 공통 헤더 */
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.admin-page-header h1 { margin: 0; flex: 1; color: var(--navy); }
+
+/* 매물번호 표시 */
+.listing-no-display {
+  background: var(--green-soft);
+  border: 1px solid #cde7d9;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+.listing-no-display strong { color: var(--navy); font-size: 1.1rem; }
+
+/* 면적 / 금액 행 */
+.area-row, .price-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.admin-form .area-row input,
+.admin-form .price-row input { flex: 1; min-width: 0; }
+.area-pyeong, .price-korean {
+  font-size: 0.85rem; color: var(--green);
+  font-weight: 700; white-space: nowrap; min-width: 90px;
+}
+
+/* 매물 관리 필터 바 */
+.admin-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.admin-filters input,
+.admin-filters select {
+  flex: 1 1 120px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+/* 정렬 버튼 행 */
+.sort-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.sort-row .btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.total-count { margin-left: auto; font-size: 0.88rem; color: var(--gray-700); }
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* 매물 목록 아이템 개선 */
+.admin-item-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.admin-item-no {
+  font-size: 11px; color: var(--gray-700);
+  background: var(--gray-100); padding: 2px 7px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.admin-item-title { font-size: 0.95rem; }
+.admin-item-date { margin-left: auto; font-size: 11px; color: var(--gray-700); }
+.badge-done {
+  display: inline-block;
+  background: #fee2e2; color: #dc2626;
+  font-size: 11px; padding: 2px 7px;
+  border-radius: 4px; margin-left: 4px;
+}
+.done-btn.done-active { border-color: #dc2626; color: #dc2626; }
+
+/* 반응형 */
+@media (max-width: 760px) {
+  .dash-stats { grid-template-columns: 1fr 1fr; }
+  .recent-title { min-width: calc(100% - 80px); }
+  .admin-filters input,
+  .admin-filters select { flex: 1 1 calc(50% - 4px); }
+}
+@media (max-width: 480px) {
+  .dash-stats { grid-template-columns: 1fr; }
+}
