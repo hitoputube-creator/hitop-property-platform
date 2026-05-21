@@ -11,143 +11,111 @@
   </head>
   <body data-page="listings">
 
-    <!-- 탑바 -->
-    <div class="top-bar">
-      <div class="container">
-        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
-        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
-      </div>
-    </div>
-
-    <!-- 헤더 -->
-    <header class="site-header">
-      <div class="container nav-wrap">
+    <!-- ======= 헤더 ======= -->
+    <header class="lp-header">
+      <div class="lp-header-top">
         <a class="brand" href="index.html">
           <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
         </a>
-        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
-        <nav class="nav-menu" aria-label="메인 메뉴">
-          <a href="about.html">하이탑소개</a>
-          <a href="listings.html" aria-current="page">매물보기</a>
-          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
-          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
-          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-          <a href="index.html#contact">고객센터</a>
-        </nav>
+        <div class="lp-header-info">
+          <span class="lp-header-hours">🕙 평일 10:00 ~ 19:00</span>
+          <a href="tel:031-949-8969" class="lp-header-phone">📞 031-949-8969</a>
+        </div>
       </div>
+      <nav class="lp-header-nav">
+        <a href="about.html">하이탑소개</a>
+        <a href="listings.html" class="nav-active">매물보기</a>
+        <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+        <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+        <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+        <a href="index.html#contact">고객센터</a>
+      </nav>
     </header>
 
-    <!-- 3단 본문: 사이드바 | 지도 | 카드패널 -->
+    <!-- ======= 3단 본문 ======= -->
     <div class="lp-body">
 
-      <!-- 왼쪽 사이드바 -->
-      <aside class="lp-sidebar" aria-label="필터 사이드바">
-        <div class="lp-sidebar-section">
-          <div class="lp-sidebar-header">매물 종류</div>
+      <!-- ── 왼쪽 사이드바 (200px) ── -->
+      <aside class="lp-sidebar">
 
+        <!-- 매물 종류 필터 -->
+        <div class="lp-sb-section-title">매물 종류</div>
+        <nav class="lp-cat-nav">
           <a class="lp-cat-item active" href="#" data-cat="">
-            <span class="lp-cat-name">전체 매물</span>
-            <span class="lp-cat-count" id="cnt-all">(0)</span>
+            <span class="lp-cat-name">전체매물</span>
+            <span class="lp-cat-count" id="cnt-all">0</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="공장창고">
             <span class="lp-cat-name">공장·창고</span>
-            <span class="lp-cat-count" id="cnt-공장창고">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="공장창고" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="공장창고" data-deal="임대">임</span>
-            </span>
+            <span class="lp-cat-count" id="cnt-공장창고">0</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="상가">
             <span class="lp-cat-name">상가·빌딩</span>
-            <span class="lp-cat-count" id="cnt-상가">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="상가" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="상가" data-deal="임대">임</span>
-            </span>
+            <span class="lp-cat-count" id="cnt-상가">0</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="토지">
             <span class="lp-cat-name">토지·개발</span>
-            <span class="lp-cat-count" id="cnt-토지">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="토지" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="토지" data-deal="임대">임</span>
-            </span>
+            <span class="lp-cat-count" id="cnt-토지">0</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="오피스텔">
             <span class="lp-cat-name">오피스텔</span>
-            <span class="lp-cat-count" id="cnt-오피스텔">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-jeon" data-cat="오피스텔" data-deal="전세">전</span>
-              <span class="lp-deal-badge lbdg-wol"  data-cat="오피스텔" data-deal="월세">월</span>
-            </span>
+            <span class="lp-cat-count" id="cnt-오피스텔">0</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="힐스테이트더운정">
             <span class="lp-cat-name">힐스테이트더운정</span>
-            <span class="lp-cat-count" id="cnt-힐스테이트더운정">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae"  data-cat="힐스테이트더운정" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-jeon" data-cat="힐스테이트더운정" data-deal="전세">전</span>
-              <span class="lp-deal-badge lbdg-wol"  data-cat="힐스테이트더운정" data-deal="월세">월</span>
-            </span>
+            <span class="lp-cat-count" id="cnt-힐스테이트더운정">0</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="단독주택">
             <span class="lp-cat-name">단독·전원주택</span>
-            <span class="lp-cat-count" id="cnt-단독주택">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="단독주택" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="단독주택" data-deal="임대">임</span>
-            </span>
+            <span class="lp-cat-count" id="cnt-단독주택">0</span>
+          </a>
+        </nav>
+
+        <!-- 전화문의 박스 -->
+        <div class="lp-contact-box">
+          <div class="lp-contact-label">전화문의</div>
+          <a href="tel:031-949-8969" class="lp-contact-phone">031-949-8969</a>
+          <p class="lp-contact-hours">평일 10:00 ~ 19:00</p>
+          <a href="https://open.kakao.com" target="_blank" rel="noreferrer" class="lp-kakao-btn">
+            💬 카카오톡 문의
           </a>
         </div>
 
-        <!-- 하단 문의 박스 -->
-        <div class="lp-contact-box">
-          <div class="lp-contact-box-body">
-            <div class="cb-label">매물 문의</div>
-            <a href="tel:031-949-8969" class="cb-phone">031-949-8969</a>
-            <div class="cb-divider"></div>
-            <p class="cb-hours">평일 10:00 ~ 19:00</p>
-            <a href="https://open.kakao.com" target="_blank" rel="noreferrer" class="cb-kakao-btn">
-              💬 카카오톡 문의
-            </a>
-          </div>
-<!-- 실시간 빠른문의 미니폼 -->
-<div class="lp-mini-inquiry-box">
-  <div class="lp-mini-inquiry-title">실시간 빠른문의</div>
-  <p class="lp-mini-inquiry-sub">빠르게 문의 남겨주세요.</p>
-
-  <input type="text" class="lp-mini-inquiry-input" placeholder="이름" />
-  <input type="tel" class="lp-mini-inquiry-input" placeholder="연락처" />
-  <textarea class="lp-mini-inquiry-textarea" placeholder="문의내용"></textarea>
-
-  <label class="lp-mini-inquiry-agree">
-    <input type="checkbox" />
-    <span>개인정보 수집·이용 동의</span>
-  </label>
-
-  <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="lp-mini-inquiry-btn">
-    상담문의 남기기
-  </a>
-</div>
-        
-      </aside>
-
-      <!-- 가운데: 카카오맵 -->
-      <aside class="lp-map" aria-label="지도 영역">
-        <div id="map">
-          <div class="map-placeholder-text">
-            <span>📍 카카오맵 로딩 중...</span>
-          </div>
+        <!-- 실시간 빠른문의 -->
+        <div class="lp-inquiry-box">
+          <div class="lp-inquiry-title">실시간 빠른문의</div>
+          <p class="lp-inquiry-sub">빠르게 문의 남겨주세요.</p>
+          <input type="text"  class="lp-inq-input" placeholder="이름" />
+          <input type="tel"   class="lp-inq-input" placeholder="연락처" />
+          <textarea class="lp-inq-textarea" placeholder="문의내용"></textarea>
+          <label class="lp-inq-agree">
+            <input type="checkbox" />
+            <span>개인정보 수집·이용 동의</span>
+          </label>
+          <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="lp-inq-submit">
+            상담문의 남기기
+          </a>
         </div>
+
       </aside>
 
-      <!-- 오른쪽: 검색 + 추천/최신 + 전체카드 -->
-      <main class="lp-main" id="lpMain">
+      <!-- ── 가운데: 카카오맵 (flex:1) ── -->
+      <div class="lp-map-wrap">
+        <div class="map-search-overlay">
+          <input type="text" id="mapSearchInput" placeholder="🔍 주소 또는 매물명 검색" autocomplete="off" />
+          <button type="button" id="mapSearchBtn">검색</button>
+        </div>
+        <div id="map">
+          <div class="map-loading">📍 카카오맵 로딩 중...</div>
+        </div>
+      </div>
 
-        <!-- 검색바 -->
-        <form id="filterForm" class="lp-search-bar" novalidate>
-          <input type="text" name="keyword" id="kwInput" placeholder="🔍 제목·주소 검색" autocomplete="off" />
-          <select name="formCat" id="formCatSelect">
+      <!-- ── 오른쪽 패널 (320px) ── -->
+      <aside class="lp-panel" id="lpMain">
+
+        <!-- 상단 필터바 -->
+        <div class="lp-filter-bar">
+          <select id="formCatSelect">
             <option value="">매물종류 전체</option>
             <option value="공장창고">공장·창고</option>
             <option value="상가">상가·빌딩</option>
@@ -156,71 +124,68 @@
             <option value="힐스테이트더운정">힐스테이트더운정</option>
             <option value="단독주택">단독·전원주택</option>
           </select>
-          <select name="formDeal" id="formDealSelect">
+          <select id="formDealSelect">
             <option value="">거래유형 전체</option>
             <option value="매매">매매</option>
             <option value="전세">전세</option>
             <option value="월세">월세</option>
             <option value="임대">임대</option>
           </select>
-          <select name="formSpecial" id="formSpecialSelect">
-            <option value="">전체 매물</option>
-            <option value="추천">⭐ 추천매물</option>
-            <option value="급매">🔥 급매물</option>
-          </select>
-          <button type="submit" class="lp-search-submit">검색</button>
-          <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
-        </form>
+          <div class="lp-filter-row2">
+            <input type="text" id="kwInput" placeholder="지역 검색" autocomplete="off" />
+            <button type="button" id="filterSearchBtn">검색</button>
+          </div>
+        </div>
 
         <!-- ⭐ 추천매물 섹션 -->
-        <section class="lp-preview-section" id="sectionFeatured">
-          <div class="lp-preview-header">
-            <span class="lp-preview-icon">⭐</span>
-            <span class="lp-preview-title">추천매물</span>
-            <button class="lp-preview-more" type="button" id="btnShowFeatured">전체보기</button>
+        <section class="lp-section" id="sectionFeatured">
+          <div class="lp-section-hd">
+            <span class="lp-sec-icon">⭐</span>
+            <span class="lp-sec-title">추천매물</span>
+            <button class="lp-sec-more" type="button" id="btnShowFeatured">전체보기</button>
           </div>
-          <div id="featuredCards" class="lp-preview-cards">
-            <div class="lp-preview-empty">등록된 추천매물이 없습니다.</div>
+          <div id="featuredCards" class="lp-mini-list">
+            <div class="lp-empty-sm">등록된 추천매물이 없습니다.</div>
           </div>
         </section>
 
         <!-- 🔥 최신등록 섹션 -->
-        <section class="lp-preview-section" id="sectionLatest">
-          <div class="lp-preview-header">
-            <span class="lp-preview-icon">🔥</span>
-            <span class="lp-preview-title">최신등록</span>
-            <button class="lp-preview-more" type="button" id="btnShowLatest">전체보기</button>
+        <section class="lp-section" id="sectionLatest">
+          <div class="lp-section-hd">
+            <span class="lp-sec-icon">🔥</span>
+            <span class="lp-sec-title">최신등록</span>
+            <button class="lp-sec-more" type="button" id="btnShowLatest">전체보기</button>
           </div>
-          <div id="latestCards" class="lp-preview-cards">
-            <div class="lp-preview-empty">등록된 매물이 없습니다.</div>
+          <div id="latestCards" class="lp-mini-list">
+            <div class="lp-empty-sm">등록된 매물이 없습니다.</div>
           </div>
         </section>
 
-        <!-- 전체 매물 구분선 -->
-        <div class="lp-all-divider">
-          <span>전체 매물</span>
-        </div>
-
-        <!-- 결과 헤더 -->
-        <div class="lp-results-hd">
-          <span class="lp-result-count">총 <strong id="listCount">0</strong>개 매물</span>
+        <!-- 전체 매물 헤더 -->
+        <div class="lp-all-hd">
+          <span class="lp-all-count">전체 매물 <strong id="listCount">0</strong>개</span>
           <div class="lp-sort-btns">
             <button class="lp-sort-btn active" id="sortDateBtn" type="button">최신순</button>
             <button class="lp-sort-btn" id="sortPriceBtn" type="button">가격순</button>
           </div>
         </div>
 
-        <!-- 카드 목록 -->
-        <div id="listingCards" class="lp-cards-grid"></div>
+        <!-- 매물 카드 목록 -->
+        <div id="listingCards" class="lp-cards-list"></div>
 
         <!-- 페이지네이션 -->
         <div id="lpPagination" class="lp-pagination"></div>
 
-      </main>
+        <!-- 하단 슬라이드형 매물카드 (가로 스크롤) -->
+        <div class="lp-slide-section">
+          <div class="lp-slide-hd">📌 빠른 매물 보기</div>
+          <div id="slideCards" class="lp-slide-list"></div>
+        </div>
 
+      </aside>
     </div><!-- .lp-body -->
 
-    <!-- 매물 상세 모달 -->
+    <!-- ======= 매물 상세 모달 ======= -->
     <div id="listingModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="매물 상세보기">
       <div class="modal-box">
         <div class="modal-header">
@@ -265,7 +230,7 @@
       </div>
     </div>
 
-    <!-- 라이트박스 -->
+    <!-- ======= 라이트박스 ======= -->
     <div id="lightbox" class="lightbox-overlay hidden" role="dialog" aria-modal="true">
       <button class="lightbox-close" id="lightboxClose" type="button" aria-label="닫기">✕</button>
       <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="이전">‹</button>
@@ -273,41 +238,37 @@
       <button class="lightbox-next" id="lightboxNext" type="button" aria-label="다음">›</button>
     </div>
 
-    <!-- 플로팅 문의 -->
-    <div class="floating-contact">
-      <a href="tel:031-949-8969" class="float-btn float-call" title="전화문의">
-        <span class="float-btn-icon">📞</span><span>전화문의</span>
+    <!-- ======= 우측 하단 플로팅 버튼 ======= -->
+    <div class="floating-btns">
+      <a href="tel:031-949-8969" class="float-btn float-call">
+        <span class="float-icon">📞</span>
+        <span>전화문의</span>
       </a>
-      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-blog" title="블로그">
-        <span class="float-btn-icon">N</span><span>네이버블로그</span>
+      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-blog">
+        <span class="float-icon">N</span>
+        <span>네이버블로그</span>
       </a>
-      <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao" title="카카오톡">
-        <span class="float-btn-icon">💬</span><span>카카오채팅</span>
+      <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao">
+        <span class="float-icon">💬</span>
+        <span>카카오채팅</span>
       </a>
     </div>
 
-    <footer class="site-footer compact-footer">
-      <div class="container footer-inner">
-        <p class="footer-main">
-          <strong>하이탑부동산공인중개사사무소</strong>
-          <span>대표: 주현희</span>
-          <span>주소: 경기도 파주시 책향기로830, 1층</span>
-          <span>전화: 031-949-8969</span>
-          <a href="admin.html" style="margin-left:auto;padding:4px 10px;background:#333;color:#fff;border-radius:4px;font-size:11px;text-decoration:none;opacity:0.6;">관리자</a>
-        </p>
-        <p class="footer-sub">
-          <span>중개사무소 등록번호: 41480-2016-00026</span>
-          <span>사업자등록번호: 305-48-62183</span>
-          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
-        </p>
-        <p class="footer-links">
+    <!-- ======= 푸터 ======= -->
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <p><strong>하이탑부동산공인중개사사무소</strong> · 대표: 주현희 · 031-949-8969</p>
+        <p>경기도 파주시 책향기로 830, 1층 · 등록번호: 41480-2016-00026 · 사업자: 305-48-62183</p>
+        <p class="lp-footer-links">
           <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
           <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
           <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="admin.html" style="opacity:.5;">관리자</a>
         </p>
+        <p class="lp-footer-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
       </div>
     </footer>
 
-    <script src="app.js?v=20260521c"></script>
+    <script src="app.js?v=20260521e"></script>
   </body>
 </html>

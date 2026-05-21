@@ -91,7 +91,7 @@ const PROPERTY_FIELDS = {
   }
 };
 
-// ── 샘플 데이터 (is_featured / is_urgent 필드 추가) ──
+// ── 샘플 데이터 ──
 const sampleListings = [
   {
     id:'s1', propertyType:'공장창고', dealType:'임대',
@@ -102,8 +102,7 @@ const sampleListings = [
     office:'1개/1개', parking:'가능 (5대)', elevator:'없음', approvalDate:'2010-03-15',
     title:'대형 물류창고', description:'IC 접근성 우수, 층고 높음.\n자유로 IC 5분 거리.\n대형 트럭 진출입 가능.',
     imageUrls:['https://picsum.photos/seed/factory1/800/500','https://picsum.photos/seed/factory2/800/500'],
-    listingNo:'F-0001', createdAt:'2026-05-01T09:00:00.000Z',
-    is_featured: true   // ⭐ 추천매물
+    listingNo:'F-0001', createdAt:'2026-05-01T09:00:00.000Z', is_featured: true
   },
   {
     id:'s2', propertyType:'상가', dealType:'임대',
@@ -115,8 +114,7 @@ const sampleListings = [
     parking:'가능', heating:'중앙난방', buildingUse:'근린생활시설', approvalDate:'2015-06-20',
     title:'대로변 1층 상가', description:'유동인구 풍부, 주차 가능.\n코너 상가, 가시성 우수.',
     imageUrls:['https://picsum.photos/seed/store1/800/500','https://picsum.photos/seed/store2/800/500'],
-    listingNo:'S-0001', createdAt:'2026-05-02T09:00:00.000Z',
-    is_urgent: true     // 🔥 급매물
+    listingNo:'S-0001', createdAt:'2026-05-02T09:00:00.000Z', is_urgent: true
   },
   {
     id:'s3', propertyType:'오피스텔', dealType:'전세',
@@ -128,22 +126,21 @@ const sampleListings = [
     parking:'가능 (세대당 1대)', buildingUse:'업무시설',
     title:'신축 오피스텔', description:'역세권, 풀옵션.\nGTX-A 운정역 도보 5분.',
     imageUrls:['https://picsum.photos/seed/officetel1/800/500','https://picsum.photos/seed/officetel2/800/500'],
-    listingNo:'O-0001', createdAt:'2026-05-03T09:00:00.000Z',
-    is_featured: true   // ⭐ 추천매물
+    listingNo:'O-0001', createdAt:'2026-05-03T09:00:00.000Z', is_featured: true
   }
 ];
 
 // ── 스토리지 / 포맷 헬퍼 ──
-const readListings = () => {
+const readListings  = () => {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) { localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleListings)); return [...sampleListings]; }
   try { return JSON.parse(raw); } catch { return [...sampleListings]; }
 };
 const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
-const formatPrice = (n) => Number(n).toLocaleString('ko-KR');
-const getThumbnail = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
+const formatPrice   = (n) => Number(n).toLocaleString('ko-KR');
+const getThumbnail  = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
 const getDisplayAddress = (item) => item.displayAddress || item.address;
-const getMainPrice = (item) => item.deposit || item.salePrice || item.price || 0;
+const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
 const toKoreanPrice = (wanwon) => {
   const n = Number(wanwon);
@@ -184,7 +181,7 @@ const CAT_LABELS = {
 
 // ── 라이트박스 ──
 let lightboxImages = [];
-let lightboxIdx = 0;
+let lightboxIdx    = 0;
 
 const openLightbox = (images, idx) => {
   lightboxImages = images; lightboxIdx = idx;
@@ -211,12 +208,12 @@ const lightboxNav = (dir) => {
 const openModal = (item) => {
   const modal = document.getElementById('listingModal');
   if (!modal) return;
-  const cfg = PROPERTY_FIELDS[item.propertyType] || {};
+  const cfg        = PROPERTY_FIELDS[item.propertyType] || {};
   const priceFields = (cfg.priceConfig || {})[item.dealType] || [];
-  const infoFields = cfg.infoFields || [];
-  const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
+  const infoFields  = cfg.infoFields || [];
+  const images      = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
 
-  document.getElementById('modalId').textContent = item.id;
+  document.getElementById('modalId').textContent    = item.id;
   document.getElementById('modalTitle').textContent = item.title;
   document.getElementById('modalBadge').textContent = `${item.propertyType} | ${item.dealType}`;
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
@@ -250,7 +247,7 @@ const openModal = (item) => {
   const descEl = document.getElementById('modalDesc');
   descEl.innerHTML = item.description ? item.description.replace(/\n/g,'<br>') : '';
 
-  const mainImg = document.getElementById('modalMainImg');
+  const mainImg  = document.getElementById('modalMainImg');
   const thumbsEl = document.getElementById('modalThumbs');
   if (images.length > 0) {
     mainImg.src = images[0]; mainImg.dataset.index = 0;
@@ -293,8 +290,8 @@ const requireAdminLogin = () => {
   if (!overlay || !mainEl) return true;
   const ADMIN_PW = 'hitop2025';
   if (sessionStorage.getItem('hitop_admin') !== '1') {
-    const loginBtn = document.getElementById('loginBtn');
-    const loginPw  = document.getElementById('loginPw');
+    const loginBtn   = document.getElementById('loginBtn');
+    const loginPw    = document.getElementById('loginPw');
     const loginError = document.getElementById('loginError');
     const doLogin = () => {
       if (loginPw.value === ADMIN_PW) { sessionStorage.setItem('hitop_admin','1'); location.reload(); }
@@ -324,19 +321,18 @@ const priceInRange = (price, range) => {
 };
 
 // ─────────────────────────────────────────────
-// listings.html
+// listings.html — 전면 재설계 (2026-05-21)
 // ─────────────────────────────────────────────
 const setupListingsPage = () => {
-  const cardsEl  = document.getElementById('listingCards');
-  const filterForm = document.getElementById('filterForm');
-  if (!cardsEl || !filterForm) return;
+  const cardsEl = document.getElementById('listingCards');
+  if (!cardsEl) return;
 
   // ── 필터 상태 ──
-  const flt = { cat:'', deal:'', price:'', kw:'', formCat:'', formDeal:'', special:'' };
-  let sortMode = 'date';
+  const flt = { cat:'', deal:'', kw:'', special:'' };
+  let sortMode   = 'date';
   let currentPage = 1;
   const PAGE_SIZE = 10;
-  let filtered = [];
+  let filtered    = [];
 
   // ── 카카오맵 ──
   let map = null, miniMap = null, openIw = null;
@@ -345,21 +341,21 @@ const setupListingsPage = () => {
   // ── 카운트 업데이트 ──
   const updateCounts = () => {
     const all = readListings();
-    const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=`(${v})`; };
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('cnt-all', all.length);
-    ['공장창고','상가','토지','오피스텔','힐스테이트더운정','단독주택'].forEach(cat => {
-      set(`cnt-${cat}`, all.filter(i=>i.propertyType===cat).length);
-    });
+    ['공장창고','상가','토지','오피스텔','힐스테이트더운정','단독주택'].forEach(cat =>
+      set(`cnt-${cat}`, all.filter(i => i.propertyType === cat).length)
+    );
   };
 
   // ── 지도 마커 ──
   const placeMarkers = (items) => {
-    if (!map || typeof kakao==='undefined') return;
+    if (!map || typeof kakao === 'undefined') return;
     activeMarkers.forEach(m => m.setMap(null));
     activeMarkers.length = 0;
-    if (openIw) { openIw.close(); openIw=null; }
+    if (openIw) { openIw.close(); openIw = null; }
     const geocoder = new kakao.maps.services.Geocoder();
-    items.slice(0,30).forEach(item => {
+    items.slice(0, 30).forEach(item => {
       geocoder.addressSearch(item.address, (result, status) => {
         if (status !== kakao.maps.services.Status.OK) return;
         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
@@ -367,12 +363,12 @@ const setupListingsPage = () => {
         const iw = new kakao.maps.InfoWindow({
           content:`<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
             ${item.title}<br>
-            <span style="color:#F97316;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
+            <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
           </div>`
         });
-        kakao.maps.event.addListener(marker,'click',() => {
+        kakao.maps.event.addListener(marker, 'click', () => {
           if (openIw) openIw.close();
-          iw.open(map, marker); openIw=iw;
+          iw.open(map, marker); openIw = iw;
           openModalFull(item);
         });
         activeMarkers.push(marker);
@@ -383,55 +379,130 @@ const setupListingsPage = () => {
   // ── 지도 초기화 ──
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
-    if (!mapEl || typeof kakao==='undefined') return;
+    if (!mapEl || typeof kakao === 'undefined') return;
     mapEl.innerHTML = '';
-    map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(37.7512,126.7820), level:7 });
+    map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(37.7512, 126.7820), level: 7 });
     applyFilters();
   });
 
-  // ── 모달 (미니맵 포함) ──
+  // ── 모달 열기 (미니맵 포함) ──
   const openModalFull = (item) => {
     openModal(item);
     const doneTag = document.getElementById('modalDoneTag');
     if (doneTag) doneTag.classList.toggle('hidden', item.status !== 'done');
     const minimapWrap = document.getElementById('modalMinimapWrap');
-    const minimapEl  = document.getElementById('modalMiniMap');
+    const minimapEl   = document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
     minimapWrap.style.display = 'none';
-    if (typeof kakao==='undefined' || !item.address) return;
+    if (typeof kakao === 'undefined' || !item.address) return;
     new kakao.maps.services.Geocoder().addressSearch(item.address, (result, status) => {
       if (status !== kakao.maps.services.Status.OK) return;
       const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
       minimapWrap.style.display = 'block';
       minimapEl.innerHTML = '';
-      miniMap = new kakao.maps.Map(minimapEl, { center: coords, level:4 });
+      miniMap = new kakao.maps.Map(minimapEl, { center: coords, level: 4 });
       new kakao.maps.Marker({ map: miniMap, position: coords });
     });
   };
 
-  // ── 미니카드 HTML (추천/최신 섹션용) ──
+  // ── 가격 텍스트 생성 ──
+  const buildPriceText = (item) => {
+    if (item.dealType === '매매') {
+      const p = item.salePrice || item.price || getMainPrice(item);
+      return p ? `매매 ${toKoreanPrice(p)}` : '매매';
+    }
+    if (item.dealType === '전세') {
+      return item.deposit ? `전세 ${toKoreanPrice(item.deposit)}` : '전세';
+    }
+    if (item.dealType === '임대' || item.dealType === '월세') {
+      const parts = [];
+      if (item.deposit)     parts.push(`보${formatPrice(item.deposit)}만`);
+      if (item.monthlyRent) parts.push(`월${formatPrice(item.monthlyRent)}만`);
+      return parts.length ? parts.join(' / ') : item.dealType;
+    }
+    const p = getMainPrice(item);
+    return p ? `${item.dealType} ${toKoreanPrice(p)}` : item.dealType;
+  };
+
+  // ── 면적 텍스트 생성 ──
+  const buildAreaText = (item) => {
+    const sqm = item.area || item.landArea || item.contractArea || 0;
+    if (!sqm) return '';
+    const py = Math.round(Number(sqm) * 0.3025);
+    return `${sqm}㎡ (약 ${py}평)`;
+  };
+
+  // ── 미니 카드 HTML (추천/최신 섹션) ──
   const miniCardHTML = (item) => {
     const color = CAT_COLORS[item.propertyType] || '#374151';
     const label = CAT_LABELS[item.propertyType] || item.propertyType;
-    const price = getMainPrice(item);
-    const priceText = price ? `${item.dealType} ${formatPrice(price)}만원` : '-';
     const imgSrc = getThumbnail(item);
     return `
       <div class="lp-mini-card" data-id="${item.id}">
-        <div class="lp-mini-img">
+        <div class="lp-mini-thumb">
           ${imgSrc
             ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />`
-            : `<div style="width:100%;height:100%;background:#dce8f5;"></div>`}
+            : ''}
         </div>
-        <div class="lp-mini-body">
+        <div class="lp-mini-info">
           <div class="lp-mini-badges">
-            <span class="lp-mini-cat" style="background:${color}">${label}</span>
-            <span class="lp-mini-deal">${item.dealType}</span>
+            <span class="lp-mini-cat-bdg" style="background:${color}">${label}</span>
+            <span class="lp-mini-deal-bdg">${item.dealType}</span>
           </div>
-          <div class="lp-mini-title">${item.title}</div>
-          <div class="lp-mini-addr">${getDisplayAddress(item)}</div>
+          <div class="lp-mini-card-title">${item.title}</div>
+          <div class="lp-mini-card-price">${buildPriceText(item)}</div>
         </div>
-        <div class="lp-mini-price">${priceText}</div>
+      </div>`;
+  };
+
+  // ── 메인 카드 HTML ──
+  const cardHTML = (item) => {
+    const isDone  = item.status === 'done';
+    const color   = CAT_COLORS[item.propertyType] || '#64748b';
+    const label   = CAT_LABELS[item.propertyType] || item.propertyType;
+    const imgSrc  = getThumbnail(item);
+    const priceText = buildPriceText(item);
+    const areaText  = buildAreaText(item);
+
+    const cornerBadge = item.is_urgent
+      ? `<span class="lp-corner-tag lp-tag-urg">🔥 급매</span>`
+      : item.is_featured
+        ? `<span class="lp-corner-tag lp-tag-feat">⭐ 추천</span>`
+        : '';
+
+    return `
+      <article class="lp-card${isDone ? ' is-done' : ''}" data-id="${item.id}">
+        <div class="lp-card-thumb">
+          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
+          <span class="lp-cat-bdg" style="background:${color}">${label}</span>
+          <span class="lp-deal-bdg" style="left:${label.length > 4 ? 90 : 70}px">${item.dealType}</span>
+          ${cornerBadge}
+          ${isDone ? '<div class="lp-sold-overlay">거래완료</div>' : ''}
+        </div>
+        <div class="lp-card-body">
+          <div class="lp-card-title">${item.title}</div>
+          <div class="lp-card-price">${priceText}</div>
+          ${areaText ? `<div class="lp-card-area">📐 ${areaText}</div>` : ''}
+          <div class="lp-card-addr">📍 ${getDisplayAddress(item)}</div>
+        </div>
+      </article>`;
+  };
+
+  // ── 슬라이드 카드 HTML ──
+  const slideCardHTML = (item) => {
+    const color  = CAT_COLORS[item.propertyType] || '#64748b';
+    const label  = CAT_LABELS[item.propertyType] || item.propertyType;
+    const imgSrc = getThumbnail(item);
+    return `
+      <div class="lp-slide-card" data-id="${item.id}">
+        <div class="lp-slide-thumb-wrap">
+          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
+          <span class="lp-slide-bdg" style="background:${color}">${label}</span>
+        </div>
+        <div class="lp-slide-info">
+          <div class="lp-slide-title">${item.title}</div>
+          <div class="lp-slide-price">${buildPriceText(item)}</div>
+        </div>
       </div>`;
   };
 
@@ -439,18 +510,14 @@ const setupListingsPage = () => {
   const renderPreviewSections = () => {
     const all = readListings().filter(x => x.status !== 'done');
 
-    // ⭐ 추천매물 (is_featured 또는 tags에 '추천' 포함)
-    const featured = all
-      .filter(x => x.is_featured || (x.tags && x.tags.includes('추천')))
-      .slice(0, 3);
+    const featured = all.filter(x => x.is_featured || (x.tags && x.tags.includes('추천'))).slice(0, 3);
     const featuredEl = document.getElementById('featuredCards');
     if (featuredEl) {
       featuredEl.innerHTML = featured.length
         ? featured.map(miniCardHTML).join('')
-        : '<div class="lp-preview-empty">등록된 추천매물이 없습니다.</div>';
+        : '<div class="lp-empty-sm">등록된 추천매물이 없습니다.</div>';
     }
 
-    // 🔥 최신등록 (등록일 최신 3개)
     const latest = [...all]
       .sort((a,b) => (b.createdAt||b.id||'').localeCompare(a.createdAt||a.id||''))
       .slice(0, 3);
@@ -458,10 +525,10 @@ const setupListingsPage = () => {
     if (latestEl) {
       latestEl.innerHTML = latest.length
         ? latest.map(miniCardHTML).join('')
-        : '<div class="lp-preview-empty">등록된 매물이 없습니다.</div>';
+        : '<div class="lp-empty-sm">등록된 매물이 없습니다.</div>';
     }
 
-    // 미니카드 클릭 → 모달
+    // 미니 카드 클릭 → 모달
     document.querySelectorAll('.lp-mini-card').forEach(card => {
       card.addEventListener('click', () => {
         const item = readListings().find(x => x.id === card.dataset.id);
@@ -469,94 +536,44 @@ const setupListingsPage = () => {
       });
     });
 
-    // 전체보기 버튼
     document.getElementById('btnShowFeatured')?.addEventListener('click', () => {
-      const sel = document.getElementById('formSpecialSelect');
-      if (sel) sel.value = '추천';
-      flt.special = '추천';
-      applyFilters();
-      document.querySelector('.lp-all-divider')?.scrollIntoView({ behavior:'smooth' });
+      flt.special = '추천'; applyFilters();
+      document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
     });
     document.getElementById('btnShowLatest')?.addEventListener('click', () => {
-      sortMode = 'date';
-      flt.special = '';
-      const sel = document.getElementById('formSpecialSelect');
-      if (sel) sel.value = '';
+      flt.special = ''; sortMode = 'date';
       document.getElementById('sortDateBtn')?.classList.add('active');
       document.getElementById('sortPriceBtn')?.classList.remove('active');
       applyFilters();
-      document.querySelector('.lp-all-divider')?.scrollIntoView({ behavior:'smooth' });
+      document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
 
-  // ── 카드 HTML (레퍼런스 스타일) ──
-  const cardHTML = (item) => {
-    const isDone = item.status === 'done';
-    const color  = CAT_COLORS[item.propertyType] || '#64748b';
-    const label  = CAT_LABELS[item.propertyType] || item.propertyType;
-    const imgSrc = getThumbnail(item);
-
-    // 가격 뱃지
-    let priceBadges = '';
-    if (item.dealType === '임대' || item.dealType === '월세') {
-      if (item.deposit)     priceBadges += `<span class="lp-price-pill lp-pill-bo">보 <strong>${formatPrice(item.deposit)}만</strong></span>`;
-      if (item.monthlyRent) priceBadges += `<span class="lp-price-pill lp-pill-wol">월 <strong>${formatPrice(item.monthlyRent)}만</strong></span>`;
-    } else if (item.dealType === '전세') {
-      if (item.deposit)     priceBadges += `<span class="lp-price-pill lp-pill-jeon">전 <strong>${formatPrice(item.deposit)}만</strong></span>`;
-    } else if (item.dealType === '매매') {
-      const p = item.salePrice || item.price || getMainPrice(item);
-      if (p) priceBadges += `<span class="lp-price-pill lp-pill-mae">매 <strong>${formatPrice(p)}만</strong></span>`;
-    } else {
-      const p = getMainPrice(item);
-      if (p) priceBadges += `<span class="lp-price-pill lp-pill-bo">${item.dealType} <strong>${formatPrice(p)}만</strong></span>`;
-    }
-
-    // 해시태그 설명
-    const hashDesc = (item.description || item.title || '').replace(/\n/g, ' ').trim();
-
-    // 면적 정보
-    const landPy   = item.landArea     ? `대지 ${Math.round(Number(item.landArea)     * 0.3025)}평` : '';
-    const buildPy  = item.buildingArea ? `연면적 ${Math.round(Number(item.buildingArea) * 0.3025)}평` : '';
-    const areaPy   = item.area         ? `${item.area}㎡` : '';
-    const infoChips = [
-      `<span class="lp-info-chip" style="background:${color};color:#fff;border-color:${color};">${label}</span>`,
-      landPy  ? `<span class="lp-info-chip">${landPy}</span>`  : '',
-      buildPy ? `<span class="lp-info-chip">${buildPy}</span>` : (areaPy ? `<span class="lp-info-chip">${areaPy}</span>` : ''),
-    ].join('');
-
-    // 코너 배지
-    const cornerBadge = item.is_urgent
-      ? `<span class="lp-corner-badge badge-urgent">🔥 급매</span>`
-      : item.is_featured
-        ? `<span class="lp-corner-badge badge-featured">⭐ 추천</span>`
-        : '';
-
-    return `
-      <article class="lp-card${isDone?' is-done':''}" data-id="${item.id}">
-        <div class="lp-card-img">
-          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
-          ${item.listingNo ? `<span class="lp-listing-no">${item.listingNo}</span>` : ''}
-          ${cornerBadge}
-          ${isDone ? '<div class="lp-sold-overlay">거래완료</div>' : ''}
-        </div>
-        <div class="lp-card-body">
-          <div class="lp-price-row">${priceBadges}</div>
-          ${hashDesc ? `<div class="lp-card-hashtag">${hashDesc}</div>` : ''}
-          <div class="lp-card-addr">📍 ${getDisplayAddress(item)}</div>
-          <div class="lp-card-info-row">${infoChips}</div>
-        </div>
-      </article>`;
+  // ── 슬라이드 카드 렌더 ──
+  const renderSlideCards = (items) => {
+    const el = document.getElementById('slideCards');
+    if (!el) return;
+    const visible = items.filter(x => x.status !== 'done').slice(0, 20);
+    el.innerHTML = visible.length
+      ? visible.map(slideCardHTML).join('')
+      : '<div style="color:#9CA3AF;font-size:12px;padding:8px;">매물이 없습니다.</div>';
+    el.querySelectorAll('.lp-slide-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const item = readListings().find(x => x.id === card.dataset.id);
+        if (item) openModalFull(item);
+      });
+    });
   };
 
   // ── 페이지 렌더 ──
   const renderPage = () => {
     const total = filtered.length;
-    const el = document.getElementById('listCount');
-    if (el) el.textContent = total;
+    const countEl = document.getElementById('listCount');
+    if (countEl) countEl.textContent = total;
 
     const totalPages = Math.ceil(total / PAGE_SIZE);
-    const start = (currentPage-1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start+PAGE_SIZE);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
     cardsEl.innerHTML = pageItems.length
       ? pageItems.map(cardHTML).join('')
@@ -569,114 +586,112 @@ const setupListingsPage = () => {
       });
     });
 
+    // 페이지네이션
     const pgEl = document.getElementById('lpPagination');
     if (pgEl) {
-      if (totalPages <= 1) { pgEl.innerHTML=''; return; }
-      let html = '';
-      if (currentPage>1) html += `<button class="lp-page-btn" data-pg="${currentPage-1}">‹</button>`;
-      for (let p=1; p<=totalPages; p++) {
-        html += `<button class="lp-page-btn${p===currentPage?' active':''}" data-pg="${p}">${p}</button>`;
-      }
-      if (currentPage<totalPages) html += `<button class="lp-page-btn" data-pg="${currentPage+1}">›</button>`;
-      pgEl.innerHTML = html;
-      pgEl.querySelectorAll('.lp-page-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentPage = Number(btn.dataset.pg);
-          renderPage();
-          document.getElementById('lpMain')?.scrollTo({ top:0, behavior:'smooth' });
+      if (totalPages <= 1) { pgEl.innerHTML = ''; }
+      else {
+        let html = '';
+        if (currentPage > 1) html += `<button class="lp-page-btn" data-pg="${currentPage-1}">‹</button>`;
+        for (let p = 1; p <= totalPages; p++) {
+          html += `<button class="lp-page-btn${p===currentPage?' active':''}" data-pg="${p}">${p}</button>`;
+        }
+        if (currentPage < totalPages) html += `<button class="lp-page-btn" data-pg="${currentPage+1}">›</button>`;
+        pgEl.innerHTML = html;
+        pgEl.querySelectorAll('.lp-page-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            currentPage = Number(btn.dataset.pg);
+            renderPage();
+            document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         });
-      });
+      }
     }
+
     placeMarkers(pageItems);
+    renderSlideCards(filtered);
   };
 
   // ── 필터 실행 ──
   const applyFilters = () => {
-    const effectiveCat  = flt.cat  || flt.formCat;
-    const effectiveDeal = flt.deal || flt.formDeal;
-
     let items = readListings();
-    if (effectiveCat)    items = items.filter(i => i.propertyType === effectiveCat);
-    if (effectiveDeal)   items = items.filter(i => i.dealType === effectiveDeal);
-    if (flt.kw)          items = items.filter(i =>
-      i.title.toLowerCase().includes(flt.kw) ||
-      i.address.toLowerCase().includes(flt.kw) ||
+    if (flt.cat)     items = items.filter(i => i.propertyType === flt.cat);
+    if (flt.deal)    items = items.filter(i => i.dealType === flt.deal);
+    if (flt.kw)      items = items.filter(i =>
+      (i.title||'').toLowerCase().includes(flt.kw) ||
+      (i.address||'').toLowerCase().includes(flt.kw) ||
       (i.displayAddress||'').toLowerCase().includes(flt.kw)
     );
-    if (flt.price)       items = items.filter(i => priceInRange(getMainPrice(i), flt.price));
+    if (flt.special === '추천') items = items.filter(i => i.is_featured || (i.tags && i.tags.includes('추천')));
+    if (flt.special === '급매') items = items.filter(i => i.is_urgent   || (i.tags && i.tags.includes('급매')));
 
-    // ⭐ 추천/급매 필터
-    if (flt.special === '추천') items = items.filter(i => i.is_featured || (i.tags&&i.tags.includes('추천')));
-    if (flt.special === '급매') items = items.filter(i => i.is_urgent   || (i.tags&&i.tags.includes('급매')));
-
-    if (sortMode==='price') items.sort((a,b) => Number(getMainPrice(b))-Number(getMainPrice(a)));
+    if (sortMode === 'price') items.sort((a,b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
     else items.sort((a,b) => (b.createdAt||b.id||'').localeCompare(a.createdAt||a.id||''));
 
-    filtered = items;
+    filtered    = items;
     currentPage = 1;
     renderPage();
     updateCounts();
   };
 
-  // ── 사이드바: 카테고리 ──
+  // ── 왼쪽 사이드바: 카테고리 ──
   document.querySelectorAll('.lp-cat-item').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      flt.cat=el.dataset.cat; flt.deal=''; flt.price='';
-      const fc = document.getElementById('formCatSelect');
-      if (fc) fc.value = flt.cat;
+      flt.cat = el.dataset.cat;
+      flt.deal = '';
+      const catSel = document.getElementById('formCatSelect');
+      if (catSel) catSel.value = flt.cat;
       document.querySelectorAll('.lp-cat-item').forEach(x => x.classList.remove('active'));
       el.classList.add('active');
       applyFilters();
     });
   });
 
-  // ── 사이드바: 거래유형 배지 ──
-  document.querySelectorAll('.lp-deal-badge').forEach(el => {
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      flt.cat=el.dataset.cat; flt.deal=el.dataset.deal; flt.price='';
-      document.querySelectorAll('.lp-cat-item').forEach(x =>
-        x.classList.toggle('active', x.dataset.cat===flt.cat));
-      applyFilters();
-    });
+  // ── 오른쪽 필터바 ──
+  document.getElementById('formCatSelect')?.addEventListener('change', (e) => {
+    flt.cat = e.target.value;
+    document.querySelectorAll('.lp-cat-item').forEach(x =>
+      x.classList.toggle('active', x.dataset.cat === flt.cat));
+    applyFilters();
   });
-
-  // ── 검색 폼 ──
-  filterForm.addEventListener('submit', e => {
-    e.preventDefault();
-    flt.kw       = (document.getElementById('kwInput')?.value||'').toLowerCase();
-    flt.formCat  = document.getElementById('formCatSelect')?.value||'';
-    flt.formDeal = document.getElementById('formDealSelect')?.value||'';
-    flt.special  = document.getElementById('formSpecialSelect')?.value||'';
+  document.getElementById('formDealSelect')?.addEventListener('change', (e) => {
+    flt.deal = e.target.value;
     applyFilters();
   });
 
-  document.getElementById('kwInput')?.addEventListener('input', e => {
-    flt.kw = e.target.value.toLowerCase();
+  const doSearch = () => {
+    flt.kw = (document.getElementById('kwInput')?.value || '').toLowerCase().trim();
     applyFilters();
+  };
+  document.getElementById('filterSearchBtn')?.addEventListener('click', doSearch);
+  document.getElementById('kwInput')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
   });
 
-  // ── 초기화 버튼 ──
-  document.getElementById('filterResetBtn')?.addEventListener('click', () => {
-    Object.assign(flt, { cat:'', deal:'', price:'', kw:'', formCat:'', formDeal:'', special:'' });
-    filterForm.reset();
-    sortMode = 'date';
-    document.querySelectorAll('.lp-cat-item').forEach(x => x.classList.toggle('active', x.dataset.cat===''));
-    document.getElementById('sortDateBtn')?.classList.add('active');
-    document.getElementById('sortPriceBtn')?.classList.remove('active');
+  // ── 지도 위 검색 ──
+  const doMapSearch = () => {
+    const q = (document.getElementById('mapSearchInput')?.value || '').toLowerCase().trim();
+    if (!q) return;
+    flt.kw = q;
+    const kwEl = document.getElementById('kwInput');
+    if (kwEl) kwEl.value = q;
     applyFilters();
+  };
+  document.getElementById('mapSearchBtn')?.addEventListener('click', doMapSearch);
+  document.getElementById('mapSearchInput')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doMapSearch();
   });
 
   // ── 정렬 ──
   document.getElementById('sortDateBtn')?.addEventListener('click', () => {
-    sortMode='date';
+    sortMode = 'date';
     document.getElementById('sortDateBtn')?.classList.add('active');
     document.getElementById('sortPriceBtn')?.classList.remove('active');
     applyFilters();
   });
   document.getElementById('sortPriceBtn')?.addEventListener('click', () => {
-    sortMode='price';
+    sortMode = 'price';
     document.getElementById('sortPriceBtn')?.classList.add('active');
     document.getElementById('sortDateBtn')?.classList.remove('active');
     applyFilters();
@@ -687,12 +702,12 @@ const setupListingsPage = () => {
   if (urlCat) {
     flt.cat = urlCat;
     document.querySelectorAll('.lp-cat-item').forEach(x =>
-      x.classList.toggle('active', x.dataset.cat===urlCat));
+      x.classList.toggle('active', x.dataset.cat === urlCat));
   }
 
   // ── 초기 렌더 ──
   applyFilters();
-  renderPreviewSections(); // ⭐🔥 추천/최신 섹션 렌더
+  renderPreviewSections();
 };
 
 // ─────────────────────────────────────────────
@@ -705,7 +720,7 @@ const setupHomePage = () => {
     .filter(i => i.status !== 'done')
     .sort((a,b) => (b.createdAt||b.id||'').localeCompare(a.createdAt||a.id||''))
     .slice(0, 6);
-  if (!listings.length) { recentEl.innerHTML='<p>등록된 매물이 없습니다.</p>'; return; }
+  if (!listings.length) { recentEl.innerHTML = '<p>등록된 매물이 없습니다.</p>'; return; }
   recentEl.innerHTML = listings.map(item => `
     <a class="home-listing-card" href="listings.html" title="${item.title}">
       <div class="hlc-img">
@@ -746,7 +761,7 @@ const setupAdminDashboard = () => {
           <span class="recent-status ${item.status==='done'?'status-done':'status-public'}">${item.status==='done'?'거래완료':'공개중'}</span>
           <span class="recent-date">${(item.createdAt||'').slice(0,10)||'-'}</span>
         </div>`).join('')
-    : '<p style="color:var(--gray-700);padding:16px 0;">등록된 매물이 없습니다.</p>';
+    : '<p style="color:#6B7280;padding:16px 0;">등록된 매물이 없습니다.</p>';
 };
 
 // ─────────────────────────────────────────────
@@ -757,24 +772,24 @@ const setupAdminRegister = () => {
   const form = document.getElementById('adminForm');
   if (!form) return;
   const imageContainer = document.getElementById('imageUrlContainer');
-  const addImageBtn = document.getElementById('addImageBtn');
-  const MAX_IMAGES = 5;
-  let isEditMode = false;
+  const addImageBtn    = document.getElementById('addImageBtn');
+  const MAX_IMAGES     = 5;
+  let isEditMode       = false;
 
   const addImageRow = (value='') => {
     if (!imageContainer) return;
     if (imageContainer.querySelectorAll('.image-url-row').length >= MAX_IMAGES) return;
     const count = imageContainer.querySelectorAll('.image-url-row').length;
-    const row = document.createElement('div');
+    const row   = document.createElement('div');
     row.className = 'image-url-row';
     const input = document.createElement('input');
-    input.name='imageUrls'; input.type='url'; input.placeholder=`사진 URL ${count+1}`; input.value=value;
-    if (count===0) input.required=true;
+    input.name = 'imageUrls'; input.type = 'url'; input.placeholder = `사진 URL ${count+1}`; input.value = value;
+    if (count === 0) input.required = true;
     const removeBtn = document.createElement('button');
-    removeBtn.type='button'; removeBtn.className='btn btn-outline img-remove-btn'; removeBtn.textContent='삭제 X';
+    removeBtn.type = 'button'; removeBtn.className = 'btn btn-outline img-remove-btn'; removeBtn.textContent = '삭제 X';
     removeBtn.addEventListener('click', () => {
-      if (imageContainer.querySelectorAll('.image-url-row').length>1) row.remove();
-      else input.value='';
+      if (imageContainer.querySelectorAll('.image-url-row').length > 1) row.remove();
+      else input.value = '';
     });
     row.appendChild(input); row.appendChild(removeBtn); imageContainer.appendChild(row);
   };
@@ -805,14 +820,10 @@ const setupAdminRegister = () => {
     });
   }
 
-  const areaEl = form.elements['area'];
-  if (areaEl) areaEl.addEventListener('input', () => {
-    const el=document.getElementById('areaPyeong'); if(el)el.textContent=toPyeong(areaEl.value);
-  });
+  const areaEl  = form.elements['area'];
+  if (areaEl)  areaEl.addEventListener('input',  () => { const el=document.getElementById('areaPyeong'); if(el)el.textContent=toPyeong(areaEl.value); });
   const priceEl = form.elements['price'];
-  if (priceEl) priceEl.addEventListener('input', () => {
-    const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value);
-  });
+  if (priceEl) priceEl.addEventListener('input', () => { const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value); });
 
   const editId = new URLSearchParams(window.location.search).get('edit');
   if (editId) {
@@ -851,7 +862,7 @@ const setupAdminRegister = () => {
       payload.updatedAt = new Date().toISOString();
       listings = listings.map(item => item.id===payload.id ? {...item,...payload} : item);
     } else {
-      payload.id = `id_${Date.now()}`;
+      payload.id        = `id_${Date.now()}`;
       payload.createdAt = new Date().toISOString();
       payload.updatedAt = new Date().toISOString();
       if (!payload.listingNo) payload.listingNo = getNextListingNo(payload.propertyType);
@@ -868,7 +879,7 @@ const setupAdminRegister = () => {
 // ─────────────────────────────────────────────
 const setupAdminListingsMgmt = () => {
   if (!requireAdminLogin()) return;
-  const listEl = document.getElementById('adminListings');
+  const listEl       = document.getElementById('adminListings');
   const paginationEl = document.getElementById('pagination');
   if (!listEl) return;
   const PAGE_SIZE=10; let currentPage=1, sortMode='date', filtered=[];
@@ -912,7 +923,7 @@ const setupAdminListingsMgmt = () => {
             </div>
           </article>`;
         }).join('')
-      : '<p style="padding:24px;color:var(--gray-700);">조건에 맞는 매물이 없습니다.</p>';
+      : '<p style="padding:24px;color:#6B7280;">조건에 맞는 매물이 없습니다.</p>';
     if (paginationEl) {
       const tp=Math.ceil(total/PAGE_SIZE);
       paginationEl.innerHTML = tp<=1 ? '' :
@@ -936,7 +947,7 @@ const setupAdminListingsMgmt = () => {
     const listings=readListings();
     if (action==='delete') { if(!confirm('정말 삭제하시겠습니까?'))return; writeListings(listings.filter(i=>i.id!==id)); applyFilters(); }
     if (action==='done') {
-      writeListings(listings.map(i=>i.id===id?{...i,status:i.status==='done'?'':' done',updatedAt:new Date().toISOString()}:i));
+      writeListings(listings.map(i=>i.id===id?{...i,status:i.status==='done'?'':'done',updatedAt:new Date().toISOString()}:i));
       applyFilters();
     }
   });
@@ -949,21 +960,21 @@ const setupAdminListingsMgmt = () => {
 document.addEventListener('DOMContentLoaded', () => {
   setupMobileNav();
   const page = document.body.dataset.page;
-  if (page==='home')             setupHomePage();
-  else if (page==='listings')    setupListingsPage();
-  else if (page==='admin-dashboard') setupAdminDashboard();
-  else if (page==='admin-register')  setupAdminRegister();
-  else if (page==='admin-listings')  setupAdminListingsMgmt();
+  if      (page === 'home')             setupHomePage();
+  else if (page === 'listings')         setupListingsPage();
+  else if (page === 'admin-dashboard')  setupAdminDashboard();
+  else if (page === 'admin-register')   setupAdminRegister();
+  else if (page === 'admin-listings')   setupAdminListingsMgmt();
 
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
-  document.getElementById('listingModal')?.addEventListener('click', e=>{ if(e.target===e.currentTarget)closeModal(); });
+  document.getElementById('listingModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
   document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
-  document.getElementById('lightboxPrev')?.addEventListener('click', ()=>lightboxNav(-1));
-  document.getElementById('lightboxNext')?.addEventListener('click', ()=>lightboxNav(1));
-  document.getElementById('lightbox')?.addEventListener('click', e=>{ if(e.target===e.currentTarget)closeLightbox(); });
-  document.addEventListener('keydown', e=>{
-    if (e.key==='Escape') { closeLightbox(); closeModal(); }
-    if (e.key==='ArrowLeft')  lightboxNav(-1);
-    if (e.key==='ArrowRight') lightboxNav(1);
+  document.getElementById('lightboxPrev')?.addEventListener('click', () => lightboxNav(-1));
+  document.getElementById('lightboxNext')?.addEventListener('click', () => lightboxNav(1));
+  document.getElementById('lightbox')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeLightbox(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')      { closeLightbox(); closeModal(); }
+    if (e.key === 'ArrowLeft')   lightboxNav(-1);
+    if (e.key === 'ArrowRight')  lightboxNav(1);
   });
 });
