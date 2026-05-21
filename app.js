@@ -321,32 +321,21 @@ const priceInRange = (price, range) => {
 };
 
 // ─────────────────────────────────────────────
-// listings.html — 전면 재설계 (2026-05-21)
+// listings.html — v2 재설계 (2026-05-21)
+// 레이아웃: 60% 지도 | 40% 패널 + 하단 전체 그리드
 // ─────────────────────────────────────────────
 const setupListingsPage = () => {
   const cardsEl = document.getElementById('listingCards');
   if (!cardsEl) return;
 
-  // ── 필터 상태 ──
   const flt = { cat:'', deal:'', kw:'', special:'' };
-  let sortMode   = 'date';
+  let sortMode    = 'date';
   let currentPage = 1;
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 12;
   let filtered    = [];
 
-  // ── 카카오맵 ──
   let map = null, miniMap = null, openIw = null;
   const activeMarkers = [];
-
-  // ── 카운트 업데이트 ──
-  const updateCounts = () => {
-    const all = readListings();
-    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    set('cnt-all', all.length);
-    ['공장창고','상가','토지','오피스텔','힐스테이트더운정','단독주택'].forEach(cat =>
-      set(`cnt-${cat}`, all.filter(i => i.propertyType === cat).length)
-    );
-  };
 
   // ── 지도 마커 ──
   const placeMarkers = (items) => {
@@ -405,7 +394,7 @@ const setupListingsPage = () => {
     });
   };
 
-  // ── 가격 텍스트 생성 ──
+  // ── 가격 텍스트 ──
   const buildPriceText = (item) => {
     if (item.dealType === '매매') {
       const p = item.salePrice || item.price || getMainPrice(item);
@@ -424,7 +413,7 @@ const setupListingsPage = () => {
     return p ? `${item.dealType} ${toKoreanPrice(p)}` : item.dealType;
   };
 
-  // ── 면적 텍스트 생성 ──
+  // ── 면적 텍스트 ──
   const buildAreaText = (item) => {
     const sqm = item.area || item.landArea || item.contractArea || 0;
     if (!sqm) return '';
@@ -434,15 +423,13 @@ const setupListingsPage = () => {
 
   // ── 미니 카드 HTML (추천/최신 섹션) ──
   const miniCardHTML = (item) => {
-    const color = CAT_COLORS[item.propertyType] || '#374151';
-    const label = CAT_LABELS[item.propertyType] || item.propertyType;
+    const color  = CAT_COLORS[item.propertyType] || '#374151';
+    const label  = CAT_LABELS[item.propertyType] || item.propertyType;
     const imgSrc = getThumbnail(item);
     return `
       <div class="lp-mini-card" data-id="${item.id}">
         <div class="lp-mini-thumb">
-          ${imgSrc
-            ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />`
-            : ''}
+          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
         </div>
         <div class="lp-mini-info">
           <div class="lp-mini-badges">
@@ -450,17 +437,18 @@ const setupListingsPage = () => {
             <span class="lp-mini-deal-bdg">${item.dealType}</span>
           </div>
           <div class="lp-mini-card-title">${item.title}</div>
+          <div class="lp-mini-card-location">📍 ${getDisplayAddress(item)}</div>
           <div class="lp-mini-card-price">${buildPriceText(item)}</div>
         </div>
       </div>`;
   };
 
-  // ── 메인 카드 HTML ──
+  // ── 메인 카드 HTML (하단 그리드) ──
   const cardHTML = (item) => {
-    const isDone  = item.status === 'done';
-    const color   = CAT_COLORS[item.propertyType] || '#64748b';
-    const label   = CAT_LABELS[item.propertyType] || item.propertyType;
-    const imgSrc  = getThumbnail(item);
+    const isDone    = item.status === 'done';
+    const color     = CAT_COLORS[item.propertyType] || '#64748b';
+    const label     = CAT_LABELS[item.propertyType] || item.propertyType;
+    const imgSrc    = getThumbnail(item);
     const priceText = buildPriceText(item);
     const areaText  = buildAreaText(item);
 
@@ -474,36 +462,22 @@ const setupListingsPage = () => {
       <article class="lp-card${isDone ? ' is-done' : ''}" data-id="${item.id}">
         <div class="lp-card-thumb">
           ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
-          <span class="lp-cat-bdg" style="background:${color}">${label}</span>
-          <span class="lp-deal-bdg" style="left:${label.length > 4 ? 90 : 70}px">${item.dealType}</span>
           ${cornerBadge}
           ${isDone ? '<div class="lp-sold-overlay">거래완료</div>' : ''}
         </div>
         <div class="lp-card-body">
+          <div class="lp-card-tags">
+            <span class="lp-tag-cat" style="background:${color}">${label}</span>
+            <span class="lp-tag-deal">${item.dealType}</span>
+          </div>
           <div class="lp-card-title">${item.title}</div>
           <div class="lp-card-price">${priceText}</div>
-          ${areaText ? `<div class="lp-card-area">📐 ${areaText}</div>` : ''}
-          <div class="lp-card-addr">📍 ${getDisplayAddress(item)}</div>
+          <div class="lp-card-meta">
+            ${areaText ? `<span>📐 ${areaText}</span>` : ''}
+            <span>📍 ${getDisplayAddress(item)}</span>
+          </div>
         </div>
       </article>`;
-  };
-
-  // ── 슬라이드 카드 HTML ──
-  const slideCardHTML = (item) => {
-    const color  = CAT_COLORS[item.propertyType] || '#64748b';
-    const label  = CAT_LABELS[item.propertyType] || item.propertyType;
-    const imgSrc = getThumbnail(item);
-    return `
-      <div class="lp-slide-card" data-id="${item.id}">
-        <div class="lp-slide-thumb-wrap">
-          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
-          <span class="lp-slide-bdg" style="background:${color}">${label}</span>
-        </div>
-        <div class="lp-slide-info">
-          <div class="lp-slide-title">${item.title}</div>
-          <div class="lp-slide-price">${buildPriceText(item)}</div>
-        </div>
-      </div>`;
   };
 
   // ── 추천/최신 섹션 렌더 ──
@@ -528,7 +502,6 @@ const setupListingsPage = () => {
         : '<div class="lp-empty-sm">등록된 매물이 없습니다.</div>';
     }
 
-    // 미니 카드 클릭 → 모달
     document.querySelectorAll('.lp-mini-card').forEach(card => {
       card.addEventListener('click', () => {
         const item = readListings().find(x => x.id === card.dataset.id);
@@ -538,30 +511,14 @@ const setupListingsPage = () => {
 
     document.getElementById('btnShowFeatured')?.addEventListener('click', () => {
       flt.special = '추천'; applyFilters();
-      document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });
     });
     document.getElementById('btnShowLatest')?.addEventListener('click', () => {
       flt.special = ''; sortMode = 'date';
       document.getElementById('sortDateBtn')?.classList.add('active');
       document.getElementById('sortPriceBtn')?.classList.remove('active');
       applyFilters();
-      document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  };
-
-  // ── 슬라이드 카드 렌더 ──
-  const renderSlideCards = (items) => {
-    const el = document.getElementById('slideCards');
-    if (!el) return;
-    const visible = items.filter(x => x.status !== 'done').slice(0, 20);
-    el.innerHTML = visible.length
-      ? visible.map(slideCardHTML).join('')
-      : '<div style="color:#9CA3AF;font-size:12px;padding:8px;">매물이 없습니다.</div>';
-    el.querySelectorAll('.lp-slide-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const item = readListings().find(x => x.id === card.dataset.id);
-        if (item) openModalFull(item);
-      });
+      document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });
     });
   };
 
@@ -586,7 +543,6 @@ const setupListingsPage = () => {
       });
     });
 
-    // 페이지네이션
     const pgEl = document.getElementById('lpPagination');
     if (pgEl) {
       if (totalPages <= 1) { pgEl.innerHTML = ''; }
@@ -602,22 +558,21 @@ const setupListingsPage = () => {
           btn.addEventListener('click', () => {
             currentPage = Number(btn.dataset.pg);
             renderPage();
-            document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });
           });
         });
       }
     }
 
-    placeMarkers(pageItems);
-    renderSlideCards(filtered);
+    placeMarkers(filtered.slice(0, 30));
   };
 
   // ── 필터 실행 ──
   const applyFilters = () => {
     let items = readListings();
-    if (flt.cat)     items = items.filter(i => i.propertyType === flt.cat);
-    if (flt.deal)    items = items.filter(i => i.dealType === flt.deal);
-    if (flt.kw)      items = items.filter(i =>
+    if (flt.cat)  items = items.filter(i => i.propertyType === flt.cat);
+    if (flt.deal) items = items.filter(i => i.dealType === flt.deal);
+    if (flt.kw)   items = items.filter(i =>
       (i.title||'').toLowerCase().includes(flt.kw) ||
       (i.address||'').toLowerCase().includes(flt.kw) ||
       (i.displayAddress||'').toLowerCase().includes(flt.kw)
@@ -631,33 +586,14 @@ const setupListingsPage = () => {
     filtered    = items;
     currentPage = 1;
     renderPage();
-    updateCounts();
   };
 
-  // ── 왼쪽 사이드바: 카테고리 ──
-  document.querySelectorAll('.lp-cat-item').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      flt.cat = el.dataset.cat;
-      flt.deal = '';
-      const catSel = document.getElementById('formCatSelect');
-      if (catSel) catSel.value = flt.cat;
-      document.querySelectorAll('.lp-cat-item').forEach(x => x.classList.remove('active'));
-      el.classList.add('active');
-      applyFilters();
-    });
-  });
-
-  // ── 오른쪽 필터바 ──
+  // ── 필터 이벤트 ──
   document.getElementById('formCatSelect')?.addEventListener('change', (e) => {
-    flt.cat = e.target.value;
-    document.querySelectorAll('.lp-cat-item').forEach(x =>
-      x.classList.toggle('active', x.dataset.cat === flt.cat));
-    applyFilters();
+    flt.cat = e.target.value; applyFilters();
   });
   document.getElementById('formDealSelect')?.addEventListener('change', (e) => {
-    flt.deal = e.target.value;
-    applyFilters();
+    flt.deal = e.target.value; applyFilters();
   });
 
   const doSearch = () => {
@@ -665,8 +601,17 @@ const setupListingsPage = () => {
     applyFilters();
   };
   document.getElementById('filterSearchBtn')?.addEventListener('click', doSearch);
-  document.getElementById('kwInput')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') doSearch();
+  document.getElementById('kwInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  document.getElementById('filterResetBtn')?.addEventListener('click', () => {
+    flt.cat = ''; flt.deal = ''; flt.kw = ''; flt.special = '';
+    const catSel  = document.getElementById('formCatSelect');
+    const dealSel = document.getElementById('formDealSelect');
+    const kwEl    = document.getElementById('kwInput');
+    if (catSel)  catSel.value  = '';
+    if (dealSel) dealSel.value = '';
+    if (kwEl)    kwEl.value    = '';
+    applyFilters();
   });
 
   // ── 지도 위 검색 ──
@@ -697,12 +642,17 @@ const setupListingsPage = () => {
     applyFilters();
   });
 
+  // ── 전체 매물 보기 버튼 (패널 하단) ──
+  document.getElementById('btnScrollToAll')?.addEventListener('click', () => {
+    document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
   // ── URL 파라미터 ──
   const urlCat = new URLSearchParams(window.location.search).get('category');
   if (urlCat) {
     flt.cat = urlCat;
-    document.querySelectorAll('.lp-cat-item').forEach(x =>
-      x.classList.toggle('active', x.dataset.cat === urlCat));
+    const catSel = document.getElementById('formCatSelect');
+    if (catSel) catSel.value = urlCat;
   }
 
   // ── 초기 렌더 ──

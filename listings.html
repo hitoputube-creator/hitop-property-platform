@@ -32,74 +32,10 @@
       </nav>
     </header>
 
-    <!-- ======= 3단 본문 ======= -->
-    <div class="lp-body">
+    <!-- ======= 중간 섹션: 좌(60%) 지도 | 우(40%) 패널 ======= -->
+    <div class="lp-mid-body">
 
-      <!-- ── 왼쪽 사이드바 (200px) ── -->
-      <aside class="lp-sidebar">
-
-        <!-- 매물 종류 필터 -->
-        <div class="lp-sb-section-title">매물 종류</div>
-        <nav class="lp-cat-nav">
-          <a class="lp-cat-item active" href="#" data-cat="">
-            <span class="lp-cat-name">전체매물</span>
-            <span class="lp-cat-count" id="cnt-all">0</span>
-          </a>
-          <a class="lp-cat-item" href="#" data-cat="공장창고">
-            <span class="lp-cat-name">공장·창고</span>
-            <span class="lp-cat-count" id="cnt-공장창고">0</span>
-          </a>
-          <a class="lp-cat-item" href="#" data-cat="상가">
-            <span class="lp-cat-name">상가·빌딩</span>
-            <span class="lp-cat-count" id="cnt-상가">0</span>
-          </a>
-          <a class="lp-cat-item" href="#" data-cat="토지">
-            <span class="lp-cat-name">토지·개발</span>
-            <span class="lp-cat-count" id="cnt-토지">0</span>
-          </a>
-          <a class="lp-cat-item" href="#" data-cat="오피스텔">
-            <span class="lp-cat-name">오피스텔</span>
-            <span class="lp-cat-count" id="cnt-오피스텔">0</span>
-          </a>
-          <a class="lp-cat-item" href="#" data-cat="힐스테이트더운정">
-            <span class="lp-cat-name">힐스테이트더운정</span>
-            <span class="lp-cat-count" id="cnt-힐스테이트더운정">0</span>
-          </a>
-          <a class="lp-cat-item" href="#" data-cat="단독주택">
-            <span class="lp-cat-name">단독·전원주택</span>
-            <span class="lp-cat-count" id="cnt-단독주택">0</span>
-          </a>
-        </nav>
-
-        <!-- 전화문의 박스 -->
-        <div class="lp-contact-box">
-          <div class="lp-contact-label">전화문의</div>
-          <a href="tel:031-949-8969" class="lp-contact-phone">031-949-8969</a>
-          <p class="lp-contact-hours">평일 10:00 ~ 19:00</p>
-          <a href="https://open.kakao.com" target="_blank" rel="noreferrer" class="lp-kakao-btn">
-            💬 카카오톡 문의
-          </a>
-        </div>
-
-        <!-- 실시간 빠른문의 -->
-        <div class="lp-inquiry-box">
-          <div class="lp-inquiry-title">실시간 빠른문의</div>
-          <p class="lp-inquiry-sub">빠르게 문의 남겨주세요.</p>
-          <input type="text"  class="lp-inq-input" placeholder="이름" />
-          <input type="tel"   class="lp-inq-input" placeholder="연락처" />
-          <textarea class="lp-inq-textarea" placeholder="문의내용"></textarea>
-          <label class="lp-inq-agree">
-            <input type="checkbox" />
-            <span>개인정보 수집·이용 동의</span>
-          </label>
-          <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="lp-inq-submit">
-            상담문의 남기기
-          </a>
-        </div>
-
-      </aside>
-
-      <!-- ── 가운데: 카카오맵 (flex:1) ── -->
+      <!-- ── 왼쪽: 카카오맵 (60%) ── -->
       <div class="lp-map-wrap">
         <div class="map-search-overlay">
           <input type="text" id="mapSearchInput" placeholder="🔍 주소 또는 매물명 검색" autocomplete="off" />
@@ -110,30 +46,33 @@
         </div>
       </div>
 
-      <!-- ── 오른쪽 패널 (320px) ── -->
-      <aside class="lp-panel" id="lpMain">
+      <!-- ── 오른쪽: 패널 (40%) ── -->
+      <aside class="lp-panel">
 
-        <!-- 상단 필터바 -->
+        <!-- 필터 영역 -->
         <div class="lp-filter-bar">
-          <select id="formCatSelect">
-            <option value="">매물종류 전체</option>
-            <option value="공장창고">공장·창고</option>
-            <option value="상가">상가·빌딩</option>
-            <option value="토지">토지·개발</option>
-            <option value="오피스텔">오피스텔</option>
-            <option value="힐스테이트더운정">힐스테이트더운정</option>
-            <option value="단독주택">단독·전원주택</option>
-          </select>
-          <select id="formDealSelect">
-            <option value="">거래유형 전체</option>
-            <option value="매매">매매</option>
-            <option value="전세">전세</option>
-            <option value="월세">월세</option>
-            <option value="임대">임대</option>
-          </select>
+          <div class="lp-filter-row1">
+            <select id="formCatSelect">
+              <option value="">매물종류 전체</option>
+              <option value="공장창고">공장·창고</option>
+              <option value="상가">상가·빌딩</option>
+              <option value="토지">토지·개발</option>
+              <option value="오피스텔">오피스텔</option>
+              <option value="힐스테이트더운정">힐스테이트더운정</option>
+              <option value="단독주택">단독·전원주택</option>
+            </select>
+            <select id="formDealSelect">
+              <option value="">거래유형 전체</option>
+              <option value="매매">매매</option>
+              <option value="전세">전세</option>
+              <option value="월세">월세</option>
+              <option value="임대">임대</option>
+            </select>
+          </div>
           <div class="lp-filter-row2">
-            <input type="text" id="kwInput" placeholder="지역 검색" autocomplete="off" />
+            <input type="text" id="kwInput" placeholder="지역명 또는 매물명 검색" autocomplete="off" />
             <button type="button" id="filterSearchBtn">검색</button>
+            <button type="button" id="filterResetBtn">초기화</button>
           </div>
         </div>
 
@@ -161,29 +100,30 @@
           </div>
         </section>
 
-        <!-- 전체 매물 헤더 -->
-        <div class="lp-all-hd">
+        <!-- 전체 매물 보기 버튼 -->
+        <div class="lp-view-all">
+          <button type="button" class="lp-view-all-btn" id="btnScrollToAll">
+            ↓ 전체 매물 보기
+          </button>
+        </div>
+
+      </aside>
+    </div><!-- .lp-mid-body -->
+
+    <!-- ======= 하단 섹션: 전체 매물 그리드 ======= -->
+    <section class="lp-bottom" id="lp-bottom">
+      <div class="lp-bottom-inner">
+        <div class="lp-bottom-hd">
           <span class="lp-all-count">전체 매물 <strong id="listCount">0</strong>개</span>
           <div class="lp-sort-btns">
             <button class="lp-sort-btn active" id="sortDateBtn" type="button">최신순</button>
             <button class="lp-sort-btn" id="sortPriceBtn" type="button">가격순</button>
           </div>
         </div>
-
-        <!-- 매물 카드 목록 -->
-        <div id="listingCards" class="lp-cards-list"></div>
-
-        <!-- 페이지네이션 -->
+        <div id="listingCards" class="lp-card-grid"></div>
         <div id="lpPagination" class="lp-pagination"></div>
-
-        <!-- 하단 슬라이드형 매물카드 (가로 스크롤) -->
-        <div class="lp-slide-section">
-          <div class="lp-slide-hd">📌 빠른 매물 보기</div>
-          <div id="slideCards" class="lp-slide-list"></div>
-        </div>
-
-      </aside>
-    </div><!-- .lp-body -->
+      </div>
+    </section>
 
     <!-- ======= 매물 상세 모달 ======= -->
     <div id="listingModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="매물 상세보기">
@@ -269,6 +209,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260521e"></script>
+    <script src="app.js?v=20260521f"></script>
   </body>
 </html>
