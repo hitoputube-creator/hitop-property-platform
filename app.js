@@ -380,16 +380,18 @@ const setupListingsPage = () => {
     });
   };
 
-  // ── 지도 초기화 ──
+  // ── 지도 초기화 (autoload=false 방식) ──
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
     if (!mapEl || typeof kakao === 'undefined') return;
-    mapEl.innerHTML = '';
-    map = new kakao.maps.Map(mapEl, {
-      center: new kakao.maps.LatLng(37.7512, 126.7820),
-      level: 7
+    kakao.maps.load(() => {
+      mapEl.innerHTML = '';
+      map = new kakao.maps.Map(mapEl, {
+        center: new kakao.maps.LatLng(37.7512, 126.7820),
+        level: 7
+      });
+      applyFilters();
     });
-    applyFilters();
   });
 
   // ── 모달 열기 (미니맵 + 거래완료 표시) ──
@@ -401,7 +403,7 @@ const setupListingsPage = () => {
     const minimapEl   = document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
     minimapWrap.style.display = 'none';
-    if (typeof kakao === 'undefined' || !item.address) return;
+    if (typeof kakao === 'undefined' || !kakao.maps.services || !item.address) return;
     new kakao.maps.services.Geocoder().addressSearch(item.address, (result, status) => {
       if (status !== kakao.maps.services.Status.OK) return;
       const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
