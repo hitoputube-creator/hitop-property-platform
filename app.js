@@ -515,7 +515,7 @@ const setupListingsPage = () => {
           renderAllGrid();
           document.getElementById('allListingsSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-      }
+      });
     }
   };
 
