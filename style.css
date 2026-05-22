@@ -12,12 +12,12 @@
 body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: #1e293b; background: var(--gray-100); }
 .container { width: min(1120px, 92%); margin: 0 auto; }
 .site-header { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 10; }
-.nav-wrap { display: flex; align-items: center; justify-content: space-between; min-height: 64px; gap: 12px; }
+.nav-wrap { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 18px; }
 .brand { color: var(--navy); font-weight: 800; text-decoration: none; font-size: 1.1rem; }
-.brand-logo { height: 50px; width: auto; vertical-align: middle; }
+.brand-logo { height: 56px; width: auto; vertical-align: middle; }
 .brand-text { font-size: inherit; font-weight: inherit; }
-.nav-menu { display: flex; gap: 14px; align-items: center; }
-.nav-menu a { color: var(--gray-700); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+.nav-menu { display: flex; gap: 22px; align-items: center; flex: 1; justify-content: center; }
+.nav-menu a { color: var(--gray-700); text-decoration: none; font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
 .nav-menu a:hover { color: var(--navy); }
 .nav-toggle { display: none; border: 1px solid var(--gray-200); background: var(--white); border-radius: 8px; padding: 6px 8px; }
 
@@ -1681,4 +1681,50 @@ body[data-page="listings"] .site-header .lp-header-phone {
   text-decoration: none;
   font-size: 18px;
   font-weight: 900;
+}
+.header-contact-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-contact-text {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f8fafc;
+  text-align: right;
+}
+
+.header-contact-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 3px;
+}
+
+.header-contact-phone {
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ff5a00;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.header-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: #071f5f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
 }
