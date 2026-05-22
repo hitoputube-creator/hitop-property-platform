@@ -82,7 +82,20 @@
           </div>
 
           <input name="title" placeholder="제목" required />
-          <textarea name="description" rows="4" placeholder="설명" required></textarea>
+
+          <!-- 추천매물 / 급매물 체크박스 -->
+          <div class="flag-check-row">
+            <label class="flag-check-label flag-recommended" id="labelRecommended">
+              <input type="checkbox" name="isRecommended" id="chkRecommended" />
+              ⭐ 추천매물로 등록
+            </label>
+            <label class="flag-check-label flag-urgent" id="labelUrgent">
+              <input type="checkbox" name="isUrgent" id="chkUrgent" />
+              🔥 급매물로 등록
+            </label>
+          </div>
+
+          <textarea name="description" rows="4" placeholder="특이사항 / 메모" required></textarea>
 
           <div id="imageUrlContainer"></div>
           <button type="button" id="addImageBtn" class="btn btn-outline" style="font-size:0.85rem;">사진 추가 +</button>
