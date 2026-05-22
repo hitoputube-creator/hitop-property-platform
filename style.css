@@ -1419,7 +1419,7 @@ body[data-page="listings"] .lp-sidebar-header {
   height: 42px;
   line-height: 42px;
   padding: 0 18px;
-  background: #d83a6d;
+  background: #071f5f;
   color: #ffffff;
   font-size: 15px;
   font-weight: 800;
@@ -1492,7 +1492,7 @@ body[data-page="listings"] .lp-contact-inner {
 
 body[data-page="listings"] .lp-phone-big {
   display: block;
-  color: #c9a84c;
+  color: #ff5a00;
   font-size: 24px;
   font-weight: 900;
   text-decoration: none;
