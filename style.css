@@ -1273,3 +1273,47 @@ body[data-page="listings"] .lp-header-nav a:hover,
 body[data-page="listings"] .lp-header-nav a.nav-active {
   color: #ffd24d;
 }
+/* 매물보기 페이지 상단 흰색 헤더 양끝 정렬 */
+body[data-page="listings"] .site-header .container.nav-wrap {
+  width: 100%;
+  max-width: none;
+  height: 72px;
+  margin: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* 로고는 왼쪽으로 */
+body[data-page="listings"] .site-header .brand {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+/* 로고 크기 */
+body[data-page="listings"] .site-header .brand-logo {
+  height: 56px;
+  display: block;
+}
+
+/* 평일시간 + 전화번호는 오른쪽으로 */
+body[data-page="listings"] .site-header .lp-header-info {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* 전화번호 색상 */
+body[data-page="listings"] .site-header .lp-header-phone {
+  color: #003b8f;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 800;
+}
