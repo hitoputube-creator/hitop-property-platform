@@ -1105,7 +1105,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 /* 전체 3단: 15% | 50% | 35% */
 .lp-body {
-  grid-template-columns: 15% 50% 35%;
+  grid-template-columns: 220px minmax(640px, 1fr) 480px;
   height: calc(100vh - 136px);
 }
 
