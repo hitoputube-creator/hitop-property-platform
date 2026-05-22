@@ -20,22 +20,35 @@
     </div>
 
     <!-- 헤더 -->
-    <header class="site-header">
-      <div class="container nav-wrap">
-        <a class="brand" href="index.html">
-          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
-        </a>
-        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
-        <nav class="nav-menu" aria-label="메인 메뉴">
-          <a href="about.html">하이탑소개</a>
-          <a href="listings.html" aria-current="page">매물보기</a>
-          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
-          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
-          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-          <a href="index.html#contact">고객센터</a>
-        </nav>
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">
+      <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+    </a>
+
+    <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+
+    <nav class="nav-menu" aria-label="메인 메뉴">
+      <a href="about.html">하이탑소개</a>
+      <a href="listings.html" aria-current="page">매물보기</a>
+      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+      <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+      <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+      <a href="index.html#contact">고객센터</a>
+    </nav>
+
+    <div class="header-contact-box">
+      <div class="header-contact-text">
+        <span class="header-contact-label">대표 상담</span>
+        <a href="tel:031-949-8969" class="header-contact-phone">031-949-8969</a>
       </div>
-    </header>
+      <a href="#sideInquiryForm" class="header-contact-btn"
+         onclick="document.getElementById('sideInquiryForm')?.scrollIntoView({behavior:'smooth', block:'center'}); return false;">
+        문의하기
+      </a>
+    </div>
+  </div>
+</header>
 
     <!-- ══ 3단 메인 바디 ══ -->
     <div class="lp-body" id="lpBody">
