@@ -1533,3 +1533,55 @@ body[data-page="listings"] .lp-header-search .lp-search-reset {
   font-weight: 600;
   cursor: pointer;
 }
+/* 매물보기 상단 헤더 3단 정렬 복구 */
+body[data-page="listings"] .site-header {
+  background: #ffffff;
+  position: relative;
+  z-index: 50;
+}
+
+/* 흰색 헤더: 로고 / 검색창 / 연락처 */
+body[data-page="listings"] .site-header .container.nav-wrap {
+  width: 100%;
+  max-width: none;
+  height: 78px;
+  margin: 0;
+  padding: 0 36px;
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  align-items: center;
+  gap: 24px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+/* 로고 */
+body[data-page="listings"] .site-header .brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+body[data-page="listings"] .site-header .brand-logo {
+  height: 58px;
+  display: block;
+}
+
+/* 오른쪽 영업시간 + 전화번호 */
+body[data-page="listings"] .site-header .lp-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+body[data-page="listings"] .site-header .lp-header-phone {
+  color: #003b8f;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 900;
+}
