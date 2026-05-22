@@ -1245,3 +1245,31 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .adm-stats-4 { grid-template-columns: 1fr 1fr; }
   .lp-all-grid { grid-template-columns: 1fr; }
 }
+/* 매물보기 페이지 - 하이탑 상호 아래 메뉴 네이비바 */
+body[data-page="listings"] .lp-header-nav {
+  width: 100%;
+  height: 48px;
+  background: #071f5f;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 34px;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 네이비바 안의 메뉴 글자 */
+body[data-page="listings"] .lp-header-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 48px;
+  white-space: nowrap;
+}
+
+/* 현재 페이지 또는 마우스 올렸을 때 */
+body[data-page="listings"] .lp-header-nav a:hover,
+body[data-page="listings"] .lp-header-nav a.nav-active {
+  color: #ffd24d;
+}
