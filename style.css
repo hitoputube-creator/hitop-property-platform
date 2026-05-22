@@ -1111,56 +1111,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 /* ── 왼쪽 사이드바 ── */
 
-  /* ── 왼쪽 사이드바 ── */
-
-/* 왼쪽 사이드바 - 전문 중개 신뢰 박스 */
-body[data-page="listings"] .lp-trust-box {
-  margin: 14px 14px 0;
-  padding: 14px 14px 13px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-left: 4px solid #c9a84c;
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-}
-
-body[data-page="listings"] .lp-trust-title {
-  font-size: 14px;
-  font-weight: 900;
-  color: #071f5f;
-  margin-bottom: 9px;
-  letter-spacing: -0.03em;
-}
-
-body[data-page="listings"] .lp-trust-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-body[data-page="listings"] .lp-trust-list li {
-  position: relative;
-  padding-left: 15px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-  line-height: 1.45;
-  letter-spacing: -0.03em;
-}
-
-body[data-page="listings"] .lp-trust-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #c9a84c;
-}
 
 .lp-contact-inner {
   padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
