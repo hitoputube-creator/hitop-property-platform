@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --navy: #12335a;
   --navy-dark: #0c2340;
   --green: #1f8f63;
@@ -43,7 +43,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .listing-filter-grid .btn { flex: 0 0 auto; padding: 8px 14px; font-size: 0.88rem; white-space: nowrap; }
 
 .listings-filter-bar { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 8px 12px; }
-/* ===== 매물보기 레이아웃 (3단) ===== */
 .listings-filter-top {
   background: var(--white); border-bottom: 1px solid var(--gray-200);
   padding: 8px 12px;
@@ -78,7 +77,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   min-height: 600px;
 }
 
-/* 카테고리 사이드바 */
 .listings-sidebar {
   background: var(--white);
   border-right: 1px solid var(--gray-200);
@@ -265,7 +263,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
    ====================================== */
 :root { --gold: #C9A84C; }
 
-/* 대시보드 헤더 */
 .dash-header {
   display: flex;
   justify-content: space-between;
@@ -277,7 +274,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .dash-title { margin: 0; color: var(--navy); font-size: 1.5rem; }
 .dash-actions { display: flex; gap: 10px; }
 
-/* 통계 카드 */
 .dash-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -297,7 +293,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .stat-num   { font-size: 2.2rem; font-weight: 800; color: var(--navy); }
 .stat-label { font-size: 0.88rem; color: var(--gray-700); margin-top: 6px; }
 
-/* 최근 매물 */
 .dash-recent h2 { color: var(--navy); margin-bottom: 12px; font-size: 1.1rem; }
 .recent-list { display: grid; gap: 8px; }
 .recent-item {
@@ -330,7 +325,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .status-public { background: var(--green-soft); color: var(--green); }
 .recent-date   { font-size: 11px; color: var(--gray-700); flex-shrink: 0; }
 
-/* 관리자 페이지 공통 헤더 */
 .admin-page-header {
   display: flex;
   align-items: center;
@@ -340,7 +334,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 .admin-page-header h1 { margin: 0; flex: 1; color: var(--navy); }
 
-/* 매물번호 표시 */
 .listing-no-display {
   background: var(--green-soft);
   border: 1px solid #cde7d9;
@@ -351,7 +344,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 .listing-no-display strong { color: var(--navy); font-size: 1.1rem; }
 
-/* 면적 / 금액 행 */
 .area-row, .price-row {
   display: flex;
   gap: 8px;
@@ -364,7 +356,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   font-weight: 700; white-space: nowrap; min-width: 90px;
 }
 
-/* 매물 관리 필터 바 */
 .admin-filters {
   display: flex;
   gap: 8px;
@@ -381,7 +372,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   font-size: 0.88rem;
 }
 
-/* 정렬 버튼 행 */
 .sort-row {
   display: flex;
   gap: 8px;
@@ -391,7 +381,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .sort-row .btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 .total-count { margin-left: auto; font-size: 0.88rem; color: var(--gray-700); }
 
-/* 페이지네이션 */
 .pagination {
   display: flex;
   gap: 6px;
@@ -400,7 +389,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   flex-wrap: wrap;
 }
 
-/* 매물 목록 아이템 개선 */
 .admin-item-header {
   display: flex;
   gap: 8px;
@@ -423,7 +411,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 .done-btn.done-active { border-color: #dc2626; color: #dc2626; }
 
-/* 반응형 (관리자) */
 @media (max-width: 760px) {
   .dash-stats { grid-template-columns: 1fr 1fr; }
   .recent-title { min-width: calc(100% - 80px); }
@@ -531,6 +518,41 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   grid-row: 1;
   background: #fff;
   border-right: 1px solid #E5E7EB;
+}
+#map { width: 100%; height: 100%; background: #dce8f5; }
+.map-loading {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.92rem; color: #4a6785;
+}
+.map-search-overlay {
+  position: absolute; top: 14px; left: 50%;
+  transform: translateX(-50%); z-index: 10;
+  display: flex; gap: 6px;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(6px);
+  padding: 8px; border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(10,31,92,0.18);
+  width: calc(100% - 32px); max-width: 480px;
+}
+.map-search-overlay input {
+  flex: 1; padding: 9px 12px;
+  border: 1.5px solid #E5E7EB; border-radius: 7px;
+  font-family: inherit; font-size: 13px; outline: none; min-width: 0;
+  transition: border-color 0.15s;
+}
+.map-search-overlay input:focus { border-color: #0A1F5C; }
+.map-search-overlay button {
+  padding: 9px 18px; background: #0A1F5C; color: #fff;
+  border: none; border-radius: 7px;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap; transition: background 0.15s;
+}
+.map-search-overlay button:hover { background: #071544; }
+
+/* ── 오른쪽: 패널 (40%) ── */
+.lp-panel {
+  background: #F8F9FA;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -560,12 +582,15 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   text-decoration: none;
   border-bottom: 1px solid #F3F4F6;
 }
-.lp-cat-item:hover { background: #F9FAFB; }
-.lp-cat-item.active {
-  border-left-color: #F97316;
-  font-weight: 700;
-  background: #FFF7ED;
-  color: #1E3A5F;
+#sectionFeatured .lp-section-hd { border-left: 3px solid #F59E0B; }
+#sectionLatest   .lp-section-hd { border-left: 3px solid #EF4444; }
+.lp-sec-icon { font-size: 15px; }
+.lp-sec-title { flex: 1; font-size: 14px; font-weight: 800; color: #0A1F5C; }
+.lp-sec-more {
+  font-size: 11px; color: #6B7280; background: none;
+  border: 1px solid #E5E7EB; border-radius: 4px;
+  padding: 3px 9px; cursor: pointer; font-family: inherit;
+  transition: all 0.12s; white-space: nowrap;
 }
 .lp-cat-name { flex: 1; font-size: 15px; }
 .lp-cat-count { font-size: 11px; color: #9CA3AF; flex-shrink: 0; margin-right: 3px; }

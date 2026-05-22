@@ -1,9 +1,6 @@
 console.log('app.js 로드됨!');
 const STORAGE_KEY = 'hitop_listings_v1';
 
-// ─────────────────────────────────────────────
-// 매물 종류별 필드 정의
-// ─────────────────────────────────────────────
 const PROPERTY_FIELDS = {
   '공장창고': {
     dealTypes: ['매매','임대'],
@@ -94,9 +91,7 @@ const PROPERTY_FIELDS = {
   }
 };
 
-// ─────────────────────────────────────────────
-// 샘플 데이터
-// ─────────────────────────────────────────────
+// ── 샘플 데이터 ──
 const sampleListings = [
   {
     id:'s1', propertyType:'공장창고', dealType:'임대',
@@ -106,8 +101,8 @@ const sampleListings = [
     floor:'지상 1층 / 총 1층', direction:'남향', mainUse:'창고시설',
     office:'1개/1개', parking:'가능 (5대)', elevator:'없음', approvalDate:'2010-03-15',
     title:'대형 물류창고', description:'IC 접근성 우수, 층고 높음.\n자유로 IC 5분 거리.\n대형 트럭 진출입 가능.',
-    imageUrls:['https://picsum.photos/seed/factory1/800/500','https://picsum.photos/seed/factory2/800/500','https://picsum.photos/seed/factory3/800/500'],
-    listingNo:'F-0001', createdAt:'2026-05-01T09:00:00.000Z'
+    imageUrls:['https://picsum.photos/seed/factory1/800/500','https://picsum.photos/seed/factory2/800/500'],
+    listingNo:'F-0001', createdAt:'2026-05-01T09:00:00.000Z', is_featured: true
   },
   {
     id:'s2', propertyType:'상가', dealType:'임대',
@@ -119,7 +114,7 @@ const sampleListings = [
     parking:'가능', heating:'중앙난방', buildingUse:'근린생활시설', approvalDate:'2015-06-20',
     title:'대로변 1층 상가', description:'유동인구 풍부, 주차 가능.\n코너 상가, 가시성 우수.',
     imageUrls:['https://picsum.photos/seed/store1/800/500','https://picsum.photos/seed/store2/800/500'],
-    listingNo:'S-0001', createdAt:'2026-05-02T09:00:00.000Z'
+    listingNo:'S-0001', createdAt:'2026-05-02T09:00:00.000Z', is_urgent: true
   },
   {
     id:'s3', propertyType:'오피스텔', dealType:'전세',
@@ -131,27 +126,22 @@ const sampleListings = [
     parking:'가능 (세대당 1대)', buildingUse:'업무시설',
     title:'신축 오피스텔', description:'역세권, 풀옵션.\nGTX-A 운정역 도보 5분.',
     imageUrls:['https://picsum.photos/seed/officetel1/800/500','https://picsum.photos/seed/officetel2/800/500'],
-    listingNo:'O-0001', createdAt:'2026-05-03T09:00:00.000Z'
+    listingNo:'O-0001', createdAt:'2026-05-03T09:00:00.000Z', is_featured: true
   }
 ];
 
-// ─────────────────────────────────────────────
-// 스토리지 / 포맷 헬퍼
-// ─────────────────────────────────────────────
-const readListings = () => {
+// ── 스토리지 / 포맷 헬퍼 ──
+const readListings  = () => {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) { localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleListings)); return [...sampleListings]; }
   try { return JSON.parse(raw); } catch { return [...sampleListings]; }
 };
 const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
-const formatPrice = (n) => Number(n).toLocaleString('ko-KR');
-const getThumbnail = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
+const formatPrice   = (n) => Number(n).toLocaleString('ko-KR');
+const getThumbnail  = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
 const getDisplayAddress = (item) => item.displayAddress || item.address;
-const getMainPrice = (item) => item.deposit || item.salePrice || item.price || 0;
+const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
-// ─────────────────────────────────────────────
-// 한국어 가격 / 평 변환
-// ─────────────────────────────────────────────
 const toKoreanPrice = (wanwon) => {
   const n = Number(wanwon);
   if (!n || isNaN(n) || n <= 0) return '';
@@ -190,42 +180,37 @@ const getNextListingNo = () => getNextPropertyNumber();
 // 라이트박스
 // ─────────────────────────────────────────────
 let lightboxImages = [];
-let lightboxIdx = 0;
+let lightboxIdx    = 0;
 
 const openLightbox = (images, idx) => {
-  lightboxImages = images;
-  lightboxIdx = idx;
+  lightboxImages = images; lightboxIdx = idx;
   const lb = document.getElementById('lightbox');
   if (!lb) return;
   document.getElementById('lightboxImg').src = images[idx];
   lb.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 };
-
 const closeLightbox = () => {
   document.getElementById('lightbox')?.classList.add('hidden');
   document.body.style.overflow = '';
 };
-
 const lightboxNav = (dir) => {
   if (!lightboxImages.length) return;
   lightboxIdx = (lightboxIdx + dir + lightboxImages.length) % lightboxImages.length;
   document.getElementById('lightboxImg').src = lightboxImages[lightboxIdx];
-  document.querySelectorAll('.modal-thumb').forEach((t, i) => t.classList.toggle('active', i === lightboxIdx));
+  document.querySelectorAll('.modal-thumb').forEach((t,i) => t.classList.toggle('active', i === lightboxIdx));
   const mainImg = document.getElementById('modalMainImg');
   if (mainImg) { mainImg.src = lightboxImages[lightboxIdx]; mainImg.dataset.index = lightboxIdx; }
 };
 
-// ─────────────────────────────────────────────
-// 매물 상세 모달
-// ─────────────────────────────────────────────
+// ── 매물 상세 모달 ──
 const openModal = (item) => {
   const modal = document.getElementById('listingModal');
   if (!modal) return;
-  const cfg = PROPERTY_FIELDS[item.propertyType] || {};
+  const cfg        = PROPERTY_FIELDS[item.propertyType] || {};
   const priceFields = (cfg.priceConfig || {})[item.dealType] || [];
-  const infoFields = cfg.infoFields || [];
-  const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
+  const infoFields  = cfg.infoFields || [];
+  const images      = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
 
   document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
   document.getElementById('modalTitle').textContent = item.title;
@@ -238,10 +223,9 @@ const openModal = (item) => {
     if (!val && val !== 0) return;
     priceHTML += `<div class="modal-price-row">
       <span class="price-label">${f.label}</span>
-      <strong class="price-value">${f.money ? formatPrice(val) + '만원' : val}</strong>
+      <strong class="price-value">${f.money ? formatPrice(val)+'만원' : val}</strong>
     </div>`;
   });
-  // 기존 단순 price 필드 fallback
   if (!priceHTML && item.price) {
     priceHTML = `<div class="modal-price-row">
       <span class="price-label">${item.dealType}</span>
@@ -254,125 +238,84 @@ const openModal = (item) => {
   infoFields.forEach(f => {
     const val = item[f.key];
     if (!val && val !== 0) return;
-    tableHTML += `<tr><td class="info-label">${f.label}</td><td class="info-value">${val}${f.suffix || ''}</td></tr>`;
+    tableHTML += `<tr><td class="info-label">${f.label}</td><td class="info-value">${val}${f.suffix||''}</td></tr>`;
   });
   if (!tableHTML && item.area) tableHTML = `<tr><td class="info-label">면적</td><td class="info-value">${item.area}㎡</td></tr>`;
   document.getElementById('modalInfoTable').innerHTML = tableHTML;
 
   const descEl = document.getElementById('modalDesc');
-  descEl.innerHTML = item.description ? item.description.replace(/\n/g, '<br>') : '';
+  descEl.innerHTML = item.description ? item.description.replace(/\n/g,'<br>') : '';
 
-  const mainImg = document.getElementById('modalMainImg');
+  const mainImg  = document.getElementById('modalMainImg');
   const thumbsEl = document.getElementById('modalThumbs');
   if (images.length > 0) {
-    mainImg.src = images[0];
-    mainImg.dataset.index = 0;
-    thumbsEl.innerHTML = images.map((url, i) =>
-      `<img src="${url}" class="modal-thumb${i === 0 ? ' active' : ''}" data-index="${i}" />`
+    mainImg.src = images[0]; mainImg.dataset.index = 0;
+    thumbsEl.innerHTML = images.map((url,i) =>
+      `<img src="${url}" class="modal-thumb${i===0?' active':''}" data-index="${i}" />`
     ).join('');
     thumbsEl.querySelectorAll('.modal-thumb').forEach(thumb => {
       thumb.addEventListener('click', () => {
         const idx = parseInt(thumb.dataset.index);
-        mainImg.src = images[idx];
-        mainImg.dataset.index = idx;
+        mainImg.src = images[idx]; mainImg.dataset.index = idx;
         thumbsEl.querySelectorAll('.modal-thumb').forEach(t => t.classList.remove('active'));
         thumb.classList.add('active');
       });
     });
     mainImg.onclick = () => openLightbox(images, parseInt(mainImg.dataset.index));
   } else {
-    mainImg.src = '';
-    thumbsEl.innerHTML = '';
-    mainImg.onclick = null;
+    mainImg.src = ''; thumbsEl.innerHTML = ''; mainImg.onclick = null;
   }
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 };
-
 const closeModal = () => {
   document.getElementById('listingModal')?.classList.add('hidden');
   document.body.style.overflow = '';
 };
 
-// ─────────────────────────────────────────────
-// 공통: 모바일 네비
-// ─────────────────────────────────────────────
+// ── 모바일 네비 ──
 const setupMobileNav = () => {
   const toggle = document.querySelector('.nav-toggle');
-  const menu = document.querySelector('.nav-menu');
+  const menu   = document.querySelector('.nav-menu');
   if (!toggle || !menu) return;
   toggle.addEventListener('click', () => menu.classList.toggle('open'));
 };
 
-// ─────────────────────────────────────────────
-// 공통: 관리자 로그인 게이트
-// ─────────────────────────────────────────────
+// ── 관리자 로그인 게이트 ──
 const requireAdminLogin = () => {
   const overlay = document.getElementById('loginOverlay');
-  const mainEl = document.getElementById('adminMain');
+  const mainEl  = document.getElementById('adminMain');
   if (!overlay || !mainEl) return true;
-
   const ADMIN_PW = 'hitop2025';
   if (sessionStorage.getItem('hitop_admin') !== '1') {
-    const loginBtn = document.getElementById('loginBtn');
-    const loginPw = document.getElementById('loginPw');
+    const loginBtn   = document.getElementById('loginBtn');
+    const loginPw    = document.getElementById('loginPw');
     const loginError = document.getElementById('loginError');
     const doLogin = () => {
-      if (loginPw.value === ADMIN_PW) {
-        sessionStorage.setItem('hitop_admin', '1');
-        location.reload();
-      } else {
-        loginError.classList.remove('hidden');
-        loginPw.value = '';
-        loginPw.focus();
-      }
+      if (loginPw.value === ADMIN_PW) { sessionStorage.setItem('hitop_admin','1'); location.reload(); }
+      else { loginError.classList.remove('hidden'); loginPw.value=''; loginPw.focus(); }
     };
-    if (loginBtn) loginBtn.addEventListener('click', doLogin);
-    if (loginPw) loginPw.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+    loginBtn?.addEventListener('click', doLogin);
+    loginPw?.addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
     return false;
   }
-
   overlay.classList.add('hidden');
   mainEl.classList.remove('hidden');
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.style.display = 'inline-flex';
-    logoutBtn.addEventListener('click', () => {
-      sessionStorage.removeItem('hitop_admin');
-      location.reload();
-    });
+    logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('hitop_admin'); location.reload(); });
   }
   return true;
 };
 
-// ─────────────────────────────────────────────
-// 카테고리 메타 (색상·라벨·프리픽스)
-// ─────────────────────────────────────────────
-const CAT_COLORS = {
-  '공장창고':       '#2563EB',
-  '상가':           '#EA580C',
-  '토지':           '#92400E',
-  '오피스텔':       '#7C3AED',
-  '힐스테이트더운정':'#059669',
-  '단독주택':       '#0891B2',
-};
-const CAT_LABELS = {
-  '공장창고':       '공장·창고',
-  '상가':           '상가·빌딩',
-  '토지':           '토지·개발',
-  '오피스텔':       '오피스텔',
-  '힐스테이트더운정':'힐스테이트더운정',
-  '단독주택':       '단독·전원주택',
-};
-
-// 가격 범위 체크
 const priceInRange = (price, range) => {
   const p = Number(price);
-  if (range === 'under1')  return p < 10000;
-  if (range === '1to5')    return p >= 10000 && p < 50000;
-  if (range === '5to10')   return p >= 50000 && p < 100000;
-  if (range === 'over10')  return p >= 100000;
+  if (range==='under1') return p < 10000;
+  if (range==='1to5')   return p >= 10000 && p < 50000;
+  if (range==='5to10')  return p >= 50000 && p < 100000;
+  if (range==='over10') return p >= 100000;
   return true;
 };
 
@@ -422,15 +365,14 @@ const setupListingsPage = () => {
         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
         const marker = new kakao.maps.Marker({ map, position: coords, title: item.title });
         const iw = new kakao.maps.InfoWindow({
-          content: `<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
+          content:`<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
             ${item.title}<br>
-            <span style="color:#F97316;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
+            <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
           </div>`
         });
         kakao.maps.event.addListener(marker, 'click', () => {
           if (openIw) openIw.close();
-          iw.open(map, marker);
-          openIw = iw;
+          iw.open(map, marker); openIw = iw;
           openModalFull(item);
         });
         activeMarkers.push(marker);
@@ -456,7 +398,7 @@ const setupListingsPage = () => {
     const doneTag = document.getElementById('modalDoneTag');
     if (doneTag) doneTag.classList.toggle('hidden', !isCompleted(item));
     const minimapWrap = document.getElementById('modalMinimapWrap');
-    const minimapEl  = document.getElementById('modalMiniMap');
+    const minimapEl   = document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
     minimapWrap.style.display = 'none';
     if (typeof kakao === 'undefined' || !item.address) return;
@@ -573,7 +515,7 @@ const setupListingsPage = () => {
           renderAllGrid();
           document.getElementById('allListingsSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-      });
+      }
     }
   };
 
@@ -672,35 +614,35 @@ const setupListingsPage = () => {
     e.target.reset();
   });
 
-  // ── URL 파라미터 (?category=공장창고) ──
+  // ── 전체 매물 보기 버튼 (패널 하단) ──
+  document.getElementById('btnScrollToAll')?.addEventListener('click', () => {
+    document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // ── URL 파라미터 ──
   const urlCat = new URLSearchParams(window.location.search).get('category');
   if (urlCat) {
     flt.cat = urlCat;
-    document.querySelectorAll('.lp-cat-item').forEach(x =>
-      x.classList.toggle('active', x.dataset.cat === urlCat));
+    const catSel = document.getElementById('formCatSelect');
+    if (catSel) catSel.value = urlCat;
   }
 
   // 초기 렌더
   applyFilters();
+  renderPreviewSections();
 };
 
 // ─────────────────────────────────────────────
-// index.html — 메인 페이지
+// index.html
 // ─────────────────────────────────────────────
 const setupHomePage = () => {
   const recentEl = document.getElementById('homeRecentListings');
   if (!recentEl) return;
-
   const listings = readListings()
     .filter(i => i.status !== 'done')
-    .sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''))
+    .sort((a,b) => (b.createdAt||b.id||'').localeCompare(a.createdAt||a.id||''))
     .slice(0, 6);
-
-  if (!listings.length) {
-    recentEl.innerHTML = '<p style="color:var(--gray-700);">등록된 매물이 없습니다.</p>';
-    return;
-  }
-
+  if (!listings.length) { recentEl.innerHTML = '<p>등록된 매물이 없습니다.</p>'; return; }
   recentEl.innerHTML = listings.map(item => `
     <a class="home-listing-card" href="listings.html" title="${item.title}">
       <div class="hlc-img">
@@ -949,48 +891,36 @@ const setupAdminDashboard = () => {
 };
 
 // ─────────────────────────────────────────────
-// admin-register.html — 매물 등록/수정
+// admin-register.html
 // ─────────────────────────────────────────────
 const setupAdminRegister = () => {
   if (!requireAdminLogin()) return;
-
   const form = document.getElementById('adminForm');
   if (!form) return;
-
   const imageContainer = document.getElementById('imageUrlContainer');
-  const addImageBtn = document.getElementById('addImageBtn');
-  const MAX_IMAGES = 5;
-  let isEditMode = false;
+  const addImageBtn    = document.getElementById('addImageBtn');
+  const MAX_IMAGES     = 5;
+  let isEditMode       = false;
 
-  // 다중 이미지 URL 관리
-  const addImageRow = (value = '') => {
+  const addImageRow = (value='') => {
     if (!imageContainer) return;
     if (imageContainer.querySelectorAll('.image-url-row').length >= MAX_IMAGES) return;
     const count = imageContainer.querySelectorAll('.image-url-row').length;
-    const row = document.createElement('div');
+    const row   = document.createElement('div');
     row.className = 'image-url-row';
     const input = document.createElement('input');
-    input.name = 'imageUrls';
-    input.type = 'url';
-    input.placeholder = `사진 URL ${count + 1}`;
-    input.value = value;
+    input.name = 'imageUrls'; input.type = 'url'; input.placeholder = `사진 URL ${count+1}`; input.value = value;
     if (count === 0) input.required = true;
     const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'btn btn-outline img-remove-btn';
-    removeBtn.textContent = '삭제 X';
+    removeBtn.type = 'button'; removeBtn.className = 'btn btn-outline img-remove-btn'; removeBtn.textContent = '삭제 X';
     removeBtn.addEventListener('click', () => {
       if (imageContainer.querySelectorAll('.image-url-row').length > 1) row.remove();
       else input.value = '';
     });
-    row.appendChild(input);
-    row.appendChild(removeBtn);
-    imageContainer.appendChild(row);
+    row.appendChild(input); row.appendChild(removeBtn); imageContainer.appendChild(row);
   };
 
-  const resetImageFields = () => {
-    if (imageContainer) { imageContainer.innerHTML = ''; addImageRow(); }
-  };
+  const resetImageFields = () => { if(imageContainer){imageContainer.innerHTML=''; addImageRow();} };
   resetImageFields();
   addImageBtn?.addEventListener('click', () => addImageRow());
 
@@ -1008,58 +938,32 @@ const setupAdminRegister = () => {
     if (isEditMode) return;
     const pt = form.elements['propertyType']?.value;
     const noDisplay = document.getElementById('listingNoDisplay');
-    const noInput = form.elements['listingNo'];
-    if (pt) {
-      const no = getNextListingNo(pt);
-      if (noDisplay) noDisplay.textContent = no;
-      if (noInput) noInput.value = no;
-    } else {
-      if (noDisplay) noDisplay.textContent = '-';
-      if (noInput) noInput.value = '';
-    }
+    const noInput   = form.elements['listingNo'];
+    if (pt) { const no=getNextListingNo(pt); if(noDisplay)noDisplay.textContent=no; if(noInput)noInput.value=no; }
+    else { if(noDisplay)noDisplay.textContent='-'; if(noInput)noInput.value=''; }
   };
 
-  // 매물종류 변경 시 초기화 (수정 모드 제외)
   const ptEl = form.elements['propertyType'];
   if (ptEl) {
     ptEl.addEventListener('change', () => {
       if (!isEditMode) {
-        const selectedType = ptEl.value;
-        form.reset();
-        form.elements['id'].value = '';
-        ptEl.value = selectedType;
+        const sel = ptEl.value; form.reset(); form.elements['id'].value=''; ptEl.value=sel;
         resetImageFields();
-        const pyeongEl = document.getElementById('areaPyeong');
-        if (pyeongEl) pyeongEl.textContent = '';
-        const koreanEl = document.getElementById('priceKorean');
-        if (koreanEl) koreanEl.textContent = '';
+        const py=document.getElementById('areaPyeong'); if(py)py.textContent='';
+        const ko=document.getElementById('priceKorean'); if(ko)ko.textContent='';
       }
       updateListingNo();
     });
   }
 
-  // 면적 → 평 자동계산
-  const areaEl = form.elements['area'];
-  if (areaEl) {
-    areaEl.addEventListener('input', () => {
-      const el = document.getElementById('areaPyeong');
-      if (el) el.textContent = toPyeong(areaEl.value);
-    });
-  }
-
-  // 금액 → 한글 자동표시
+  const areaEl  = form.elements['area'];
+  if (areaEl)  areaEl.addEventListener('input',  () => { const el=document.getElementById('areaPyeong'); if(el)el.textContent=toPyeong(areaEl.value); });
   const priceEl = form.elements['price'];
-  if (priceEl) {
-    priceEl.addEventListener('input', () => {
-      const el = document.getElementById('priceKorean');
-      if (el) el.textContent = toKoreanPrice(priceEl.value);
-    });
-  }
+  if (priceEl) priceEl.addEventListener('input', () => { const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value); });
 
-  // 수정 모드: URL 파라미터 확인
   const editId = new URLSearchParams(window.location.search).get('edit');
   if (editId) {
-    const target = readListings().find((item) => item.id === editId);
+    const target = readListings().find(item => item.id===editId);
     if (target) {
       isEditMode = true;
       const titleEl = document.getElementById('formTitle');
@@ -1084,34 +988,22 @@ const setupAdminRegister = () => {
         ? target.imageUrls : (target.imageUrl ? [target.imageUrl] : []);
       urls.forEach((url) => addImageRow(url));
       if (!urls.length) addImageRow();
-
-      const noDisplay = document.getElementById('listingNoDisplay');
-      if (noDisplay) noDisplay.textContent = target.listingNo || '-';
-      const pyeongEl = document.getElementById('areaPyeong');
-      if (pyeongEl && target.area) pyeongEl.textContent = toPyeong(target.area);
-      const koreanEl = document.getElementById('priceKorean');
-      if (koreanEl && target.price) koreanEl.textContent = toKoreanPrice(target.price);
-
-      const cancelBtn = document.getElementById('cancelEditBtn');
-      if (cancelBtn) cancelBtn.classList.remove('hidden');
+      const noDisp=document.getElementById('listingNoDisplay'); if(noDisp)noDisp.textContent=target.listingNo||'-';
+      const pyEl=document.getElementById('areaPyeong'); if(pyEl&&target.area)pyEl.textContent=toPyeong(target.area);
+      const koEl=document.getElementById('priceKorean'); if(koEl&&target.price)koEl.textContent=toKoreanPrice(target.price);
+      const cancelBtn=document.getElementById('cancelEditBtn'); if(cancelBtn)cancelBtn.classList.remove('hidden');
     }
   }
 
-  const cancelBtn = document.getElementById('cancelEditBtn');
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', () => { window.location.href = 'admin-listings.html'; });
-  }
+  document.getElementById('cancelEditBtn')?.addEventListener('click', () => { window.location.href='admin-listings.html'; });
 
-  // 폼 저장
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', e => {
     e.preventDefault();
     const fd = new FormData(form);
     const payload = {};
-    for (const [key, value] of fd.entries()) {
-      if (key !== 'imageUrls') payload[key] = value;
-    }
+    for (const [key,value] of fd.entries()) { if(key!=='imageUrls') payload[key]=value; }
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
-      .map((el) => el.value.trim()).filter((v) => v);
+      .map(el => el.value.trim()).filter(v => v);
     payload.price = Number(payload.price);
     payload.area  = Number(payload.area);
     payload.isRecommended = chkRec?.checked === true;
@@ -1120,11 +1012,9 @@ const setupAdminRegister = () => {
     let listings = readListings();
     if (payload.id) {
       payload.updatedAt = new Date().toISOString();
-      listings = listings.map((item) =>
-        item.id === payload.id ? { ...item, ...payload } : item
-      );
+      listings = listings.map(item => item.id===payload.id ? {...item,...payload} : item);
     } else {
-      payload.id = `id_${Date.now()}`;
+      payload.id        = `id_${Date.now()}`;
       payload.createdAt = new Date().toISOString();
       payload.updatedAt = new Date().toISOString();
       if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
@@ -1138,139 +1028,82 @@ const setupAdminRegister = () => {
 };
 
 // ─────────────────────────────────────────────
-// admin-listings.html — 매물 관리
+// admin-listings.html
 // ─────────────────────────────────────────────
 const setupAdminListingsMgmt = () => {
   if (!requireAdminLogin()) return;
-
-  const listEl = document.getElementById('adminListings');
+  const listEl       = document.getElementById('adminListings');
   const paginationEl = document.getElementById('pagination');
   if (!listEl) return;
-
-  const PAGE_SIZE = 10;
-  let currentPage = 1;
-  let sortMode = 'date';
-  let filtered = [];
+  const PAGE_SIZE=10; let currentPage=1, sortMode='date', filtered=[];
 
   const applyFilters = () => {
-    const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
-    const category = document.getElementById('filterCategory')?.value || '';
-    const dealType = document.getElementById('filterDealType')?.value || '';
-    const status = document.getElementById('filterStatus')?.value || '';
-
+    const search   = (document.getElementById('searchInput')?.value||'').toLowerCase();
+    const category = document.getElementById('filterCategory')?.value||'';
+    const dealType = document.getElementById('filterDealType')?.value||'';
+    const status   = document.getElementById('filterStatus')?.value||'';
     let listings = readListings();
-    if (search) listings = listings.filter((item) =>
-      item.title.toLowerCase().includes(search) ||
-      item.address.toLowerCase().includes(search) ||
-      (item.displayAddress || '').toLowerCase().includes(search)
-    );
-    if (category) listings = listings.filter((item) => item.propertyType === category);
-    if (dealType) listings = listings.filter((item) => item.dealType === dealType);
-    if (status === 'done') listings = listings.filter((item) => item.status === 'done');
-    else if (status === 'public') listings = listings.filter((item) => item.status !== 'done');
-
-    if (sortMode === 'date') {
-      listings.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
-    } else {
-      listings.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
-    }
-
-    filtered = listings;
-    currentPage = 1;
-    renderPage();
+    if (search)   listings=listings.filter(i=>i.title.toLowerCase().includes(search)||i.address.toLowerCase().includes(search)||(i.displayAddress||'').toLowerCase().includes(search));
+    if (category) listings=listings.filter(i=>i.propertyType===category);
+    if (dealType) listings=listings.filter(i=>i.dealType===dealType);
+    if (status==='done')   listings=listings.filter(i=>i.status==='done');
+    else if (status==='public') listings=listings.filter(i=>i.status!=='done');
+    if (sortMode==='date')  listings.sort((a,b)=>(b.createdAt||b.id||'').localeCompare(a.createdAt||a.id||''));
+    else listings.sort((a,b)=>Number(getMainPrice(b))-Number(getMainPrice(a)));
+    filtered=listings; currentPage=1; renderPage();
   };
 
   const renderPage = () => {
-    const total = filtered.length;
-    const totalCountEl = document.getElementById('totalCount');
-    if (totalCountEl) totalCountEl.textContent = `총 ${total}개`;
-
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start + PAGE_SIZE);
-
+    const total=filtered.length;
+    const totalCountEl=document.getElementById('totalCount'); if(totalCountEl) totalCountEl.textContent=`총 ${total}개`;
+    const start=(currentPage-1)*PAGE_SIZE;
+    const pageItems=filtered.slice(start,start+PAGE_SIZE);
     listEl.innerHTML = pageItems.length
-      ? pageItems.map((item) => {
-          const isDone = item.status === 'done';
-          const createdDate = (item.createdAt || '').slice(0, 10) || '-';
-          return `
-            <article class="admin-item${isDone ? ' admin-item-done' : ''}">
-              <div class="admin-item-header">
-                ${item.listingNo ? `<span class="admin-item-no">${item.listingNo}</span>` : ''}
-                <strong class="admin-item-title">${item.title}${isDone ? ' <span class="badge-done">거래완료</span>' : ''}</strong>
-                <span class="admin-item-date">등록 ${createdDate}</span>
-              </div>
-              <p style="margin:4px 0;font-size:13px;">${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
-              <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.area}㎡</p>
-              <div class="admin-item-actions">
-                <a href="admin-register.html?edit=${item.id}" class="btn btn-outline">수정</a>
-                <button class="btn btn-primary" data-action="delete" data-id="${item.id}" type="button">삭제</button>
-                <button class="btn btn-outline done-btn${isDone ? ' done-active' : ''}" data-action="done" data-id="${item.id}" type="button">${isDone ? '완료취소' : '거래완료'}</button>
-              </div>
-            </article>
-          `;
+      ? pageItems.map(item => {
+          const isDone=item.status==='done';
+          return `<article class="admin-item${isDone?' admin-item-done':''}">
+            <div class="admin-item-header">
+              ${item.listingNo?`<span class="admin-item-no">${item.listingNo}</span>`:''}
+              <strong class="admin-item-title">${item.title}${isDone?' <span class="badge-done">거래완료</span>':''}</strong>
+              <span class="admin-item-date">등록 ${(item.createdAt||'').slice(0,10)||'-'}</span>
+            </div>
+            <p style="margin:4px 0;font-size:13px;">${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
+            <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.area}㎡</p>
+            <div class="admin-item-actions">
+              <a href="admin-register.html?edit=${item.id}" class="btn btn-outline">수정</a>
+              <button class="btn btn-primary" data-action="delete" data-id="${item.id}" type="button">삭제</button>
+              <button class="btn btn-outline done-btn${isDone?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${isDone?'완료취소':'거래완료'}</button>
+            </div>
+          </article>`;
         }).join('')
-      : '<p style="padding:24px;color:var(--gray-700);">조건에 맞는 매물이 없습니다.</p>';
-
+      : '<p style="padding:24px;color:#6B7280;">조건에 맞는 매물이 없습니다.</p>';
     if (paginationEl) {
-      const totalPages = Math.ceil(total / PAGE_SIZE);
-      paginationEl.innerHTML = totalPages <= 1 ? '' :
-        Array.from({ length: totalPages }, (_, i) => i + 1)
-          .map((p) => `<button class="btn ${p === currentPage ? 'btn-primary' : 'btn-outline'}" data-page="${p}" type="button">${p}</button>`)
+      const tp=Math.ceil(total/PAGE_SIZE);
+      paginationEl.innerHTML = tp<=1 ? '' :
+        Array.from({length:tp},(_,i)=>i+1)
+          .map(p=>`<button class="btn ${p===currentPage?'btn-primary':'btn-outline'}" data-page="${p}" type="button">${p}</button>`)
           .join('');
     }
   };
 
-  ['searchInput'].forEach((id) => {
-    document.getElementById(id)?.addEventListener('input', applyFilters);
+  ['searchInput'].forEach(id=>document.getElementById(id)?.addEventListener('input',applyFilters));
+  ['filterCategory','filterDealType','filterStatus'].forEach(id=>document.getElementById(id)?.addEventListener('change',applyFilters));
+  document.getElementById('sortDate')?.addEventListener('click',()=>{sortMode='date';document.getElementById('sortDate')?.classList.add('active');document.getElementById('sortPrice')?.classList.remove('active');applyFilters();});
+  document.getElementById('sortPrice')?.addEventListener('click',()=>{sortMode='price';document.getElementById('sortPrice')?.classList.add('active');document.getElementById('sortDate')?.classList.remove('active');applyFilters();});
+  paginationEl?.addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-page]'); if(!btn)return;
+    currentPage=Number(btn.dataset.page); renderPage(); window.scrollTo({top:0,behavior:'smooth'});
   });
-  ['filterCategory', 'filterDealType', 'filterStatus'].forEach((id) => {
-    document.getElementById(id)?.addEventListener('change', applyFilters);
-  });
-
-  document.getElementById('sortDate')?.addEventListener('click', () => {
-    sortMode = 'date';
-    document.getElementById('sortDate')?.classList.add('active');
-    document.getElementById('sortPrice')?.classList.remove('active');
-    applyFilters();
-  });
-  document.getElementById('sortPrice')?.addEventListener('click', () => {
-    sortMode = 'price';
-    document.getElementById('sortPrice')?.classList.add('active');
-    document.getElementById('sortDate')?.classList.remove('active');
-    applyFilters();
-  });
-
-  paginationEl?.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-page]');
-    if (!btn) return;
-    currentPage = Number(btn.dataset.page);
-    renderPage();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  listEl.addEventListener('click', e => {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const { action, id } = btn.dataset;
-    const listings = readListings();
-
-    if (action === 'delete') {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      writeListings(listings.filter((item) => item.id !== id));
-      applyFilters();
-    }
-    if (action === 'done') {
-      const target = listings.find((item) => item.id === id);
-      if (!target) return;
-      writeListings(listings.map((item) =>
-        item.id === id
-          ? { ...item, status: item.status === 'done' ? '' : 'done', updatedAt: new Date().toISOString() }
-          : item
-      ));
+  listEl.addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-action]'); if(!btn)return;
+    const {action,id}=btn.dataset;
+    const listings=readListings();
+    if (action==='delete') { if(!confirm('정말 삭제하시겠습니까?'))return; writeListings(listings.filter(i=>i.id!==id)); applyFilters(); }
+    if (action==='done') {
+      writeListings(listings.map(i=>i.id===id?{...i,status:i.status==='done'?'':'done',updatedAt:new Date().toISOString()}:i));
       applyFilters();
     }
   });
-
   applyFilters();
 };
 
@@ -1280,22 +1113,21 @@ const setupAdminListingsMgmt = () => {
 document.addEventListener('DOMContentLoaded', () => {
   setupMobileNav();
   const page = document.body.dataset.page;
-  if (page === 'home') setupHomePage();
-  else if (page === 'listings') setupListingsPage();
-  else if (page === 'admin-dashboard') setupAdminDashboard();
-  else if (page === 'admin-register') setupAdminRegister();
-  else if (page === 'admin-listings') setupAdminListingsMgmt();
+  if      (page === 'home')             setupHomePage();
+  else if (page === 'listings')         setupListingsPage();
+  else if (page === 'admin-dashboard')  setupAdminDashboard();
+  else if (page === 'admin-register')   setupAdminRegister();
+  else if (page === 'admin-listings')   setupAdminListingsMgmt();
 
-  // 모달 / 라이트박스 이벤트 (listings.html)
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
-  document.getElementById('listingModal')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.getElementById('listingModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
   document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
   document.getElementById('lightboxPrev')?.addEventListener('click', () => lightboxNav(-1));
   document.getElementById('lightboxNext')?.addEventListener('click', () => lightboxNav(1));
-  document.getElementById('lightbox')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
+  document.getElementById('lightbox')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeLightbox(); });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeLightbox(); closeModal(); }
-    if (e.key === 'ArrowLeft') lightboxNav(-1);
-    if (e.key === 'ArrowRight') lightboxNav(1);
+    if (e.key === 'Escape')      { closeLightbox(); closeModal(); }
+    if (e.key === 'ArrowLeft')   lightboxNav(-1);
+    if (e.key === 'ArrowRight')  lightboxNav(1);
   });
 });
