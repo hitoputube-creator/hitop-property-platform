@@ -168,19 +168,23 @@ const toPyeong = (sqm) => {
   return `약 ${(n * 0.3025).toFixed(1)}평`;
 };
 
-const getNextListingNo = (propertyType) => {
-  const prefixMap = {
-    '공장창고': 'F', '상가': 'S', '오피스텔': 'O',
-    '힐스테이트더운정': 'H', '토지': 'T', '단독주택': 'L',
-  };
-  const prefix = prefixMap[propertyType] || 'X';
+// 신형 매물번호: YYMMDD-N (예: 250521-1)
+const getNextPropertyNumber = () => {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(2);
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const prefix = `${yy}${mm}${dd}`;
   const listings = readListings();
   const existing = listings
-    .filter((item) => item.listingNo && item.listingNo.startsWith(prefix + '-'))
-    .map((item) => parseInt(item.listingNo.split('-')[1]) || 0);
+    .filter(i => (i.property_number || i.listingNo || '').startsWith(prefix + '-'))
+    .map(i => parseInt(((i.property_number || i.listingNo || '').split('-')[1])) || 0);
   const maxNo = existing.length > 0 ? Math.max(...existing) : 0;
-  return `${prefix}-${String(maxNo + 1).padStart(4, '0')}`;
+  return `${prefix}-${maxNo + 1}`;
 };
+
+// 구형 호환 (admin-register.html 에서 여전히 사용)
+const getNextListingNo = () => getNextPropertyNumber();
 
 // ─────────────────────────────────────────────
 // 라이트박스
@@ -223,7 +227,7 @@ const openModal = (item) => {
   const infoFields = cfg.infoFields || [];
   const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
 
-  document.getElementById('modalId').textContent = item.id;
+  document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
   document.getElementById('modalTitle').textContent = item.title;
   document.getElementById('modalBadge').textContent = `${item.propertyType} | ${item.dealType}`;
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
@@ -373,23 +377,27 @@ const priceInRange = (price, range) => {
 };
 
 // ─────────────────────────────────────────────
-// listings.html
+// listings.html — v3 (사이드바 | 지도+오버레이 | 추천+최신 패널)
 // ─────────────────────────────────────────────
 const setupListingsPage = () => {
-  const cardsEl = document.getElementById('listingCards');
   const filterForm = document.getElementById('filterForm');
-  if (!cardsEl || !filterForm) return;
+  if (!filterForm) return;
 
-  // ── 필터 상태 ──
-  const flt = { cat: '', deal: '', price: '', kw: '', formCat: '', formDeal: '' };
+  const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '' };
   let sortMode = 'date';
-  let currentPage = 1;
-  const PAGE_SIZE = 10;
+  let allPage  = 1;
+  const ALL_SIZE = 15; // 5열 × 3행
   let filtered = [];
 
   // ── 카카오맵 ──
-  let map = null, miniMap = null, openIw = null;
+  let map = null, openIw = null;
   const activeMarkers = [];
+
+  // ── 필드 헬퍼 ──
+  const isCompleted = i => i.is_completed === true || i.status === 'done';
+  const isRec       = i => i.is_recommended === true || i.isRecommended === true;
+  const isNew       = i => i.is_new === true;
+  const dealClass   = t => t === '매매' ? 'deal-mae' : t === '전세' ? 'deal-jeon' : t === '월세' ? 'deal-wol' : 'deal-im';
 
   // ── 카운트 업데이트 ──
   const updateCounts = () => {
@@ -433,19 +441,20 @@ const setupListingsPage = () => {
   // ── 지도 초기화 ──
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
-    if (!mapEl) return;
-    if (typeof kakao === 'undefined') { console.log('kakao 없음'); return; }
+    if (!mapEl || typeof kakao === 'undefined') return;
     mapEl.innerHTML = '';
-    map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(37.7512, 126.7820), level: 7 });
+    map = new kakao.maps.Map(mapEl, {
+      center: new kakao.maps.LatLng(37.7512, 126.7820),
+      level: 7
+    });
     applyFilters();
   });
 
-  // ── 모달 (미니맵 + 거래완료 태그 포함) ──
+  // ── 모달 열기 (미니맵 + 거래완료 표시) ──
   const openModalFull = (item) => {
     openModal(item);
     const doneTag = document.getElementById('modalDoneTag');
-    if (doneTag) doneTag.classList.toggle('hidden', item.status !== 'done');
-
+    if (doneTag) doneTag.classList.toggle('hidden', !isCompleted(item));
     const minimapWrap = document.getElementById('modalMinimapWrap');
     const minimapEl  = document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
@@ -456,208 +465,211 @@ const setupListingsPage = () => {
       const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
       minimapWrap.style.display = 'block';
       minimapEl.innerHTML = '';
-      miniMap = new kakao.maps.Map(minimapEl, { center: coords, level: 4 });
-      new kakao.maps.Marker({ map: miniMap, position: coords });
+      const mm = new kakao.maps.Map(minimapEl, { center: coords, level: 4 });
+      new kakao.maps.Marker({ map: mm, position: coords });
     });
   };
 
-  // ── 카드 한 장 HTML ──
-  const cardHTML = (item) => {
-    const isDone  = item.status === 'done';
-    const color   = CAT_COLORS[item.propertyType] || '#64748b';
-    const label   = CAT_LABELS[item.propertyType] || item.propertyType;
-    const price   = getMainPrice(item);
-    const area    = item.area ? `${item.area}㎡ / ${(Number(item.area) * 0.3025).toFixed(0)}평` : '-';
-    const imgSrc  = getThumbnail(item);
-    return `
-      <article class="lp-card${isDone ? ' is-done' : ''}" data-id="${item.id}">
-        <div class="lp-card-img">
-          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
-          ${item.listingNo ? `<span class="lp-listing-no">${item.listingNo}</span>` : ''}
-          ${isDone ? '<div class="lp-sold-overlay">거래완료</div>' : ''}
+  // ── 페이지네이션 HTML ──
+  const paginationHTML = (current, total) => {
+    if (total <= 1) return '';
+    let html = '';
+    if (current > 1) html += `<button class="lp-page-btn" data-pg="${current - 1}">‹</button>`;
+    const s = Math.max(1, current - 2);
+    const e = Math.min(total, s + 4);
+    for (let p = s; p <= e; p++) {
+      html += `<button class="lp-page-btn${p === current ? ' active' : ''}" data-pg="${p}">${p}</button>`;
+    }
+    if (current < total) html += `<button class="lp-page-btn" data-pg="${current + 1}">›</button>`;
+    return html;
+  };
+
+  // ── 오른쪽 패널: 추천 + 최신 미니카드 ──
+  const renderSpecialPanels = () => {
+    const all  = readListings();
+    const recItems = all.filter(i => isRec(i) && !isCompleted(i)).slice(0, 3);
+    const newItems = all.filter(i => isNew(i) && !isCompleted(i)).slice(0, 3);
+
+    const miniCardHTML = item => {
+      const thumb = getThumbnail(item);
+      return `<article class="lp-mini-card" data-id="${item.id}">
+        <div class="lp-mini-img${!thumb ? ' lp-mini-img-empty' : ''}">
+          ${thumb ? `<img src="${thumb}" alt="${item.title}" onerror="this.style.display='none'" />` : ''}
         </div>
-        <div class="lp-card-body">
-          <div class="lp-card-badges">
-            <span class="lp-cat-tag" style="background:${color};">${label}</span>
-            <span class="lp-deal-tag">${item.dealType}</span>
-          </div>
-          <div class="lp-card-title">${item.title}</div>
-          <div class="lp-card-area">${area}</div>
-          <div class="lp-card-addr">${getDisplayAddress(item)}</div>
-          <div class="lp-card-price">${item.dealType} ${formatPrice(price)}만원</div>
+        <div class="lp-mini-body">
+          <div class="lp-mini-title">${item.title}</div>
+          <div class="lp-mini-addr">${getDisplayAddress(item)}</div>
+          <div class="lp-mini-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</div>
+        </div>
+      </article>`;
+    };
+
+    [['recCards','추천'], ['newCards','최신']].forEach(([id, label], idx) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const items = idx === 0 ? recItems : newItems;
+      el.innerHTML = items.length
+        ? items.map(miniCardHTML).join('')
+        : `<div class="lp-mini-empty">${label} 매물 없음</div>`;
+      el.querySelectorAll('.lp-mini-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const found = readListings().find(x => x.id === card.dataset.id);
+          if (found) openModalFull(found);
+        });
+      });
+    });
+  };
+
+  // ── 전체 매물 그리드 카드 HTML ──
+  const fullCardHTML = item => {
+    const done   = isCompleted(item);
+    const label  = CAT_LABELS[item.propertyType] || item.propertyType;
+    const price  = getMainPrice(item);
+    const sqm    = Number(item.area || item.landArea || item.contractArea || item.exclusiveArea || 0);
+    const area   = sqm ? `${sqm}㎡ · ${(sqm * 0.3025).toFixed(0)}평` : '';
+    const imgSrc = getThumbnail(item);
+    const dc     = dealClass(item.dealType);
+    return `
+      <article class="lp-all-card${done ? ' lp-all-done' : ''}" data-id="${item.id}">
+        <div class="lp-all-img">
+          ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
+          ${done ? '<div class="lp-all-sold">거래완료</div>' : ''}
+          <span class="lp-all-cat-tag">${label}</span>
+        </div>
+        <div class="lp-all-body">
+          <span class="lp-deal-pill ${dc}">${item.dealType}</span>
+          <div class="lp-all-title">${item.title}</div>
+          <div class="lp-all-price">${formatPrice(price)}만원</div>
+          ${area ? `<div class="lp-all-area">${area}</div>` : ''}
+          <div class="lp-all-addr">${getDisplayAddress(item)}</div>
         </div>
       </article>`;
   };
 
-  // ── 페이지 렌더 ──
-  const renderPage = () => {
-    const total = filtered.length;
-    const el = document.getElementById('listCount');
-    if (el) el.textContent = total;
-
-    const totalPages = Math.ceil(total / PAGE_SIZE);
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start + PAGE_SIZE);
-
-    cardsEl.innerHTML = pageItems.length
-      ? pageItems.map(cardHTML).join('')
-      : '<div class="lp-empty">조건에 맞는 매물이 없습니다.</div>';
-
-    cardsEl.querySelectorAll('.lp-card').forEach(card => {
+  // ── 전체 그리드 렌더 ──
+  const renderAllGrid = () => {
+    const cardsEl = document.getElementById('listingCards');
+    const countEl = document.getElementById('listCount');
+    if (!cardsEl) return;
+    const total      = filtered.length;
+    if (countEl) countEl.textContent = total;
+    const totalPages = Math.ceil(total / ALL_SIZE);
+    const items      = filtered.slice((allPage - 1) * ALL_SIZE, allPage * ALL_SIZE);
+    cardsEl.innerHTML = items.length
+      ? items.map(fullCardHTML).join('')
+      : '<div class="lp-empty" style="grid-column:1/-1;">조건에 맞는 매물이 없습니다.</div>';
+    cardsEl.querySelectorAll('.lp-all-card').forEach(card => {
       card.addEventListener('click', () => {
-        const item = filtered.find(x => x.id === card.dataset.id);
-        if (item) openModalFull(item);
+        const found = filtered.find(x => x.id === card.dataset.id);
+        if (found) openModalFull(found);
       });
     });
-
-    // 페이지네이션
     const pgEl = document.getElementById('lpPagination');
     if (pgEl) {
-      if (totalPages <= 1) { pgEl.innerHTML = ''; return; }
-      let html = '';
-      if (currentPage > 1) html += `<button class="lp-page-btn" data-pg="${currentPage - 1}">‹</button>`;
-      for (let p = 1; p <= totalPages; p++) {
-        html += `<button class="lp-page-btn${p === currentPage ? ' active' : ''}" data-pg="${p}">${p}</button>`;
-      }
-      if (currentPage < totalPages) html += `<button class="lp-page-btn" data-pg="${currentPage + 1}">›</button>`;
-      pgEl.innerHTML = html;
+      pgEl.innerHTML = paginationHTML(allPage, totalPages);
       pgEl.querySelectorAll('.lp-page-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          currentPage = Number(btn.dataset.pg);
-          renderPage();
-          document.getElementById('lpMain')?.scrollTo({ top: 0, behavior: 'smooth' });
+          allPage = Number(btn.dataset.pg);
+          renderAllGrid();
+          document.getElementById('allListingsSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       });
     }
-
-    // 현재 페이지 마커만 표시
-    placeMarkers(pageItems);
   };
 
   // ── 필터 실행 ──
   const applyFilters = () => {
     const effectiveCat  = flt.cat  || flt.formCat;
     const effectiveDeal = flt.deal || flt.formDeal;
-
     let items = readListings();
-
-    if (effectiveCat)    items = items.filter(i => i.propertyType === effectiveCat);
-    if (effectiveDeal)   items = items.filter(i => i.dealType === effectiveDeal);
-    if (flt.kw)          items = items.filter(i =>
-      i.title.toLowerCase().includes(flt.kw) ||
-      i.address.toLowerCase().includes(flt.kw) ||
+    if (effectiveCat)  items = items.filter(i => i.propertyType === effectiveCat);
+    if (effectiveDeal) items = items.filter(i => i.dealType === effectiveDeal);
+    if (flt.kw)        items = items.filter(i =>
+      (i.title || '').toLowerCase().includes(flt.kw) ||
+      (i.address || '').toLowerCase().includes(flt.kw) ||
       (i.displayAddress || '').toLowerCase().includes(flt.kw)
     );
-    if (flt.price)       items = items.filter(i => priceInRange(getMainPrice(i), flt.price));
-
     if (sortMode === 'price') items.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
     else items.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
-
     filtered = items;
-    currentPage = 1;
-    renderPage();
+    allPage  = 1;
+    renderAllGrid();
+    renderSpecialPanels();
     updateCounts();
+    placeMarkers(items);
   };
 
-  // ── 사이드바: 카테고리 클릭 ──
+  // ── 정렬 ──
+  const setSortMode = mode => {
+    sortMode = mode;
+    const isDate = mode === 'date';
+    ['sortDateBtn','sortDateBtn2'].forEach(id =>
+      document.getElementById(id)?.classList.toggle('active', isDate));
+    ['sortPriceBtn','sortPriceBtn2'].forEach(id =>
+      document.getElementById(id)?.classList.toggle('active', !isDate));
+    applyFilters();
+  };
+  document.getElementById('sortDateBtn')?.addEventListener('click',  () => setSortMode('date'));
+  document.getElementById('sortPriceBtn')?.addEventListener('click', () => setSortMode('price'));
+  document.getElementById('sortDateBtn2')?.addEventListener('click',  () => setSortMode('date'));
+  document.getElementById('sortPriceBtn2')?.addEventListener('click', () => setSortMode('price'));
+
+  // ── 사이드바 카테고리 클릭 ──
   document.querySelectorAll('.lp-cat-item').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      flt.cat = el.dataset.cat; flt.deal = ''; flt.price = '';
-      // 폼 드롭다운 동기화
+      flt.cat = el.dataset.cat;
+      flt.deal = '';
       const fc = document.getElementById('formCatSelect');
       if (fc) fc.value = flt.cat;
-      // active 표시
       document.querySelectorAll('.lp-cat-item').forEach(x => x.classList.remove('active'));
       el.classList.add('active');
-      document.querySelectorAll('.lp-deal-btn').forEach(x => x.classList.toggle('active', x.dataset.deal === ''));
-      document.querySelectorAll('.lp-price-btn').forEach(x => x.classList.remove('active'));
       applyFilters();
     });
   });
 
-  // ── 사이드바: 거래유형 배지 (카테고리 + 거래유형 동시) ──
-  document.querySelectorAll('.lp-deal-badge').forEach(el => {
-    el.addEventListener('click', e => {
-      e.stopPropagation(); // 부모 cat-item 클릭 방지
-      flt.cat = el.dataset.cat; flt.deal = el.dataset.deal; flt.price = '';
-      // active 동기화
-      document.querySelectorAll('.lp-cat-item').forEach(x =>
-        x.classList.toggle('active', x.dataset.cat === flt.cat)
-      );
-      document.querySelectorAll('.lp-deal-btn').forEach(x =>
-        x.classList.toggle('active', x.dataset.deal === flt.deal)
-      );
-      applyFilters();
-    });
-  });
-
-  // ── 사이드바: 거래 유형 버튼 ──
-  document.querySelectorAll('.lp-deal-btn').forEach(el => {
-    el.addEventListener('click', () => {
-      flt.deal = el.dataset.deal;
-      document.querySelectorAll('.lp-deal-btn').forEach(x => x.classList.remove('active'));
-      el.classList.add('active');
-      const fd = document.getElementById('formDealSelect');
-      if (fd) fd.value = flt.deal;
-      applyFilters();
-    });
-  });
-
-  // ── 사이드바: 가격대 버튼 ──
-  document.querySelectorAll('.lp-price-btn').forEach(el => {
-    el.addEventListener('click', () => {
-      const next = flt.price === el.dataset.price ? '' : el.dataset.price;
-      flt.price = next;
-      document.querySelectorAll('.lp-price-btn').forEach(x =>
-        x.classList.toggle('active', x.dataset.price === next)
-      );
-      applyFilters();
-    });
-  });
-
-  // ── 검색 폼 제출 ──
+  // ── 오버레이 검색 폼 ──
   filterForm.addEventListener('submit', e => {
     e.preventDefault();
     flt.kw       = (document.getElementById('kwInput')?.value || '').toLowerCase();
-    flt.formCat  = document.getElementById('formCatSelect')?.value || '';
+    flt.formCat  = document.getElementById('formCatSelect')?.value  || '';
     flt.formDeal = document.getElementById('formDealSelect')?.value || '';
     applyFilters();
   });
-
-  // ── 검색 키워드 실시간 ──
   document.getElementById('kwInput')?.addEventListener('input', e => {
     flt.kw = e.target.value.toLowerCase();
     applyFilters();
   });
-
-  // ── 초기화 버튼 ──
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
-    Object.assign(flt, { cat: '', deal: '', price: '', kw: '', formCat: '', formDeal: '' });
+    Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '' });
     filterForm.reset();
-    sortMode = 'date';
     document.querySelectorAll('.lp-cat-item').forEach(x =>
       x.classList.toggle('active', x.dataset.cat === ''));
-    document.querySelectorAll('.lp-deal-btn').forEach(x =>
-      x.classList.toggle('active', x.dataset.deal === ''));
-    document.querySelectorAll('.lp-price-btn').forEach(x => x.classList.remove('active'));
-    document.getElementById('sortDateBtn')?.classList.add('active');
-    document.getElementById('sortPriceBtn')?.classList.remove('active');
-    applyFilters();
+    setSortMode('date');
   });
 
-  // ── 정렬 버튼 ──
-  document.getElementById('sortDateBtn')?.addEventListener('click', () => {
-    sortMode = 'date';
-    document.getElementById('sortDateBtn')?.classList.add('active');
-    document.getElementById('sortPriceBtn')?.classList.remove('active');
-    applyFilters();
+  // ── 전체 매물 보기 / 닫기 ──
+  document.getElementById('showAllBtn')?.addEventListener('click', () => {
+    const sec = document.getElementById('allListingsSection');
+    if (!sec) return;
+    sec.classList.remove('hidden');
+    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   });
-  document.getElementById('sortPriceBtn')?.addEventListener('click', () => {
-    sortMode = 'price';
-    document.getElementById('sortPriceBtn')?.classList.add('active');
-    document.getElementById('sortDateBtn')?.classList.remove('active');
-    applyFilters();
+  document.getElementById('hideAllBtn')?.addEventListener('click', () => {
+    const sec = document.getElementById('allListingsSection');
+    if (!sec) return;
+    sec.classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── 빠른 문의 폼 ──
+  document.getElementById('sideInquiryForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const name  = (document.getElementById('inquiryName')?.value  || '').trim();
+    const phone = (document.getElementById('inquiryPhone')?.value || '').trim();
+    if (!name || !phone) { alert('이름과 연락처를 입력해주세요.'); return; }
+    alert(`상담 문의가 접수되었습니다.\n담당자가 빠른 시일 내에 연락드리겠습니다.\n\n이름: ${name}\n연락처: ${phone}`);
+    e.target.reset();
   });
 
   // ── URL 파라미터 (?category=공장창고) ──
@@ -668,7 +680,7 @@ const setupListingsPage = () => {
       x.classList.toggle('active', x.dataset.cat === urlCat));
   }
 
-  // 초기 렌더 (맵 없어도 카드 즉시 표시)
+  // 초기 렌더
   applyFilters();
 };
 
@@ -705,38 +717,235 @@ const setupHomePage = () => {
 };
 
 // ─────────────────────────────────────────────
-// admin.html — 대시보드
+// admin.html — 통합 관리자 대시보드 v2
 // ─────────────────────────────────────────────
 const setupAdminDashboard = () => {
   if (!requireAdminLogin()) return;
 
-  const listings = readListings();
-  const total = listings.length;
-  const done = listings.filter((i) => i.status === 'done').length;
+  const listEl = document.getElementById('adminListWrap');
+  if (!listEl) return;
 
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('statTotal', total);
-  set('statPublic', total - done);
-  set('statDone', done);
+  let sortMode = 'date';
+  let filterCat = '', filterDeal = '', filterKw = '';
+  let filtered = [];
 
-  const recentEl = document.getElementById('recentListings');
-  if (!recentEl) return;
-  const recent = [...listings]
-    .sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''))
-    .slice(0, 5);
+  // ── 필드 헬퍼 (신·구 호환) ──
+  const isCompleted = i => i.is_completed === true || i.status === 'done';
+  const isRec       = i => i.is_recommended === true || i.isRecommended === true;
+  const isNew       = i => i.is_new === true;
+  const getPropNo   = i => i.property_number || i.listingNo || '-';
 
-  recentEl.innerHTML = recent.length
-    ? recent.map((item) => `
-        <div class="recent-item">
-          <span class="recent-no">${item.listingNo || '-'}</span>
-          <span class="recent-title">${item.title}</span>
-          <span class="recent-type">${item.propertyType}</span>
-          <span class="recent-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
-          <span class="recent-status ${item.status === 'done' ? 'status-done' : 'status-public'}">${item.status === 'done' ? '거래완료' : '공개중'}</span>
-          <span class="recent-date">${(item.createdAt || '').slice(0, 10) || '-'}</span>
-        </div>
-      `).join('')
-    : '<p style="color:var(--gray-700);padding:16px 0;">등록된 매물이 없습니다.</p>';
+  // ── 통계 업데이트 ──
+  const updateStats = () => {
+    const all  = readListings();
+    const done = all.filter(isCompleted).length;
+    const rec  = all.filter(isRec).length;
+    const set  = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('statTotal',       all.length);
+    set('statPublic',      all.length - done);
+    set('statDone',        done);
+    set('statRecommended', rec);
+  };
+
+  // ── 목록 렌더 ──
+  const renderList = () => {
+    listEl.innerHTML = filtered.length
+      ? filtered.map(item => {
+          const done  = isCompleted(item);
+          const rec   = isRec(item);
+          const isnew = isNew(item);
+          const thumb = getThumbnail(item);
+          const price = getMainPrice(item);
+          const propNo = getPropNo(item);
+          const date  = (item.createdAt || '').slice(0, 10) || '-';
+          return `
+            <article class="adm-item${done ? ' adm-item-done' : ''}" data-id="${item.id}">
+              ${thumb ? `
+              <div class="adm-item-img${done ? ' adm-img-done' : ''}">
+                <img src="${thumb}" alt="${item.title}" onerror="this.style.display='none'" />
+                ${done ? '<div class="adm-done-badge">거래완료</div>' : ''}
+                ${rec   ? '<span class="adm-rec-ribbon">⭐ 추천</span>' : ''}
+                ${isnew ? '<span class="adm-new-ribbon">🔥 최신</span>' : ''}
+              </div>` : ''}
+              <div class="adm-item-body">
+                <div class="adm-item-row1">
+                  <span class="adm-item-no">${propNo}</span>
+                  <span class="adm-item-type">${item.propertyType || '-'}</span>
+                  <span class="adm-item-deal">${item.dealType || '-'}</span>
+                  <span class="adm-item-date">${date}</span>
+                </div>
+                <div class="adm-item-title">${item.title}</div>
+                <div class="adm-item-info">${getDisplayAddress(item)} · ${formatPrice(price)}만원 · ${item.area || 0}㎡</div>
+                <div class="adm-item-actions">
+                  <button class="adm-btn${rec   ? ' adm-btn-rec-on' : ''}" data-action="rec"  data-id="${item.id}">⭐ 추천</button>
+                  <button class="adm-btn${isnew ? ' adm-btn-new-on' : ''}" data-action="new"  data-id="${item.id}">🔥 최신</button>
+                  <button class="adm-btn adm-btn-done${done ? ' done-active' : ''}" data-action="done" data-id="${item.id}">${done ? '완료취소' : '거래완료'}</button>
+                  <button class="adm-btn adm-btn-edit" data-action="edit" data-id="${item.id}">✏️ 수정</button>
+                  <button class="adm-btn adm-btn-del"  data-action="del"  data-id="${item.id}">🗑️ 삭제</button>
+                </div>
+              </div>
+            </article>`;
+        }).join('')
+      : '<p style="padding:24px;color:#999;">조건에 맞는 매물이 없습니다.</p>';
+  };
+
+  // ── 필터 적용 ──
+  const applyFilters = () => {
+    let listings = readListings();
+    if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
+    if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
+    if (filterKw) {
+      const kw = filterKw.toLowerCase();
+      listings = listings.filter(i =>
+        (i.title || '').toLowerCase().includes(kw) ||
+        (i.address || '').toLowerCase().includes(kw) ||
+        (i.displayAddress || '').toLowerCase().includes(kw)
+      );
+    }
+    if (sortMode === 'price') listings.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
+    else listings.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
+    filtered = listings;
+    renderList();
+    updateStats();
+    const tc = document.getElementById('adminTotalCount');
+    if (tc) tc.textContent = `총 ${listings.length}개`;
+  };
+
+  // ── 액션 핸들러 ──
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, id } = btn.dataset;
+    const listings = readListings();
+
+    if (action === 'del') {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      writeListings(listings.filter(i => i.id !== id));
+      applyFilters();
+    }
+
+    if (action === 'done') {
+      const target = listings.find(i => i.id === id);
+      if (!target) return;
+      const nowDone = !isCompleted(target);
+      if (nowDone && !confirm('거래완료 처리하시겠습니까?')) return;
+      writeListings(listings.map(i => i.id === id
+        ? { ...i, is_completed: nowDone, status: nowDone ? 'done' : '', updatedAt: new Date().toISOString() }
+        : i));
+      applyFilters();
+    }
+
+    if (action === 'rec') {
+      const target = listings.find(i => i.id === id);
+      if (!target) return;
+      const nowRec = !isRec(target);
+      writeListings(listings.map(i => i.id === id
+        ? { ...i, is_recommended: nowRec, isRecommended: nowRec, updatedAt: new Date().toISOString() }
+        : i));
+      applyFilters();
+    }
+
+    if (action === 'new') {
+      const target = listings.find(i => i.id === id);
+      if (!target) return;
+      const nowNew = !isNew(target);
+      writeListings(listings.map(i => i.id === id
+        ? { ...i, is_new: nowNew, updatedAt: new Date().toISOString() }
+        : i));
+      applyFilters();
+    }
+
+    if (action === 'edit') {
+      const target = listings.find(i => i.id === id);
+      if (target) openEditModal(target);
+    }
+  });
+
+  // ── 수정 모달 ──
+  const editModal = document.getElementById('editModal');
+
+  const openEditModal = (item) => {
+    document.getElementById('editId').value        = item.id;
+    document.getElementById('editTitle').value     = item.title || '';
+    document.getElementById('editType').value      = item.propertyType || '공장창고';
+    document.getElementById('editDeal').value      = item.dealType || '매매';
+    document.getElementById('editPrice').value     = item.price || item.salePrice || item.deposit || '';
+    document.getElementById('editArea').value      = item.area || item.landArea || '';
+    document.getElementById('editAddress').value   = item.displayAddress || item.address || '';
+    document.getElementById('editDesc').value      = item.description || '';
+    document.getElementById('editImageUrl').value  = (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
+    editModal?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeEditModal = () => {
+    editModal?.classList.add('hidden');
+    document.body.style.overflow = '';
+  };
+
+  document.getElementById('editModalClose')?.addEventListener('click', closeEditModal);
+  document.getElementById('editCancelBtn')?.addEventListener('click', closeEditModal);
+  editModal?.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
+
+  document.getElementById('editForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = document.getElementById('editId').value;
+    const listings = readListings();
+    const updates = {
+      title:        document.getElementById('editTitle').value,
+      propertyType: document.getElementById('editType').value,
+      dealType:     document.getElementById('editDeal').value,
+      displayAddress: document.getElementById('editAddress').value,
+      description:  document.getElementById('editDesc').value,
+      updatedAt:    new Date().toISOString(),
+    };
+    const priceVal = Number(document.getElementById('editPrice').value);
+    const areaVal  = Number(document.getElementById('editArea').value);
+    if (priceVal) updates.price = priceVal;
+    if (areaVal)  updates.area  = areaVal;
+    const imgUrl = document.getElementById('editImageUrl').value.trim();
+    if (imgUrl) updates.imageUrls = [imgUrl];
+    writeListings(listings.map(i => i.id === id ? { ...i, ...updates } : i));
+    closeEditModal();
+    applyFilters();
+  });
+
+  // ── 검색·필터 이벤트 ──
+  document.getElementById('adminSearchBtn')?.addEventListener('click', () => {
+    filterKw = (document.getElementById('adminSearchKw')?.value || '').trim();
+    applyFilters();
+  });
+  document.getElementById('adminSearchKw')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { filterKw = e.target.value.trim(); applyFilters(); }
+  });
+  document.getElementById('adminFilterCat')?.addEventListener('change', e => {
+    filterCat = e.target.value; applyFilters();
+  });
+  document.getElementById('adminFilterDeal')?.addEventListener('change', e => {
+    filterDeal = e.target.value; applyFilters();
+  });
+  document.getElementById('adminResetBtn')?.addEventListener('click', () => {
+    filterCat = ''; filterDeal = ''; filterKw = '';
+    const fc = document.getElementById('adminFilterCat'); if (fc) fc.value = '';
+    const fd = document.getElementById('adminFilterDeal'); if (fd) fd.value = '';
+    const fk = document.getElementById('adminSearchKw'); if (fk) fk.value = '';
+    applyFilters();
+  });
+
+  document.getElementById('adminSortDate')?.addEventListener('click', () => {
+    sortMode = 'date';
+    document.getElementById('adminSortDate')?.classList.add('active');
+    document.getElementById('adminSortPrice')?.classList.remove('active');
+    applyFilters();
+  });
+  document.getElementById('adminSortPrice')?.addEventListener('click', () => {
+    sortMode = 'price';
+    document.getElementById('adminSortPrice')?.classList.add('active');
+    document.getElementById('adminSortDate')?.classList.remove('active');
+    applyFilters();
+  });
+
+  applyFilters();
 };
 
 // ─────────────────────────────────────────────
@@ -784,6 +993,15 @@ const setupAdminRegister = () => {
   };
   resetImageFields();
   addImageBtn?.addEventListener('click', () => addImageRow());
+
+  // ── 추천/급매 체크박스 스타일 ──
+  const chkRec = document.getElementById('chkRecommended');
+  const chkUrg = document.getElementById('chkUrgent');
+  const lblRec = document.getElementById('labelRecommended');
+  const lblUrg = document.getElementById('labelUrgent');
+  const syncFlagStyle = (chk, lbl) => lbl?.classList.toggle('is-checked', !!chk?.checked);
+  chkRec?.addEventListener('change', () => syncFlagStyle(chkRec, lblRec));
+  chkUrg?.addEventListener('change', () => syncFlagStyle(chkUrg, lblUrg));
 
   // 매물번호 자동생성
   const updateListingNo = () => {
@@ -850,8 +1068,16 @@ const setupAdminRegister = () => {
       Object.entries(target).forEach(([key, value]) => {
         if (key === 'imageUrls') return;
         const el = form.elements[key];
-        if (el) el.value = value;
+        if (!el) return;
+        if (el.type === 'checkbox') {
+          el.checked = value === true || value === 'true';
+        } else {
+          el.value = value;
+        }
       });
+      // 체크박스 라벨 스타일 동기화
+      syncFlagStyle(chkRec, lblRec);
+      syncFlagStyle(chkUrg, lblUrg);
 
       imageContainer.innerHTML = '';
       const urls = (target.imageUrls && target.imageUrls.length)
@@ -887,7 +1113,9 @@ const setupAdminRegister = () => {
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
       .map((el) => el.value.trim()).filter((v) => v);
     payload.price = Number(payload.price);
-    payload.area = Number(payload.area);
+    payload.area  = Number(payload.area);
+    payload.isRecommended = chkRec?.checked === true;
+    payload.isUrgent      = chkUrg?.checked === true;
 
     let listings = readListings();
     if (payload.id) {
@@ -899,7 +1127,8 @@ const setupAdminRegister = () => {
       payload.id = `id_${Date.now()}`;
       payload.createdAt = new Date().toISOString();
       payload.updatedAt = new Date().toISOString();
-      if (!payload.listingNo) payload.listingNo = getNextListingNo(payload.propertyType);
+      if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
+      if (!payload.property_number) payload.property_number = payload.listingNo;
       if (!payload.status) payload.status = '';
       listings.unshift(payload);
     }

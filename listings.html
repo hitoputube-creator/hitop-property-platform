@@ -11,11 +11,11 @@
   </head>
   <body data-page="listings">
 
-    <!-- 탑바 -->
+    <!-- 탑바: 영업시간 + 전화 1.5배 -->
     <div class="top-bar">
       <div class="container">
-        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
-        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+        <span class="top-bar-hours top-bar-lg">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone top-bar-lg" href="tel:031-949-8969">📞 031-949-8969</a>
       </div>
     </div>
 
@@ -37,15 +37,13 @@
       </div>
     </header>
 
-    <!-- ══════════════════════════════════════
-         3단 본문: 사이드바 | 매물영역 | 지도
-         ══════════════════════════════════════ -->
-    <div class="lp-body">
+    <!-- ══ 3단 메인 바디 ══ -->
+    <div class="lp-body" id="lpBody">
 
-      <!-- ── 왼쪽 사이드바 ── -->
-      <aside class="lp-sidebar" aria-label="필터 사이드바">
+      <!-- ── 왼쪽 사이드바 (15%) ── -->
+      <aside class="lp-sidebar" aria-label="카테고리 사이드바">
 
-        <!-- 섹션 1: 매물 종류 -->
+        <!-- 매물 종류 -->
         <div class="lp-sidebar-section">
           <div class="lp-sidebar-header">매물 종류</div>
 
@@ -53,101 +51,65 @@
             <span class="lp-cat-name">전체 매물</span>
             <span class="lp-cat-count" id="cnt-all">(0)</span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="공장창고">
             <span class="lp-cat-name">공장·창고</span>
             <span class="lp-cat-count" id="cnt-공장창고">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="공장창고" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="공장창고" data-deal="임대">임</span>
-            </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="상가">
             <span class="lp-cat-name">상가·빌딩</span>
             <span class="lp-cat-count" id="cnt-상가">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="상가" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="상가" data-deal="임대">임</span>
-            </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="토지">
             <span class="lp-cat-name">토지·개발</span>
             <span class="lp-cat-count" id="cnt-토지">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="토지" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="토지" data-deal="임대">임</span>
-            </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="오피스텔">
             <span class="lp-cat-name">오피스텔</span>
             <span class="lp-cat-count" id="cnt-오피스텔">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-jeon" data-cat="오피스텔" data-deal="전세">전</span>
-              <span class="lp-deal-badge lbdg-wol"  data-cat="오피스텔" data-deal="월세">월</span>
-            </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="힐스테이트더운정">
             <span class="lp-cat-name">힐스테이트더운정</span>
             <span class="lp-cat-count" id="cnt-힐스테이트더운정">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae"  data-cat="힐스테이트더운정" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-jeon" data-cat="힐스테이트더운정" data-deal="전세">전</span>
-              <span class="lp-deal-badge lbdg-wol"  data-cat="힐스테이트더운정" data-deal="월세">월</span>
-            </span>
           </a>
-
           <a class="lp-cat-item" href="#" data-cat="단독주택">
             <span class="lp-cat-name">단독·전원주택</span>
             <span class="lp-cat-count" id="cnt-단독주택">(0)</span>
-            <span class="lp-cat-badges">
-              <span class="lp-deal-badge lbdg-mae" data-cat="단독주택" data-deal="매매">매</span>
-              <span class="lp-deal-badge lbdg-im"  data-cat="단독주택" data-deal="임대">임</span>
-            </span>
           </a>
         </div>
 
-        <!-- 섹션 2: 거래 유형 -->
+        <!-- 전화 문의 -->
         <div class="lp-sidebar-section">
-          <div class="lp-sidebar-header">거래 유형</div>
-          <div class="lp-deal-btns">
-            <button class="lp-deal-btn active" type="button" data-deal="">전체</button>
-            <button class="lp-deal-btn" type="button" data-deal="매매">매매</button>
-            <button class="lp-deal-btn" type="button" data-deal="임대">임대</button>
+          <div class="lp-sidebar-header">전화 문의</div>
+          <div class="lp-contact-inner">
+            <a href="tel:031-949-8969" class="lp-phone-big">031-949-8969</a>
+            <p class="lp-hours-small">평일 10:00 ~ 19:00</p>
+            <a href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noreferrer" class="lp-kakao-btn">
+              💬 카카오톡 문의
+            </a>
           </div>
         </div>
 
-        <!-- 섹션 3: 가격대 -->
-        <div class="lp-sidebar-section">
-          <div class="lp-sidebar-header">가격대</div>
-          <div class="lp-price-grid">
-            <button class="lp-price-btn" type="button" data-price="under1">1억 이하</button>
-            <button class="lp-price-btn" type="button" data-price="1to5">1억~5억</button>
-            <button class="lp-price-btn" type="button" data-price="5to10">5억~10억</button>
-            <button class="lp-price-btn" type="button" data-price="over10">10억 이상</button>
-          </div>
-        </div>
-
-        <!-- 하단 문의 박스 -->
-        <div class="lp-contact-box">
-          <div class="cb-label">매물 문의</div>
-          <a href="tel:031-949-8969" class="cb-phone">031-949-8969</a>
-          <p class="cb-hours">평일 10:00 ~ 19:00</p>
+        <!-- 빠른 문의 폼 -->
+        <div class="lp-sidebar-section lp-inquiry-section">
+          <div class="lp-sidebar-header">실시간 빠른문의</div>
+          <form class="lp-inquiry-form" id="sideInquiryForm" novalidate>
+            <input type="text"  id="inquiryName"  placeholder="이름" required />
+            <input type="tel"   id="inquiryPhone" placeholder="연락처 (010-0000-0000)" required />
+            <textarea id="inquiryMsg" rows="3" placeholder="문의내용"></textarea>
+            <button type="submit" class="lp-inquiry-submit">상담문의 남기기</button>
+          </form>
         </div>
 
       </aside>
 
-      <!-- ── 가운데: 검색 + 카드 ── -->
-      <main class="lp-main" id="lpMain">
+      <!-- ── 가운데: 지도 + 오버레이 검색바 (50%) ── -->
+      <div class="lp-center" id="lpCenter">
 
-        <!-- 검색바 -->
-        <form id="filterForm" class="lp-search-bar" novalidate>
-          <input type="text" name="keyword" id="kwInput" placeholder="제목·주소 검색" autocomplete="off" />
+        <!-- 지도 위 오버레이 검색바 -->
+        <form id="filterForm" class="lp-overlay-search" novalidate>
+          <input type="text" name="keyword" id="kwInput" placeholder="매물명 / 위치 검색" autocomplete="off" />
           <select name="formCat" id="formCatSelect">
-            <option value="">매물종류 전체</option>
+            <option value="">매물종류</option>
             <option value="공장창고">공장·창고</option>
             <option value="상가">상가·빌딩</option>
             <option value="토지">토지·개발</option>
@@ -156,7 +118,7 @@
             <option value="단독주택">단독·전원주택</option>
           </select>
           <select name="formDeal" id="formDealSelect">
-            <option value="">거래유형 전체</option>
+            <option value="">거래유형</option>
             <option value="매매">매매</option>
             <option value="전세">전세</option>
             <option value="월세">월세</option>
@@ -166,33 +128,58 @@
           <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
         </form>
 
-        <!-- 결과 헤더 -->
-        <div class="lp-results-hd">
-          <span class="lp-result-count">총 <strong id="listCount">0</strong>개 매물</span>
+        <!-- 카카오맵 -->
+        <div id="map">
+          <div class="map-placeholder-text">
+            <span>📍 카카오맵 로딩 중...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 오른쪽: 추천 + 최신 매물 패널 (35%) ── -->
+      <div class="lp-panel" id="lpPanel">
+
+        <div class="lp-panel-hd">
+          <span style="font-weight:700;font-size:14px;color:#111827;">추천 &amp; 최신 매물</span>
           <div class="lp-sort-btns">
             <button class="lp-sort-btn active" id="sortDateBtn" type="button">최신순</button>
             <button class="lp-sort-btn" id="sortPriceBtn" type="button">가격순</button>
           </div>
         </div>
 
-        <!-- 카드 목록 -->
-        <div id="listingCards" class="lp-cards-grid"></div>
-
-        <!-- 페이지네이션 -->
-        <div id="lpPagination" class="lp-pagination"></div>
-
-      </main>
-
-      <!-- ── 오른쪽: 카카오맵 ── -->
-      <aside class="lp-map" aria-label="지도 영역">
-        <div id="map">
-          <div class="map-placeholder-text">
-            <span>📍 카카오맵 로딩 중...</span>
+        <!-- 좌우 2열: 추천 | 최신 -->
+        <div class="lp-panel-2col">
+          <div class="lp-panel-col">
+            <div class="lp-col-header lp-col-rec">⭐ 추천매물</div>
+            <div id="recCards" class="lp-col-cards"></div>
+          </div>
+          <div class="lp-panel-col">
+            <div class="lp-col-header lp-col-new">🔥 최신매물</div>
+            <div id="newCards" class="lp-col-cards"></div>
           </div>
         </div>
-      </aside>
+
+        <!-- 전체 매물 보기 버튼 -->
+        <button type="button" id="showAllBtn" class="lp-show-all-btn">↓ 전체 매물 보기</button>
+
+      </div>
 
     </div><!-- .lp-body -->
+
+    <!-- ══ 하단 전체 매물 그리드 ══ -->
+    <section id="allListingsSection" class="lp-all-section hidden">
+      <div class="lp-all-toolbar">
+        <h2 class="lp-all-title">전체 매물</h2>
+        <div class="lp-sort-btns">
+          <button class="lp-sort-btn active" id="sortDateBtn2" type="button">최신순</button>
+          <button class="lp-sort-btn" id="sortPriceBtn2" type="button">가격순</button>
+        </div>
+        <span class="lp-result-count">총 <strong id="listCount">0</strong>개</span>
+        <button type="button" id="hideAllBtn" class="lp-hide-btn">▲ 닫기</button>
+      </div>
+      <div id="listingCards" class="lp-all-grid"></div>
+      <div id="lpPagination" class="lp-pagination lp-all-pgn"></div>
+    </section>
 
     <!-- ══ 매물 상세 모달 ══ -->
     <div id="listingModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="매물 상세보기">
@@ -205,7 +192,6 @@
           </div>
         </div>
         <div class="modal-body">
-          <!-- 왼쪽: 이미지 -->
           <div class="modal-left">
             <div class="modal-main-img">
               <img id="modalMainImg" src="" alt="매물사진" />
@@ -216,7 +202,6 @@
               <div id="modalDesc" class="modal-desc"></div>
             </div>
           </div>
-          <!-- 오른쪽: 요약 + 문의 -->
           <div class="modal-right">
             <div>
               <span class="modal-badge" id="modalBadge"></span>
@@ -227,7 +212,7 @@
             <table class="modal-info-table" id="modalInfoTable"></table>
             <div class="modal-contact">
               <a href="tel:031-949-8969" class="btn modal-tel">📞 문의전화 031-949-8969</a>
-              <a href="https://open.kakao.com" target="_blank" rel="noreferrer" class="modal-kakao-btn">💬 카카오톡 문의</a>
+              <a href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noreferrer" class="modal-kakao-btn">💬 카카오톡 문의</a>
             </div>
             <div class="modal-agent">
               <strong>하이탑부동산공인중개사사무소</strong>
@@ -251,11 +236,11 @@
       <button class="lightbox-next" id="lightboxNext" type="button" aria-label="다음">›</button>
     </div>
 
-    <!-- 플로팅 문의 -->
+    <!-- 플로팅 문의 (1.5배) -->
     <div class="floating-contact">
-      <a href="tel:031-949-8969" class="float-btn float-call" title="전화문의">전화<br>문의</a>
-      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-blog" title="블로그">네이버<br>블로그</a>
-      <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao" title="카카오톡">카카오<br>채팅</a>
+      <a href="tel:031-949-8969" class="float-btn float-btn-lg float-call" title="전화문의">전화<br>문의</a>
+      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-btn-lg float-blog" title="블로그">네이버<br>블로그</a>
+      <a href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noopener noreferrer" class="float-btn float-btn-lg float-kakao" title="카카오톡">카카오<br>채팅</a>
     </div>
 
     <footer class="site-footer compact-footer">
@@ -280,6 +265,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260521b"></script>
+    <script src="app.js?v=20260522b"></script>
   </body>
 </html>
