@@ -307,8 +307,27 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .listing-filter-grid input, .listing-filter-grid select { flex: 1 1 calc(50% - 4px); }
   .modal-box { border-radius: 0; max-height: 100vh; height: 100vh; }
   .modal-body { grid-template-columns: 1fr; overflow-y: auto; }
-  .floating-contact { bottom: 20px; right: 14px; }
-  .float-btn { width: 48px; height: 48px; font-size: 10px; }
+.floating-btns {
+  right: 12px;
+  bottom: 84px;
+  gap: 9px;
+}
+
+.float-btn-card {
+  width: 56px;
+  height: 56px;
+  gap: 2px;
+}
+
+.float-btn-card svg {
+  width: 20px;
+  height: 20px;
+}
+
+.float-btn-card-label,
+.float-btn-card span {
+  font-size: 10px;
+}
   .footer-main span, .footer-sub span { display: block; margin: 2px 0; }
   .footer-main strong { display: block; margin: 0 0 4px; }
   .modal-body { grid-template-columns: 1fr; }
@@ -1095,10 +1114,10 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
 }
 .lp-phone-big {
-  font-size: 20px; font-weight: 800; color: #F97316;
+  font-size: 20px; font-weight: 800; color: #C9A84C;
   text-decoration: none; display: block; line-height: 1.2;
 }
-.lp-phone-big:hover { color: #C2410C; }
+.lp-phone-big:hover { color: #b89540; }
 .lp-hours-small { font-size: 11px; color: #9CA3AF; margin: 0; }
 .lp-kakao-btn {
   display: block; background: #C9A84C; color: #fff;
@@ -1452,15 +1471,16 @@ body[data-page="listings"] .lp-cat-count::after {
 
 /* 메뉴 hover */
 body[data-page="listings"] .lp-cat-item:hover {
-  background: #fff5f8;
-  color: #d83a6d;
+  background: #f8f5ed;
+  color: #071f5f;
 }
 
 /* 선택된 메뉴 */
 body[data-page="listings"] .lp-cat-item.active {
-  background: #fff0f5;
-  color: #d83a6d;
+  background: #f8f1df;
+  color: #071f5f;
   font-weight: 800;
+  border-left-color: #c9a84c;
 }
 
 /* 전화문의 영역 */
@@ -1472,7 +1492,7 @@ body[data-page="listings"] .lp-contact-inner {
 
 body[data-page="listings"] .lp-phone-big {
   display: block;
-  color: #ff5a00;
+  color: #c9a84c;
   font-size: 24px;
   font-weight: 900;
   text-decoration: none;
@@ -1520,8 +1540,8 @@ body[data-page="listings"] .lp-inquiry-form textarea {
 
 body[data-page="listings"] .lp-inquiry-form input:focus,
 body[data-page="listings"] .lp-inquiry-form textarea:focus {
-  border-color: #d83a6d;
-  box-shadow: 0 0 0 3px rgba(216, 58, 109, 0.12);
+  border-color: #071f5f;
+  box-shadow: 0 0 0 3px rgba(7, 31, 95, 0.12);
 }
 
 /* 상담문의 버튼 */
