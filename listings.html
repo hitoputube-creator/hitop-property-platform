@@ -7,10 +7,17 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
 
+    <!-- 탑바: 영업시간 + 전화 1.5배 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours top-bar-lg">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone top-bar-lg" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
 
     <!-- 헤더 -->
     <header class="site-header">
@@ -18,43 +25,16 @@
         <a class="brand" href="index.html">
           <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
         </a>
-        <!-- 지도 위 오버레이 검색바 -->
-        <form id="filterForm" class="lp-overlay-search" novalidate>
-          <input type="text" name="keyword" id="kwInput" placeholder="매물명 / 위치 검색" autocomplete="off" />
-          <select name="formCat" id="formCatSelect">
-            <option value="">매물종류</option>
-            <option value="공장창고">공장·창고</option>
-            <option value="상가">상가·빌딩</option>
-            <option value="토지">토지·개발</option>
-            <option value="오피스텔">오피스텔</option>
-            <option value="힐스테이트더운정">힐스테이트더운정</option>
-            <option value="단독주택">단독·전원주택</option>
-          </select>
-          <select name="formDeal" id="formDealSelect">
-            <option value="">거래유형</option>
-            <option value="매매">매매</option>
-            <option value="전세">전세</option>
-            <option value="월세">월세</option>
-            <option value="임대">임대</option>
-          </select>
-          <button type="submit" class="lp-search-submit">검색</button>
-          <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
-        </form>
-
-        
-        <div class="lp-header-info">
-          <span class="lp-header-hours">🕙 평일 10:00 ~ 19:00</span>
-          <a href="tel:031-949-8969" class="lp-header-phone">📞 031-949-8969</a>
-        </div>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html" aria-current="page">매물보기</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="index.html#contact">고객센터</a>
+        </nav>
       </div>
-      <nav class="lp-header-nav">
-        <a href="about.html">하이탑소개</a>
-        <a href="listings.html" class="nav-active">매물보기</a>
-        <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
-        <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
-        <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-        <a href="index.html#contact">고객센터</a>
-      </nav>
     </header>
 
     <!-- ══ 3단 메인 바디 ══ -->
@@ -125,6 +105,28 @@
       <!-- ── 가운데: 지도 + 오버레이 검색바 (50%) ── -->
       <div class="lp-center" id="lpCenter">
 
+        <!-- 지도 위 오버레이 검색바 -->
+        <form id="filterForm" class="lp-overlay-search" novalidate>
+          <input type="text" name="keyword" id="kwInput" placeholder="매물명 / 위치 검색" autocomplete="off" />
+          <select name="formCat" id="formCatSelect">
+            <option value="">매물종류</option>
+            <option value="공장창고">공장·창고</option>
+            <option value="상가">상가·빌딩</option>
+            <option value="토지">토지·개발</option>
+            <option value="오피스텔">오피스텔</option>
+            <option value="힐스테이트더운정">힐스테이트더운정</option>
+            <option value="단독주택">단독·전원주택</option>
+          </select>
+          <select name="formDeal" id="formDealSelect">
+            <option value="">거래유형</option>
+            <option value="매매">매매</option>
+            <option value="전세">전세</option>
+            <option value="월세">월세</option>
+            <option value="임대">임대</option>
+          </select>
+          <button type="submit" class="lp-search-submit">검색</button>
+          <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
+        </form>
 
         <!-- 카카오맵 -->
         <div id="map">
@@ -191,7 +193,9 @@
         </div>
         <div class="modal-body">
           <div class="modal-left">
-            <div class="modal-main-img"><img id="modalMainImg" src="" alt="매물사진" /></div>
+            <div class="modal-main-img">
+              <img id="modalMainImg" src="" alt="매물사진" />
+            </div>
             <div class="modal-thumbs" id="modalThumbs"></div>
             <div class="modal-desc-section">
               <h4>매물 설명</h4>
@@ -224,7 +228,7 @@
       </div>
     </div>
 
-    <!-- ======= 라이트박스 ======= -->
+    <!-- ══ 라이트박스 ══ -->
     <div id="lightbox" class="lightbox-overlay hidden" role="dialog" aria-modal="true">
       <button class="lightbox-close" id="lightboxClose" type="button" aria-label="닫기">✕</button>
       <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="이전">‹</button>
@@ -239,18 +243,25 @@
       <a href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noopener noreferrer" class="float-btn float-btn-lg float-kakao" title="카카오톡">카카오<br>채팅</a>
     </div>
 
-    <!-- ======= 푸터 ======= -->
-    <footer class="lp-footer">
-      <div class="lp-footer-inner">
-        <p><strong>하이탑부동산공인중개사사무소</strong> · 대표: 주현희 · 031-949-8969</p>
-        <p>경기도 파주시 책향기로 830, 1층 · 등록번호: 41480-2016-00026 · 사업자: 305-48-62183</p>
-        <p class="lp-footer-links">
+    <footer class="site-footer compact-footer">
+      <div class="container footer-inner">
+        <p class="footer-main">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로830, 1층</span>
+          <span>전화: 031-949-8969</span>
+          <a href="admin.html" style="margin-left:auto;padding:4px 10px;background:#333;color:#fff;border-radius:4px;font-size:11px;text-decoration:none;opacity:0.6;">관리자</a>
+        </p>
+        <p class="footer-sub">
+          <span>중개사무소 등록번호: 41480-2016-00026</span>
+          <span>사업자등록번호: 305-48-62183</span>
+          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+        </p>
+        <p class="footer-links">
           <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
           <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
           <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-          <a href="admin.html" style="opacity:.5;">관리자</a>
         </p>
-        <p class="lp-footer-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
       </div>
     </footer>
 
