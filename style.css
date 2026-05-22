@@ -1482,3 +1482,54 @@ body[data-page="listings"] .lp-inquiry-submit {
 body[data-page="listings"] .lp-inquiry-submit:hover {
   background: #0b2d80;
 }
+/* 헤더 가운데 검색창 */
+body[data-page="listings"] .lp-header-search {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 36px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body[data-page="listings"] .lp-header-search input {
+  flex: 1;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-header-search select {
+  width: 110px;
+  height: 38px;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  padding: 0 8px;
+  font-size: 13px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-header-search .lp-search-submit {
+  width: 58px;
+  height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: #071f5f;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+body[data-page="listings"] .lp-header-search .lp-search-reset {
+  width: 56px;
+  height: 38px;
+  border: 0;
+  background: transparent;
+  color: #8b95a7;
+  font-weight: 600;
+  cursor: pointer;
+}
