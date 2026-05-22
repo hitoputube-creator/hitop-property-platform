@@ -1317,3 +1317,168 @@ body[data-page="listings"] .site-header .lp-header-phone {
   font-size: 18px;
   font-weight: 800;
 }
+/* 매물보기 페이지 - 왼쪽 사이드바 카드형 디자인 */
+body[data-page="listings"] .lp-sidebar {
+  width: 280px;
+  background: #f6f7fb;
+  border-right: 1px solid #e5e7eb;
+  padding: 18px 14px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* 사이드바 섹션을 카드처럼 */
+body[data-page="listings"] .lp-sidebar-section {
+  background: #ffffff;
+  border: 1px solid #e2e5ec;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* 카드 상단 제목 */
+body[data-page="listings"] .lp-sidebar-header {
+  height: 42px;
+  line-height: 42px;
+  padding: 0 18px;
+  background: #d83a6d;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* 카테고리 항목 */
+body[data-page="listings"] .lp-cat-item {
+  height: 42px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333333;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid #edf0f4;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+/* 마지막 줄 border 제거 */
+body[data-page="listings"] .lp-cat-item:last-child {
+  border-bottom: 0;
+}
+
+/* 카테고리 오른쪽 숫자를 화살표처럼 정리 */
+body[data-page="listings"] .lp-cat-count {
+  color: transparent;
+  font-size: 0;
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+/* 오른쪽 화살표 */
+body[data-page="listings"] .lp-cat-count::after {
+  content: "›";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  color: #9ca3af;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 18px;
+}
+
+/* 메뉴 hover */
+body[data-page="listings"] .lp-cat-item:hover {
+  background: #fff5f8;
+  color: #d83a6d;
+}
+
+/* 선택된 메뉴 */
+body[data-page="listings"] .lp-cat-item.active {
+  background: #fff0f5;
+  color: #d83a6d;
+  font-weight: 800;
+}
+
+/* 전화문의 영역 */
+body[data-page="listings"] .lp-contact-inner {
+  padding: 18px 16px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-phone-big {
+  display: block;
+  color: #ff5a00;
+  font-size: 24px;
+  font-weight: 900;
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+
+body[data-page="listings"] .lp-hours-small {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: #8b95a7;
+}
+
+/* 카카오톡 버튼 */
+body[data-page="listings"] .lp-kakao-btn {
+  display: block;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  background: #d4ad43;
+  color: #ffffff;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* 빠른문의 폼 */
+body[data-page="listings"] .lp-inquiry-form {
+  padding: 14px 14px 16px;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-inquiry-form input,
+body[data-page="listings"] .lp-inquiry-form textarea {
+  width: 100%;
+  margin-bottom: 9px;
+  padding: 10px 11px;
+  border: 1px solid #d9dee8;
+  border-radius: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+body[data-page="listings"] .lp-inquiry-form input:focus,
+body[data-page="listings"] .lp-inquiry-form textarea:focus {
+  border-color: #d83a6d;
+  box-shadow: 0 0 0 3px rgba(216, 58, 109, 0.12);
+}
+
+/* 상담문의 버튼 */
+body[data-page="listings"] .lp-inquiry-submit {
+  width: 100%;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: #071f5f;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+body[data-page="listings"] .lp-inquiry-submit:hover {
+  background: #0b2d80;
+}
