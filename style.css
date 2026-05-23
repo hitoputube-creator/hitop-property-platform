@@ -1857,10 +1857,52 @@ body[data-page="listings"] .lp-sidebar {
   grid-row: 1 / 3 !important; /* 1행부터 2행 끝까지 전체를 스팬하여 세로 폭 100% 온전히 활용! */
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important; /* 오리지널 넉넉한 갭 보존 */
-  padding: 12px 10px !important; /* 오리지널 패딩 보존 */
+  gap: 8px !important; /* 오리지널 12px에서 8px로 다이어트 */
+  padding: 8px 10px !important; /* 오리지널 12px 10px에서 세로 8px로 다이어트 */
   overflow-y: auto !important; /* 오버플로우 방지용 안전 스크롤 */
   border-right: 1px solid #E5E7EB !important;
+  height: 100% !important;
+  background: #ffffff !important; /* 100% 흰색 기둥 보장 */
+}
+
+/* 사이드바 섹션을 카드처럼 */
+body[data-page="listings"] .lp-sidebar-section {
+  margin-bottom: 8px !important; /* 14px에서 8px로 축소 */
+}
+
+/* 카드 상단 제목 */
+body[data-page="listings"] .lp-sidebar-header {
+  height: 34px !important; /* 42px에서 34px로 축소 */
+  line-height: 34px !important;
+  font-size: 14px !important; /* 15px에서 미세조정 */
+}
+
+/* 카테고리 항목 */
+body[data-page="listings"] .lp-cat-item {
+  height: 32px !important; /* 42px에서 32px로 70px 대폭 절약 */
+  font-size: 13px !important; /* 14px에서 미세조정 */
+}
+
+/* 전화문의 영역 */
+body[data-page="listings"] .lp-contact-inner {
+  padding: 10px 16px !important; /* 18px 16px에서 축소 */
+}
+body[data-page="listings"] .lp-phone-big {
+  font-size: 18px !important;
+  margin-bottom: 2px !important;
+}
+body[data-page="listings"] .lp-hours-small {
+  margin-bottom: 6px !important;
+}
+
+/* 빠른문의 폼 */
+body[data-page="listings"] .lp-inquiry-form {
+  padding: 8px 10px 10px !important; /* 14px 14px 16px에서 축소 */
+}
+body[data-page="listings"] .lp-inquiry-form input,
+body[data-page="listings"] .lp-inquiry-form textarea {
+  margin-bottom: 5px !important; /* 9px에서 5px로 축소 */
+  padding: 7px 9px !important; /* 10px 11px에서 축소 */
 }
 
 /* ── 가운데 지도 영역 (그리드 2열 1행) ── */
@@ -1877,26 +1919,46 @@ body[data-page="listings"] #map {
   height: 100% !important;
 }
 
-/* ── 오른쪽 추천/최신 패널 (그리드 3열 1행) ── */
+/* ── 오른쪽 추천/최신 패널 (그리드 3열 1~2행 전체 관통) ── */
 body[data-page="listings"] .lp-panel {
   grid-column: 3 !important;
-  grid-row: 1 !important;
+  grid-row: 1 / 3 !important; /* 1행부터 2행 끝까지 전체를 차지하여 침범 완전 방지! */
   display: flex !important;
   flex-direction: column !important;
   background: #F3F4F6 !important;
   overflow-y: auto !important; /* 내용물 스크롤 가능하게 유지 */
 }
 
-/* ── 하단 매물 카테고리 카드바 (그리드 2~3열 2행) ── */
-/* 좌측 사이드바 아래 공간을 절대 침범하지 않고 지도/우측패널 아래에만 깔끔하게 정렬! */
+/* ── 하단 매물 카테고리 카드바 (그리드 2열 2행 단독 배치) ── */
+/* 좌측 사이드바 및 우측 추천 패널 아래 공간을 전혀 침범하지 않고 오직 가운데 지도 영역의 아래에만 정확하게 정렬! */
 body[data-page="listings"] .cat-cards-section {
-  grid-column: 2 / 4 !important; /* 2열(지도 아래)부터 3열(추천패널 아래)까지 가로로 꽉 채움! */
+  grid-column: 2 !important; /* 오직 2열(지도 아래)에만 단독 배치! */
   grid-row: 2 !important; /* 2행에 위치 */
+  margin-left: 0 !important; /* margin-left 상속 초기화 (핵심 버그 픽스) */
+  margin-right: 0 !important;
   margin-bottom: 0 !important;
-  padding: 6px 16px 8px !important; /* 세로 콤팩트 여백 */
+  padding: 6px 12px 8px !important; /* 세로 콤팩트 여백 */
   background: #F3F4F6 !important;
   border-top: 1px solid #E5E7EB !important;
   flex-shrink: 0 !important;
+  width: 100% !important; /* 100% 가득 채워 지도 너비와 일치 */
+  box-sizing: border-box !important;
+}
+
+/* 5개 카드 가로 1줄 정렬 */
+body[data-page="listings"] .cat-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important; /* 5개 카드 가로 정렬 */
+  gap: 8px !important;
+}
+body[data-page="listings"] .cat-card {
+  height: 120px !important; /* 160px에서 120px로 다이어트하여 세로 크기 절약 */
+}
+body[data-page="listings"] .cat-card-name {
+  font-size: 14px !important;
+}
+body[data-page="listings"] .cat-card-body {
+  padding: 8px 10px !important;
 }
 
 /* 불필요한 하단 전체 매물 스크롤 리스트 은닉 (100vh 조건 완수) */
