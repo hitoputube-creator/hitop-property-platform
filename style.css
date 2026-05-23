@@ -1412,13 +1412,13 @@ body[data-page="listings"] .site-header .lp-header-phone {
 /* 매물보기 페이지 - 왼쪽 사이드바 카드형 디자인 */
 body[data-page="listings"] .lp-sidebar {
   width: 280px;
-  height: 100%;
-  min-height: 0;
+  height: 52vh;
+  min-height: 420px;
   background: #f6f7fb;
   border-right: 1px solid #e5e7eb;
   padding: 18px 14px;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow-y: scroll;
   align-self: stretch;
 }
 
