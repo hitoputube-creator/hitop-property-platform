@@ -598,6 +598,8 @@ const setupListingsPage = () => {
     const name  = (document.getElementById('inquiryName')?.value  || '').trim();
     const phone = (document.getElementById('inquiryPhone')?.value || '').trim();
     if (!name || !phone) { alert('이름과 연락처를 입력해주세요.'); return; }
+    const agree = document.getElementById('agreePrivacySide');
+    if (agree && !agree.checked) { alert('개인정보 수집 및 이용에 동의해주셔야 상담신청이 가능합니다.'); return; }
     alert(`상담 문의가 접수되었습니다.\n담당자가 빠른 시일 내에 연락드리겠습니다.\n\n이름: ${name}\n연락처: ${phone}`);
     e.target.reset();
   });

@@ -1406,11 +1406,11 @@ body[data-page="listings"] .lp-sidebar {
 /* 사이드바 섹션을 카드처럼 */
 body[data-page="listings"] .lp-sidebar-section {
   background: #ffffff;
-  border: 1px solid #e2e5ec;
-  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 0px;
   overflow: hidden;
   margin-bottom: 14px;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: none;
 }
 
 /* 카드 상단 제목 */
@@ -1885,27 +1885,175 @@ body[data-page="listings"] .lp-cat-item {
 
 /* 전화문의 영역 */
 body[data-page="listings"] .lp-contact-inner {
-  padding: 10px 16px !important; /* 18px 16px에서 축소 */
+  padding: 12px 14px !important;
 }
-body[data-page="listings"] .lp-phone-big {
-  font-size: 18px !important;
-  margin-bottom: 2px !important;
+
+body[data-page="listings"] .phone-inquiry-box {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0px !important;
+  box-shadow: none !important;
 }
-body[data-page="listings"] .lp-hours-small {
+
+body[data-page="listings"] .side-call-header {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: center !important;
   margin-bottom: 6px !important;
 }
 
-/* 빠른문의 폼 */
-body[data-page="listings"] .lp-inquiry-form {
-  padding: 8px 10px 10px !important; /* 14px 14px 16px에서 축소 */
+body[data-page="listings"] .side-call-header .call-title {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: #071f5f !important;
 }
+
+body[data-page="listings"] .side-call-header .call-subtitle {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  color: #94a3b8 !important;
+  margin-left: 6px !important;
+}
+
+body[data-page="listings"] .lp-phone-big {
+  display: block !important;
+  text-align: center !important;
+  color: #071f5f !important; /* 이미지처럼 다크 네이비로 설정 */
+  font-size: 26px !important; /* 텍스트 크기 확대 */
+  font-weight: 900 !important;
+  text-decoration: none !important;
+  margin: 6px 0 !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.2 !important;
+}
+
+body[data-page="listings"] .call-divider {
+  width: 80% !important;
+  height: 1px !important;
+  background-color: #cbd5e1 !important;
+  margin: 8px auto !important;
+}
+
+body[data-page="listings"] .lp-hours-small {
+  margin: 0 0 10px 0 !important;
+  font-size: 12px !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+}
+
+/* 카카오톡 버튼 모서리 각지게 */
+body[data-page="listings"] .lp-kakao-btn {
+  border-radius: 0px !important;
+}
+
+
+/* 실시간 빠른문의 (상담 신청) 박스 */
+body[data-page="listings"] .lp-inquiry-section {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0px !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+body[data-page="listings"] .lp-inquiry-section .lp-sidebar-header {
+  background-color: #071f5f !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  height: 38px !important;
+  line-height: 38px !important;
+}
+
+body[data-page="listings"] .lp-inquiry-form {
+  padding: 10px 10px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
 body[data-page="listings"] .lp-inquiry-form input,
 body[data-page="listings"] .lp-inquiry-form textarea {
-  margin-bottom: 5px !important; /* 9px에서 5px로 축소 */
-  padding: 7px 9px !important; /* 10px 11px에서 축소 */
+  width: 100% !important;
+  margin-bottom: 0 !important; /* gap으로 간격 제어 */
+  padding: 8px 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0px !important; /* 반듯한 네모 */
+  font-size: 13px !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  background-color: #ffffff !important;
+  color: #334155 !important;
 }
+
 body[data-page="listings"] .lp-inquiry-form textarea {
-  margin-bottom: 0 !important; /* 버튼이 삭제되어 textarea가 마지막 요소이므로 마진 제거 */
+  resize: none !important;
+}
+
+/* 개인정보 수집 이용 동의 행 */
+body[data-page="listings"] .privacy-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 2px 0 !important;
+}
+
+body[data-page="listings"] .privacy-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11px !important;
+  color: #64748b !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+body[data-page="listings"] .privacy-label input[type="checkbox"] {
+  width: 13px !important;
+  height: 13px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+}
+
+body[data-page="listings"] .btn-view-privacy {
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  border-radius: 0px !important;
+  cursor: pointer !important;
+  outline: none !important;
+  transition: all 0.1s ease !important;
+}
+
+body[data-page="listings"] .btn-view-privacy:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* 상담문의 남기기 제출 버튼 */
+body[data-page="listings"] .lp-inquiry-submit-btn {
+  width: 100% !important;
+  background-color: #071f5f !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 0px !important;
+  padding: 10px 0 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  transition: background-color 0.15s ease !important;
+  margin-top: 4px !important;
+}
+
+body[data-page="listings"] .lp-inquiry-submit-btn:hover {
+  background-color: #1e3a8a !important;
 }
 
 /* ── 가운데 지도 영역 (그리드 2열 1행) ── */

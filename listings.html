@@ -6,7 +6,7 @@
     <title>하이탑부동산 | 매물보기</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20260523o" />
+    <link rel="stylesheet" href="style.css?v=20260523p" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
@@ -103,10 +103,14 @@
         </div>
 
         <!-- 전화 문의 -->
-        <div class="lp-sidebar-section">
-          <div class="lp-sidebar-header">전화 문의</div>
+        <div class="lp-sidebar-section phone-inquiry-box">
           <div class="lp-contact-inner">
+            <div class="side-call-header">
+              <span class="call-title">대표번호</span>
+              <span class="call-subtitle">CALL CENTER</span>
+            </div>
             <a href="tel:031-949-8969" class="lp-phone-big">031-949-8969</a>
+            <div class="call-divider"></div>
             <p class="lp-hours-small">평일 10:00 ~ 19:00</p>
             <a href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noreferrer" class="lp-kakao-btn">
               💬 카카오톡 문의
@@ -116,11 +120,21 @@
 
         <!-- 빠른 문의 폼 -->
         <div class="lp-sidebar-section lp-inquiry-section">
-          <div class="lp-sidebar-header">실시간 빠른문의</div>
+          <div class="lp-sidebar-header">상담 신청</div>
           <form class="lp-inquiry-form" id="sideInquiryForm" novalidate>
             <input type="text"  id="inquiryName"  placeholder="이름" required />
-            <input type="tel"   id="inquiryPhone" placeholder="연락처 (010-0000-0000)" required />
-            <textarea id="inquiryMsg" rows="3" placeholder="문의내용"></textarea>
+            <input type="tel"   id="inquiryPhone" placeholder="연락처" required />
+            <textarea id="inquiryMsg" rows="3" placeholder="내용입력"></textarea>
+            
+            <div class="privacy-row">
+              <label class="privacy-label">
+                <input type="checkbox" id="agreePrivacySide" required />
+                <span>개인정보 수집·이용 동의</span>
+              </label>
+              <button type="button" class="btn-view-privacy" onclick="alert('개인정보 수집 및 이용 안내\n\n1. 수집항목: 이름, 연락처, 문의내용\n2. 수집목적: 매물 상담 및 빠른 문의 답변\n3. 보유 및 이용기간: 목적 달성 후 지체 없이 파기')">내용 보기</button>
+            </div>
+            
+            <button type="submit" class="lp-inquiry-submit-btn">상담문의 남기기</button>
           </form>
         </div>
 
