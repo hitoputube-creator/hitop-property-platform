@@ -3810,6 +3810,12 @@ body[data-page="listings"] .lp-panel {
 
   overflow-y: auto !important; /* 내용물 스크롤 가능하게 유지 */
 
+  overflow-x: hidden !important; /* 가로 스크롤 방지 */
+
+  box-sizing: border-box !important;
+
+  padding-right: 96px !important; /* 플로팅 버튼과의 겹침 완전히 방지 */
+
 }
 
 /* ── 하단 매물 카테고리 카드바 (그리드 2열 2행 단독 배치) ── */
@@ -3988,6 +3994,12 @@ body[data-page="listings"] .lp-panel {
 
   border-left: 1px solid #E5E7EB !important;
 
+  overflow-x: hidden !important; /* 가로 스크롤 방지 */
+
+  box-sizing: border-box !important;
+
+  padding-right: 96px !important; /* 플로팅 버튼과의 겹침 완전히 방지 */
+
 }
 
 body[data-page="listings"] .lp-panel-hd {
@@ -4028,13 +4040,17 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   display: grid !important;
 
-  grid-template-columns: 1fr 1fr !important; /* 좌우 50% 균등 분할 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; /* 좌우 50% 균등 분할 및 유연한 축소 */
 
   gap: 0 !important;  /* 컬럼 사이 구분선으로 대체 */
 
   flex: 1 !important;
 
   min-height: 0 !important; /* flex 자식 높이 축소 허용 */
+
+  min-width: 0 !important;
+
+  box-sizing: border-box !important;
 
   overflow: hidden !important;
 
@@ -4049,6 +4065,10 @@ body[data-page="listings"] .lp-panel-scroll-content {
   flex-direction: column;
 
   min-height: 0; /* flex 자식 높이 축소 허용 */
+
+  min-width: 0 !important;
+
+  box-sizing: border-box !important;
 
   border-right: 1px solid #E5E7EB; /* 컬럼 구분선 */
 
@@ -4213,6 +4233,12 @@ body[data-page="listings"] .lp-panel-scroll-content {
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 
   height: 220px; /* 좌우 분할 구조에 맞추어 220px로 높이 최적화 */
+
+  min-width: 0 !important;
+
+  box-sizing: border-box !important;
+
+  width: 100% !important;
 
 }
 
