@@ -1379,7 +1379,7 @@ body[data-page="listings"] .site-header .brand {
 
 /* 로고 크기 */
 body[data-page="listings"] .site-header .brand-logo {
-  height: 56px;
+  height: 36px;
   display: block;
 }
 
@@ -1661,7 +1661,7 @@ body[data-page="listings"] .site-header .brand {
 }
 
 body[data-page="listings"] .site-header .brand-logo {
-  height: 58px;
+  height: 36px;
   display: block;
 }
 
