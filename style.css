@@ -3404,7 +3404,7 @@ body[data-page="listings"] .lp-body {
 
   display: grid !important;
 
-  grid-template-columns: 280px minmax(0, 1fr) 600px !important;
+  grid-template-columns: 280px minmax(0, 1fr) 720px !important;
 
   grid-template-rows: 1fr auto !important; /* 1행: 지도/추천패널, 2행: 매물 카테고리 카드바 */
 
@@ -4212,7 +4212,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 추천 매물 카드 - 가로폭 맞춤 프리미엄 컴팩트 카드 */
+/* 추천 매물 카드 - 프리미엄 가로형 리스트 카드 */
 
 .lp-rec-card {
 
@@ -4224,15 +4224,15 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   overflow: hidden;
 
-  display: flex;
+  display: flex !important;
 
-  flex-direction: column;
+  flex-direction: row !important; /* 가로형 리스트 카드로 변경! */
 
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
 
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 
-  height: 270px; /* 자연스럽게 한 화면에 약 3개가 보이도록 270px로 카드 높이 최적화 */
+  height: 110px !important; /* 가로형 리스트 카드 컴팩트 높이 */
 
   min-width: 0 !important;
 
@@ -4300,17 +4300,19 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 상단 이미지 영역 (안정적인 16:9 비율 유지) */
+/* 왼쪽 이미지 영역 (카드 폭의 약 35% 차지) */
 
 .lp-rec-img-wrap {
 
-  position: relative;
+  position: relative !important;
 
-  width: 100%;
+  width: 35% !important; /* 카드 폭의 약 35% */
 
-  height: 140px; /* 16:9 비율 최적화 높이 */
+  height: 100% !important;
 
-  overflow: hidden;
+  flex-shrink: 0 !important;
+
+  overflow: hidden !important;
 
 }
 
@@ -4324,23 +4326,25 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 작고 이쁜 리본 배지 */
+/* 작고 이쁜 리본 배지 (가로형 리스트 맞춤 설계) */
 
 .lp-rec-ribbon {
 
   position: absolute;
 
-  top: 6px;
+  top: 4px !important;
 
-  right: 6px;
+  left: 4px !important; /* 좌상단 배치로 변경하여 시각적 간섭 최소화 */
+
+  right: auto !important;
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 12px !important; /* 권장: 12px~13px */
+  font-size: 10px !important; /* 콤팩트한 10px 크기 */
 
   font-weight: 800;
 
-  padding: 3px 7px;
+  padding: 2px 5px !important;
 
   border-radius: 4px;
 
@@ -4354,21 +4358,25 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 하단 텍스트 영역 (130px 높이에 맞춰 세로 3줄 배치 구조로 개편) */
+/* 오른쪽 텍스트 영역 (카드 폭의 약 65% 차지) */
 
 .lp-rec-body {
 
-  padding: 12px 14px !important;
+  padding: 8px 10px !important; /* 가로형 맞춤 콤팩트 패딩 */
 
   display: flex !important;
 
-  flex-direction: column !important; /* 세로 3줄 정렬! */
+  flex-direction: column !important; /* 세로 3줄 정렬 유지! */
 
   justify-content: space-between !important;
 
-  gap: 6px !important;
+  gap: 4px !important;
 
-  height: 130px !important;
+  height: 100% !important;
+
+  flex: 1 !important;
+
+  min-width: 0 !important;
 
   box-sizing: border-box !important;
 
@@ -4400,7 +4408,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   justify-content: flex-start !important;
 
-  gap: 8px !important;
+  gap: 4px !important;
 
 }
 
@@ -4408,7 +4416,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-mid {
 
-  font-size: 14px !important; /* 권장: 14px */
+  font-size: 13.5px !important; /* 가로형 맞춤 콤팩트 크기 */
 
   font-weight: 700 !important;
 
@@ -4428,7 +4436,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-bot {
 
-  font-size: 13px !important; /* 권장: 13px */
+  font-size: 12px !important; /* 가로형 맞춤 콤팩트 크기 */
 
   font-weight: 500 !important;
 
@@ -4448,13 +4456,15 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-type {
 
-  font-size: 14px !important; /* 권장: 14px~15px */
+  font-size: 13px !important; /* 가로형 맞춤 콤팩트 크기 */
 
   font-weight: 800 !important;
 
   line-height: 1;
 
   white-space: nowrap !important;
+
+  letter-spacing: -0.6px !important;
 
   flex-shrink: 0 !important;
 
@@ -4482,11 +4492,11 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   justify-content: center !important;
 
-  min-width: 34px !important;
+  min-width: 30px !important;
 
-  height: 20px !important;
+  height: 18px !important;
 
-  padding: 2px 6px !important;
+  padding: 1px 4px !important;
 
   border-radius: 4px !important;
 
@@ -4494,7 +4504,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   line-height: 1 !important;
 
-  font-size: 12px !important;
+  font-size: 11px !important; /* 가로형 맞춤 콤팩트 크기 */
 
   font-weight: 800 !important;
 
@@ -4536,13 +4546,13 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 가격 정보 (가장 굵고 잘 보이게 16.5px, 자간 조정 및 오른쪽 밀착) */
+/* 가격 정보 (가장 굵고 잘 보이게 14.5px, 자간 조정 및 오른쪽 밀착) */
 
 .lp-rec-price {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 16.5px !important;
+  font-size: 14.5px !important; /* 가로형 맞춤 콤팩트 크기 */
 
   font-weight: 800 !important;
 
@@ -4552,7 +4562,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   white-space: nowrap !important;
 
-  letter-spacing: -0.4px !important;
+  letter-spacing: -0.6px !important;
 
   margin-left: auto !important; /* 가격을 오른쪽 끝으로 밀어 균형미 극대화 */
 
