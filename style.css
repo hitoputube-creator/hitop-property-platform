@@ -1818,7 +1818,7 @@ body[data-page="listings"] .site-header .lp-header-phone {
 
 
 /* ══════════════════════════════════════
-   listings.html 100vh 풀스크린 레이아웃 패치 (유연한 flex: 1 공간 상속)
+   listings.html 100vh 풀스크린 레이아웃 패치 (2행 그리드 통합 배치)
    ══════════════════════════════════════ */
 body[data-page="listings"] {
   height: 100vh !important;
@@ -1841,34 +1841,67 @@ body[data-page="listings"] .lp-header-nav {
   flex-shrink: 0 !important;
 }
 
-/* 3단 그리드 바디의 세로 높이를 flex: 1로 조절하여 남은 공간을 완전히 채우도록 유연성 복구 */
+/* 3단 그리드 바디가 100vh 중 남은 높이를 꽉 채우며, 2행 그리드 구조를 형성하도록 설정 */
 body[data-page="listings"] .lp-body {
   flex: 1 !important;
-  min-height: 0 !important; /* 고정 min-height 해제 */
+  min-height: 0 !important;
   height: auto !important;
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) 380px !important;
+  grid-template-rows: 1fr auto !important; /* 1행: 지도/추천패널, 2행: 매물 카테고리 카드바 */
 }
 
-/* 지도 영역이 부모의 남은 공간을 완전히 채우도록 보장 */
+/* ── 왼쪽 사이드바 (그리드 1열 전체, 1~2행 관통) ── */
+body[data-page="listings"] .lp-sidebar {
+  grid-column: 1 !important;
+  grid-row: 1 / 3 !important; /* 1행부터 2행 끝까지 전체를 스팬하여 세로 폭 100% 온전히 활용! */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important; /* 오리지널 넉넉한 갭 보존 */
+  padding: 12px 10px !important; /* 오리지널 패딩 보존 */
+  overflow-y: auto !important; /* 오버플로우 방지용 안전 스크롤 */
+  border-right: 1px solid #E5E7EB !important;
+}
+
+/* ── 가운데 지도 영역 (그리드 2열 1행) ── */
 body[data-page="listings"] .lp-center {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
+  position: relative !important;
 }
 body[data-page="listings"] #map {
   flex: 1 !important;
   height: 100% !important;
 }
 
+/* ── 오른쪽 추천/최신 패널 (그리드 3열 1행) ── */
+body[data-page="listings"] .lp-panel {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #F3F4F6 !important;
+  overflow-y: auto !important; /* 내용물 스크롤 가능하게 유지 */
+}
+
+/* ── 하단 매물 카테고리 카드바 (그리드 2~3열 2행) ── */
+/* 좌측 사이드바 아래 공간을 절대 침범하지 않고 지도/우측패널 아래에만 깔끔하게 정렬! */
+body[data-page="listings"] .cat-cards-section {
+  grid-column: 2 / 4 !important; /* 2열(지도 아래)부터 3열(추천패널 아래)까지 가로로 꽉 채움! */
+  grid-row: 2 !important; /* 2행에 위치 */
+  margin-bottom: 0 !important;
+  padding: 6px 16px 8px !important; /* 세로 콤팩트 여백 */
+  background: #F3F4F6 !important;
+  border-top: 1px solid #E5E7EB !important;
+  flex-shrink: 0 !important;
+}
+
 /* 불필요한 하단 전체 매물 스크롤 리스트 은닉 (100vh 조건 완수) */
 body[data-page="listings"] #allListingsSection {
   display: none !important;
-}
-
-/* 매물 카테고리 카드바 아래 마진/패딩 제거하여 푸터와 완벽하게 밀착 및 찌그러짐 방지 */
-body[data-page="listings"] .cat-cards-section {
-  margin-bottom: 0 !important;
-  padding: 8px 36px !important; /* 세로 패딩 조절로 뷰포트 공간 확보 */
-  flex-shrink: 0 !important;
 }
 
 /* listings.html 전용 푸터 스타일 보강 및 0px 초밀착 정적 배치 */
@@ -1906,82 +1939,4 @@ body[data-page="listings"] .lp-footer-links a:hover {
 body[data-page="listings"] .lp-footer-copy {
   margin: 0;
   color: #d1d5db;
-}
-
-/* 사이드바 및 우측 패널 콤팩트 패치 고도화 (세로 높이 극단적 감축) */
-body[data-page="listings"] .lp-sidebar {
-  padding: 8px 6px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-  overflow-y: auto !important; /* 혹시 모를 오버플로우 대비 스크롤 허용 */
-}
-body[data-page="listings"] .lp-sidebar-section {
-  margin-bottom: 4px !important;
-  flex-shrink: 0 !important;
-}
-body[data-page="listings"] .lp-sidebar-header {
-  height: 26px !important;
-  line-height: 26px !important;
-  font-size: 12px !important;
-  padding: 4px 10px !important;
-}
-body[data-page="listings"] .lp-cat-item {
-  height: 25px !important;
-  padding: 2px 8px !important;
-  font-size: 13px !important;
-  border-bottom: 1px solid #f3f4f6 !important;
-}
-body[data-page="listings"] .lp-cat-name {
-  font-size: 13px !important;
-}
-body[data-page="listings"] .lp-cat-count {
-  font-size: 10px !important;
-}
-body[data-page="listings"] .lp-contact-inner {
-  padding: 4px 8px !important;
-  gap: 3px !important;
-}
-body[data-page="listings"] .lp-phone-big {
-  font-size: 15px !important;
-  font-weight: 800 !important;
-}
-body[data-page="listings"] .lp-hours-small {
-  font-size: 10px !important;
-}
-body[data-page="listings"] .lp-kakao-btn {
-  padding: 5px 8px !important;
-  font-size: 11px !important;
-  border-radius: 6px !important;
-}
-body[data-page="listings"] .lp-inquiry-form {
-  padding: 4px 8px !important;
-  gap: 3px !important;
-}
-body[data-page="listings"] .lp-inquiry-form input {
-  padding: 4px 6px !important;
-  margin-bottom: 0px !important;
-  font-size: 11px !important;
-  height: 25px !important;
-  box-sizing: border-box !important;
-}
-body[data-page="listings"] .lp-inquiry-form textarea {
-  padding: 4px 6px !important;
-  margin-bottom: 0px !important;
-  font-size: 11px !important;
-  height: 38px !important; /* 문의사항 텍스트박스 극단적 다이어트 */
-  resize: none !important;
-  box-sizing: border-box !important;
-}
-body[data-page="listings"] .lp-inquiry-submit {
-  padding: 5px !important;
-  font-size: 11px !important;
-  height: 26px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 6px !important;
-}
-body[data-page="listings"] .lp-panel {
-  overflow-y: auto !important; /* 우측 패널은 스크롤 가능하도록 유지 */
 }
