@@ -585,10 +585,8 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   display: grid;
   grid-template-columns: 220px 1fr 360px;
   grid-template-rows: 1fr;
-  height: 52vh;
-  min-height: 420px;
+  min-height: 900px;
   background: #F3F4F6;
-  overflow: hidden;
 }
 
 /* ── 왼쪽 사이드바 (col 1) ── */
@@ -1112,9 +1110,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 /* 전체 3단: 15% | 50% | 35% */
 .lp-body {
   grid-template-columns: 280px minmax(0, 1fr) 380px;
-  height: 52vh;
-  min-height: 420px;
-  overflow: hidden;
+  min-height: 900px;
 }
 
 /* ── 왼쪽 사이드바 ── */
@@ -1412,13 +1408,12 @@ body[data-page="listings"] .site-header .lp-header-phone {
 /* 매물보기 페이지 - 왼쪽 사이드바 카드형 디자인 */
 body[data-page="listings"] .lp-sidebar {
   width: 280px;
-  height: 52vh;
-  min-height: 420px;
+  height: auto;
   background: #f6f7fb;
   border-right: 1px solid #e5e7eb;
   padding: 18px 14px;
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow-y: visible;
   align-self: stretch;
 }
 
