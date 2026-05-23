@@ -305,8 +305,11 @@
     </footer>
 
     <script src="app.js?v=20260521"></script>
-    <script>
-      document.getElementById('writeForm').addEventListener('submit', function(e) {
+    <script type="module">
+      import { db, COLLECTION } from "./firebase-config.js";
+      import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      document.getElementById('writeForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         var name    = document.getElementById('w-name').value.trim();
         var phone   = document.getElementById('w-phone').value.trim();
@@ -323,29 +326,23 @@
         if (!content) { alert('문의 내용을 입력해 주세요.');     document.getElementById('w-content').focus(); return; }
         if (!privacy) { alert('개인정보 수집 및 이용에 동의해 주세요.'); return; }
 
-        var today = new Date();
-        var dateStr = today.getFullYear() + '.' +
-          String(today.getMonth() + 1).padStart(2, '0') + '.' +
-          String(today.getDate()).padStart(2, '0');
-
-        var post = {
-          id: Date.now(),
-          name: name,
-          phone: phone,
-          type: type,
-          listing: listing,
-          subject: subject,
-          content: content,
-          date: dateStr,
-          status: '접수완료'
-        };
-
-        var posts = JSON.parse(localStorage.getItem('consultPosts') || '[]');
-        posts.push(post);
-        localStorage.setItem('consultPosts', JSON.stringify(posts));
-
-        alert('상담문의가 등록되었습니다.');
-        location.href = 'consult.html';
+        try {
+          await addDoc(collection(db, COLLECTION), {
+            name:      name,
+            phone:     phone,
+            type:      type,
+            listing:   listing,
+            subject:   subject,
+            content:   content,
+            status:    "접수완료",
+            createdAt: serverTimestamp()
+          });
+          alert('상담문의가 등록되었습니다.');
+          location.href = 'consult.html';
+        } catch (err) {
+          console.error('Firestore 저장 오류:', err);
+          alert('상담문의 등록 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+        }
       });
     </script>
   </body>
