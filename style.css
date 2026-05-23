@@ -4310,11 +4310,11 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 9.5px;
+  font-size: 12px !important; /* 권장: 12px~13px */
 
   font-weight: 800;
 
-  padding: 2.5px 6.5px;
+  padding: 3px 7px;
 
   border-radius: 4px;
 
@@ -4368,7 +4368,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-type {
 
-  font-size: 11.5px !important;
+  font-size: 14px !important; /* 권장: 14px~15px */
 
   font-weight: 800 !important;
 
@@ -4394,11 +4394,11 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-badge-deal {
 
-  font-size: 9.5px !important;
+  font-size: 12px !important; /* 권장: 12px~13px */
 
   font-weight: 800 !important;
 
-  padding: 2px 5px !important;
+  padding: 2.5px 6px !important;
 
   border-radius: 4px !important;
 
@@ -4448,9 +4448,9 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 14.5px !important; /* 2컬럼 최적화 글자 크기 */
+  font-size: 17.5px !important; /* 권장: 17px~18px */
 
-  font-weight: 900 !important;
+  font-weight: 800 !important;
 
   color: #0f172a !important;
 
@@ -4486,7 +4486,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-desc-size {
 
-  font-size: 11px !important; /* 2컬럼 우측 크기에 맞춰 최적화 */
+  font-size: 13px !important; /* 권장: 13px~14px */
 
   color: #1e293b !important;
 
@@ -4506,7 +4506,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-desc-addr {
 
-  font-size: 10.5px !important;
+  font-size: 13px !important; /* 권장: 13px~14px */
 
   color: #64748b !important;
 
@@ -4526,7 +4526,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-desc-text {
 
-  font-size: 10.5px !important;
+  font-size: 13px !important; /* 권장: 13px~14px */
 
   color: #475569 !important;
 
