@@ -2118,40 +2118,56 @@ body[data-page="listings"] #allListingsSection {
 }
 
 /* listings.html 전용 푸터 스타일 보강 및 0px 초밀착 정적 배치 */
-body[data-page="listings"] .lp-footer {
-  background: #1f2937;
-  color: #f9fafb;
-  font-size: 13px;
-  text-align: center;
-  padding: 12px 20px !important;
+body[data-page="listings"] .site-footer {
+  background-color: #071f5f !important; /* 딥 네이비 계열 유지 */
+  color: #94a3b8 !important;
+  font-size: 11px !important; /* 콤팩트 크기 */
+  text-align: center !important;
+  padding: 8px 12px !important; /* 높이 대폭 감소 */
   position: static !important;
   margin-top: 0 !important; /* 틈새 완벽 방지를 위해 마진탑 0px 적용 */
-  clear: both;
+  clear: both !important;
   flex-shrink: 0 !important; /* 찌그러짐 방지 */
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important; /* 얇은 경계선 */
 }
-body[data-page="listings"] .lp-footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+body[data-page="listings"] .footer-inner {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 2px !important; /* 초밀착 */
 }
-body[data-page="listings"] .lp-footer-links {
-  margin-top: 4px;
+body[data-page="listings"] .footer-main,
+body[data-page="listings"] .footer-sub,
+body[data-page="listings"] .footer-links {
+  margin: 0 !important;
+  line-height: 1.4 !important;
 }
-body[data-page="listings"] .lp-footer-links a {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 700;
-  margin: 0 6px;
+body[data-page="listings"] .footer-main strong {
+  color: #ffffff !important;
+  font-size: 11px !important;
+  margin-right: 8px !important;
 }
-body[data-page="listings"] .lp-footer-links a:hover {
-  text-decoration: underline;
+body[data-page="listings"] .footer-main span,
+body[data-page="listings"] .footer-sub span {
+  display: inline-block !important;
+  margin: 0 4px !important;
+  color: #cbd5e1 !important;
 }
-body[data-page="listings"] .lp-footer-copy {
-  margin: 0;
-  color: #d1d5db;
+body[data-page="listings"] .footer-links {
+  margin-top: 2px !important;
+}
+body[data-page="listings"] .footer-links a {
+  color: #cbd5e1 !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  margin: 0 4px !important;
+  font-size: 11px !important;
+}
+body[data-page="listings"] .footer-links a:hover {
+  text-decoration: underline !important;
+  color: #ffffff !important;
 }
 
 /* ══════════════════════════════════════
