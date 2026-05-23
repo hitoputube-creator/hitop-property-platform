@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하이탑부동산 | 상담문의 상세보기</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .top-bar { background: #0A1F5C; padding: 6px 0; }
+      .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+      .top-bar-hours { font-size: 12px; color: #aab8d8; }
+      .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
+      .top-bar-phone:hover { color: #e0c070; }
+
+      .detail-section {
+        background: #f2f4f7;
+        padding: 48px 0 64px;
+        min-height: calc(100vh - 180px);
+      }
+
+      /* 페이지 헤더 */
+      .detail-header { margin-bottom: 16px; }
+      .detail-title {
+        font-size: 22px; font-weight: 700; color: #0A1F5C; margin: 0 0 6px;
+      }
+
+      /* 비공개 안내 박스 */
+      .private-notice {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #eef2fb;
+        border: 1px solid #c5d3f0;
+        border-radius: 8px;
+        padding: 13px 18px;
+        font-size: 13px;
+        color: #1a3a8a;
+        margin-bottom: 20px;
+      }
+
+      /* 상세 카드 */
+      .detail-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 0.5px solid #e2e6ed;
+        box-shadow: 0 2px 12px rgba(10, 31, 92, 0.05);
+        overflow: hidden;
+      }
+
+      /* 상세 테이블 */
+      .detail-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .detail-table tr {
+        border-bottom: 1px solid #f0f2f6;
+      }
+      .detail-table tr:last-child { border-bottom: none; }
+      .detail-table th {
+        width: 130px;
+        padding: 14px 20px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #888;
+        background: #f8f9fb;
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+      .detail-table td {
+        padding: 14px 20px;
+        color: #222;
+        line-height: 1.7;
+        vertical-align: top;
+      }
+
+      /* 상태 뱃지 */
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .status-받침 { background: #e8f0fe; color: #1a56c4; }
+      .status-상담 { background: #fff3e0; color: #c07000; }
+      .status-답변 { background: #e6f7ee; color: #1a7a42; }
+
+      /* 유형 뱃지 */
+      .type-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #eef1f8;
+        color: #0A1F5C;
+      }
+
+      /* 문의내용 */
+      .content-box {
+        background: #f8f9fb;
+        border-radius: 8px;
+        padding: 16px;
+        line-height: 1.9;
+        color: #333;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      /* 목록으로 버튼 */
+      .btn-back-wrap { margin-top: 20px; }
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 11px 22px;
+        background: #fff;
+        color: #555;
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #ccd0d9;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.15s;
+      }
+      .btn-back:hover { background: #f2f4f7; }
+
+      /* 글 없을 때 */
+      .not-found {
+        text-align: center;
+        padding: 60px 20px;
+      }
+      .not-found p { font-size: 15px; color: #888; margin: 0 0 20px; }
+
+      /* 모바일 */
+      @media (max-width: 640px) {
+        .detail-title { font-size: 18px; }
+        .detail-table th { width: 90px; padding: 12px 14px; }
+        .detail-table td { padding: 12px 14px; }
+        .top-bar-hours { display: none; }
+      }
+    </style>
+  </head>
+  <body data-page="consult-detail">
+
+    <!-- 탑바 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html">매물보기</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="consult.html">상담문의 게시판</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 본문 -->
+    <section class="detail-section">
+      <div class="container">
+
+        <div class="detail-header">
+          <h1 class="detail-title">상담문의 상세보기</h1>
+        </div>
+
+        <!-- 비공개 안내 -->
+        <div class="private-notice">
+          🔒 비공개 상담글입니다. 상담 내용은 외부에 공개되지 않습니다.
+        </div>
+
+        <!-- 상세 내용 영역 -->
+        <div id="detailArea"></div>
+
+        <!-- 목록으로 버튼 -->
+        <div class="btn-back-wrap">
+          <a href="consult.html" class="btn-back">← 목록으로 돌아가기</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="site-footer compact-footer">
+      <div class="container footer-inner">
+        <p class="footer-main">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로830, 1층</span>
+          <span>전화: 031-949-8969</span>
+          <span>팩스: 031-944-1108</span>
+        </p>
+        <p class="footer-sub">
+          <span>중개사무소 등록번호: 41480-2016-00026</span>
+          <span>사업자등록번호: 305-48-62183</span>
+          <span>이메일: newpajucity@naver.com</span>
+          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+        </p>
+        <p class="footer-links">
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="app.js?v=20260521"></script>
+    <script>
+      (function() {
+        function maskName(n) {
+          if (!n) return '';
+          if (n.length === 1) return n;
+          if (n.length === 2) return n[0] + '*';
+          return n[0] + '*' + n[n.length - 1];
+        }
+        function maskPhone(p) {
+          if (!p) return '';
+          var parts = p.split('-');
+          if (parts.length === 3) return parts[0] + '-****-' + parts[2];
+          if (p.length > 4) return p.slice(0, 3) + '****' + p.slice(-2);
+          return p;
+        }
+        function statusClass(s) {
+          if (s === '접수완료') return 'status-받침';
+          if (s === '상담중')   return 'status-상담';
+          return 'status-답변';
+        }
+
+        var params = new URLSearchParams(location.search);
+        var id = params.get('id');
+        var area = document.getElementById('detailArea');
+
+        if (!id) {
+          area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
+          return;
+        }
+
+        var posts = JSON.parse(localStorage.getItem('consultPosts') || '[]');
+        var post = posts.find(function(p) { return String(p.id) === String(id); });
+
+        if (!post) {
+          area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
+          return;
+        }
+
+        area.innerHTML =
+          '<div class="detail-card">' +
+            '<table class="detail-table">' +
+              '<tr><th>문의 유형</th><td><span class="type-badge">' + post.type + '</span></td></tr>' +
+              '<tr><th>제목</th><td>🔒 ' + post.subject + '</td></tr>' +
+              '<tr><th>작성자</th><td>' + maskName(post.name) + '</td></tr>' +
+              '<tr><th>연락처</th><td>' + maskPhone(post.phone) + '</td></tr>' +
+              '<tr><th>관심 매물</th><td>' + (post.listing || '—') + '</td></tr>' +
+              '<tr><th>등록일</th><td>' + post.date + '</td></tr>' +
+              '<tr><th>상태</th><td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td></tr>' +
+              '<tr><th>문의 내용</th><td><div class="content-box">' + post.content + '</div></td></tr>' +
+            '</table>' +
+          '</div>';
+      })();
+    </script>
+  </body>
+</html>
