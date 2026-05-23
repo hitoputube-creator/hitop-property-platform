@@ -149,6 +149,15 @@
           </div>
         </div>
 
+        <div class="lp-all-toolbar">
+          <h2 class="lp-all-title">전체 매물</h2>
+          <div class="lp-sort-btns">
+            <button class="lp-sort-btn active" id="sortDateBtn2" type="button">최신순</button>
+            <button class="lp-sort-btn" id="sortPriceBtn2" type="button">가격순</button>
+          </div>
+          <span class="lp-result-count">총 <strong id="listCount">0</strong>개</span>
+        </div>
+
         <!-- 좌우 2열: 추천 | 최신 -->
         <div class="lp-panel-2col">
           <div class="lp-panel-col">
@@ -219,14 +228,6 @@
 
     <!-- ══ 하단 전체 매물 그리드 ══ -->
     <section id="allListingsSection" class="lp-all-section">
-      <div class="lp-all-toolbar">
-        <h2 class="lp-all-title">전체 매물</h2>
-        <div class="lp-sort-btns">
-          <button class="lp-sort-btn active" id="sortDateBtn2" type="button">최신순</button>
-          <button class="lp-sort-btn" id="sortPriceBtn2" type="button">가격순</button>
-        </div>
-        <span class="lp-result-count">총 <strong id="listCount">0</strong>개</span>
-      </div>
       <div id="listingCards" class="lp-all-grid"></div>
       <div id="lpPagination" class="lp-pagination lp-all-pgn"></div>
     </section>
