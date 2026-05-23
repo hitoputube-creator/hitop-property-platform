@@ -2052,15 +2052,40 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 /* 컬럼 제목 */
 .lp-rec-col-title {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  color: #1e293b;
+  font-size: 16px !important; /* 글자 크기 확대 */
+  font-weight: 800 !important; /* 더 굵게 */
+  color: #071f5f !important; /* 딥 네이비 시그니처 */
   margin: 0;
   padding-bottom: 8px;
   border-bottom: 2px solid #071f5f;
+  letter-spacing: -0.4px;
+}
+
+/* 매물 더보기 버튼 */
+.lp-rec-more-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important; /* 글자 크기 13px */
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background-color: #071f5f !important; /* 네이비 기본 */
+  padding: 4px 10px !important;
+  border-radius: 4px !important;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, transform 0.15s ease !important;
+  line-height: 1 !important;
   letter-spacing: -0.3px;
-  text-align: center;
+}
+
+.lp-rec-more-btn:hover {
+  background-color: #C9A84C !important; /* 골드로 마우스오버 하이라이트 */
+  color: #111827 !important;
+  transform: translateY(-1px) !important;
 }
 
 /* 카드 세로 리스트 */
