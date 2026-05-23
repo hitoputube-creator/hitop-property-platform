@@ -222,7 +222,7 @@
                   <th class="col-status">상태</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="boardTbody">
                 <tr>
                   <td>5</td>
                   <td><span class="type-badge">공장·창고</span></td>
@@ -306,5 +306,40 @@
     </footer>
 
     <script src="app.js?v=20260521"></script>
+    <script>
+      (function() {
+        var posts = JSON.parse(localStorage.getItem('consultPosts') || '[]');
+        if (!posts.length) return;
+
+        posts.sort(function(a, b) { return b.id - a.id; });
+
+        function maskName(n) {
+          if (!n) return '';
+          if (n.length === 1) return n;
+          if (n.length === 2) return n[0] + '*';
+          return n[0] + '*' + n[n.length - 1];
+        }
+        function statusClass(s) {
+          if (s === '접수완료') return 'status-받침';
+          if (s === '상담중')   return 'status-상담';
+          return 'status-답변';
+        }
+
+        var tbody = document.getElementById('boardTbody');
+        var total = 5 + posts.length;
+
+        posts.forEach(function(post, i) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + (total - i) + '</td>' +
+            '<td><span class="type-badge">' + post.type + '</span></td>' +
+            '<td class="col-title"><a href="#">🔒 ' + post.subject + '</a></td>' +
+            '<td>' + maskName(post.name) + '</td>' +
+            '<td>' + post.date + '</td>' +
+            '<td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
+          tbody.insertBefore(tr, tbody.firstChild);
+        });
+      })();
+    </script>
   </body>
 </html>
