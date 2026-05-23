@@ -4232,7 +4232,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 
-  height: 220px; /* 좌우 분할 구조에 맞추어 220px로 높이 최적화 */
+  height: 270px; /* 자연스럽게 한 화면에 약 3개가 보이도록 270px로 카드 높이 최적화 */
 
   min-width: 0 !important;
 
@@ -4300,7 +4300,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 상단 이미지 영역 (카드 높이의 약 50%) */
+/* 상단 이미지 영역 (안정적인 16:9 비율 유지) */
 
 .lp-rec-img-wrap {
 
@@ -4308,7 +4308,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   width: 100%;
 
-  height: 112px;
+  height: 140px; /* 16:9 비율 최적화 높이 */
 
   overflow: hidden;
 
@@ -4354,7 +4354,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 하단 텍스트 영역 (카드 높이의 약 50%인 105px) */
+/* 하단 텍스트 영역 (130px로 넓혀 가독성과 여유 확보) */
 
 .lp-rec-body {
 
@@ -4366,7 +4366,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   gap: 8px !important;
 
-  height: 105px;
+  height: 130px;
 
   box-sizing: border-box;
 
