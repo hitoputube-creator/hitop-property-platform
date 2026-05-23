@@ -6,7 +6,7 @@
     <title>하이탑부동산 | 매물보기</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20260523j" />
+    <link rel="stylesheet" href="style.css?v=20260523k" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
@@ -137,35 +137,139 @@
         </div>
       </div>
 
-      <!-- ── 오른쪽: 추천 + 최신 매물 패널 (35%) ── -->
+      <!-- ── 오른쪽: 주요 추천 매물 패널 ── -->
       <div class="lp-panel" id="lpPanel">
-
         <div class="lp-panel-hd">
-          <span style="font-weight:700;font-size:14px;color:#111827;">추천 &amp; 최신 매물</span>
-          <div class="lp-sort-btns">
-            <button class="lp-sort-btn active" id="sortDateBtn" type="button">최신순</button>
-            <button class="lp-sort-btn" id="sortPriceBtn" type="button">가격순</button>
-          </div>
+          <span style="font-weight:800;font-size:16px;color:#071f5f;letter-spacing:-0.5px;">⭐ 주요 추천 매물</span>
         </div>
 
-        <div class="lp-all-toolbar">
-          <h2 class="lp-all-title">전체 매물</h2>
-          <div class="lp-sort-btns">
-            <button class="lp-sort-btn active" id="sortDateBtn2" type="button">최신순</button>
-            <button class="lp-sort-btn" id="sortPriceBtn2" type="button">가격순</button>
-          </div>
-          <span class="lp-result-count">총 <strong id="listCount">0</strong>개</span>
-        </div>
+        <div class="lp-panel-scroll-content">
+          <!-- 1. 공장 추천매물 섹션 -->
+          <div class="lp-rec-section">
+            <h3 class="lp-rec-sec-title">🏭 공장·창고 추천매물</h3>
+            <div class="lp-rec-grid">
+              
+              <!-- 공장 매물 1 -->
+              <!-- 샘플 데이터: 공장·창고 / 보증금 5,000만 / 월세 500만 / 경기 파주시 / 대지 1,200㎡ / 창고 250평 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag">월세</div>
+                  <div class="lp-rec-price">5,000 / 500 만원</div>
+                  <div class="lp-rec-addr">경기 파주시</div>
+                  <div class="lp-rec-desc">대지 1,200㎡ / 창고 250평</div>
+                </div>
+              </div>
 
-        <!-- 좌우 2열: 추천 | 최신 -->
-        <div class="lp-panel-2col">
-          <div class="lp-panel-col">
-            <div class="lp-col-header lp-col-rec">⭐ 추천매물</div>
-            <div id="recCards" class="lp-col-cards"></div>
+              <!-- 공장 매물 2 -->
+              <!-- 샘플 데이터: 공장·창고 / 보증금 2,000만 / 월세 180만 / 파주시 탄현면 / 창고 120평 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #0f766e, #14b8a6);">
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag">월세</div>
+                  <div class="lp-rec-price">2,000 / 180 만원</div>
+                  <div class="lp-rec-addr">파주시 탄현면</div>
+                  <div class="lp-rec-desc">창고 120평</div>
+                </div>
+              </div>
+
+              <!-- 공장 매물 3 -->
+              <!-- 샘플 데이터: 공장·창고 / 보증금 7,000만 / 월세 700만 / 파주시 상지석동 / 단독공장 가능 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #1e3a5f, #2563eb);">
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag">월세</div>
+                  <div class="lp-rec-price">7,000 / 700 만원</div>
+                  <div class="lp-rec-addr">파주시 상지석동</div>
+                  <div class="lp-rec-desc">단독공장 가능</div>
+                </div>
+              </div>
+
+              <!-- 공장 매물 4 -->
+              <!-- 샘플 데이터: 공장·창고 / 매매 25억 / 파주시 월롱면 / 대형 물류창고 / 도로접 우수 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #b45309, #f59e0b);">
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag deal-buy">매매</div>
+                  <div class="lp-rec-price">25 억원</div>
+                  <div class="lp-rec-addr">파주시 월롱면</div>
+                  <div class="lp-rec-desc">대형 물류창고 / 도로접 우수</div>
+                </div>
+              </div>
+
+            </div>
           </div>
-          <div class="lp-panel-col">
-            <div class="lp-col-header lp-col-new">🔥 최신매물</div>
-            <div id="newCards" class="lp-col-cards"></div>
+
+          <!-- 2. 상가 추천매물 섹션 -->
+          <div class="lp-rec-section" style="margin-top: 24px;">
+            <h3 class="lp-rec-sec-title">🏢 상가·빌딩 추천매물</h3>
+            <div class="lp-rec-grid">
+              
+              <!-- 상가 매물 1 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 보증금 3,000만 / 월세 350만 / 운정역 인근 / 전용 40평 / 1층 상가 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #4c1d95, #8b5cf6);">
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag">월세</div>
+                  <div class="lp-rec-price">3,000 / 350 만원</div>
+                  <div class="lp-rec-addr">운정역 인근</div>
+                  <div class="lp-rec-desc">전용 40평 / 1층 상가</div>
+                </div>
+              </div>
+
+              <!-- 상가 매물 2 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 매매 13억 / 운정신도시 / 전용 72평 / 여성전문병원 운영중 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #be123c, #f43f5e);">
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag deal-buy">매매</div>
+                  <div class="lp-rec-price">13 억원</div>
+                  <div class="lp-rec-addr">운정신도시</div>
+                  <div class="lp-rec-desc">전용 72평 / 병원 운영중</div>
+                </div>
+              </div>
+
+              <!-- 상가 매물 3 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 보증금 5,000만 / 월세 290만 / 초롱꽃마을 / 단지내 상가 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #0369a1, #0ea5e9);">
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag">월세</div>
+                  <div class="lp-rec-price">5,000 / 290 만원</div>
+                  <div class="lp-rec-addr">초롱꽃마을</div>
+                  <div class="lp-rec-desc">단지내 상가</div>
+                </div>
+              </div>
+
+              <!-- 상가 매물 4 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 보증금 6,000만 / 월세 500만 / 운정역 중심상권 / 1층 식당 추천 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #15803d, #22c55e);">
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-tag">월세</div>
+                  <div class="lp-rec-price">6,000 / 500 만원</div>
+                  <div class="lp-rec-addr">운정역 중심상권</div>
+                  <div class="lp-rec-desc">1층 식당 추천</div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 

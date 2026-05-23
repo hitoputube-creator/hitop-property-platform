@@ -2005,3 +2005,136 @@ body[data-page="listings"] .lp-footer-copy {
   margin: 0;
   color: #d1d5db;
 }
+
+/* ══════════════════════════════════════
+   오른쪽: 주요 추천 매물 패널 & 2열 카드 디자인
+   ══════════════════════════════════════ */
+body[data-page="listings"] .lp-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  background: #ffffff !important; /* 내부 흰색 톤으로 정리 */
+  border-left: 1px solid #E5E7EB !important;
+}
+
+body[data-page="listings"] .lp-panel-hd {
+  height: 48px !important;
+  line-height: 48px !important;
+  padding: 0 18px !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  background: #fcfcfd !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-shrink: 0 !important;
+}
+
+body[data-page="listings"] .lp-panel-scroll-content {
+  flex: 1 !important;
+  overflow-y: auto !important; /* 패널 내부 스크롤만 활성화 */
+  padding: 16px !important;
+  box-sizing: border-box !important;
+}
+
+/* 추천 섹션 */
+.lp-rec-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lp-rec-sec-title {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #071f5f;
+  letter-spacing: -0.3px;
+}
+
+/* 2열 카드 그리드 */
+.lp-rec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 추천 매물 카드 */
+.lp-rec-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.lp-rec-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
+}
+
+/* 그라데이션 이미지 플레이스홀더 */
+.lp-rec-img-placeholder {
+  aspect-ratio: 16/10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.lp-rec-body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 거래 유형 태그 */
+.lp-rec-tag {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #c2410c; /* 월세/임대용 딥 오렌지 */
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+.lp-rec-tag.deal-buy {
+  background: #0f766e; /* 매매용 청록색 */
+}
+
+/* 가격 */
+.lp-rec-price {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* 주소 및 설명 */
+.lp-rec-addr {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.lp-rec-desc {
+  font-size: 11px;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
