@@ -2007,7 +2007,7 @@ body[data-page="listings"] .lp-footer-copy {
 }
 
 /* ══════════════════════════════════════
-   오른쪽: 주요 추천 매물 패널 & 2열 카드 디자인
+   오른쪽: 주요 추천 매물 패널 & 1열 세로 리스트형 디자인
    ══════════════════════════════════════ */
 body[data-page="listings"] .lp-panel {
   display: flex !important;
@@ -2039,65 +2039,90 @@ body[data-page="listings"] .lp-panel-scroll-content {
 .lp-rec-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .lp-rec-sec-title {
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   color: #1e293b;
   margin: 0;
-  padding-bottom: 6px;
+  padding-bottom: 8px;
   border-bottom: 2px solid #071f5f;
   letter-spacing: -0.3px;
 }
 
-/* 2열 카드 그리드 */
-.lp-rec-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 10px;
+/* 1열 와이드 카드 리스트 */
+.lp-rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
 }
 
-/* 추천 매물 카드 */
+/* 추천 매물 카드 - 1열 와이드 스케일 */
 .lp-rec-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.04);
 }
 
 .lp-rec-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   border-color: #cbd5e1;
 }
 
-/* 그라데이션 이미지 플레이스홀더 */
+/* 대형 선형 그라데이션 이미지 플레이스홀더 (aspect-ratio 상향 조정) */
 .lp-rec-img-placeholder {
-  aspect-ratio: 16/10;
+  position: relative;
+  height: 180px; /* 고정 대형 높이 확보 */
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: -0.3px;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+
+/* 리본 배지 스타일링 */
+.lp-rec-ribbon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #071f5f; /* 네이비 기본 */
+  color: #ffffff;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  border: 1px solid rgba(255,255,255,0.2);
+  line-height: 1.2;
+}
+
+/* 폼팩터 리본에 포인트 주기 */
+.lp-rec-card:nth-child(even) .lp-rec-ribbon {
+  background: #C9A84C; /* 럭셔리 골드 포인트 */
+  color: #111827;
+  border-color: rgba(0,0,0,0.06);
 }
 
 .lp-rec-body {
-  padding: 10px 12px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 /* 거래 유형 태그 */
@@ -2107,33 +2132,37 @@ body[data-page="listings"] .lp-panel-scroll-content {
   font-weight: 800;
   color: #ffffff;
   background: #c2410c; /* 월세/임대용 딥 오렌지 */
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 4px;
   line-height: 1.2;
+  letter-spacing: 0.5px;
 }
 
 .lp-rec-tag.deal-buy {
   background: #0f766e; /* 매매용 청록색 */
 }
 
-/* 가격 */
+/* 대형 가격 타이포그래피 */
 .lp-rec-price {
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 900;
   color: #0f172a;
+  margin-top: 2px;
 }
 
-/* 주소 및 설명 */
+/* 주소 및 설명 스케일업 */
 .lp-rec-addr {
-  font-size: 11px;
+  font-size: 12px;
   color: #64748b;
   font-weight: 600;
 }
 
 .lp-rec-desc {
-  font-size: 11px;
-  color: #475569;
+  font-size: 12px;
+  color: #334155;
+  font-weight: 500;
+  line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
