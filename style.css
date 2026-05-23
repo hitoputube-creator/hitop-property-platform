@@ -1107,10 +1107,10 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 /* 탑바 1.5배 */
 .top-bar-lg { font-size: 18px !important; }
 
-/* 전체 3단: 15% | 50% | 35% */
+/* 전체 3단 */
 .lp-body {
   grid-template-columns: 280px minmax(0, 1fr) 380px;
-  height: 520px;
+  height: 420px;
 }
 
 /* ── 왼쪽 사이드바 ── */
@@ -1814,4 +1814,142 @@ body[data-page="listings"] .site-header .lp-header-phone {
 .lp-footer-copy {
   margin: 0;
   color: #d1d5db;
+}
+
+
+/* ══════════════════════════════════════
+   listings.html 100vh 풀스크린 레이아웃 패치 (420px 바디 높이 강제)
+   ══════════════════════════════════════ */
+body[data-page="listings"] {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 상단 영역 flex-shrink 방지 */
+body[data-page="listings"] .top-bar {
+  flex-shrink: 0 !important;
+}
+body[data-page="listings"] .site-header {
+  flex-shrink: 0 !important;
+}
+body[data-page="listings"] .lp-header-nav {
+  flex-shrink: 0 !important;
+}
+
+/* 3단 그리드 바디의 세로 높이를 420px로 과감하게 제한하여 하단 카드바 공간 확보 */
+body[data-page="listings"] .lp-body {
+  height: 420px !important;
+  min-height: 420px !important;
+  max-height: 420px !important;
+  flex: none !important;
+}
+
+/* 지도 영역이 부모의 420px 공간을 완전히 채우도록 상속 보장 */
+body[data-page="listings"] .lp-center {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+body[data-page="listings"] #map {
+  flex: 1 !important;
+  height: 100% !important;
+}
+
+/* 불필요한 하단 전체 매물 스크롤 리스트 은닉 (100vh 조건 완수) */
+body[data-page="listings"] #allListingsSection {
+  display: none !important;
+}
+
+/* 매물 카테고리 카드바 아래 마진/패딩 제거하여 푸터와 완벽하게 밀착 및 찌그러짐 방지 */
+body[data-page="listings"] .cat-cards-section {
+  margin-bottom: 0 !important;
+  padding: 8px 36px !important; /* 세로 패딩 조절로 뷰포트 공간 확보 */
+  flex-shrink: 0 !important;
+}
+
+/* listings.html 전용 푸터 스타일 보강 및 4px 초밀착 정적 배치 */
+body[data-page="listings"] .lp-footer {
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 13px;
+  text-align: center;
+  padding: 12px 20px !important;
+  position: static !important;
+  margin-top: 4px !important; /* 틈새 방지 */
+  clear: both;
+  flex-shrink: 0 !important; /* 찌그러짐 방지 */
+}
+body[data-page="listings"] .lp-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+body[data-page="listings"] .lp-footer-links {
+  margin-top: 4px;
+}
+body[data-page="listings"] .lp-footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  margin: 0 6px;
+}
+body[data-page="listings"] .lp-footer-links a:hover {
+  text-decoration: underline;
+}
+body[data-page="listings"] .lp-footer-copy {
+  margin: 0;
+  color: #d1d5db;
+}
+
+/* 사이드바 및 우측 패널 콤팩트 패치 복구 (스크롤 제거에 따른 잘림 방지) */
+body[data-page="listings"] .lp-sidebar {
+  padding: 12px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  overflow-y: auto !important; /* 사이드바 내용물 스크롤 허용 */
+}
+body[data-page="listings"] .lp-sidebar-section {
+  margin-bottom: 6px !important;
+  flex-shrink: 0 !important;
+}
+body[data-page="listings"] .lp-sidebar-header {
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 13px !important;
+}
+body[data-page="listings"] .lp-cat-item {
+  height: 32px !important;
+}
+body[data-page="listings"] .lp-contact-inner {
+  padding: 6px 10px !important;
+  gap: 4px !important;
+}
+body[data-page="listings"] .lp-phone-big {
+  font-size: 16px !important;
+}
+body[data-page="listings"] .lp-inquiry-form {
+  padding: 6px 10px !important;
+  gap: 4px !important;
+}
+body[data-page="listings"] .lp-inquiry-form input,
+body[data-page="listings"] .lp-inquiry-form textarea {
+  padding: 5px 8px !important;
+  margin-bottom: 2px !important;
+  font-size: 11px !important;
+}
+body[data-page="listings"] .lp-inquiry-submit {
+  padding: 6px !important;
+  font-size: 11px !important;
+}
+body[data-page="listings"] .lp-panel {
+  overflow-y: auto !important; /* 우측 패널은 스크롤 가능하도록 유지 */
 }
