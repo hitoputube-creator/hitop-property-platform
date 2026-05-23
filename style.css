@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --navy: #12335a;
   --navy-dark: #0c2340;
   --green: #1f8f63;
@@ -1029,7 +1029,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 /* 전체 3단: 15% | 50% | 35% */
 .lp-body {
   grid-template-columns: 15% 50% 35%;
-  height: calc(100vh - 136px);
+  height: 520px;
 }
 
 /* ── 왼쪽 사이드바 ── */
