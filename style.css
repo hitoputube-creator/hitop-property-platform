@@ -4889,3 +4889,21 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   width: 100% !important;
 }
 
+/* ── 푸터 관리자 캡슐 링크 ── */
+.footer-admin-link {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+}
+.footer-admin-link:hover {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+
+
