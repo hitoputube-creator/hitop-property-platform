@@ -1904,6 +1904,9 @@ body[data-page="listings"] .lp-inquiry-form textarea {
   margin-bottom: 5px !important; /* 9px에서 5px로 축소 */
   padding: 7px 9px !important; /* 10px 11px에서 축소 */
 }
+body[data-page="listings"] .lp-inquiry-form textarea {
+  margin-bottom: 0 !important; /* 버튼이 삭제되어 textarea가 마지막 요소이므로 마진 제거 */
+}
 
 /* ── 가운데 지도 영역 (그리드 2열 1행) ── */
 body[data-page="listings"] .lp-center {
