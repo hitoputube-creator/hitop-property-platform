@@ -332,6 +332,204 @@ const setupListingsPage = () => {
   const ALL_SIZE = 15; // 5열 × 3행
   let filtered = [];
 
+  // ── 카테고리 전체보기 오른쪽 패널 동적 치환 시스템 ──
+  let defaultPanelHTML = '';
+
+  const saveDefaultPanelHTML = () => {
+    const lpPanel = document.getElementById('lpPanel');
+    if (lpPanel && !defaultPanelHTML) {
+      defaultPanelHTML = lpPanel.innerHTML;
+    }
+  };
+
+  const restoreDefaultPanel = () => {
+    const lpPanel = document.getElementById('lpPanel');
+    if (lpPanel && defaultPanelHTML) {
+      lpPanel.innerHTML = defaultPanelHTML;
+      // 카테고리 카드 액티브 스타일 초기화
+      document.querySelectorAll('.cat-card').forEach(card => {
+        card.classList.remove('active');
+      });
+    }
+  };
+
+  const getPremiumSampleData = (categoryKey) => {
+    const samples = {
+      '공장창고': [
+        { id: 'f1', dealType: '임대', priceText: '5,000/500만원', title: '도로변 / 즉시입주 가능', buildingArea: 250, landArea: 1200, displayAddress: '경기 파주시', ribbon: '도로바로진입' },
+        { id: 'f2', dealType: '임대', priceText: '2,000/180만원', title: '민원 없는 지역 / 추천', buildingArea: 120, landArea: 500, displayAddress: '파주시 탄현면', ribbon: '추천매물' },
+        { id: 'f3', dealType: '임대', priceText: '7,000/700만원', title: '단독공장 가능 / 마당 넓음', buildingArea: 300, landArea: 1500, displayAddress: '파주시 상지석동', ribbon: '즉시입주' },
+        { id: 'f4', dealType: '매매', priceText: '25억원', title: '대형 물류창고 / 야드 우수', buildingArea: 600, landArea: 2000, displayAddress: '파주시 월롱면', ribbon: '추천매물' },
+        { id: 'f5', dealType: '임대', priceText: '3,000/250만원', title: '마당 넓고 민원 없는 단독 공장', buildingArea: 150, landArea: 800, displayAddress: '파주시 탄현면', ribbon: '단독공장' }
+      ],
+      '상가': [
+        { id: 's1', dealType: '임대', priceText: '3,000/350만원', title: '유동인구 우수 / 수익형', exclusiveArea: 40, floor: '1층 상가', displayAddress: '운정역 인근', ribbon: '수익형' },
+        { id: 's2', dealType: '매매', priceText: '13억원', title: '코너 상가 / 수익률 양호', exclusiveArea: 72, floor: '병원 운영중', displayAddress: '운정신도시', ribbon: '추천매물' },
+        { id: 's3', dealType: '임대', priceText: '5,000/290만원', title: '단지내 상가 / 추천업종 다수', exclusiveArea: 28, floor: '1층 코너', displayAddress: '초롱꽃마을', ribbon: '즉시입주' },
+        { id: 's4', dealType: '임대', priceText: '6,000/500만원', title: '1층 식당 추천 / 권리금 없음', exclusiveArea: 55, floor: '2층 대로변', displayAddress: '운정역 중심상권', ribbon: '수익형' },
+        { id: 's5', dealType: '임대', priceText: '4,000/320만원', title: '야당역 역세권 유동인구 최우수', exclusiveArea: 35, floor: '야당동', displayAddress: '야당동', ribbon: '역세권' }
+      ],
+      '토지': [
+        { id: 't1', dealType: '매매', priceText: '12억원', title: '건축 허가 완료 / 즉시 개발 가능', landArea: 450, zoningArea: '계획관리지역', displayAddress: '파주시 송촌동', ribbon: '즉시개발' },
+        { id: 't2', dealType: '매매', priceText: '8억 5,000만원', title: '도로 접함 / 단독주택 부지 강추', landArea: 320, zoningArea: '자연녹지', displayAddress: '파주시 문산읍', ribbon: '주택부지' },
+        { id: 't3', dealType: '매매', priceText: '28억원', title: '개발 용지 / 야드 공장 부지 추천', landArea: 1500, zoningArea: '계획관리지역', displayAddress: '파주시 파주읍', ribbon: '공장부지' },
+        { id: 't4', dealType: '매매', priceText: '6억원', title: '주말농장 가능 / 장기 투자 가치 우수', landArea: 600, zoningArea: '농림지역', displayAddress: '파주시 법원읍', ribbon: '주말농장' },
+        { id: 't5', dealType: '매매', priceText: '18억원', title: '창고 건축 부지 / 민원 소지 없음', landArea: 900, zoningArea: '계획관리지역', displayAddress: '파주시 광탄면', ribbon: '창고부지' }
+      ],
+      '오피스텔': [
+        { id: 'o1', dealType: '매매', priceText: '2억 8,000만원', title: 'GTX-A 운정역 초역세권 / 풀옵션', exclusiveArea: 18, floor: '고층', displayAddress: '운정신도시', ribbon: '초역세권' },
+        { id: 'o2', dealType: '전세', priceText: '2억 3,000만원', title: '안심 전세 가능 / 첫 입주 신축', exclusiveArea: 15, floor: '중층', displayAddress: '야당동', ribbon: '신축전세' },
+        { id: 'o3', dealType: '월세', priceText: '1,000/85만원', title: '풀옵션 원룸 / 즉시입주 가능', exclusiveArea: 9, floor: '남향', displayAddress: '운정역 부근', ribbon: '원룸풀옵션' },
+        { id: 'o4', dealType: '매매', priceText: '3억 2,000만원', title: '복층 구조 / 공간 활용도 최우수', exclusiveArea: 22, floor: '복층', displayAddress: '야당역 초인근', ribbon: '복층구조' },
+        { id: 'o5', dealType: '월세', priceText: '2,000/110만원', title: '투룸 오피스텔 / 신혼부부 추천', exclusiveArea: 16, floor: '투룸', displayAddress: '운정신도시', ribbon: '신혼추천' }
+      ],
+      '단독주택': [
+        { id: 'h1', dealType: '매매', priceText: '9억 5,000만원', title: '정원 넓은 친환경 전원주택', buildingArea: 45, landArea: 150, displayAddress: '파주시 야당동', ribbon: '정원넓음' },
+        { id: 'h2', dealType: '매매', priceText: '12억원', title: '고급 자재 사용 / 단독 타운하우스', buildingArea: 60, landArea: 180, displayAddress: '파주시 동패동', ribbon: '고급자재' },
+        { id: 'h3', dealType: '매매', priceText: '7억 8,000만원', title: '숲세권 단독주택 / 공기 맑고 조용함', buildingArea: 38, landArea: 120, displayAddress: '파주시 탄현면', ribbon: '숲세권' },
+        { id: 'h4', dealType: '전세', priceText: '5억원', title: '신축 단독주택 / 마당 관리 양호', buildingArea: 40, landArea: 130, displayAddress: '파주시 다율동', ribbon: '신축마당' },
+        { id: 'h5', dealType: '매매', priceText: '15억원', title: '럭셔리 대저택 / 최고급 마당 조경', buildingArea: 80, landArea: 250, displayAddress: '파주시 운정동', ribbon: '최고급조경' }
+      ]
+    };
+    return samples[categoryKey] || [];
+  };
+
+  const renderCategoryPanel = (categoryKey) => {
+    const lpPanel = document.getElementById('lpPanel');
+    if (!lpPanel) return;
+
+    saveDefaultPanelHTML();
+
+    const catNames = {
+      '공장창고': '공장·창고',
+      '상가': '상가·빌딩',
+      '토지': '토지·개발',
+      '오피스텔': '오피스텔',
+      '단독주택': '단독·전원주택'
+    };
+    const catName = catNames[categoryKey] || categoryKey;
+
+    // 카테고리 카드 액티브 스타일 적용
+    document.querySelectorAll('.cat-card').forEach(card => {
+      const href = card.getAttribute('href') || '';
+      if (href.includes(`category=${categoryKey}`)) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+      }
+    });
+
+    // 실제 매물 데이터 조회 (나중에 실제 데이터 연동 시 이 영역을 교체하세요)
+    // -------------------------------------------------------------
+    const allListings = readListings();
+    let categoryListings = allListings.filter(item => item.propertyType === categoryKey && item.status !== 'done');
+    // -------------------------------------------------------------
+
+    // 데이터가 전혀 없을 경우 데모용 프리미엄 샘플 데이터 활용
+    if (categoryListings.length === 0) {
+      categoryListings = getPremiumSampleData(categoryKey);
+    }
+
+    const cardListHTML = categoryListings.map(item => {
+      const isFactory = categoryKey === '공장창고';
+      const isStore = categoryKey === '상가';
+      const isLand = categoryKey === '토지';
+      const isOfficetel = categoryKey === '오피스텔';
+      const isHouse = categoryKey === '단독주택';
+
+      let imgSrc = 'images/factory_recommend.png';
+      if (isStore) imgSrc = 'images/store_recommend.png';
+      else if (isLand) imgSrc = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400';
+      else if (isOfficetel) imgSrc = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400';
+      else if (isHouse) imgSrc = 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400';
+
+      let areaHighlightHTML = '';
+      if (isFactory) {
+        const areaVal = item.buildingArea || item.area || 250;
+        const landVal = item.landArea || 1200;
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">창고</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· 대지 ${landVal}㎡</span>`;
+      } else if (isStore) {
+        const areaVal = item.exclusiveArea || item.area || 40;
+        const extraVal = item.floor || '1층 상가';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+      } else if (isLand) {
+        const areaVal = item.landArea || item.area || 450;
+        const extraVal = item.zoningArea || '계획관리';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">대지</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+      } else if (isOfficetel) {
+        const areaVal = item.exclusiveArea || item.area || 18;
+        const extraVal = item.floor || '고층';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+      } else if (isHouse) {
+        const areaVal = item.buildingArea || item.area || 45;
+        const landVal = item.landArea || 150;
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· 대지 ${landVal}평</span>`;
+      }
+
+      const cardThemeClass = isFactory ? 'factory-card' : 'store-card';
+      const typeLabel = catNames[categoryKey] || categoryKey;
+      const ribbonText = item.ribbon || '추천매물';
+
+      return `
+        <div class="lp-rec-card ${cardThemeClass}" data-id="${item.id || ''}" style="cursor: pointer;">
+          <div class="lp-rec-img-wrap">
+            <img src="${imgSrc}" alt="${typeLabel}" class="lp-rec-img" />
+            <div class="lp-rec-ribbon">${ribbonText}</div>
+          </div>
+          <div class="lp-rec-body">
+            <div class="lp-rec-row lp-rec-row-top">
+              <div class="lp-rec-type ${isFactory ? 'type-factory' : 'type-store'}">${typeLabel}</div>
+              <span class="lp-badge-deal ${isFactory ? 'lp-badge-factory-rent' : 'lp-badge-store-rent'}">${item.dealType}</span>
+            </div>
+            <div class="lp-rec-row lp-rec-row-price">
+              <div class="lp-rec-price">${item.priceText || (item.dealType + ' ' + formatPrice(getMainPrice(item)) + '만원')}</div>
+            </div>
+            <div class="lp-rec-row lp-rec-row-mid">
+              ${item.title || item.description}
+            </div>
+            <div class="lp-rec-row lp-rec-row-area">
+              ${areaHighlightHTML}
+            </div>
+            <div class="lp-rec-row lp-rec-row-bot">
+              ${item.displayAddress || item.address}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    lpPanel.innerHTML = `
+      <div class="lp-cat-view" id="lpCatView">
+        <div class="lp-cat-view-header">
+          <h3 class="lp-cat-view-title">
+            <span>📂 ${catName} 전체매물</span>
+            <button class="lp-cat-back-btn" id="lpCatBackBtn">추천매물 보기로 돌아가기 ↩</button>
+          </h3>
+        </div>
+        <div class="lp-cat-card-list">
+          ${cardListHTML}
+        </div>
+      </div>
+    `;
+
+    document.getElementById('lpCatBackBtn')?.addEventListener('click', () => {
+      restoreDefaultPanel();
+    });
+
+    lpPanel.querySelectorAll('.lp-rec-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.id;
+        if (id) {
+          const found = allListings.find(x => x.id === id);
+          if (found) openModalFull(found);
+        }
+      });
+    });
+
+    // 스크롤 상단으로 초기화
+    document.querySelector('.lp-cat-card-list')?.scrollTo(0, 0);
+  };
+
   // ── 카카오맵 ──
   let map = null, openIw = null;
   const activeMarkers = [];
@@ -609,6 +807,25 @@ const setupListingsPage = () => {
     document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });
   });
 
+  // ── 하단 카테고리 카드 클릭 이벤트 바인딩 ──
+  document.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', e => {
+      e.preventDefault();
+      
+      const href = card.getAttribute('href') || '';
+      let cat = '';
+      if (href.includes('category=공장창고')) cat = '공장창고';
+      else if (href.includes('category=상가')) cat = '상가';
+      else if (href.includes('category=토지')) cat = '토지';
+      else if (href.includes('category=오피스텔')) cat = '오피스텔';
+      else if (href.includes('category=단독주택')) cat = '단독주택';
+      
+      if (cat) {
+        renderCategoryPanel(cat);
+      }
+    });
+  });
+
   // ── URL 파라미터 ──
   const urlCat = new URLSearchParams(window.location.search).get('category');
   if (urlCat) {
@@ -618,8 +835,18 @@ const setupListingsPage = () => {
   }
 
   // 초기 렌더
+  saveDefaultPanelHTML();
   applyFilters();
-  renderPreviewSections();
+  if (typeof renderPreviewSections === 'function') {
+    renderPreviewSections();
+  }
+
+  // URL 카테고리 파라미터 자동 트리거
+  if (urlCat) {
+    setTimeout(() => {
+      renderCategoryPanel(urlCat);
+    }, 100);
+  }
 };
 
 // ─────────────────────────────────────────────
