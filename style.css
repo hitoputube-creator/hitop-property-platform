@@ -4376,7 +4376,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-body-left {
 
-  flex: 1.35 !important; /* 가격 영역 가로폭 56% 확보하여 잘림 원천 방지 */
+  flex: 1.05 !important; /* 가격/거래 유형 영역 44% 수준으로 복구 조정 */
 
   display: flex !important;
 
@@ -4490,15 +4490,17 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 17.5px !important; /* 권장: 17px~18px */
+  font-size: 16px !important; /* 폭에 맞춰서 압축적인 16px로 최적화 */
 
   font-weight: 800 !important;
 
   color: #0f172a !important;
 
-  line-height: 1.1 !important;
+  line-height: 1.2 !important;
 
   white-space: nowrap !important;
+
+  letter-spacing: -0.6px !important; /* 좁은 폭에서도 보일 수 있게 글자간격 축소 */
 
   overflow: visible !important;
 
@@ -4510,7 +4512,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-body-right {
 
-  flex: 1.05 !important; /* 설명 영역 가로폭 44%로 축소 조정 */
+  flex: 1.35 !important; /* 설명 영역 가로폭 56% 수준으로 복구 확대하여 덜 잘리게 조정 */
 
   display: flex !important;
 
