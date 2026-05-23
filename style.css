@@ -211,7 +211,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   color: #c9a84c;
 }
 
-.site-footer { margin-top: 32px; padding: 18px 20px; background: #1f2937; color: #f9fafb; font-size: 13px; text-align: center; }
+.site-footer { position: static; margin-top: 0; padding: 18px 20px; background: #1f2937; color: #f9fafb; font-size: 13px; text-align: center; z-index: auto; }
 .site-footer .container { max-width: 1200px; margin: 0 auto; }
 .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .footer-main, .footer-sub, .footer-links { margin: 0; line-height: 1.6; }
@@ -1795,3 +1795,15 @@ body[data-page="listings"] .site-header .lp-header-phone {
   }
 }
 
+/* ══════════════════════════════════════
+   listings.html 푸터 위치 고정
+   카드섹션 아래 맨 마지막, 전체 너비
+   ══════════════════════════════════════ */
+body[data-page="listings"] .site-footer {
+  position: static;
+  margin-top: 0;
+  margin-left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: auto;
+}
