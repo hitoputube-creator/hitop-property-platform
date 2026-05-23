@@ -1780,123 +1780,38 @@ body[data-page="listings"] .site-header .lp-header-phone {
    listings.html 푸터 위치 고정
    카드섹션 아래 맨 마지막, 전체 너비
    ══════════════════════════════════════ */
-body[data-page="listings"] .site-footer {
-  position: static;
-  margin-top: 0;
-  margin-left: 0;
-  width: 100%;
-  box-sizing: border-box;
-  z-index: auto;
-}
-
-
-
-/* ══════════════════════════════════════
-   listings.html 100vh 풀스크린 레이아웃 패치 (520px 바디 높이 강제)
-   ══════════════════════════════════════ */
-body[data-page="listings"] {
-  height: 100vh !important;
-  max-height: 100vh !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* 상단 영역 flex-shrink 방지 */
-body[data-page="listings"] .top-bar {
-  flex-shrink: 0 !important;
-}
-body[data-page="listings"] .site-header {
-  flex-shrink: 0 !important;
-}
-
-/* 3단 그리드 바디의 세로 높이를 520px로 콤팩트하게 강제하여 하단 카드바 공간 확보 */
-body[data-page="listings"] .lp-body {
-  height: 520px !important;
-  min-height: 520px !important;
-  flex: none !important; /* flex: 1 해제 */
-}
-
-/* 지도 영역이 부모의 남은 공간을 완전히 채우도록 보장 */
-body[data-page="listings"] .lp-center {
-  height: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-body[data-page="listings"] #map {
-  flex: 1 !important;
-  height: 100% !important;
-}
-
-/* 불필요한 하단 전체 매물 스크롤 리스트 은닉 (100vh 조건 완수) */
-body[data-page="listings"] #allListingsSection {
-  display: none !important;
-}
-
-/* 매물 카테고리 카드바 아래 마진/패딩 제거하여 푸터와 완벽하게 밀착 */
-body[data-page="listings"] .cat-cards-section {
-  margin-bottom: 0 !important;
-  padding: 8px 36px !important; /* 세로 패딩 조절로 뷰포트 공간 확보 */
-  flex-shrink: 0 !important;
-}
-
-/* 푸터 마진 완벽 제거 및 화면 최하단 밀착 */
-body[data-page="listings"] .site-footer {
+/* listings.html 전용 푸터 스타일 보강 및 static 정적 배치 (밀착형) */
+.lp-footer {
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 13px;
+  text-align: center;
+  padding: 18px 20px;
   position: static !important;
-  margin-top: 0 !important;
-  padding: 10px 20px !important; /* 푸터 높이 최소화 */
-  flex-shrink: 0 !important;
+  margin-top: 4px !important; /* 카드바와 푸터 사이에 틈이 안 생기도록 타이트하게 조절 */
+  clear: both;
 }
-
-/* ══════════════════════════════════════
-   사이드바 콤팩트 패치 (세로 스크롤 제거 대응)
-   ══════════════════════════════════════ */
-body[data-page="listings"] .lp-sidebar {
-  padding: 12px 10px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
+.lp-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
-
-body[data-page="listings"] .lp-sidebar-section {
-  margin-bottom: 8px !important;
-  flex-shrink: 0 !important;
+.lp-footer-links {
+  margin-top: 4px;
 }
-
-body[data-page="listings"] .lp-sidebar-header {
-  height: 36px !important;
-  line-height: 36px !important;
-  font-size: 14px !important;
+.lp-footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  margin: 0 6px;
 }
-
-body[data-page="listings"] .lp-cat-item {
-  height: 34px !important;
+.lp-footer-links a:hover {
+  text-decoration: underline;
 }
-
-body[data-page="listings"] .lp-contact-inner {
-  padding: 8px 10px !important;
-  gap: 6px !important;
-}
-
-body[data-page="listings"] .lp-phone-big {
-  font-size: 18px !important;
-}
-
-body[data-page="listings"] .lp-inquiry-form {
-  padding: 8px 10px !important;
-  gap: 6px !important;
-}
-
-body[data-page="listings"] .lp-inquiry-form input,
-body[data-page="listings"] .lp-inquiry-form textarea {
-  padding: 6px 10px !important;
-  margin-bottom: 4px !important;
-  font-size: 12px !important;
-}
-
-body[data-page="listings"] .lp-inquiry-submit {
-  padding: 8px !important;
-  font-size: 12px !important;
+.lp-footer-copy {
+  margin: 0;
+  color: #d1d5db;
 }
