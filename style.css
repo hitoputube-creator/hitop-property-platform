@@ -585,7 +585,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   display: grid;
   grid-template-columns: 220px 1fr 360px;
   grid-template-rows: 1fr;
-  min-height: 900px;
+  min-height: 770px;
   background: #F3F4F6;
 }
 
@@ -1110,7 +1110,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 /* 전체 3단: 15% | 50% | 35% */
 .lp-body {
   grid-template-columns: 280px minmax(0, 1fr) 380px;
-  min-height: 900px;
+  min-height: 770px;
 }
 
 /* ── 왼쪽 사이드바 ── */
