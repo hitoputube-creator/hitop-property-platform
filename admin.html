@@ -7,41 +7,22 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   <style>
-    .consult-mgmt-section { margin-top: 40px; }
-    .consult-mgmt-title { font-size: 18px; font-weight: 700; color: #0A1F5C; margin: 0 0 12px; }
-    .consult-mgmt-notice {
-      display: flex; align-items: flex-start; gap: 10px;
-      background: #fff8e1; border: 1px solid #f0c040;
-      border-radius: 8px; padding: 12px 16px;
-      font-size: 13px; color: #7a5a00; line-height: 1.7; margin-bottom: 16px;
-    }
-    .consult-mgmt-card {
-      background: #fff; border-radius: 12px;
+    .consult-shortcut {
+      margin-top: 40px;
+      background: #fff;
+      border-radius: 12px;
       border: 0.5px solid #e2e6ed;
       box-shadow: 0 2px 8px rgba(10,31,92,0.05);
-      overflow: hidden;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
     }
-    .consult-mgmt-table-wrap { overflow-x: auto; }
-    .consult-mgmt-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
-    .consult-mgmt-table thead tr { background: #f6f8fb; border-bottom: 2px solid #e2e6ed; }
-    .consult-mgmt-table th {
-      padding: 11px 14px; font-size: 11px; font-weight: 700;
-      color: #888; text-align: center; white-space: nowrap;
-    }
-    .consult-mgmt-table td {
-      padding: 12px 14px; text-align: center; color: #333;
-      border-bottom: 1px solid #f0f2f6; vertical-align: middle;
-    }
-    .consult-mgmt-table tbody tr:last-child td { border-bottom: none; }
-    .consult-mgmt-table tbody tr:hover { background: #f9fafb; }
-    .consult-mgmt-table td.td-title { text-align: left; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .consult-mgmt-table td.td-content { text-align: left; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .consult-type-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #eef1f8; color: #0A1F5C; }
-    .consult-status-badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .cs-접수완료 { background: #e8f0fe; color: #1a56c4; }
-    .cs-상담중   { background: #fff3e0; color: #c07000; }
-    .cs-답변완료 { background: #e6f7ee; color: #1a7a42; }
-    .consult-empty { padding: 36px; text-align: center; color: #aaa; font-size: 13px; }
+    .consult-shortcut-info {}
+    .consult-shortcut-title { font-size: 16px; font-weight: 700; color: #0A1F5C; margin: 0 0 6px; }
+    .consult-shortcut-desc { font-size: 13px; color: #666; margin: 0; }
   </style>
   </head>
   <body data-page="admin-dashboard">
@@ -55,6 +36,7 @@
           <a href="index.html">홈</a>
           <a href="listings.html">매물보기</a>
           <a href="admin.html" aria-current="page">관리자</a>
+          <a href="admin-consults.html">상담문의관리</a>
           <a href="admin-register.html">매물등록</a>
           <button class="btn btn-outline" id="logoutBtn" type="button" style="font-size:0.85rem;padding:6px 12px;display:none;">로그아웃</button>
         </nav>
@@ -132,34 +114,13 @@
         <!-- 매물 목록 -->
         <div id="adminListWrap" class="adm-list"></div>
 
-        <!-- ── 상담문의 관리 ── -->
-        <div class="consult-mgmt-section">
-          <h2 class="consult-mgmt-title">📋 상담문의 관리</h2>
-          <div class="consult-mgmt-notice">
-            ⚠️ 현재 상담문의는 브라우저 임시 저장 방식입니다. 실제 고객 문의 확인을 위해서는 Google Sheets 또는 Firebase 연동이 필요합니다.
+        <!-- ── 상담문의 관리 바로가기 ── -->
+        <div class="consult-shortcut">
+          <div class="consult-shortcut-info">
+            <p class="consult-shortcut-title">📋 상담문의 관리</p>
+            <p class="consult-shortcut-desc">상담문의 관리는 별도 페이지에서 확인할 수 있습니다.</p>
           </div>
-          <div class="consult-mgmt-card">
-            <div class="consult-mgmt-table-wrap">
-              <table class="consult-mgmt-table">
-                <thead>
-                  <tr>
-                    <th>번호</th>
-                    <th>문의유형</th>
-                    <th class="td-title">제목</th>
-                    <th>작성자</th>
-                    <th>연락처</th>
-                    <th>관심 매물</th>
-                    <th>등록일</th>
-                    <th>상태</th>
-                    <th>관리</th>
-                  </tr>
-                </thead>
-                <tbody id="consultAdminTbody">
-                  <tr><td colspan="9" class="consult-empty">등록된 상담문의가 없습니다.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <a href="admin-consults.html" class="btn btn-primary">상담문의 관리 바로가기</a>
         </div>
 
       </div>
@@ -254,91 +215,5 @@
       </div>
     </footer>
     <script src="app.js?v=20260522a"></script>
-    <script type="module">
-      import { db, COLLECTION } from "./firebase-config.js";
-      import { collection, getDocs, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-      function statusClass(s) {
-        if (s === '접수완료') return 'cs-접수완료';
-        if (s === '상담중')   return 'cs-상담중';
-        return 'cs-답변완료';
-      }
-      function formatDate(ts) {
-        if (!ts) return '—';
-        try {
-          const d = ts.toDate();
-          return d.getFullYear() + '.' +
-            String(d.getMonth() + 1).padStart(2, '0') + '.' +
-            String(d.getDate()).padStart(2, '0');
-        } catch { return '—'; }
-      }
-
-      const tbody = document.getElementById('consultAdminTbody');
-
-      (async () => {
-        try {
-          const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
-          const snap = await getDocs(q);
-          const docs = snap.docs;
-
-          if (!docs.length) return;
-
-          tbody.innerHTML = '';
-          docs.forEach((docSnap, i) => {
-            const post    = docSnap.data();
-            const docId   = docSnap.id;
-            const tr      = document.createElement('tr');
-
-            tr.innerHTML =
-              '<td>' + (docs.length - i) + '</td>' +
-              '<td><span class="consult-type-badge">' + post.type + '</span></td>' +
-              '<td class="td-title">' + post.subject + '</td>' +
-              '<td>' + post.name + '</td>' +
-              '<td>' + post.phone + '</td>' +
-              '<td>' + (post.listing || '—') + '</td>' +
-              '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
-
-            /* 관리 셀: 상태 변경 select */
-            const tdMgmt  = document.createElement('td');
-            const select  = document.createElement('select');
-            select.style.cssText = 'font-family:inherit;font-size:12px;padding:3px 6px;border:1px solid #dde2ea;border-radius:4px;cursor:pointer;';
-            ['접수완료', '상담중', '답변완료'].forEach(opt => {
-              const o = document.createElement('option');
-              o.value = opt; o.textContent = opt;
-              if (opt === post.status) o.selected = true;
-              select.appendChild(o);
-            });
-
-            const msg = document.createElement('span');
-            msg.style.cssText = 'margin-left:6px;font-size:11px;color:#1a7a42;display:none;';
-            msg.textContent   = '저장됨';
-
-            select.addEventListener('change', async () => {
-              const prev      = post.status;
-              const newStatus = select.value;
-              try {
-                await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
-                post.status = newStatus;
-                msg.style.display = 'inline';
-                setTimeout(() => { msg.style.display = 'none'; }, 2000);
-              } catch (err) {
-                console.error('상태 변경 오류:', err);
-                alert('상태 변경 중 오류가 발생했습니다.');
-                select.value = prev;
-              }
-            });
-
-            tdMgmt.appendChild(select);
-            tdMgmt.appendChild(msg);
-            tr.appendChild(tdMgmt);
-            tbody.appendChild(tr);
-          });
-        } catch (err) {
-          console.error('Firestore 상담문의 조회 오류:', err);
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:#e53e3e;">상담문의 목록을 불러오지 못했습니다.</td></tr>';
-        }
-      })();
-    </script>
   </body>
 </html>
