@@ -4376,7 +4376,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-body-left {
 
-  flex: 1.15 !important;
+  flex: 1.35 !important; /* 가격 영역 가로폭 56% 확보하여 잘림 원천 방지 */
 
   display: flex !important;
 
@@ -4386,7 +4386,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   align-items: flex-start !important;
 
-  overflow: hidden !important;
+  overflow: visible !important; /* 가격이 절대 잘리거나 생략되지 않도록 허용 */
 
 }
 
@@ -4500,13 +4500,17 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   white-space: nowrap !important;
 
+  overflow: visible !important;
+
+  text-overflow: clip !important;
+
 }
 
 /* 오른쪽 정보 블록: 면적, 지역, 설명 */
 
 .lp-rec-body-right {
 
-  flex: 1.25 !important;
+  flex: 1.05 !important; /* 설명 영역 가로폭 44%로 축소 조정 */
 
   display: flex !important;
 
