@@ -1646,7 +1646,7 @@ body[data-page="listings"] .site-header {
   z-index: 50;
 }
 
-/* 흰색 헤더: 로고 / 검색창 / 연락처 */
+/* 흰색 헤더: 로고 / 메뉴 / 검색창 */
 body[data-page="listings"] .site-header .container.nav-wrap {
   width: 100%;
   max-width: none;
@@ -1654,9 +1654,9 @@ body[data-page="listings"] .site-header .container.nav-wrap {
   margin: 0;
   padding: 0 36px;
   display: grid;
-  grid-template-columns: 280px 1fr 320px;
+  grid-template-columns: auto auto 1fr;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   box-sizing: border-box;
   background: #ffffff;
 }
