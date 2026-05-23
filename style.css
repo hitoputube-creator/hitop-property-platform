@@ -4232,7 +4232,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 
-  height: 110px !important; /* 가로형 리스트 카드 컴팩트 높이 */
+  height: 120px !important; /* 가로형 리스트 카드 4줄 맞춤 높이 */
 
   min-width: 0 !important;
 
@@ -4402,21 +4402,41 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 첫째 줄: 매물종류 + 거래유형 배지 + 가격 */
+/* 첫째 줄: 매물종류 + 거래유형 배지 */
 
 .lp-rec-row-top {
 
   justify-content: flex-start !important;
 
-  gap: 4px !important;
+  gap: 6px !important;
 
 }
 
-/* 둘째 줄: 핵심 설명 문장 */
+/* 둘째 줄: 가격 단독 표시 행 */
+
+.lp-rec-row-price {
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  justify-content: flex-start !important;
+
+  width: 100% !important;
+
+  min-width: 0 !important;
+
+  overflow: hidden !important;
+
+}
+
+/* 셋째 줄: 핵심 설명 문장 */
 
 .lp-rec-row-mid {
 
-  font-size: 13.5px !important; /* 가로형 맞춤 콤팩트 크기 */
+  font-size: 13px !important; /* 13px~14px 4줄 맞춤 크기 */
 
   font-weight: 700 !important;
 
@@ -4432,11 +4452,11 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 셋째 줄: 면적 + 주소/지역 */
+/* 넷째 줄: 면적 + 주소/지역 */
 
 .lp-rec-row-bot {
 
-  font-size: 12px !important; /* 가로형 맞춤 콤팩트 크기 */
+  font-size: 12.5px !important; /* 12px~13px 보조 텍스트 */
 
   font-weight: 500 !important;
 
@@ -4456,7 +4476,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-type {
 
-  font-size: 13px !important; /* 가로형 맞춤 콤팩트 크기 */
+  font-size: 14.5px !important; /* 4줄 구조에 맞춰 14.5px로 재인상 */
 
   font-weight: 800 !important;
 
@@ -4464,7 +4484,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   white-space: nowrap !important;
 
-  letter-spacing: -0.6px !important;
+  letter-spacing: -0.5px !important;
 
   flex-shrink: 0 !important;
 
@@ -4546,25 +4566,25 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 가격 정보 (가장 굵고 잘 보이게 14.5px, 자간 조정 및 오른쪽 밀착) */
+/* 가격 정보 (가장 굵고 잘 보이게 17.5px 단독 배치 강조) */
 
 .lp-rec-price {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 14.5px !important; /* 가로형 맞춤 콤팩트 크기 */
+  font-size: 17.5px !important; /* 17px~18px 단독 라인 강조 */
 
-  font-weight: 800 !important;
+  font-weight: 900 !important; /* 가장 굵게 900 적용 */
 
   color: #0f172a !important;
 
-  line-height: 1.2 !important;
+  line-height: 1.1 !important;
 
   white-space: nowrap !important;
 
-  letter-spacing: -0.6px !important;
+  letter-spacing: -0.4px !important; /* 자간 normal 수준 확보 */
 
-  margin-left: auto !important; /* 가격을 오른쪽 끝으로 밀어 균형미 극대화 */
+  margin-left: 0 !important; /* 왼쪽 정렬로 복구 */
 
   flex-shrink: 0 !important;
 
