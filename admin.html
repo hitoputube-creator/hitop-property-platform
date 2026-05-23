@@ -155,7 +155,7 @@
                   </tr>
                 </thead>
                 <tbody id="consultAdminTbody">
-                  <tr><td colspan="8" class="consult-empty">등록된 상담문의가 없습니다.</td></tr>
+                  <tr><td colspan="9" class="consult-empty">등록된 상담문의가 없습니다.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -254,35 +254,55 @@
       </div>
     </footer>
     <script src="app.js?v=20260522a"></script>
-    <script>
-      (function() {
-        var posts = JSON.parse(localStorage.getItem('consultPosts') || '[]');
-        var tbody = document.getElementById('consultAdminTbody');
-        if (!posts.length) return;
+    <script type="module">
+      import { db, COLLECTION } from "./firebase-config.js";
+      import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        posts.sort(function(a, b) { return b.id - a.id; });
+      function statusClass(s) {
+        if (s === '접수완료') return 'cs-접수완료';
+        if (s === '상담중')   return 'cs-상담중';
+        return 'cs-답변완료';
+      }
+      function formatDate(ts) {
+        if (!ts) return '—';
+        try {
+          const d = ts.toDate();
+          return d.getFullYear() + '.' +
+            String(d.getMonth() + 1).padStart(2, '0') + '.' +
+            String(d.getDate()).padStart(2, '0');
+        } catch { return '—'; }
+      }
 
-        function statusClass(s) {
-          if (s === '접수완료') return 'cs-접수완료';
-          if (s === '상담중')   return 'cs-상담중';
-          return 'cs-답변완료';
+      const tbody = document.getElementById('consultAdminTbody');
+
+      (async () => {
+        try {
+          const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
+          const snap = await getDocs(q);
+          const docs = snap.docs;
+
+          if (!docs.length) return;
+
+          tbody.innerHTML = '';
+          docs.forEach((doc, i) => {
+            const post = doc.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML =
+              '<td>' + (docs.length - i) + '</td>' +
+              '<td><span class="consult-type-badge">' + post.type + '</span></td>' +
+              '<td class="td-title">' + post.subject + '</td>' +
+              '<td>' + post.name + '</td>' +
+              '<td>' + post.phone + '</td>' +
+              '<td>' + (post.listing || '—') + '</td>' +
+              '<td>' + formatDate(post.createdAt) + '</td>' +
+              '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>' +
+              '<td>—</td>';
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error('Firestore 상담문의 조회 오류:', err);
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:#e53e3e;">상담문의 목록을 불러오지 못했습니다.</td></tr>';
         }
-
-        tbody.innerHTML = '';
-        posts.forEach(function(post, i) {
-          var tr = document.createElement('tr');
-          tr.innerHTML =
-            '<td>' + (posts.length - i) + '</td>' +
-            '<td><span class="consult-type-badge">' + post.type + '</span></td>' +
-            '<td class="td-title">' + post.subject + '</td>' +
-            '<td>' + post.name + '</td>' +
-            '<td>' + post.phone + '</td>' +
-            '<td>' + (post.listing || '—') + '</td>' +
-            '<td>' + post.date + '</td>' +
-            '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>' +
-            '<td>—</td>';
-          tbody.appendChild(tr);
-        });
       })();
     </script>
   </body>
