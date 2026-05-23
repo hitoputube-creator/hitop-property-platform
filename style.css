@@ -1847,7 +1847,7 @@ body[data-page="listings"] .lp-body {
   min-height: 0 !important;
   height: auto !important;
   display: grid !important;
-  grid-template-columns: 280px minmax(0, 1fr) 380px !important;
+  grid-template-columns: 280px minmax(0, 1fr) 600px !important;
   grid-template-rows: 1fr auto !important; /* 1행: 지도/추천패널, 2행: 매물 카테고리 카드바 */
 }
 
