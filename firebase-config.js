@@ -16,3 +16,4 @@ const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
 export const COLLECTION = "consultations";
+export const LISTINGS_COLLECTION = "listings";
