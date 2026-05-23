@@ -148,6 +148,7 @@
                     <th class="td-title">제목</th>
                     <th>작성자</th>
                     <th>연락처</th>
+                    <th>관심 매물</th>
                     <th>등록일</th>
                     <th>상태</th>
                     <th>관리</th>
@@ -276,6 +277,7 @@
             '<td class="td-title">' + post.subject + '</td>' +
             '<td>' + post.name + '</td>' +
             '<td>' + post.phone + '</td>' +
+            '<td>' + (post.listing || '—') + '</td>' +
             '<td>' + post.date + '</td>' +
             '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>' +
             '<td>—</td>';
