@@ -4174,7 +4174,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   flex-direction: column;
 
-  gap: 10px;
+  gap: 8px !important; /* 5개 노출용 카드 간격 축소 */
 
   flex: 1; /* 남은 컬럼 높이 전체 차지 */
 
@@ -4232,7 +4232,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 
-  height: 120px !important; /* 가로형 리스트 카드 4줄 맞춤 높이 */
+  height: 108px !important; /* 가로형 리스트 카드 5개 최적화 높이 */
 
   min-width: 0 !important;
 
@@ -4362,7 +4362,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-body {
 
-  padding: 8px 10px !important; /* 가로형 맞춤 콤팩트 패딩 */
+  padding: 6px 10px !important; /* 가로형 5개 맞춤 초콤팩트 패딩 */
 
   display: flex !important;
 
@@ -4436,7 +4436,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-mid {
 
-  font-size: 13px !important; /* 13px~14px 4줄 맞춤 크기 */
+  font-size: 12px !important; /* 5줄 맞춤 콤팩트화 */
 
   font-weight: 700 !important;
 
@@ -4456,7 +4456,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-bot {
 
-  font-size: 12.5px !important; /* 12px~13px 보조 텍스트 */
+  font-size: 11px !important; /* 5줄 맞춤 콤팩트화 */
 
   font-weight: 500 !important;
 
@@ -4476,7 +4476,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-type {
 
-  font-size: 14.5px !important; /* 4줄 구조에 맞춰 14.5px로 재인상 */
+  font-size: 13.5px !important; /* 5줄 맞춤 콤팩트화 */
 
   font-weight: 800 !important;
 
@@ -4566,13 +4566,13 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 가격 정보 (가장 굵고 잘 보이게 17.5px 단독 배치 강조) */
+/* 가격 정보 (가장 굵고 잘 보이게 16px 단독 배치 강조) */
 
 .lp-rec-price {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 17.5px !important; /* 17px~18px 단독 라인 강조 */
+  font-size: 16px !important; /* 5줄 맞춤 콤팩트화 */
 
   font-weight: 900 !important; /* 가장 굵게 900 적용 */
 
