@@ -349,7 +349,7 @@
             tr.innerHTML =
               '<td>' + (total - i) + '</td>' +
               '<td><span class="type-badge">' + post.type + '</span></td>' +
-              '<td class="col-title"><a href="#">🔒 ' + post.subject + '</a></td>' +
+              '<td class="col-title"><a href="consult-detail.html?id=' + doc.id + '">🔒 ' + post.subject + '</a></td>' +
               '<td>' + maskName(post.name) + '</td>' +
               '<td>' + formatDate(post.createdAt) + '</td>' +
               '<td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
