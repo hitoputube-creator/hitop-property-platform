@@ -223,58 +223,71 @@
     </footer>
 
     <script src="app.js?v=20260521"></script>
-    <script>
-      (function() {
-        function maskName(n) {
-          if (!n) return '';
-          if (n.length === 1) return n;
-          if (n.length === 2) return n[0] + '*';
-          return n[0] + '*' + n[n.length - 1];
-        }
-        function maskPhone(p) {
-          if (!p) return '';
-          var parts = p.split('-');
-          if (parts.length === 3) return parts[0] + '-****-' + parts[2];
-          if (p.length > 4) return p.slice(0, 3) + '****' + p.slice(-2);
-          return p;
-        }
-        function statusClass(s) {
-          if (s === '접수완료') return 'status-받침';
-          if (s === '상담중')   return 'status-상담';
-          return 'status-답변';
-        }
+    <script type="module">
+      import { db, COLLECTION } from "./firebase-config.js";
+      import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        var params = new URLSearchParams(location.search);
-        var id = params.get('id');
-        var area = document.getElementById('detailArea');
+      function maskName(n) {
+        if (!n) return '';
+        if (n.length === 1) return n;
+        if (n.length === 2) return n[0] + '*';
+        return n[0] + '*' + n[n.length - 1];
+      }
+      function maskPhone(p) {
+        if (!p) return '';
+        const parts = p.split('-');
+        if (parts.length === 3) return parts[0] + '-****-' + parts[2];
+        if (p.length > 4) return p.slice(0, 3) + '****' + p.slice(-2);
+        return p;
+      }
+      function statusClass(s) {
+        if (s === '접수완료') return 'status-받침';
+        if (s === '상담중')   return 'status-상담';
+        return 'status-답변';
+      }
+      function formatDate(ts) {
+        if (!ts) return '—';
+        try {
+          const d = ts.toDate();
+          return d.getFullYear() + '.' +
+            String(d.getMonth() + 1).padStart(2, '0') + '.' +
+            String(d.getDate()).padStart(2, '0');
+        } catch { return '—'; }
+      }
 
-        if (!id) {
-          area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
-          return;
-        }
+      const id   = new URLSearchParams(location.search).get('id');
+      const area = document.getElementById('detailArea');
 
-        var posts = JSON.parse(localStorage.getItem('consultPosts') || '[]');
-        var post = posts.find(function(p) { return String(p.id) === String(id); });
-
-        if (!post) {
-          area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
-          return;
-        }
-
-        area.innerHTML =
-          '<div class="detail-card">' +
-            '<table class="detail-table">' +
-              '<tr><th>문의 유형</th><td><span class="type-badge">' + post.type + '</span></td></tr>' +
-              '<tr><th>제목</th><td>🔒 ' + post.subject + '</td></tr>' +
-              '<tr><th>작성자</th><td>' + maskName(post.name) + '</td></tr>' +
-              '<tr><th>연락처</th><td>' + maskPhone(post.phone) + '</td></tr>' +
-              '<tr><th>관심 매물</th><td>' + (post.listing || '—') + '</td></tr>' +
-              '<tr><th>등록일</th><td>' + post.date + '</td></tr>' +
-              '<tr><th>상태</th><td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td></tr>' +
-              '<tr><th>문의 내용</th><td><div class="content-box">' + post.content + '</div></td></tr>' +
-            '</table>' +
-          '</div>';
-      })();
+      if (!id) {
+        area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
+      } else {
+        (async () => {
+          try {
+            const snap = await getDoc(doc(db, COLLECTION, id));
+            if (!snap.exists()) {
+              area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
+              return;
+            }
+            const post = snap.data();
+            area.innerHTML =
+              '<div class="detail-card">' +
+                '<table class="detail-table">' +
+                  '<tr><th>문의 유형</th><td><span class="type-badge">' + post.type + '</span></td></tr>' +
+                  '<tr><th>제목</th><td>🔒 ' + post.subject + '</td></tr>' +
+                  '<tr><th>작성자</th><td>' + maskName(post.name) + '</td></tr>' +
+                  '<tr><th>연락처</th><td>' + maskPhone(post.phone) + '</td></tr>' +
+                  '<tr><th>관심 매물</th><td>' + (post.listing || '—') + '</td></tr>' +
+                  '<tr><th>등록일</th><td>' + formatDate(post.createdAt) + '</td></tr>' +
+                  '<tr><th>상태</th><td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td></tr>' +
+                  '<tr><th>문의 내용</th><td><div class="content-box">' + post.content + '</div></td></tr>' +
+                '</table>' +
+              '</div>';
+          } catch (err) {
+            console.error('Firestore 상세 조회 오류:', err);
+            area.innerHTML = '<div class="detail-card not-found"><p>상담글을 불러오지 못했습니다.</p></div>';
+          }
+        })();
+      }
     </script>
   </body>
 </html>
