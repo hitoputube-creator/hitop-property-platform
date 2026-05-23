@@ -1583,51 +1583,59 @@ body[data-page="listings"] .lp-inquiry-submit:hover {
 /* 헤더 가운데 검색창 */
 body[data-page="listings"] .lp-header-search {
   flex: 1;
-  max-width: 720px;
-  margin: 0 36px;
+  min-width: 0;
+  max-width: 600px;
+  margin: 0 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  overflow: visible;
 }
 
 body[data-page="listings"] .lp-header-search input {
   flex: 1;
-  height: 38px;
-  padding: 0 12px;
+  min-width: 80px;
+  height: 34px;
+  padding: 0 10px;
   border: 1px solid #d8dee8;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 7px;
+  font-size: 12px;
   box-sizing: border-box;
 }
 
 body[data-page="listings"] .lp-header-search select {
-  width: 110px;
-  height: 38px;
+  flex-shrink: 0;
+  width: 88px;
+  height: 34px;
   border: 1px solid #d8dee8;
-  border-radius: 8px;
-  padding: 0 8px;
-  font-size: 13px;
+  border-radius: 7px;
+  padding: 0 4px;
+  font-size: 12px;
   background: #ffffff;
   box-sizing: border-box;
 }
 
 body[data-page="listings"] .lp-header-search .lp-search-submit {
-  width: 58px;
-  height: 38px;
+  flex-shrink: 0;
+  width: 50px;
+  height: 34px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 7px;
   background: #071f5f;
   color: #ffffff;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
 
 body[data-page="listings"] .lp-header-search .lp-search-reset {
-  width: 56px;
-  height: 38px;
+  flex-shrink: 0;
+  width: 46px;
+  height: 34px;
   border: 0;
   background: transparent;
   color: #8b95a7;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
