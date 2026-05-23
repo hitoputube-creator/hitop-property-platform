@@ -125,7 +125,7 @@
     </div>
 
     <!-- 본문 (로그인 후 표시) -->
-    <main class="section hidden" id="adminMain">
+    <main class="hidden" id="adminMain">
       <section class="detail-section">
         <div class="container">
 
@@ -187,6 +187,9 @@
       import { db, COLLECTION } from "./firebase-config.js";
       import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+      function escHtml(s) {
+        return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      }
       function statusClass(s) {
         if (s === '접수완료') return 'status-받침';
         if (s === '상담중')   return 'status-상담';
@@ -200,6 +203,11 @@
             String(d.getMonth() + 1).padStart(2,'0') + '.' +
             String(d.getDate()).padStart(2,'0');
         } catch { return '—'; }
+      }
+
+      if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
+        location.href = 'admin.html';
+        return;
       }
 
       const id             = new URLSearchParams(location.search).get('id');
@@ -223,16 +231,17 @@
             area.innerHTML =
               '<div class="detail-card">' +
                 '<table class="detail-table">' +
-                  '<tr><th>문의 유형</th><td><span class="type-badge">' + post.type + '</span></td></tr>' +
-                  '<tr><th>제목</th><td>' + post.subject + '</td></tr>' +
-                  '<tr><th>작성자</th><td>' + post.name + '</td></tr>' +
-                  '<tr><th>연락처</th><td>' + post.phone + '</td></tr>' +
-                  '<tr><th>관심 매물</th><td>' + (post.listing || '—') + '</td></tr>' +
+                  '<tr><th>문의 유형</th><td><span class="type-badge">' + escHtml(post.type) + '</span></td></tr>' +
+                  '<tr><th>제목</th><td>' + escHtml(post.subject) + '</td></tr>' +
+                  '<tr><th>작성자</th><td>' + escHtml(post.name) + '</td></tr>' +
+                  '<tr><th>연락처</th><td>' + escHtml(post.phone) + '</td></tr>' +
+                  '<tr><th>관심 매물</th><td>' + (post.listing ? escHtml(post.listing) : '—') + '</td></tr>' +
                   '<tr><th>등록일</th><td>' + formatDate(post.createdAt) + '</td></tr>' +
-                  '<tr><th>상태</th><td><span class="status-badge ' + statusClass(post.status) + '" id="statusBadge">' + post.status + '</span></td></tr>' +
-                  '<tr><th>문의 내용</th><td><div class="content-box">' + post.content + '</div></td></tr>' +
+                  '<tr><th>상태</th><td><span class="status-badge ' + statusClass(post.status) + '" id="statusBadge">' + escHtml(post.status) + '</span></td></tr>' +
+                  '<tr><th>문의 내용</th><td><div class="content-box" id="contentBox"></div></td></tr>' +
                 '</table>' +
               '</div>';
+            document.getElementById('contentBox').textContent = post.content;
 
             /* 상태 변경 UI 표시 */
             statusSelect.value = post.status;

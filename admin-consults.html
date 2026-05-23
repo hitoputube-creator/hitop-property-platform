@@ -116,7 +116,7 @@
     </div>
 
     <!-- 본문 (로그인 후 표시) -->
-    <main class="section hidden" id="adminMain">
+    <main class="hidden" id="adminMain">
       <div class="board-section">
         <div class="container">
 
@@ -186,6 +186,9 @@
       import { db, COLLECTION } from "./firebase-config.js";
       import { collection, getDocs, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+      function escHtml(s) {
+        return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      }
       function statusClass(s) {
         if (s === '접수완료') return 'status-받침';
         if (s === '상담중')   return 'status-상담';
@@ -203,6 +206,8 @@
 
       const tbody   = document.getElementById('consultAdminTbody');
       const countEl = document.getElementById('consultCount');
+
+      if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') return;
 
       (async () => {
         try {
@@ -225,13 +230,13 @@
 
             tr.innerHTML =
               '<td>' + (docs.length - i) + '</td>' +
-              '<td><span class="type-badge">' + post.type + '</span></td>' +
-              '<td class="col-title"><a href="admin-consult-detail.html?id=' + docId + '">' + post.subject + '</a></td>' +
-              '<td>' + post.name + '</td>' +
-              '<td>' + post.phone + '</td>' +
-              '<td>' + (post.listing || '—') + '</td>' +
+              '<td><span class="type-badge">' + escHtml(post.type) + '</span></td>' +
+              '<td class="col-title"><a href="admin-consult-detail.html?id=' + escHtml(docId) + '">' + escHtml(post.subject) + '</a></td>' +
+              '<td>' + escHtml(post.name) + '</td>' +
+              '<td>' + escHtml(post.phone) + '</td>' +
+              '<td>' + (post.listing ? escHtml(post.listing) : '—') + '</td>' +
               '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
+              '<td><span class="status-badge ' + statusClass(post.status) + '">' + escHtml(post.status) + '</span></td>';
 
             const tdMgmt = document.createElement('td');
             const select = document.createElement('select');
