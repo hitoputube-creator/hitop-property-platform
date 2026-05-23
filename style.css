@@ -1110,7 +1110,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 /* 전체 3단 */
 .lp-body {
   grid-template-columns: 280px minmax(0, 1fr) 380px;
-  height: 420px;
+  height: auto;
 }
 
 /* ── 왼쪽 사이드바 ── */
@@ -1818,7 +1818,7 @@ body[data-page="listings"] .site-header .lp-header-phone {
 
 
 /* ══════════════════════════════════════
-   listings.html 100vh 풀스크린 레이아웃 패치 (420px 바디 높이 강제)
+   listings.html 100vh 풀스크린 레이아웃 패치 (유연한 flex: 1 공간 상속)
    ══════════════════════════════════════ */
 body[data-page="listings"] {
   height: 100vh !important;
@@ -1841,15 +1841,14 @@ body[data-page="listings"] .lp-header-nav {
   flex-shrink: 0 !important;
 }
 
-/* 3단 그리드 바디의 세로 높이를 420px로 과감하게 제한하여 하단 카드바 공간 확보 */
+/* 3단 그리드 바디의 세로 높이를 flex: 1로 조절하여 남은 공간을 완전히 채우도록 유연성 복구 */
 body[data-page="listings"] .lp-body {
-  height: 420px !important;
-  min-height: 420px !important;
-  max-height: 420px !important;
-  flex: none !important;
+  flex: 1 !important;
+  min-height: 0 !important; /* 고정 min-height 해제 */
+  height: auto !important;
 }
 
-/* 지도 영역이 부모의 420px 공간을 완전히 채우도록 상속 보장 */
+/* 지도 영역이 부모의 남은 공간을 완전히 채우도록 보장 */
 body[data-page="listings"] .lp-center {
   height: 100% !important;
   display: flex !important;
@@ -1872,7 +1871,7 @@ body[data-page="listings"] .cat-cards-section {
   flex-shrink: 0 !important;
 }
 
-/* listings.html 전용 푸터 스타일 보강 및 4px 초밀착 정적 배치 */
+/* listings.html 전용 푸터 스타일 보강 및 0px 초밀착 정적 배치 */
 body[data-page="listings"] .lp-footer {
   background: #1f2937;
   color: #f9fafb;
@@ -1880,7 +1879,7 @@ body[data-page="listings"] .lp-footer {
   text-align: center;
   padding: 12px 20px !important;
   position: static !important;
-  margin-top: 4px !important; /* 틈새 방지 */
+  margin-top: 0 !important; /* 틈새 완벽 방지를 위해 마진탑 0px 적용 */
   clear: both;
   flex-shrink: 0 !important; /* 찌그러짐 방지 */
 }
