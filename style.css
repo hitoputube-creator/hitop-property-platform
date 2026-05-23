@@ -14,7 +14,8 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .site-header { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 10; }
 .nav-wrap { display: flex; align-items: center; justify-content: space-between; min-height: 64px; gap: 12px; }
 .brand { color: var(--navy); font-weight: 800; text-decoration: none; font-size: 1.1rem; }
-.brand-logo { height: 50px; width: auto; vertical-align: middle; }
+.brand-logo { height: 36px; width: auto; vertical-align: middle; max-width: 180px; }
+.nav-wrap { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 18px; }
 .brand-text { font-size: inherit; font-weight: inherit; }
 .nav-menu { display: flex; gap: 14px; align-items: center; }
 .nav-menu a { color: var(--gray-700); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
@@ -145,14 +146,72 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .login-box input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font: inherit; }
 .login-error { color: #dc2626; font-size: 0.88rem; margin: 0; }
 
-.floating-contact { position: fixed; bottom: 28px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 50; }
-.float-btn { width: 54px; height: 54px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; line-height: 1.3; text-align: center; text-decoration: none; box-shadow: 0 3px 10px rgba(0,0,0,0.2); transition: transform 0.2s, box-shadow 0.2s; }
-.float-btn:hover { transform: scale(1.1); box-shadow: 0 5px 16px rgba(0,0,0,0.28); }
-.float-call { background: var(--navy); color: #fff; }
-.float-blog { background: #2db400; color: #fff; }
-.float-kakao { background: #fee500; color: #3c1e1e; }
+/* 우측 플로팅 버튼 - 흰색 원형 카드형 */
+.floating-btns {
+  position: fixed;
+  right: 24px;
+  bottom: 100px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-.site-footer { margin-top: 32px; padding: 18px 20px; background: #1f2937; color: #f9fafb; font-size: 13px; text-align: center; }
+.float-btn-card {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #fff;
+  color: #0b1f4d;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.float-btn-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
+}
+
+.float-btn-card svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  fill: currentColor;
+}
+
+.float-btn-card-label,
+.float-btn-card span {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.fbc-tel {
+  color: #0b1f4d;
+}
+
+.fbc-blog {
+  color: #03c75a;
+}
+
+.fbc-kakao {
+  color: #3a2920;
+}
+
+.fbc-inquiry {
+  color: #c9a84c;
+}
+
+.site-footer { position: static; margin-top: 0; padding: 18px 20px; background: #1f2937; color: #f9fafb; font-size: 13px; text-align: center; z-index: auto; }
 .site-footer .container { max-width: 1200px; margin: 0 auto; }
 .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .footer-main, .footer-sub, .footer-links { margin: 0; line-height: 1.6; }
@@ -249,8 +308,27 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .listing-filter-grid input, .listing-filter-grid select { flex: 1 1 calc(50% - 4px); }
   .modal-box { border-radius: 0; max-height: 100vh; height: 100vh; }
   .modal-body { grid-template-columns: 1fr; overflow-y: auto; }
-  .floating-contact { bottom: 20px; right: 14px; }
-  .float-btn { width: 48px; height: 48px; font-size: 10px; }
+.floating-btns {
+  right: 12px;
+  bottom: 84px;
+  gap: 9px;
+}
+
+.float-btn-card {
+  width: 56px;
+  height: 56px;
+  gap: 2px;
+}
+
+.float-btn-card svg {
+  width: 20px;
+  height: 20px;
+}
+
+.float-btn-card-label,
+.float-btn-card span {
+  font-size: 10px;
+}
   .footer-main span, .footer-sub span { display: block; margin: 2px 0; }
   .footer-main strong { display: block; margin: 0 0 4px; }
   .modal-body { grid-template-columns: 1fr; }
@@ -507,8 +585,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   display: grid;
   grid-template-columns: 220px 1fr 360px;
   grid-template-rows: 1fr;
-  height: calc(100vh - 96px);
-  min-height: 500px;
+  min-height: 770px;
   background: #F3F4F6;
 }
 
@@ -646,6 +723,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .lp-center {
   grid-column: 2;
   grid-row: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -708,6 +786,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .lp-panel {
   grid-column: 3;
   grid-row: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: #F3F4F6;
@@ -916,6 +995,8 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 @media (min-width: 769px) and (max-width: 1100px) {
   .lp-body { grid-template-columns: 160px 1fr 280px; }
+  .cat-cards-section { margin-left: 160px; }
+  .lp-all-section { margin-left: 160px; }
 }
 
 /* ================================================================
@@ -1028,19 +1109,25 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 /* 전체 3단: 15% | 50% | 35% */
 .lp-body {
-  grid-template-columns: 15% 50% 35%;
+  grid-template-columns: 280px minmax(0, 1fr) 380px;
   height: 520px;
 }
 
 /* ── 왼쪽 사이드바 ── */
+
+
+.lp-contact-inner {
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
+}                    
+
 .lp-contact-inner {
   padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
 }
 .lp-phone-big {
-  font-size: 20px; font-weight: 800; color: #F97316;
+  font-size: 20px; font-weight: 800; color: #C9A84C;
   text-decoration: none; display: block; line-height: 1.2;
 }
-.lp-phone-big:hover { color: #C2410C; }
+.lp-phone-big:hover { color: #b89540; }
 .lp-hours-small { font-size: 11px; color: #9CA3AF; margin: 0; }
 .lp-kakao-btn {
   display: block; background: #C9A84C; color: #fff;
@@ -1149,31 +1236,17 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .lp-mini-price { font-size: 12px; font-weight: 700; color: #F97316; margin-top: 3px; }
 .lp-mini-empty { font-size: 12px; color: #9CA3AF; padding: 16px; text-align: center; }
 
-/* 전체 매물 보기 버튼 */
-.lp-show-all-btn {
-  flex-shrink: 0; width: 100%; padding: 14px;
-  background: #0A1F5C; color: #fff; border: none;
-  font: inherit; font-size: 15px; font-weight: 700;
-  cursor: pointer; transition: background 0.12s; letter-spacing: 0.5px;
-}
-.lp-show-all-btn:hover { background: #162f50; }
-
 /* ── 하단 전체 매물 섹션 ── */
-.lp-all-section { background: #F3F4F6; padding: 24px 0 40px; }
-.lp-all-section.hidden { display: none; }
+.lp-all-section { background: #F3F4F6; padding: 24px 0 40px; margin-left: 280px; }
 
 .lp-all-toolbar {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  padding: 0 24px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #E5E7EB;
+  flex-shrink: 0;
 }
-.lp-all-title { margin: 0; font-size: 1.25rem; font-weight: 800; color: #0A1F5C; }
-.lp-hide-btn {
-  margin-left: auto; padding: 7px 14px;
-  background: #fff; border: 1px solid #cbd5e1;
-  border-radius: 6px; font: inherit; font-size: 13px;
-  cursor: pointer; color: #374151; transition: all 0.12s;
-}
-.lp-hide-btn:hover { border-color: #0A1F5C; color: #0A1F5C; }
+.lp-all-title { margin: 0; font-size: 13px; font-weight: 700; color: #111827; }
 
 .lp-all-grid {
   display: grid;
@@ -1238,10 +1311,590 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .lp-panel-2col { grid-template-columns: 1fr; height: 300px; }
   .lp-all-grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; }
   .lp-all-toolbar { padding: 0 12px 12px; }
+  .lp-all-section { margin-left: 0; }
   .top-bar-lg { font-size: 14px !important; }
   .adm-stats-4 { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 480px) {
   .adm-stats-4 { grid-template-columns: 1fr 1fr; }
   .lp-all-grid { grid-template-columns: 1fr; }
+}
+/* 매물보기 페이지 - 하이탑 상호 아래 메뉴 네이비바 */
+body[data-page="listings"] .lp-header-nav {
+  width: 100%;
+  height: 48px;
+  background: #071f5f;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 34px;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 네이비바 안의 메뉴 글자 */
+body[data-page="listings"] .lp-header-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 48px;
+  white-space: nowrap;
+}
+
+/* 현재 페이지 또는 마우스 올렸을 때 */
+body[data-page="listings"] .lp-header-nav a:hover,
+body[data-page="listings"] .lp-header-nav a.nav-active {
+  color: #ffd24d;
+}
+/* 매물보기 페이지 상단 흰색 헤더 양끝 정렬 */
+body[data-page="listings"] .site-header .container.nav-wrap {
+  width: 100%;
+  max-width: none;
+  height: 72px;
+  margin: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* 로고는 왼쪽으로 */
+body[data-page="listings"] .site-header .brand {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+/* 로고 크기 */
+body[data-page="listings"] .site-header .brand-logo {
+  height: 36px;
+  display: block;
+}
+
+/* 평일시간 + 전화번호는 오른쪽으로 */
+body[data-page="listings"] .site-header .lp-header-info {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* 전화번호 색상 */
+body[data-page="listings"] .site-header .lp-header-phone {
+  color: #003b8f;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 800;
+}
+/* 매물보기 페이지 - 왼쪽 사이드바 카드형 디자인 */
+body[data-page="listings"] .lp-sidebar {
+  width: 280px;
+  height: auto;
+  background: #f6f7fb;
+  border-right: 1px solid #e5e7eb;
+  padding: 18px 14px;
+  box-sizing: border-box;
+  overflow-y: visible;
+  align-self: stretch;
+}
+
+/* 사이드바 섹션을 카드처럼 */
+body[data-page="listings"] .lp-sidebar-section {
+  background: #ffffff;
+  border: 1px solid #e2e5ec;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* 카드 상단 제목 */
+body[data-page="listings"] .lp-sidebar-header {
+  height: 42px;
+  line-height: 42px;
+  padding: 0 18px;
+  background: #071f5f;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* 카테고리 항목 */
+body[data-page="listings"] .lp-cat-item {
+  height: 42px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333333;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid #edf0f4;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+/* 마지막 줄 border 제거 */
+body[data-page="listings"] .lp-cat-item:last-child {
+  border-bottom: 0;
+}
+
+/* 카테고리 오른쪽 숫자를 화살표처럼 정리 */
+body[data-page="listings"] .lp-cat-count {
+  color: transparent;
+  font-size: 0;
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+/* 오른쪽 화살표 */
+body[data-page="listings"] .lp-cat-count::after {
+  content: "›";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  color: #9ca3af;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 18px;
+}
+
+/* 메뉴 hover */
+body[data-page="listings"] .lp-cat-item:hover {
+  background: #f8f5ed;
+  color: #071f5f;
+}
+
+/* 선택된 메뉴 */
+body[data-page="listings"] .lp-cat-item.active {
+  background: #f8f1df;
+  color: #071f5f;
+  font-weight: 800;
+  border-left-color: #c9a84c;
+}
+
+/* 전화문의 영역 */
+body[data-page="listings"] .lp-contact-inner {
+  padding: 18px 16px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-phone-big {
+  display: block;
+  color: #ff5a00;
+  font-size: 24px;
+  font-weight: 900;
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+
+body[data-page="listings"] .lp-hours-small {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: #8b95a7;
+}
+
+/* 카카오톡 버튼 */
+body[data-page="listings"] .lp-kakao-btn,
+.lp-kakao-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  background: #C9A84C;
+  color: #ffffff;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: background 0.12s;
+}
+
+body[data-page="listings"] .lp-kakao-btn:hover,
+.lp-kakao-btn:hover {
+  background: #b89540;
+  color: #ffffff;
+}
+
+/* 빠른문의 폼 */
+body[data-page="listings"] .lp-inquiry-form {
+  padding: 14px 14px 16px;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-inquiry-form input,
+body[data-page="listings"] .lp-inquiry-form textarea {
+  width: 100%;
+  margin-bottom: 9px;
+  padding: 10px 11px;
+  border: 1px solid #d9dee8;
+  border-radius: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+body[data-page="listings"] .lp-inquiry-form input:focus,
+body[data-page="listings"] .lp-inquiry-form textarea:focus {
+  border-color: #071f5f;
+  box-shadow: 0 0 0 3px rgba(7, 31, 95, 0.12);
+}
+
+/* 상담문의 버튼 */
+body[data-page="listings"] .lp-inquiry-submit {
+  width: 100%;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: #071f5f;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+body[data-page="listings"] .lp-inquiry-submit:hover {
+  background: #0b2d80;
+}
+/* 헤더 가운데 검색창 */
+body[data-page="listings"] .lp-header-search {
+  flex: 1;
+  min-width: 0;
+  max-width: 600px;
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow: visible;
+}
+
+body[data-page="listings"] .lp-header-search input {
+  flex: 1;
+  min-width: 80px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #d8dee8;
+  border-radius: 7px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-header-search select {
+  flex-shrink: 0;
+  width: 88px;
+  height: 34px;
+  border: 1px solid #d8dee8;
+  border-radius: 7px;
+  padding: 0 4px;
+  font-size: 12px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+body[data-page="listings"] .lp-header-search .lp-search-submit {
+  flex-shrink: 0;
+  width: 50px;
+  height: 34px;
+  border: 0;
+  border-radius: 7px;
+  background: #071f5f;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+body[data-page="listings"] .lp-header-search .lp-search-reset {
+  flex-shrink: 0;
+  width: 46px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: #8b95a7;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* 매물보기 상단 헤더 3단 정렬 복구 */
+body[data-page="listings"] .site-header {
+  background: #ffffff;
+  position: relative;
+  z-index: 50;
+}
+
+/* 흰색 헤더: 로고 / 메뉴 / 검색창 */
+body[data-page="listings"] .site-header .container.nav-wrap {
+  width: 100%;
+  max-width: none;
+  height: 78px;
+  margin: 0;
+  padding: 0 36px;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+/* 로고 */
+body[data-page="listings"] .site-header .brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+body[data-page="listings"] .site-header .brand-logo {
+  height: 36px;
+  display: block;
+}
+
+/* 오른쪽 영업시간 + 전화번호 */
+body[data-page="listings"] .site-header .lp-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+body[data-page="listings"] .site-header .lp-header-phone {
+  color: #003b8f;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* ══════════════════════════════════════
+   매물 카테고리 카드 섹션 (listings.html)
+   ══════════════════════════════════════ */
+.cat-cards-section {
+  background: #0A1F5C;
+  padding: 14px 36px;
+  flex-shrink: 0;
+  margin-left: 280px;
+}
+.cat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.cat-card {
+  position: relative;
+  height: 160px;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  transition: box-shadow 0.22s;
+}
+.cat-card:hover {
+  box-shadow: 0 0 0 3px #C9A84C;
+}
+.cat-card-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.35s ease;
+}
+.cat-card:hover .cat-card-img {
+  transform: scale(1.08);
+}
+.cat-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+}
+.cat-card-body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px 16px;
+}
+.cat-card-name {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+}
+.cat-card-more {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 12px;
+  color: #C9A84C;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+/* 태블릿: 3열 */
+@media (max-width: 1024px) {
+  .cat-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cat-cards-section {
+    padding: 14px 20px;
+  }
+}
+
+/* 모바일: 2열 */
+@media (max-width: 768px) {
+  .cat-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cat-cards-section {
+    padding: 12px 16px;
+    margin-left: 0;
+  }
+  .cat-card {
+    height: 130px;
+  }
+  .cat-card-name {
+    font-size: 15px;
+  }
+}
+
+/* ══════════════════════════════════════
+   listings.html 푸터 위치 고정
+   카드섹션 아래 맨 마지막, 전체 너비
+   ══════════════════════════════════════ */
+body[data-page="listings"] .site-footer {
+  position: static;
+  margin-top: 0;
+  margin-left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: auto;
+}
+
+/* ══════════════════════════════════════
+   listings.html 100vh 풀스크린 레이아웃 패치
+   ══════════════════════════════════════ */
+body[data-page="listings"] {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 상단 영역 flex-shrink 방지 */
+body[data-page="listings"] .top-bar {
+  flex-shrink: 0 !important;
+}
+body[data-page="listings"] .site-header {
+  flex-shrink: 0 !important;
+}
+
+/* 3단 그리드 바디가 100vh 중 남은 높이를 꽉 채우도록 설정 */
+body[data-page="listings"] .lp-body {
+  flex: 1 !important;
+  min-height: 0 !important; /* 고정 min-height 해제 */
+  height: auto !important;
+}
+
+/* 지도 영역이 부모의 남은 공간을 완전히 채우도록 보장 */
+body[data-page="listings"] .lp-center {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+body[data-page="listings"] #map {
+  flex: 1 !important;
+  height: 100% !important;
+}
+
+/* 불필요한 하단 전체 매물 스크롤 리스트 은닉 (100vh 조건 완수) */
+body[data-page="listings"] #allListingsSection {
+  display: none !important;
+}
+
+/* 매물 카테고리 카드바 아래 마진/패딩 제거하여 푸터와 완벽하게 밀착 */
+body[data-page="listings"] .cat-cards-section {
+  margin-bottom: 0 !important;
+  padding: 8px 36px !important; /* 세로 패딩 조절로 뷰포트 공간 확보 */
+  flex-shrink: 0 !important;
+}
+
+/* 푸터 마진 완벽 제거 및 화면 최하단 밀착 */
+body[data-page="listings"] .site-footer {
+  position: static !important;
+  margin-top: 0 !important;
+  padding: 10px 20px !important; /* 푸터 높이 최소화 */
+  flex-shrink: 0 !important;
+}
+
+/* ══════════════════════════════════════
+   사이드바 콤팩트 패치 (세로 스크롤 제거 대응)
+   ══════════════════════════════════════ */
+body[data-page="listings"] .lp-sidebar {
+  padding: 12px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+body[data-page="listings"] .lp-sidebar-section {
+  margin-bottom: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+body[data-page="listings"] .lp-sidebar-header {
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 14px !important;
+}
+
+body[data-page="listings"] .lp-cat-item {
+  height: 34px !important;
+}
+
+body[data-page="listings"] .lp-contact-inner {
+  padding: 8px 10px !important;
+  gap: 6px !important;
+}
+
+body[data-page="listings"] .lp-phone-big {
+  font-size: 18px !important;
+}
+
+body[data-page="listings"] .lp-inquiry-form {
+  padding: 8px 10px !important;
+  gap: 6px !important;
+}
+
+body[data-page="listings"] .lp-inquiry-form input,
+body[data-page="listings"] .lp-inquiry-form textarea {
+  padding: 6px 10px !important;
+  margin-bottom: 4px !important;
+  font-size: 12px !important;
+}
+
+body[data-page="listings"] .lp-inquiry-submit {
+  padding: 8px !important;
+  font-size: 12px !important;
 }

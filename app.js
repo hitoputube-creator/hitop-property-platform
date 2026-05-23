@@ -592,20 +592,6 @@ const setupListingsPage = () => {
     setSortMode('date');
   });
 
-  // ── 전체 매물 보기 / 닫기 ──
-  document.getElementById('showAllBtn')?.addEventListener('click', () => {
-    const sec = document.getElementById('allListingsSection');
-    if (!sec) return;
-    sec.classList.remove('hidden');
-    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-  });
-  document.getElementById('hideAllBtn')?.addEventListener('click', () => {
-    const sec = document.getElementById('allListingsSection');
-    if (!sec) return;
-    sec.classList.add('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
   // ── 빠른 문의 폼 ──
   document.getElementById('sideInquiryForm')?.addEventListener('submit', e => {
     e.preventDefault();

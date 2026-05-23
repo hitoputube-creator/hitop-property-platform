@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
 
@@ -20,25 +20,47 @@
     </div>
 
     <!-- 헤더 -->
-    <header class="site-header">
-      <div class="container nav-wrap">
-        <a class="brand" href="index.html">
-          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
-        </a>
-        <div class="lp-header-info">
-          <span class="lp-header-hours">🕙 평일 10:00 ~ 19:00</span>
-          <a href="tel:031-949-8969" class="lp-header-phone">📞 031-949-8969</a>
-        </div>
-      </div>
-      <nav class="lp-header-nav">
-        <a href="about.html">하이탑소개</a>
-        <a href="listings.html" class="nav-active">매물보기</a>
-        <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
-        <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
-        <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-        <a href="index.html#contact">고객센터</a>
-      </nav>
-    </header>
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">
+      <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+    </a>
+
+    <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+
+    <nav class="nav-menu" aria-label="메인 메뉴">
+      <a href="about.html">하이탑소개</a>
+      <a href="listings.html" aria-current="page">매물보기</a>
+      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+      <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+      <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+      <a href="index.html#contact">고객센터</a>
+    </nav>
+
+    <form id="filterForm" class="lp-header-search" novalidate>
+      <input type="text" name="keyword" id="kwInput" placeholder="매물명 / 위치 검색" autocomplete="off" />
+      <select name="formCat" id="formCatSelect">
+        <option value="">매물종류</option>
+        <option value="공장창고">공장·창고</option>
+        <option value="상가">상가·빌딩</option>
+        <option value="토지">토지·개발</option>
+        <option value="오피스텔">오피스텔</option>
+        <option value="힐스테이트더운정">힐스테이트더운정</option>
+        <option value="단독주택">단독·전원주택</option>
+      </select>
+      <select name="formDeal" id="formDealSelect">
+        <option value="">거래유형</option>
+        <option value="매매">매매</option>
+        <option value="전세">전세</option>
+        <option value="월세">월세</option>
+        <option value="임대">임대</option>
+      </select>
+      <button type="submit" class="lp-search-submit">검색</button>
+      <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
+    </form>
+
+  </div>
+</header>
 
     <!-- ══ 3단 메인 바디 ══ -->
     <div class="lp-body" id="lpBody">
@@ -108,29 +130,6 @@
       <!-- ── 가운데: 지도 + 오버레이 검색바 (50%) ── -->
       <div class="lp-center" id="lpCenter">
 
-        <!-- 지도 위 오버레이 검색바 -->
-        <form id="filterForm" class="lp-overlay-search" novalidate>
-          <input type="text" name="keyword" id="kwInput" placeholder="매물명 / 위치 검색" autocomplete="off" />
-          <select name="formCat" id="formCatSelect">
-            <option value="">매물종류</option>
-            <option value="공장창고">공장·창고</option>
-            <option value="상가">상가·빌딩</option>
-            <option value="토지">토지·개발</option>
-            <option value="오피스텔">오피스텔</option>
-            <option value="힐스테이트더운정">힐스테이트더운정</option>
-            <option value="단독주택">단독·전원주택</option>
-          </select>
-          <select name="formDeal" id="formDealSelect">
-            <option value="">거래유형</option>
-            <option value="매매">매매</option>
-            <option value="전세">전세</option>
-            <option value="월세">월세</option>
-            <option value="임대">임대</option>
-          </select>
-          <button type="submit" class="lp-search-submit">검색</button>
-          <button type="button" id="filterResetBtn" class="lp-search-reset">초기화</button>
-        </form>
-
         <!-- 카카오맵 -->
         <div id="map">
           <div class="map-placeholder-text">
@@ -150,6 +149,15 @@
           </div>
         </div>
 
+        <div class="lp-all-toolbar">
+          <h2 class="lp-all-title">전체 매물</h2>
+          <div class="lp-sort-btns">
+            <button class="lp-sort-btn active" id="sortDateBtn2" type="button">최신순</button>
+            <button class="lp-sort-btn" id="sortPriceBtn2" type="button">가격순</button>
+          </div>
+          <span class="lp-result-count">총 <strong id="listCount">0</strong>개</span>
+        </div>
+
         <!-- 좌우 2열: 추천 | 최신 -->
         <div class="lp-panel-2col">
           <div class="lp-panel-col">
@@ -162,24 +170,64 @@
           </div>
         </div>
 
-        <!-- 전체 매물 보기 버튼 -->
-        <button type="button" id="showAllBtn" class="lp-show-all-btn">↓ 전체 매물 보기</button>
-
       </div>
 
     </div><!-- .lp-body -->
 
-    <!-- ══ 하단 전체 매물 그리드 ══ -->
-    <section id="allListingsSection" class="lp-all-section hidden">
-      <div class="lp-all-toolbar">
-        <h2 class="lp-all-title">전체 매물</h2>
-        <div class="lp-sort-btns">
-          <button class="lp-sort-btn active" id="sortDateBtn2" type="button">최신순</button>
-          <button class="lp-sort-btn" id="sortPriceBtn2" type="button">가격순</button>
-        </div>
-        <span class="lp-result-count">총 <strong id="listCount">0</strong>개</span>
-        <button type="button" id="hideAllBtn" class="lp-hide-btn">▲ 닫기</button>
+    <!-- ══ 매물 카테고리 카드 ══ -->
+    <section class="cat-cards-section">
+      <div class="cat-cards-grid">
+
+        <a class="cat-card" href="listings.html?category=공장창고">
+          <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400')"></div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-body">
+            <span class="cat-card-name">공장·창고</span>
+            <span class="cat-card-more">전체보기 →</span>
+          </div>
+        </a>
+
+        <a class="cat-card" href="listings.html?category=상가">
+          <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400')"></div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-body">
+            <span class="cat-card-name">상가·빌딩</span>
+            <span class="cat-card-more">전체보기 →</span>
+          </div>
+        </a>
+
+        <a class="cat-card" href="listings.html?category=토지">
+          <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400')"></div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-body">
+            <span class="cat-card-name">토지·개발</span>
+            <span class="cat-card-more">전체보기 →</span>
+          </div>
+        </a>
+
+        <a class="cat-card" href="listings.html?category=오피스텔">
+          <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400')"></div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-body">
+            <span class="cat-card-name">오피스텔</span>
+            <span class="cat-card-more">전체보기 →</span>
+          </div>
+        </a>
+
+        <a class="cat-card" href="listings.html?category=단독주택">
+          <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400')"></div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-body">
+            <span class="cat-card-name">단독·전원주택</span>
+            <span class="cat-card-more">전체보기 →</span>
+          </div>
+        </a>
+
       </div>
+    </section>
+
+    <!-- ══ 하단 전체 매물 그리드 ══ -->
+    <section id="allListingsSection" class="lp-all-section">
       <div id="listingCards" class="lp-all-grid"></div>
       <div id="lpPagination" class="lp-pagination lp-all-pgn"></div>
     </section>
@@ -196,7 +244,9 @@
         </div>
         <div class="modal-body">
           <div class="modal-left">
-            <div class="modal-main-img"><img id="modalMainImg" src="" alt="매물사진" /></div>
+            <div class="modal-main-img">
+              <img id="modalMainImg" src="" alt="매물사진" />
+            </div>
             <div class="modal-thumbs" id="modalThumbs"></div>
             <div class="modal-desc-section">
               <h4>매물 설명</h4>
@@ -229,7 +279,7 @@
       </div>
     </div>
 
-    <!-- ======= 라이트박스 ======= -->
+    <!-- ══ 라이트박스 ══ -->
     <div id="lightbox" class="lightbox-overlay hidden" role="dialog" aria-modal="true">
       <button class="lightbox-close" id="lightboxClose" type="button" aria-label="닫기">✕</button>
       <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="이전">‹</button>
@@ -237,25 +287,65 @@
       <button class="lightbox-next" id="lightboxNext" type="button" aria-label="다음">›</button>
     </div>
 
-    <!-- 플로팅 문의 (1.5배) -->
-    <div class="floating-contact">
-      <a href="tel:031-949-8969" class="float-btn float-btn-lg float-call" title="전화문의">전화<br>문의</a>
-      <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" class="float-btn float-btn-lg float-blog" title="블로그">네이버<br>블로그</a>
-      <a href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noopener noreferrer" class="float-btn float-btn-lg float-kakao" title="카카오톡">카카오<br>채팅</a>
-    </div>
+<!-- ✅ 플로팅 버튼 (우측 중하단 고정) - 흰색 원형 카드형 -->
+<div class="floating-btns">
 
-    <!-- ======= 푸터 ======= -->
-    <footer class="lp-footer">
-      <div class="lp-footer-inner">
-        <p><strong>하이탑부동산공인중개사사무소</strong> · 대표: 주현희 · 031-949-8969</p>
-        <p>경기도 파주시 책향기로 830, 1층 · 등록번호: 41480-2016-00026 · 사업자: 305-48-62183</p>
-        <p class="lp-footer-links">
+  <!-- 전화상담 -->
+  <a class="float-btn-card fbc-tel" href="tel:031-949-8969" title="전화상담">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/>
+    </svg>
+    <span class="float-btn-card-label">전화상담</span>
+  </a>
+
+  <!-- 블로그 -->
+  <a class="float-btn-card fbc-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" title="네이버 블로그">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+    </svg>
+    <span class="float-btn-card-label">블로그</span>
+  </a>
+
+  <!-- 카카오톡 -->
+  <a class="float-btn-card fbc-kakao" href="https://open.kakao.com/o/sPajuHitop" target="_blank" rel="noopener noreferrer" title="카카오톡 문의">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/>
+    </svg>
+    <span class="float-btn-card-label">카카오톡</span>
+  </a>
+
+  <!-- 매물문의 -->
+  <a class="float-btn-card fbc-inquiry" href="#sideInquiryForm" title="매물문의"
+     onclick="document.getElementById('sideInquiryForm')?.scrollIntoView({behavior:'smooth',block:'center'}); return false;">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+    </svg>
+    <span class="float-btn-card-label">매물문의</span>
+  </a>
+
+</div>
+<!-- // 플로팅 버튼 끝 -->
+
+
+    <footer class="site-footer compact-footer">
+      <div class="container footer-inner">
+        <p class="footer-main">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로830, 1층</span>
+          <span>전화: 031-949-8969</span>
+          <a href="admin.html" style="margin-left:auto;padding:4px 10px;background:#333;color:#fff;border-radius:4px;font-size:11px;text-decoration:none;opacity:0.6;">관리자</a>
+        </p>
+        <p class="footer-sub">
+          <span>중개사무소 등록번호: 41480-2016-00026</span>
+          <span>사업자등록번호: 305-48-62183</span>
+          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+        </p>
+        <p class="footer-links">
           <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
           <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
           <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-          <a href="admin.html" style="opacity:.5;">관리자</a>
         </p>
-        <p class="lp-footer-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
       </div>
     </footer>
 
