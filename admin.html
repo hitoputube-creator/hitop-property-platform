@@ -6,6 +6,43 @@
     <title>하이탑부동산 | 관리자</title>
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+  <style>
+    .consult-mgmt-section { margin-top: 40px; }
+    .consult-mgmt-title { font-size: 18px; font-weight: 700; color: #0A1F5C; margin: 0 0 12px; }
+    .consult-mgmt-notice {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fff8e1; border: 1px solid #f0c040;
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: #7a5a00; line-height: 1.7; margin-bottom: 16px;
+    }
+    .consult-mgmt-card {
+      background: #fff; border-radius: 12px;
+      border: 0.5px solid #e2e6ed;
+      box-shadow: 0 2px 8px rgba(10,31,92,0.05);
+      overflow: hidden;
+    }
+    .consult-mgmt-table-wrap { overflow-x: auto; }
+    .consult-mgmt-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
+    .consult-mgmt-table thead tr { background: #f6f8fb; border-bottom: 2px solid #e2e6ed; }
+    .consult-mgmt-table th {
+      padding: 11px 14px; font-size: 11px; font-weight: 700;
+      color: #888; text-align: center; white-space: nowrap;
+    }
+    .consult-mgmt-table td {
+      padding: 12px 14px; text-align: center; color: #333;
+      border-bottom: 1px solid #f0f2f6; vertical-align: middle;
+    }
+    .consult-mgmt-table tbody tr:last-child td { border-bottom: none; }
+    .consult-mgmt-table tbody tr:hover { background: #f9fafb; }
+    .consult-mgmt-table td.td-title { text-align: left; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .consult-mgmt-table td.td-content { text-align: left; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .consult-type-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #eef1f8; color: #0A1F5C; }
+    .consult-status-badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .cs-접수완료 { background: #e8f0fe; color: #1a56c4; }
+    .cs-상담중   { background: #fff3e0; color: #c07000; }
+    .cs-답변완료 { background: #e6f7ee; color: #1a7a42; }
+    .consult-empty { padding: 36px; text-align: center; color: #aaa; font-size: 13px; }
+  </style>
   </head>
   <body data-page="admin-dashboard">
     <header class="site-header">
@@ -94,6 +131,35 @@
 
         <!-- 매물 목록 -->
         <div id="adminListWrap" class="adm-list"></div>
+
+        <!-- ── 상담문의 관리 ── -->
+        <div class="consult-mgmt-section">
+          <h2 class="consult-mgmt-title">📋 상담문의 관리</h2>
+          <div class="consult-mgmt-notice">
+            ⚠️ 현재 상담문의는 브라우저 임시 저장 방식입니다. 실제 고객 문의 확인을 위해서는 Google Sheets 또는 Firebase 연동이 필요합니다.
+          </div>
+          <div class="consult-mgmt-card">
+            <div class="consult-mgmt-table-wrap">
+              <table class="consult-mgmt-table">
+                <thead>
+                  <tr>
+                    <th>번호</th>
+                    <th>문의유형</th>
+                    <th class="td-title">제목</th>
+                    <th>작성자</th>
+                    <th>연락처</th>
+                    <th>등록일</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="consultAdminTbody">
+                  <tr><td colspan="8" class="consult-empty">등록된 상담문의가 없습니다.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
       </div>
     </main>
@@ -187,5 +253,35 @@
       </div>
     </footer>
     <script src="app.js?v=20260522a"></script>
+    <script>
+      (function() {
+        var posts = JSON.parse(localStorage.getItem('consultPosts') || '[]');
+        var tbody = document.getElementById('consultAdminTbody');
+        if (!posts.length) return;
+
+        posts.sort(function(a, b) { return b.id - a.id; });
+
+        function statusClass(s) {
+          if (s === '접수완료') return 'cs-접수완료';
+          if (s === '상담중')   return 'cs-상담중';
+          return 'cs-답변완료';
+        }
+
+        tbody.innerHTML = '';
+        posts.forEach(function(post, i) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + (posts.length - i) + '</td>' +
+            '<td><span class="consult-type-badge">' + post.type + '</span></td>' +
+            '<td class="td-title">' + post.subject + '</td>' +
+            '<td>' + post.name + '</td>' +
+            '<td>' + post.phone + '</td>' +
+            '<td>' + post.date + '</td>' +
+            '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>' +
+            '<td>—</td>';
+          tbody.appendChild(tr);
+        });
+      })();
+    </script>
   </body>
 </html>
