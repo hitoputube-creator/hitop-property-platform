@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하이탑부동산 | 상담문의 글쓰기</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .top-bar { background: #0A1F5C; padding: 6px 0; }
+      .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+      .top-bar-hours { font-size: 12px; color: #aab8d8; }
+      .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
+      .top-bar-phone:hover { color: #e0c070; }
+
+      .write-section {
+        background: #f2f4f7;
+        padding: 48px 0 64px;
+        min-height: calc(100vh - 180px);
+      }
+
+      /* 페이지 헤더 */
+      .write-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        gap: 12px;
+      }
+      .write-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0A1F5C;
+        margin: 0 0 6px;
+      }
+      .write-notice {
+        font-size: 13px;
+        color: #666;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* 폼 카드 */
+      .write-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 0.5px solid #e2e6ed;
+        box-shadow: 0 2px 12px rgba(10, 31, 92, 0.05);
+        padding: 36px 40px;
+      }
+
+      /* 폼 요소 */
+      .form-group { margin-bottom: 20px; }
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 7px;
+      }
+      .form-label .req { color: #C9A84C; margin-left: 2px; }
+      .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 14px;
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 14px;
+        color: #222;
+        background: #f8f9fb;
+        border: 1px solid #dde2ea;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      .form-control:focus {
+        border-color: #0A1F5C;
+        box-shadow: 0 0 0 3px rgba(10, 31, 92, 0.08);
+        background: #fff;
+      }
+      .form-control::placeholder { color: #bbb; }
+      select.form-control {
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 38px;
+      }
+      textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.7;
+      }
+
+      /* 두 칸 나란히 */
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+      /* 개인정보 동의 */
+      .privacy-box {
+        background: #f8f9fb;
+        border: 1px solid #dde2ea;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-bottom: 24px;
+      }
+      .privacy-text {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.8;
+        margin: 0 0 10px;
+      }
+      .privacy-check-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        cursor: pointer;
+      }
+      .privacy-check-label input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #0A1F5C;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      /* 버튼 영역 */
+      .btn-row {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-submit {
+        flex: 1;
+        padding: 14px;
+        background: #0A1F5C;
+        color: #fff;
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .btn-submit:hover { background: #0d2870; }
+      .btn-back {
+        padding: 14px 22px;
+        background: #fff;
+        color: #555;
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        border: 1px solid #ccd0d9;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
+        white-space: nowrap;
+      }
+      .btn-back:hover { background: #f2f4f7; }
+
+      /* 모바일 */
+      @media (max-width: 640px) {
+        .write-card { padding: 24px 18px; }
+        .form-row { grid-template-columns: 1fr; }
+        .btn-row { flex-direction: column; }
+        .btn-back { text-align: center; }
+        .top-bar-hours { display: none; }
+        .write-title { font-size: 18px; }
+      }
+    </style>
+  </head>
+  <body data-page="write-consult">
+
+    <!-- 탑바 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html">매물보기</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="consult.html">상담문의 게시판</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 본문 -->
+    <section class="write-section">
+      <div class="container">
+
+        <div class="write-header">
+          <div>
+            <h1 class="write-title">상담문의 글쓰기</h1>
+            <p class="write-notice">🔒 남겨주신 상담 내용은 공개되지 않으며, 담당자 확인 후 개별 연락드립니다.</p>
+          </div>
+        </div>
+
+        <div class="write-card">
+          <form id="writeForm" novalidate>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="w-name">이름<span class="req">*</span></label>
+                <input class="form-control" type="text" id="w-name" placeholder="홍길동" autocomplete="name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="w-phone">연락처<span class="req">*</span></label>
+                <input class="form-control" type="tel" id="w-phone" placeholder="010-0000-0000" autocomplete="tel" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="w-type">문의 유형<span class="req">*</span></label>
+              <select class="form-control" id="w-type">
+                <option value="">선택해주세요</option>
+                <option value="공장·창고 상담">공장·창고 상담</option>
+                <option value="상가·빌딩 상담">상가·빌딩 상담</option>
+                <option value="토지·개발 상담">토지·개발 상담</option>
+                <option value="오피스텔 상담">오피스텔 상담</option>
+                <option value="힐스테이트더운정 상담">힐스테이트더운정 상담</option>
+                <option value="매도·임대 의뢰">매도·임대 의뢰</option>
+                <option value="기타 문의">기타 문의</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="w-listing">관심 매물 또는 매물번호</label>
+              <input class="form-control" type="text" id="w-listing" placeholder="예: 파주 탄현면 창고, 매물번호 #042 (없으면 비워두세요)" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="w-subject">제목<span class="req">*</span></label>
+              <input class="form-control" type="text" id="w-subject" placeholder="상담 제목을 입력해주세요" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="w-content">문의 내용<span class="req">*</span></label>
+              <textarea class="form-control" id="w-content" placeholder="상담받고 싶은 내용을 자유롭게 입력해 주세요.&#10;예) 예산 범위, 희망 지역, 용도 등"></textarea>
+            </div>
+
+            <div class="privacy-box">
+              <p class="privacy-text">
+                하이탑부동산은 상담 응대를 위해 이름, 연락처를 수집·이용합니다. 수집된 정보는 상담 목적 외 사용되지 않으며, 상담 완료 후 파기됩니다.
+              </p>
+              <label class="privacy-check-label">
+                <input type="checkbox" id="w-privacy" />
+                개인정보 수집 및 이용에 동의합니다 <span class="req">*</span>
+              </label>
+            </div>
+
+            <div class="btn-row">
+              <button type="submit" class="btn-submit">상담글 등록하기</button>
+              <a href="consult.html" class="btn-back">목록으로 돌아가기</a>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="site-footer compact-footer">
+      <div class="container footer-inner">
+        <p class="footer-main">
+          <strong>하이탑부동산공인중개사사무소</strong>
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로830, 1층</span>
+          <span>전화: 031-949-8969</span>
+          <span>팩스: 031-944-1108</span>
+        </p>
+        <p class="footer-sub">
+          <span>중개사무소 등록번호: 41480-2016-00026</span>
+          <span>사업자등록번호: 305-48-62183</span>
+          <span>이메일: newpajucity@naver.com</span>
+          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
+        </p>
+        <p class="footer-links">
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="app.js?v=20260521"></script>
+    <script>
+      document.getElementById('writeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('상담문의 등록 기능은 다음 단계에서 연결됩니다.');
+      });
+    </script>
+  </body>
+</html>
