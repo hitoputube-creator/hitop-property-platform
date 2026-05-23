@@ -4354,45 +4354,29 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 하단 텍스트 영역 (130px로 넓혀 가독성과 여유 확보) */
+/* 하단 텍스트 영역 (130px 높이에 맞춰 세로 3줄 배치 구조로 개편) */
 
 .lp-rec-body {
 
-  padding: 10px 12px;
+  padding: 12px 14px !important;
 
   display: flex !important;
 
-  flex-direction: row !important; /* 좌우 분할! */
-
-  gap: 8px !important;
-
-  height: 130px;
-
-  box-sizing: border-box;
-
-}
-
-/* 왼쪽 정보 블록: 매물종류, 거래유형, 가격 */
-
-.lp-rec-body-left {
-
-  flex: 1.05 !important; /* 가격/거래 유형 영역 44% 수준으로 복구 조정 */
-
-  display: flex !important;
-
-  flex-direction: column !important;
+  flex-direction: column !important; /* 세로 3줄 정렬! */
 
   justify-content: space-between !important;
 
-  align-items: flex-start !important;
+  gap: 6px !important;
 
-  overflow: visible !important; /* 가격이 절대 잘리거나 생략되지 않도록 허용 */
+  height: 130px !important;
+
+  box-sizing: border-box !important;
 
 }
 
-/* 매물종류와 거래유형 한 줄 정렬 컨테이너 */
+/* 개별 가로 행 스타일 */
 
-.lp-rec-type-row {
+.lp-rec-row {
 
   display: flex !important;
 
@@ -4400,9 +4384,63 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   align-items: center !important;
 
+  width: 100% !important;
+
+  box-sizing: border-box !important;
+
+  min-width: 0 !important;
+
+  overflow: hidden !important;
+
+}
+
+/* 첫째 줄: 매물종류 + 거래유형 배지 + 가격 */
+
+.lp-rec-row-top {
+
+  justify-content: flex-start !important;
+
   gap: 8px !important;
 
-  width: 100% !important;
+}
+
+/* 둘째 줄: 핵심 설명 문장 */
+
+.lp-rec-row-mid {
+
+  font-size: 14px !important; /* 권장: 14px */
+
+  font-weight: 700 !important;
+
+  color: #1e293b !important;
+
+  white-space: nowrap !important;
+
+  overflow: hidden !important;
+
+  text-overflow: ellipsis !important;
+
+  line-height: 1.2 !important;
+
+}
+
+/* 셋째 줄: 면적 + 주소/지역 */
+
+.lp-rec-row-bot {
+
+  font-size: 13px !important; /* 권장: 13px */
+
+  font-weight: 500 !important;
+
+  color: #64748b !important;
+
+  white-space: nowrap !important;
+
+  overflow: hidden !important;
+
+  text-overflow: ellipsis !important;
+
+  line-height: 1.2 !important;
 
 }
 
@@ -4417,6 +4455,8 @@ body[data-page="listings"] .lp-panel-scroll-content {
   line-height: 1;
 
   white-space: nowrap !important;
+
+  flex-shrink: 0 !important;
 
 }
 
@@ -4496,13 +4536,13 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 가격 정보 (가장 굵고 잘 보이게 18px 전후) */
+/* 가격 정보 (가장 굵고 잘 보이게 16.5px, 자간 조정 및 오른쪽 밀착) */
 
 .lp-rec-price {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 16px !important; /* 폭에 맞춰서 압축적인 16px로 최적화 */
+  font-size: 16.5px !important;
 
   font-weight: 800 !important;
 
@@ -4512,95 +4552,15 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   white-space: nowrap !important;
 
-  letter-spacing: -0.6px !important; /* 좁은 폭에서도 보일 수 있게 글자간격 축소 */
+  letter-spacing: -0.4px !important;
 
-  overflow: visible !important;
+  margin-left: auto !important; /* 가격을 오른쪽 끝으로 밀어 균형미 극대화 */
 
-  text-overflow: clip !important;
-
-}
-
-/* 오른쪽 정보 블록: 면적, 지역, 설명 */
-
-.lp-rec-body-right {
-
-  flex: 1.35 !important; /* 설명 영역 가로폭 56% 수준으로 복구 확대하여 덜 잘리게 조정 */
-
-  display: flex !important;
-
-  flex-direction: column !important;
-
-  justify-content: space-between !important;
-
-  border-left: 1px solid #e5e7eb !important;
-
-  padding-left: 8px !important;
-
-  text-align: left !important;
-
-  overflow: hidden !important;
+  flex-shrink: 0 !important;
 
 }
 
-/* 면적 정보 (12px~13px, font-weight 700) */
 
-.lp-rec-desc-size {
-
-  font-size: 13px !important; /* 권장: 13px~14px */
-
-  color: #1e293b !important;
-
-  font-weight: 700 !important;
-
-  line-height: 1.2 !important;
-
-  white-space: nowrap !important;
-
-  overflow: hidden !important;
-
-  text-overflow: ellipsis !important;
-
-}
-
-/* 지역 정보 */
-
-.lp-rec-desc-addr {
-
-  font-size: 13px !important; /* 권장: 13px~14px */
-
-  color: #64748b !important;
-
-  font-weight: 600 !important;
-
-  line-height: 1.1 !important;
-
-  white-space: nowrap !important;
-
-  overflow: hidden !important;
-
-  text-overflow: ellipsis !important;
-
-}
-
-/* 설명/장점 정보 */
-
-.lp-rec-desc-text {
-
-  font-size: 13px !important; /* 권장: 13px~14px */
-
-  color: #475569 !important;
-
-  font-weight: 500 !important;
-
-  line-height: 1.2 !important;
-
-  white-space: nowrap !important;
-
-  overflow: hidden !important;
-
-  text-overflow: ellipsis !important;
-
-}
 
 /* ── listings.html 전용 초슬림 세련된 탑바 스타일 ── */
 
