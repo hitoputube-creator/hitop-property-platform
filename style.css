@@ -2117,13 +2117,13 @@ body[data-page="listings"] #allListingsSection {
   display: none !important;
 }
 
-/* listings.html 전용 푸터 스타일 보강 및 0px 초밀착 정적 배치 */
+/* listings.html 전용 푸터 스타일 - 여유롭고 프리미엄한 회사정보바 */
 body[data-page="listings"] .site-footer {
   background-color: #071f5f !important; /* 딥 네이비 계열 유지 */
-  color: #94a3b8 !important;
-  font-size: 11px !important; /* 콤팩트 크기 */
+  color: #cbd5e1 !important;
+  font-size: 13.5px !important; /* 기본 글자 크기 13px~14px */
   text-align: center !important;
-  padding: 8px 12px !important; /* 높이 대폭 감소 */
+  padding: 18px 24px !important; /* 높이와 여백 자연스럽게 정리 */
   position: static !important;
   margin-top: 0 !important; /* 틈새 완벽 방지를 위해 마진탑 0px 적용 */
   clear: both !important;
@@ -2136,38 +2136,25 @@ body[data-page="listings"] .footer-inner {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 2px !important; /* 초밀착 */
+  gap: 6px !important; /* 줄 간격 자연스럽게 정리 */
 }
 body[data-page="listings"] .footer-main,
-body[data-page="listings"] .footer-sub,
-body[data-page="listings"] .footer-links {
+body[data-page="listings"] .footer-sub {
   margin: 0 !important;
-  line-height: 1.4 !important;
+  line-height: 1.7 !important; /* 줄 간격 자연스럽게 정리 */
 }
 body[data-page="listings"] .footer-main strong {
   color: #ffffff !important;
-  font-size: 11px !important;
+  font-size: 14.5px !important; /* 회사명 조금 더 크게 */
+  font-weight: 800 !important; /* 회사명은 조금 더 굵게 */
   margin-right: 8px !important;
 }
 body[data-page="listings"] .footer-main span,
 body[data-page="listings"] .footer-sub span {
   display: inline-block !important;
   margin: 0 4px !important;
-  color: #cbd5e1 !important;
-}
-body[data-page="listings"] .footer-links {
-  margin-top: 2px !important;
-}
-body[data-page="listings"] .footer-links a {
-  color: #cbd5e1 !important;
-  text-decoration: none !important;
-  font-weight: 700 !important;
-  margin: 0 4px !important;
-  font-size: 11px !important;
-}
-body[data-page="listings"] .footer-links a:hover {
-  text-decoration: underline !important;
-  color: #ffffff !important;
+  color: #cbd5e1 !important; /* 흰색/연회색 계열 유지 */
+  font-size: 13px !important; /* 기본 글자 크기 13px~14px */
 }
 
 /* ══════════════════════════════════════
