@@ -1908,46 +1908,79 @@ body[data-page="listings"] .lp-footer-copy {
   color: #d1d5db;
 }
 
-/* 사이드바 및 우측 패널 콤팩트 패치 복구 (스크롤 제거에 따른 잘림 방지) */
+/* 사이드바 및 우측 패널 콤팩트 패치 고도화 (세로 높이 극단적 감축) */
 body[data-page="listings"] .lp-sidebar {
-  padding: 12px 10px !important;
+  padding: 8px 6px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
-  overflow-y: auto !important; /* 사이드바 내용물 스크롤 허용 */
+  gap: 4px !important;
+  overflow-y: auto !important; /* 혹시 모를 오버플로우 대비 스크롤 허용 */
 }
 body[data-page="listings"] .lp-sidebar-section {
-  margin-bottom: 6px !important;
+  margin-bottom: 4px !important;
   flex-shrink: 0 !important;
 }
 body[data-page="listings"] .lp-sidebar-header {
-  height: 32px !important;
-  line-height: 32px !important;
-  font-size: 13px !important;
+  height: 26px !important;
+  line-height: 26px !important;
+  font-size: 12px !important;
+  padding: 4px 10px !important;
 }
 body[data-page="listings"] .lp-cat-item {
-  height: 32px !important;
+  height: 25px !important;
+  padding: 2px 8px !important;
+  font-size: 13px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+body[data-page="listings"] .lp-cat-name {
+  font-size: 13px !important;
+}
+body[data-page="listings"] .lp-cat-count {
+  font-size: 10px !important;
 }
 body[data-page="listings"] .lp-contact-inner {
-  padding: 6px 10px !important;
-  gap: 4px !important;
+  padding: 4px 8px !important;
+  gap: 3px !important;
 }
 body[data-page="listings"] .lp-phone-big {
-  font-size: 16px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+body[data-page="listings"] .lp-hours-small {
+  font-size: 10px !important;
+}
+body[data-page="listings"] .lp-kakao-btn {
+  padding: 5px 8px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
 }
 body[data-page="listings"] .lp-inquiry-form {
-  padding: 6px 10px !important;
-  gap: 4px !important;
+  padding: 4px 8px !important;
+  gap: 3px !important;
 }
-body[data-page="listings"] .lp-inquiry-form input,
-body[data-page="listings"] .lp-inquiry-form textarea {
-  padding: 5px 8px !important;
-  margin-bottom: 2px !important;
+body[data-page="listings"] .lp-inquiry-form input {
+  padding: 4px 6px !important;
+  margin-bottom: 0px !important;
   font-size: 11px !important;
+  height: 25px !important;
+  box-sizing: border-box !important;
+}
+body[data-page="listings"] .lp-inquiry-form textarea {
+  padding: 4px 6px !important;
+  margin-bottom: 0px !important;
+  font-size: 11px !important;
+  height: 38px !important; /* 문의사항 텍스트박스 극단적 다이어트 */
+  resize: none !important;
+  box-sizing: border-box !important;
 }
 body[data-page="listings"] .lp-inquiry-submit {
-  padding: 6px !important;
+  padding: 5px !important;
   font-size: 11px !important;
+  height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 6px !important;
 }
 body[data-page="listings"] .lp-panel {
   overflow-y: auto !important; /* 우측 패널은 스크롤 가능하도록 유지 */
