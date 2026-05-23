@@ -3,181 +3,164 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>하이탑부동산 | 매물상담</title>
+    <title>하이탑부동산 | 비공개 매물상담 게시판</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <style>
-      /* ── 탑바 ── */
       .top-bar { background: #0A1F5C; padding: 6px 0; }
       .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
       .top-bar-hours { font-size: 12px; color: #aab8d8; }
       .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
       .top-bar-phone:hover { color: #e0c070; }
 
-      /* ── 페이지 히어로 ── */
-      .consult-hero {
-        background: linear-gradient(135deg, #0A1F5C 0%, #15376f 100%);
-        padding: 48px 0 40px;
-        text-align: center;
-      }
-      .consult-hero h1 {
-        font-size: 26px; font-weight: 700; color: #fff; margin: 0 0 10px;
-      }
-      .consult-hero p {
-        font-size: 14px; color: #aab8d8; margin: 0;
-      }
-
-      /* ── 안내 배너 ── */
-      .consult-notice {
-        background: #fffbe6;
-        border: 1px solid #f0d060;
-        border-radius: 10px;
-        padding: 14px 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 13px;
-        color: #5a4200;
-        margin-bottom: 28px;
-        line-height: 1.7;
-      }
-      .consult-notice-icon {
-        font-size: 18px; flex-shrink: 0;
-      }
-
-      /* ── 폼 레이아웃 ── */
-      .consult-section {
+      /* ── 페이지 본문 영역 ── */
+      .board-section {
         background: #f2f4f7;
-        padding: 52px 0 64px;
-        min-height: calc(100vh - 220px);
+        padding: 48px 0 64px;
+        min-height: calc(100vh - 180px);
       }
-      .consult-card {
-        background: #fff;
-        border-radius: 16px;
-        border: 0.5px solid #e2e6ed;
-        box-shadow: 0 4px 24px rgba(10, 31, 92, 0.07);
-        padding: 40px 44px;
-        max-width: 680px;
-        margin: 0 auto;
+
+      /* ── 게시판 헤더 ── */
+      .board-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        gap: 12px;
       }
-      .consult-card-title {
-        font-size: 18px; font-weight: 700; color: #0A1F5C;
+      .board-title-wrap {}
+      .board-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0A1F5C;
         margin: 0 0 6px;
       }
-      .consult-card-sub {
-        font-size: 13px; color: #888; margin: 0 0 28px;
+      .board-notice {
+        font-size: 13px;
+        color: #666;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .board-notice-lock {
+        font-size: 13px;
       }
 
-      /* ── 폼 필드 ── */
-      .form-group { margin-bottom: 20px; }
-      .form-label {
-        display: block;
-        font-size: 13px; font-weight: 600; color: #333;
-        margin-bottom: 7px;
-      }
-      .form-label .required {
-        color: #C9A84C; margin-left: 3px;
-      }
-      .form-control {
-        width: 100%; box-sizing: border-box;
-        padding: 12px 14px;
-        font-family: "Pretendard", "Noto Sans KR", sans-serif;
-        font-size: 14px; color: #222;
-        background: #f8f9fb;
-        border: 1px solid #dde2ea;
-        border-radius: 8px;
-        outline: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
-      }
-      .form-control:focus {
-        border-color: #0A1F5C;
-        box-shadow: 0 0 0 3px rgba(10, 31, 92, 0.08);
-        background: #fff;
-      }
-      .form-control::placeholder { color: #bbb; }
-      select.form-control { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
-      textarea.form-control { resize: vertical; min-height: 110px; line-height: 1.7; }
-
-      /* 두 칸 나란히 */
-      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-      /* ── 개인정보 동의 ── */
-      .privacy-box {
-        background: #f8f9fb;
-        border: 1px solid #dde2ea;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin-bottom: 20px;
-      }
-      .privacy-text {
-        font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 10px;
-      }
-      .privacy-check-label {
-        display: flex; align-items: center; gap: 8px;
-        font-size: 13px; font-weight: 600; color: #333; cursor: pointer;
-      }
-      .privacy-check-label input[type="checkbox"] {
-        width: 16px; height: 16px; accent-color: #0A1F5C; cursor: pointer;
-        flex-shrink: 0;
-      }
-
-      /* ── 제출 버튼 ── */
-      .submit-btn {
-        width: 100%;
-        padding: 15px;
+      /* ── 글쓰기 버튼 ── */
+      .board-write-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
         background: #0A1F5C;
         color: #fff;
         font-family: "Pretendard", "Noto Sans KR", sans-serif;
-        font-size: 15px; font-weight: 700;
-        border: none; border-radius: 10px;
-        cursor: pointer;
-        transition: background 0.15s, transform 0.1s;
-      }
-      .submit-btn:hover { background: #0d2870; }
-      .submit-btn:active { transform: scale(0.99); }
-
-      /* ── 완료 화면 ── */
-      .consult-success { display: none; text-align: center; padding: 20px 0 8px; }
-      .success-icon {
-        width: 64px; height: 64px;
-        background: linear-gradient(135deg, #0A1F5C, #1a3fa0);
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 30px;
-      }
-      .success-title {
-        font-size: 18px; font-weight: 700; color: #0A1F5C; margin: 0 0 8px;
-      }
-      .success-msg {
-        font-size: 14px; color: #666; line-height: 1.8; margin: 0 0 28px;
-      }
-      .success-btns {
-        display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-      }
-      .success-btn {
-        display: inline-flex; align-items: center; gap: 8px;
-        padding: 13px 28px;
-        border-radius: 10px;
-        font-family: "Pretendard", "Noto Sans KR", sans-serif;
-        font-size: 14px; font-weight: 700;
+        font-size: 14px;
+        font-weight: 700;
         text-decoration: none;
-        transition: opacity 0.15s, transform 0.1s;
-        min-width: 160px; justify-content: center;
+        border-radius: 8px;
+        white-space: nowrap;
+        transition: background 0.15s;
+        flex-shrink: 0;
       }
-      .success-btn:hover { opacity: 0.88; }
-      .success-btn:active { transform: scale(0.98); }
-      .btn-kakao-s { background: #FEE500; color: #3a1d1d; }
-      .btn-tel-s { background: #0A1F5C; color: #fff; }
+      .board-write-btn:hover { background: #0d2870; }
 
-      /* ── 반응형 ── */
-      @media (max-width: 768px) {
+      /* ── 게시판 카드 ── */
+      .board-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 0.5px solid #e2e6ed;
+        box-shadow: 0 2px 12px rgba(10, 31, 92, 0.05);
+        overflow: hidden;
+      }
+
+      /* ── 표 ── */
+      .board-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .board-table thead tr {
+        background: #f6f8fb;
+        border-bottom: 2px solid #e2e6ed;
+      }
+      .board-table th {
+        padding: 13px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #888;
+        text-align: center;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .board-table th.col-title { text-align: left; }
+      .board-table td {
+        padding: 14px 16px;
+        text-align: center;
+        color: #444;
+        border-bottom: 1px solid #f0f2f6;
+        vertical-align: middle;
+      }
+      .board-table td.col-title { text-align: left; }
+      .board-table tbody tr:last-child td { border-bottom: none; }
+      .board-table tbody tr:hover { background: #f9fafb; }
+
+      .col-num   { width: 52px; }
+      .col-type  { width: 120px; }
+      .col-title { }
+      .col-author{ width: 80px; }
+      .col-date  { width: 100px; }
+      .col-status{ width: 90px; }
+
+      /* 제목 링크 */
+      .board-table td.col-title a {
+        color: #1e293b;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .board-table td.col-title a:hover { color: #0A1F5C; text-decoration: underline; }
+
+      /* 상담유형 뱃지 */
+      .type-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #eef1f8;
+        color: #0A1F5C;
+      }
+
+      /* 상태 뱃지 */
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .status-받침 { background: #e8f0fe; color: #1a56c4; }
+      .status-상담 { background: #fff3e0; color: #c07000; }
+      .status-답변 { background: #e6f7ee; color: #1a7a42; }
+
+      /* ── 모바일: 가로 스크롤 ── */
+      .board-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      @media (max-width: 640px) {
+        .board-title { font-size: 18px; }
+        .board-table { min-width: 560px; }
+        .board-table th,
+        .board-table td { padding: 11px 12px; font-size: 13px; }
+        .board-write-btn { padding: 9px 14px; font-size: 13px; }
         .top-bar-hours { display: none; }
-        .consult-card { padding: 28px 20px; border-radius: 12px; }
-        .form-row { grid-template-columns: 1fr; }
-        .success-btns { flex-direction: column; align-items: stretch; }
-        .success-btn { min-width: 0; }
       }
     </style>
   </head>
@@ -209,102 +192,92 @@
       </div>
     </header>
 
-    <!-- 히어로 -->
-    <section class="consult-hero">
-      <div class="container">
-        <h1>비공개 매물상담</h1>
-        <p>담당자가 직접 확인 후 연락드립니다</p>
-      </div>
-    </section>
-
-    <!-- 폼 본문 -->
-    <section class="consult-section">
+    <!-- 게시판 본문 -->
+    <section class="board-section">
       <div class="container">
 
-        <!-- 안내 배너 -->
-        <div class="consult-notice">
-          <span class="consult-notice-icon">🔒</span>
-          <span>남겨주신 상담 내용은 공개되지 않으며, 하이탑부동산 담당자 확인 후 순차적으로 연락드립니다.</span>
+        <!-- 게시판 헤더 -->
+        <div class="board-header">
+          <div class="board-title-wrap">
+            <h1 class="board-title">비공개 매물상담 게시판</h1>
+            <p class="board-notice">
+              <span class="board-notice-lock">🔒</span>
+              상담 내용은 공개되지 않으며, 담당자 확인 후 개별 연락드립니다.
+            </p>
+          </div>
+          <a href="write-consult.html" class="board-write-btn">✏️ 매물상담 글쓰기</a>
         </div>
 
-        <!-- 상담 카드 -->
-        <div class="consult-card">
-          <p class="consult-card-title">매물상담 문의</p>
-          <p class="consult-card-sub">모든 항목을 입력하시면 더 정확한 상담이 가능합니다.</p>
-
-          <!-- 폼 -->
-          <form id="consultForm" novalidate>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label" for="c-name">이름<span class="required">*</span></label>
-                <input class="form-control" type="text" id="c-name" name="name" placeholder="홍길동" autocomplete="name" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="c-phone">연락처<span class="required">*</span></label>
-                <input class="form-control" type="tel" id="c-phone" name="phone" placeholder="010-0000-0000" autocomplete="tel" required />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="c-type">문의 유형<span class="required">*</span></label>
-              <select class="form-control" id="c-type" name="type" required>
-                <option value="">선택해주세요</option>
-                <option value="공장·창고 상담">공장·창고 상담</option>
-                <option value="상가·빌딩 상담">상가·빌딩 상담</option>
-                <option value="토지·개발 상담">토지·개발 상담</option>
-                <option value="오피스텔 상담">오피스텔 상담</option>
-                <option value="힐스테이트더운정 상담">힐스테이트더운정 상담</option>
-                <option value="매도·임대 의뢰">매도·임대 의뢰</option>
-                <option value="기타 문의">기타 문의</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="c-listing">관심 매물 또는 매물번호</label>
-              <input class="form-control" type="text" id="c-listing" name="listing" placeholder="예: A구역 창고, 매물번호 #042 (없으면 비워두세요)" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="c-content">문의 내용<span class="required">*</span></label>
-              <textarea class="form-control" id="c-content" name="content" placeholder="상담받고 싶은 내용을 자유롭게 입력해 주세요.&#10;예) 예산 범위, 희망 지역, 용도 등" required></textarea>
-            </div>
-
-            <!-- 개인정보 동의 -->
-            <div class="privacy-box">
-              <p class="privacy-text">
-                하이탑부동산은 상담 응대를 위해 이름, 연락처를 수집·이용합니다. 수집된 정보는 상담 목적 외 사용되지 않으며, 상담 완료 후 파기됩니다.
-              </p>
-              <label class="privacy-check-label">
-                <input type="checkbox" id="c-privacy" name="privacy" required />
-                개인정보 수집 및 이용에 동의합니다 <span class="required">*</span>
-              </label>
-            </div>
-
-            <button type="submit" class="submit-btn">상담 문의 접수하기</button>
-          </form>
-
-          <!-- 완료 화면 -->
-          <div class="consult-success" id="consultSuccess">
-            <div class="success-icon">✅</div>
-            <p class="success-title">상담 문의가 접수되었습니다.</p>
-            <p class="success-msg">
-              빠르게 연락드리겠습니다.<br />
-              급하신 경우 아래 버튼으로 바로 연락해 주세요.
-            </p>
-            <div class="success-btns">
-              <a class="success-btn btn-kakao-s"
-                 href="https://open.kakao.com/o/sPajuHitop"
-                 target="_blank" rel="noopener noreferrer">
-                💬 카카오톡 상담
-              </a>
-              <a class="success-btn btn-tel-s" href="tel:031-949-8969">
-                📞 전화상담 031-949-8969
-              </a>
-            </div>
+        <!-- 게시판 목록 -->
+        <div class="board-card">
+          <div class="board-table-wrap">
+            <table class="board-table">
+              <thead>
+                <tr>
+                  <th class="col-num">번호</th>
+                  <th class="col-type">상담유형</th>
+                  <th class="col-title">제목</th>
+                  <th class="col-author">작성자</th>
+                  <th class="col-date">등록일</th>
+                  <th class="col-status">상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>5</td>
+                  <td><span class="type-badge">공장·창고</span></td>
+                  <td class="col-title">
+                    <a href="#">🔒 파주 탄현면 쪽 창고 임대 가능한 매물 문의드립니다</a>
+                  </td>
+                  <td>박*현</td>
+                  <td>2026.05.23</td>
+                  <td><span class="status-badge status-받침">접수완료</span></td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td><span class="type-badge">상가·빌딩</span></td>
+                  <td class="col-title">
+                    <a href="#">🔒 운정신도시 1층 상가 매매 상담 요청합니다</a>
+                  </td>
+                  <td>최*영</td>
+                  <td>2026.05.21</td>
+                  <td><span class="status-badge status-상담">상담중</span></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><span class="type-badge">토지·개발</span></td>
+                  <td class="col-title">
+                    <a href="#">🔒 개발 가능한 토지 매입 관련 문의드립니다</a>
+                  </td>
+                  <td>이*수</td>
+                  <td>2026.05.19</td>
+                  <td><span class="status-badge status-답변">답변완료</span></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><span class="type-badge">오피스텔</span></td>
+                  <td class="col-title">
+                    <a href="#">🔒 힐스테이트더운정 오피스텔 분양 관련 문의</a>
+                  </td>
+                  <td>김*희</td>
+                  <td>2026.05.16</td>
+                  <td><span class="status-badge status-답변">답변완료</span></td>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td><span class="type-badge">매도·임대 의뢰</span></td>
+                  <td class="col-title">
+                    <a href="#">🔒 공장 건물 매도 의뢰 드리고 싶습니다</a>
+                  </td>
+                  <td>홍*동</td>
+                  <td>2026.05.13</td>
+                  <td><span class="status-badge status-답변">답변완료</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+        </div>
 
-        </div><!-- /consult-card -->
       </div>
     </section>
 
@@ -333,26 +306,5 @@
     </footer>
 
     <script src="app.js?v=20260521"></script>
-    <script>
-      document.getElementById('consultForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        var name = document.getElementById('c-name').value.trim();
-        var phone = document.getElementById('c-phone').value.trim();
-        var type = document.getElementById('c-type').value;
-        var content = document.getElementById('c-content').value.trim();
-        var privacy = document.getElementById('c-privacy').checked;
-
-        if (!name) { alert('이름을 입력해 주세요.'); document.getElementById('c-name').focus(); return; }
-        if (!phone) { alert('연락처를 입력해 주세요.'); document.getElementById('c-phone').focus(); return; }
-        if (!type) { alert('문의 유형을 선택해 주세요.'); document.getElementById('c-type').focus(); return; }
-        if (!content) { alert('문의 내용을 입력해 주세요.'); document.getElementById('c-content').focus(); return; }
-        if (!privacy) { alert('개인정보 수집 및 이용에 동의해 주세요.'); document.getElementById('c-privacy').focus(); return; }
-
-        document.getElementById('consultForm').style.display = 'none';
-        document.getElementById('consultSuccess').style.display = 'block';
-        window.scrollTo({ top: document.querySelector('.consult-card').offsetTop - 20, behavior: 'smooth' });
-      });
-    </script>
   </body>
 </html>
