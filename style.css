@@ -4390,6 +4390,22 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
+/* 매물종류와 거래유형 한 줄 정렬 컨테이너 */
+
+.lp-rec-type-row {
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  gap: 8px !important;
+
+  width: 100% !important;
+
+}
+
 /* 매물 종류 */
 
 .lp-rec-type {
