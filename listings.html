@@ -6,7 +6,7 @@
     <title>하이탑부동산 | 매물보기</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20260523r" />
+    <link rel="stylesheet" href="style.css?v=20260523s" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
@@ -153,144 +153,151 @@
 
       <div class="lp-panel" id="lpPanel">
 
-        <div class="lp-panel-scroll-content">
-          <div class="lp-rec-2col-layout">
-            
-            <!-- 왼쪽 컬럼: 공장 추천매물 -->
-            <div class="lp-rec-column">
+        <!-- 2컬럼 레이아웃: 제목 고정 + 카드 독립 스크롤 구조 -->
+        <div class="lp-rec-2col-layout">
+
+          <!-- 왼쪽 컬럼: 공장 추천매물 -->
+          <div class="lp-rec-column">
+            <!-- 고정 제목바 -->
+            <div class="lp-rec-col-header">
               <h3 class="lp-rec-col-title">
                 <span>🏭 공장 추천매물</span>
                 <a href="listings.html?category=공장·창고" class="lp-rec-more-btn">공장매물 더보기</a>
               </h3>
-              <div class="lp-rec-card-list">
-                
-                <!-- 공장 카드 1 -->
-                <!-- 샘플 데이터: 공장·창고 / 5,000 / 500 만원 / 경기 파주시 / 대지 1,200㎡ · 창고 250평 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
-                    <div class="lp-rec-ribbon">도로바로진입</div>
-                    <span>공장·창고</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">5,000 / 500 만원</div>
-                    <div class="lp-rec-addr">경기 파주시</div>
-                    <div class="lp-rec-desc">대지 1,200㎡ · 창고 250평</div>
-                  </div>
-                </div>
-
-                <!-- 공장 카드 2 -->
-                <!-- 샘플 데이터: 공장·창고 / 2,000 / 180 만원 / 파주시 탄현면 / 창고 120평 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #0f766e, #14b8a6);">
-                    <div class="lp-rec-ribbon">추천매물</div>
-                    <span>공장·창고</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">2,000 / 180 만원</div>
-                    <div class="lp-rec-addr">파주시 탄현면</div>
-                    <div class="lp-rec-desc">창고 120평</div>
-                  </div>
-                </div>
-
-                <!-- 공장 카드 3 -->
-                <!-- 샘플 데이터: 공장·창고 / 7,000 / 700 만원 / 파주시 상지석동 / 단독공장 가능 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #1e3a5f, #2563eb);">
-                    <div class="lp-rec-ribbon">즉시입주</div>
-                    <span>공장·창고</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">7,000 / 700 만원</div>
-                    <div class="lp-rec-addr">파주시 상지석동</div>
-                    <div class="lp-rec-desc">단독공장 가능</div>
-                  </div>
-                </div>
-
-                <!-- 공장 카드 4 -->
-                <!-- 샘플 데이터: 공장·창고 / 매매 25억 / 파주시 월롱면 / 대형 물류창고 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #b45309, #f59e0b);">
-                    <div class="lp-rec-ribbon">추천매물</div>
-                    <span>공장·창고</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">매매 25억원</div>
-                    <div class="lp-rec-addr">파주시 월롱면</div>
-                    <div class="lp-rec-desc">대형 물류창고</div>
-                  </div>
-                </div>
-
-              </div>
             </div>
+            <!-- 스크롤 카드 영역 -->
+            <div class="lp-rec-card-list">
 
-            <!-- 오른쪽 컬럼: 상가 추천매물 -->
-            <div class="lp-rec-column">
+              <!-- 공장 카드 1 -->
+              <!-- 샘플 데이터: 공장·창고 / 5,000 / 500 만원 / 경기 파주시 / 대지 1,200㎡ · 창고 250평 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+                  <div class="lp-rec-ribbon">도로바로진입</div>
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">5,000 / 500 만원</div>
+                  <div class="lp-rec-addr">경기 파주시</div>
+                  <div class="lp-rec-desc">대지 1,200㎡ · 창고 250평</div>
+                </div>
+              </div>
+
+              <!-- 공장 카드 2 -->
+              <!-- 샘플 데이터: 공장·창고 / 2,000 / 180 만원 / 파주시 탄현면 / 창고 120평 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #0f766e, #14b8a6);">
+                  <div class="lp-rec-ribbon">추천매물</div>
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">2,000 / 180 만원</div>
+                  <div class="lp-rec-addr">파주시 탄현면</div>
+                  <div class="lp-rec-desc">창고 120평</div>
+                </div>
+              </div>
+
+              <!-- 공장 카드 3 -->
+              <!-- 샘플 데이터: 공장·창고 / 7,000 / 700 만원 / 파주시 상지석동 / 단독공장 가능 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #1e3a5f, #2563eb);">
+                  <div class="lp-rec-ribbon">즉시입주</div>
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">7,000 / 700 만원</div>
+                  <div class="lp-rec-addr">파주시 상지석동</div>
+                  <div class="lp-rec-desc">단독공장 가능</div>
+                </div>
+              </div>
+
+              <!-- 공장 카드 4 -->
+              <!-- 샘플 데이터: 공장·창고 / 매매 25억 / 파주시 월롱면 / 대형 물류창고 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #b45309, #f59e0b);">
+                  <div class="lp-rec-ribbon">추천매물</div>
+                  <span>공장·창고</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">매매 25억원</div>
+                  <div class="lp-rec-addr">파주시 월롱면</div>
+                  <div class="lp-rec-desc">대형 물류창고</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 오른쪽 컬럼: 상가 추천매물 -->
+          <div class="lp-rec-column">
+            <!-- 고정 제목바 -->
+            <div class="lp-rec-col-header">
               <h3 class="lp-rec-col-title">
                 <span>🏢 상가 추천매물</span>
                 <a href="listings.html?category=상가·빌딩" class="lp-rec-more-btn">상가매물 더보기</a>
               </h3>
-              <div class="lp-rec-card-list">
-                
-                <!-- 상가 카드 1 -->
-                <!-- 샘플 데이터: 상가·빌딩 / 3,000 / 350 만원 / 운정역 인근 / 전용 40평 · 1층 상가 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #4c1d95, #8b5cf6);">
-                    <div class="lp-rec-ribbon">수익형</div>
-                    <span>상가·빌딩</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">3,000 / 350 만원</div>
-                    <div class="lp-rec-addr">운정역 인근</div>
-                    <div class="lp-rec-desc">전용 40평 · 1층 상가</div>
-                  </div>
-                </div>
-
-                <!-- 상가 카드 2 -->
-                <!-- 샘플 데이터: 상가·빌딩 / 매매 13억 / 운정신도시 / 전용 72평 · 병원 운영중 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #be123c, #f43f5e);">
-                    <div class="lp-rec-ribbon">추천매물</div>
-                    <span>상가·빌딩</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">매매 13억원</div>
-                    <div class="lp-rec-addr">운정신도시</div>
-                    <div class="lp-rec-desc">전용 72평 · 병원 운영중</div>
-                  </div>
-                </div>
-
-                <!-- 상가 카드 3 -->
-                <!-- 샘플 데이터: 상가·빌딩 / 5,000 / 290 만원 / 초롱꽃마을 / 단지내 상가 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #0369a1, #0ea5e9);">
-                    <div class="lp-rec-ribbon">즉시입주</div>
-                    <span>상가·빌딩</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">5,000 / 290 만원</div>
-                    <div class="lp-rec-addr">초롱꽃마을</div>
-                    <div class="lp-rec-desc">단지내 상가</div>
-                  </div>
-                </div>
-
-                <!-- 상가 카드 4 -->
-                <!-- 샘플 데이터: 상가·빌딩 / 6,000 / 500 만원 / 운정역 중심상권 / 1층 식당 추천 -->
-                <div class="lp-rec-card">
-                  <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #15803d, #22c55e);">
-                    <div class="lp-rec-ribbon">수익형</div>
-                    <span>상가·빌딩</span>
-                  </div>
-                  <div class="lp-rec-body">
-                    <div class="lp-rec-price">6,000 / 500 만원</div>
-                    <div class="lp-rec-addr">운정역 중심상권</div>
-                    <div class="lp-rec-desc">1층 식당 추천</div>
-                  </div>
-                </div>
-
-              </div>
             </div>
+            <!-- 스크롤 카드 영역 -->
+            <div class="lp-rec-card-list">
 
+              <!-- 상가 카드 1 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 3,000 / 350 만원 / 운정역 인근 / 전용 40평 · 1층 상가 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #4c1d95, #8b5cf6);">
+                  <div class="lp-rec-ribbon">수익형</div>
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">3,000 / 350 만원</div>
+                  <div class="lp-rec-addr">운정역 인근</div>
+                  <div class="lp-rec-desc">전용 40평 · 1층 상가</div>
+                </div>
+              </div>
+
+              <!-- 상가 카드 2 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 매매 13억 / 운정신도시 / 전용 72평 · 병원 운영중 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #be123c, #f43f5e);">
+                  <div class="lp-rec-ribbon">추천매물</div>
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">매매 13억원</div>
+                  <div class="lp-rec-addr">운정신도시</div>
+                  <div class="lp-rec-desc">전용 72평 · 병원 운영중</div>
+                </div>
+              </div>
+
+              <!-- 상가 카드 3 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 5,000 / 290 만원 / 초롱꽃마을 / 단지내 상가 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #0369a1, #0ea5e9);">
+                  <div class="lp-rec-ribbon">즉시입주</div>
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">5,000 / 290 만원</div>
+                  <div class="lp-rec-addr">초롱꽃마을</div>
+                  <div class="lp-rec-desc">단지내 상가</div>
+                </div>
+              </div>
+
+              <!-- 상가 카드 4 -->
+              <!-- 샘플 데이터: 상가·빌딩 / 6,000 / 500 만원 / 운정역 중심상권 / 1층 식당 추천 -->
+              <div class="lp-rec-card">
+                <div class="lp-rec-img-placeholder" style="background: linear-gradient(135deg, #15803d, #22c55e);">
+                  <div class="lp-rec-ribbon">수익형</div>
+                  <span>상가·빌딩</span>
+                </div>
+                <div class="lp-rec-body">
+                  <div class="lp-rec-price">6,000 / 500 만원</div>
+                  <div class="lp-rec-addr">운정역 중심상권</div>
+                  <div class="lp-rec-desc">1층 식당 추천</div>
+                </div>
+              </div>
+
+            </div>
           </div>
+
         </div>
 
       </div>
