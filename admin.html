@@ -256,7 +256,7 @@
     <script src="app.js?v=20260522a"></script>
     <script type="module">
       import { db, COLLECTION } from "./firebase-config.js";
-      import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { collection, getDocs, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
       function statusClass(s) {
         if (s === '접수완료') return 'cs-접수완료';
@@ -284,9 +284,11 @@
           if (!docs.length) return;
 
           tbody.innerHTML = '';
-          docs.forEach((doc, i) => {
-            const post = doc.data();
-            const tr = document.createElement('tr');
+          docs.forEach((docSnap, i) => {
+            const post    = docSnap.data();
+            const docId   = docSnap.id;
+            const tr      = document.createElement('tr');
+
             tr.innerHTML =
               '<td>' + (docs.length - i) + '</td>' +
               '<td><span class="consult-type-badge">' + post.type + '</span></td>' +
@@ -295,8 +297,41 @@
               '<td>' + post.phone + '</td>' +
               '<td>' + (post.listing || '—') + '</td>' +
               '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>' +
-              '<td>—</td>';
+              '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
+
+            /* 관리 셀: 상태 변경 select */
+            const tdMgmt  = document.createElement('td');
+            const select  = document.createElement('select');
+            select.style.cssText = 'font-family:inherit;font-size:12px;padding:3px 6px;border:1px solid #dde2ea;border-radius:4px;cursor:pointer;';
+            ['접수완료', '상담중', '답변완료'].forEach(opt => {
+              const o = document.createElement('option');
+              o.value = opt; o.textContent = opt;
+              if (opt === post.status) o.selected = true;
+              select.appendChild(o);
+            });
+
+            const msg = document.createElement('span');
+            msg.style.cssText = 'margin-left:6px;font-size:11px;color:#1a7a42;display:none;';
+            msg.textContent   = '저장됨';
+
+            select.addEventListener('change', async () => {
+              const prev      = post.status;
+              const newStatus = select.value;
+              try {
+                await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
+                post.status = newStatus;
+                msg.style.display = 'inline';
+                setTimeout(() => { msg.style.display = 'none'; }, 2000);
+              } catch (err) {
+                console.error('상태 변경 오류:', err);
+                alert('상태 변경 중 오류가 발생했습니다.');
+                select.value = prev;
+              }
+            });
+
+            tdMgmt.appendChild(select);
+            tdMgmt.appendChild(msg);
+            tr.appendChild(tdMgmt);
             tbody.appendChild(tr);
           });
         } catch (err) {
