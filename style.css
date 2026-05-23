@@ -997,8 +997,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 @media (min-width: 769px) and (max-width: 1100px) {
   .lp-body { grid-template-columns: 160px 1fr 280px; }
-  .cat-cards-section { margin-left: 160px; }
-  .lp-all-section { margin-left: 160px; }
 }
 
 /* ================================================================
@@ -1250,7 +1248,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .lp-show-all-btn:hover { background: #162f50; }
 
 /* ── 하단 전체 매물 섹션 ── */
-.lp-all-section { background: #F3F4F6; padding: 24px 0 40px; margin-left: 280px; }
+.lp-all-section { background: #F3F4F6; padding: 24px 0 40px; }
 .lp-all-section.hidden { display: none; }
 
 .lp-all-toolbar {
@@ -1329,7 +1327,6 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   .lp-panel-2col { grid-template-columns: 1fr; height: 300px; }
   .lp-all-grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; }
   .lp-all-toolbar { padding: 0 12px 12px; }
-  .lp-all-section { margin-left: 0; }
   .top-bar-lg { font-size: 14px !important; }
   .adm-stats-4 { grid-template-columns: 1fr 1fr; }
 }
@@ -1710,7 +1707,6 @@ body[data-page="listings"] .site-header .lp-header-phone {
   background: #0A1F5C;
   padding: 14px 36px;
   flex-shrink: 0;
-  margin-left: 280px;
 }
 .cat-cards-grid {
   display: grid;
@@ -1785,7 +1781,6 @@ body[data-page="listings"] .site-header .lp-header-phone {
   }
   .cat-cards-section {
     padding: 12px 16px;
-    margin-left: 0;
   }
   .cat-card {
     height: 130px;
