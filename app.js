@@ -288,12 +288,12 @@ const requireAdminLogin = () => {
   const mainEl  = document.getElementById('adminMain');
   if (!overlay || !mainEl) return true;
   const ADMIN_PW = 'hitop2025';
-  if (sessionStorage.getItem('hitop_admin') !== '1') {
+  if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
     const loginBtn   = document.getElementById('loginBtn');
     const loginPw    = document.getElementById('loginPw');
     const loginError = document.getElementById('loginError');
     const doLogin = () => {
-      if (loginPw.value === ADMIN_PW) { sessionStorage.setItem('hitop_admin','1'); location.reload(); }
+      if (loginPw.value === ADMIN_PW) { sessionStorage.setItem('hitopAdminLoggedIn','true'); location.reload(); }
       else { loginError.classList.remove('hidden'); loginPw.value=''; loginPw.focus(); }
     };
     loginBtn?.addEventListener('click', doLogin);
@@ -305,7 +305,7 @@ const requireAdminLogin = () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.style.display = 'inline-flex';
-    logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('hitop_admin'); location.reload(); });
+    logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('hitopAdminLoggedIn'); location.reload(); });
   }
   return true;
 };
@@ -1351,9 +1351,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
   if      (page === 'home')             setupHomePage();
   else if (page === 'listings')         setupListingsPage();
-  else if (page === 'admin-dashboard')  setupAdminDashboard();
-  else if (page === 'admin-register')   setupAdminRegister();
-  else if (page === 'admin-listings')   setupAdminListingsMgmt();
+  else if (page === 'admin-dashboard')       setupAdminDashboard();
+  else if (page === 'admin-register')        setupAdminRegister();
+  else if (page === 'admin-listings')        setupAdminListingsMgmt();
+  else if (page === 'admin-consults')        requireAdminLogin();
+  else if (page === 'admin-consult-detail')  requireAdminLogin();
 
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
   document.getElementById('listingModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });

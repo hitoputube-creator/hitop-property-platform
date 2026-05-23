@@ -7,58 +7,82 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <style>
-      .consult-mgmt-card {
-        background: #fff;
-        border-radius: 12px;
+      .board-section {
+        background: #f2f4f7;
+        padding: 48px 0 64px;
+        min-height: calc(100vh - 180px);
+      }
+      .board-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .board-title { font-size: 22px; font-weight: 700; color: #0A1F5C; margin: 0 0 6px; }
+      .board-notice {
+        font-size: 13px; color: #666; margin: 0;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .admin-notice-box {
+        display: flex; align-items: center; gap: 10px;
+        background: #fff8e1; border: 1px solid #f0c040;
+        border-radius: 8px; padding: 11px 16px;
+        font-size: 13px; color: #7a5a00; margin-bottom: 16px;
+      }
+      .board-card {
+        background: #fff; border-radius: 12px;
         border: 0.5px solid #e2e6ed;
-        box-shadow: 0 2px 8px rgba(10,31,92,0.05);
+        box-shadow: 0 2px 12px rgba(10,31,92,0.05);
         overflow: hidden;
       }
-      .consult-mgmt-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .consult-mgmt-table {
-        width: 100%; border-collapse: collapse; font-size: 13px; min-width: 780px;
-      }
-      .consult-mgmt-table thead tr { background: #f6f8fb; border-bottom: 2px solid #e2e6ed; }
-      .consult-mgmt-table th {
+      .board-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .board-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 820px; }
+      .board-table thead tr { background: #f6f8fb; border-bottom: 2px solid #e2e6ed; }
+      .board-table th {
         padding: 12px 14px; font-size: 11px; font-weight: 700;
         color: #888; text-align: center; white-space: nowrap;
       }
-      .consult-mgmt-table td {
-        padding: 13px 14px; text-align: center; color: #333;
+      .board-table th.col-title { text-align: left; }
+      .board-table td {
+        padding: 13px 14px; text-align: center; color: #444;
         border-bottom: 1px solid #f0f2f6; vertical-align: middle;
       }
-      .consult-mgmt-table tbody tr:last-child td { border-bottom: none; }
-      .consult-mgmt-table tbody tr:hover { background: #f9fafb; }
-      .consult-mgmt-table td.td-title {
-        text-align: left; max-width: 240px;
-        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      .board-table td.col-title { text-align: left; }
+      .board-table tbody tr:last-child td { border-bottom: none; }
+      .board-table tbody tr:hover { background: #f9fafb; }
+      .board-table td.col-title a {
+        color: #1e293b; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 5px;
       }
-      .consult-mgmt-table td.td-listing {
-        max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      }
-      .consult-type-badge {
-        display: inline-block; padding: 2px 7px;
+      .board-table td.col-title a:hover { color: #0A1F5C; text-decoration: underline; }
+      .type-badge {
+        display: inline-block; padding: 3px 8px;
         border-radius: 4px; font-size: 11px; font-weight: 600;
         background: #eef1f8; color: #0A1F5C;
       }
-      .consult-status-badge {
-        display: inline-block; padding: 3px 9px;
-        border-radius: 20px; font-size: 11px; font-weight: 700;
+      .status-badge {
+        display: inline-block; padding: 4px 10px;
+        border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap;
       }
-      .cs-접수완료 { background: #e8f0fe; color: #1a56c4; }
-      .cs-상담중   { background: #fff3e0; color: #c07000; }
-      .cs-답변완료 { background: #e6f7ee; color: #1a7a42; }
-      .consult-empty { padding: 48px; text-align: center; color: #aaa; font-size: 14px; }
-
-      .page-header {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 20px; gap: 12px;
+      .status-받침 { background: #e8f0fe; color: #1a56c4; }
+      .status-상담  { background: #fff3e0; color: #c07000; }
+      .status-답변  { background: #e6f7ee; color: #1a7a42; }
+      .board-empty { padding: 48px; text-align: center; color: #aaa; font-size: 14px; }
+      .btn-back-header {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 9px 18px; background: #fff; color: #555;
+        font-family: "Pretendard","Noto Sans KR",sans-serif;
+        font-size: 13px; font-weight: 600;
+        border: 1px solid #ccd0d9; border-radius: 8px;
+        text-decoration: none; white-space: nowrap;
+        transition: background 0.15s;
       }
-      .page-title { font-size: 22px; font-weight: 700; color: #0A1F5C; margin: 0; }
-      .page-count { font-size: 13px; color: #888; }
-
+      .btn-back-header:hover { background: #f2f4f7; }
       @media (max-width: 640px) {
-        .page-title { font-size: 18px; }
+        .board-title { font-size: 18px; }
+        .board-header { align-items: flex-start; }
       }
     </style>
   </head>
@@ -81,6 +105,7 @@
       </div>
     </header>
 
+    <!-- 로그인 오버레이 -->
     <div id="loginOverlay" class="login-overlay">
       <div class="login-box">
         <h2>관리자 로그인</h2>
@@ -90,37 +115,47 @@
       </div>
     </div>
 
+    <!-- 본문 (로그인 후 표시) -->
     <main class="section hidden" id="adminMain">
-      <div class="container">
+      <div class="board-section">
+        <div class="container">
 
-        <div class="page-header">
-          <h1 class="page-title">📋 상담문의 관리</h1>
-          <span class="page-count" id="consultCount"></span>
-        </div>
-
-        <div class="consult-mgmt-card">
-          <div class="consult-mgmt-table-wrap">
-            <table class="consult-mgmt-table">
-              <thead>
-                <tr>
-                  <th style="width:46px;">번호</th>
-                  <th style="width:130px;">문의유형</th>
-                  <th class="td-title">제목</th>
-                  <th style="width:72px;">작성자</th>
-                  <th style="width:120px;">연락처</th>
-                  <th class="td-listing" style="width:140px;">관심 매물</th>
-                  <th style="width:96px;">등록일</th>
-                  <th style="width:86px;">상태</th>
-                  <th style="width:130px;">관리</th>
-                </tr>
-              </thead>
-              <tbody id="consultAdminTbody">
-                <tr><td colspan="9" class="consult-empty">상담문의 목록을 불러오는 중...</td></tr>
-              </tbody>
-            </table>
+          <div class="board-header">
+            <div>
+              <h1 class="board-title">📋 상담문의 관리</h1>
+              <p class="board-notice" id="consultCount">목록을 불러오는 중...</p>
+            </div>
+            <a href="admin.html" class="btn-back-header">← 관리자 대시보드</a>
           </div>
-        </div>
 
+          <div class="admin-notice-box">
+            🔑 관리자 전용 페이지입니다. 접수된 비공개 상담문의 전체 내용을 확인할 수 있습니다.
+          </div>
+
+          <div class="board-card">
+            <div class="board-table-wrap">
+              <table class="board-table">
+                <thead>
+                  <tr>
+                    <th style="width:46px;">번호</th>
+                    <th style="width:120px;">문의유형</th>
+                    <th class="col-title">제목</th>
+                    <th style="width:72px;">작성자</th>
+                    <th style="width:118px;">연락처</th>
+                    <th style="width:130px;">관심 매물</th>
+                    <th style="width:94px;">등록일</th>
+                    <th style="width:80px;">상태</th>
+                    <th style="width:126px;">관리</th>
+                  </tr>
+                </thead>
+                <tbody id="consultAdminTbody">
+                  <tr><td colspan="9" class="board-empty">목록을 불러오는 중...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
       </div>
     </main>
 
@@ -146,39 +181,39 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260522a"></script>
+    <script src="app.js?v=20260524"></script>
     <script type="module">
       import { db, COLLECTION } from "./firebase-config.js";
       import { collection, getDocs, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
       function statusClass(s) {
-        if (s === '접수완료') return 'cs-접수완료';
-        if (s === '상담중')   return 'cs-상담중';
-        return 'cs-답변완료';
+        if (s === '접수완료') return 'status-받침';
+        if (s === '상담중')   return 'status-상담';
+        return 'status-답변';
       }
       function formatDate(ts) {
         if (!ts) return '—';
         try {
           const d = ts.toDate();
           return d.getFullYear() + '.' +
-            String(d.getMonth() + 1).padStart(2, '0') + '.' +
-            String(d.getDate()).padStart(2, '0');
+            String(d.getMonth() + 1).padStart(2,'0') + '.' +
+            String(d.getDate()).padStart(2,'0');
         } catch { return '—'; }
       }
 
-      const tbody = document.getElementById('consultAdminTbody');
+      const tbody   = document.getElementById('consultAdminTbody');
       const countEl = document.getElementById('consultCount');
 
       (async () => {
         try {
-          const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
+          const q    = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
           const snap = await getDocs(q);
           const docs = snap.docs;
 
           if (countEl) countEl.textContent = '총 ' + docs.length + '건';
 
           if (!docs.length) {
-            tbody.innerHTML = '<tr><td colspan="9" class="consult-empty">등록된 상담문의가 없습니다.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="board-empty">등록된 상담문의가 없습니다.</td></tr>';
             return;
           }
 
@@ -190,13 +225,13 @@
 
             tr.innerHTML =
               '<td>' + (docs.length - i) + '</td>' +
-              '<td><span class="consult-type-badge">' + post.type + '</span></td>' +
-              '<td class="td-title">' + post.subject + '</td>' +
+              '<td><span class="type-badge">' + post.type + '</span></td>' +
+              '<td class="col-title"><a href="admin-consult-detail.html?id=' + docId + '">' + post.subject + '</a></td>' +
               '<td>' + post.name + '</td>' +
               '<td>' + post.phone + '</td>' +
-              '<td class="td-listing">' + (post.listing || '—') + '</td>' +
+              '<td>' + (post.listing || '—') + '</td>' +
               '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="consult-status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
+              '<td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
 
             const tdMgmt = document.createElement('td');
             const select = document.createElement('select');
@@ -218,6 +253,9 @@
               try {
                 await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
                 post.status = newStatus;
+                /* 상태 뱃지 동기화 */
+                const badge = tr.querySelector('.status-badge');
+                if (badge) { badge.className = 'status-badge ' + statusClass(newStatus); badge.textContent = newStatus; }
                 msg.style.display = 'inline';
                 setTimeout(() => { msg.style.display = 'none'; }, 2000);
               } catch (err) {
