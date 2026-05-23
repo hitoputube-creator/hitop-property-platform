@@ -4213,7 +4213,6 @@ body[data-page="listings"] .lp-panel-scroll-content {
 }
 
 
-
 /* 추천 매물 카드 - 프리미엄 가로형 리스트 카드 */
 
 .lp-rec-card {
@@ -4238,9 +4237,9 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   height: auto !important;
 
-  min-height: 104px !important; /* 최소 높이 확보로 찌그러짐 방지 */
+  min-height: 116px !important; /* 5행 구조 최적화 최소 높이 */
 
-  max-height: 135px !important; /* 최대 높이 제어로 과도한 팽창 방지 */
+  max-height: 145px !important; /* 5행 구조 최적화 최대 높이 */
 
   min-width: 0 !important;
 
@@ -4368,17 +4367,19 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 /* 오른쪽 텍스트 영역 (카드 폭의 약 65% 차지) */
 
+
+
 .lp-rec-body {
 
-  padding: 6px 10px !important; /* 가로형 5개 맞춤 초콤팩트 패딩 */
+  padding: 7px 10px 6px !important; /* 5행 완벽 맞춤 프리미엄 패딩 */
 
   display: flex !important;
 
-  flex-direction: column !important; /* 세로 3줄 정렬 유지! */
+  flex-direction: column !important;
 
-  justify-content: space-between !important;
+  justify-content: space-between !important; /* 5개 행 세로 자동 분산 정렬 */
 
-  gap: 4px !important;
+  gap: 2px !important; /* 5행 콤팩트 행간 */
 
   height: 100% !important;
 
@@ -4444,7 +4445,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-mid {
 
-  font-size: 12px !important; /* 5줄 맞춤 콤팩트화 */
+  font-size: 12.5px !important; /* 가독성 위해 약간 확대 */
 
   font-weight: 700 !important;
 
@@ -4460,13 +4461,132 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 넷째 줄: 면적 + 주소/지역 */
+/* 넷째 줄: 전용면적 강조 행 */
+
+.lp-rec-row-area {
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  width: 100% !important;
+
+  box-sizing: border-box !important;
+
+  min-width: 0 !important;
+
+  overflow: hidden !important;
+
+  font-size: 12px !important;
+
+  line-height: 1.2 !important;
+
+  white-space: nowrap !important;
+
+  color: #334155 !important;
+
+}
+
+.lp-area-highlight {
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+
+  gap: 3px !important;
+
+  margin-right: 5px !important;
+
+}
+
+/* "전용" / "창고" / "건물" 라벨 */
+
+.lp-area-lbl {
+
+  font-size: 9.5px !important;
+
+  font-weight: 850 !important;
+
+  padding: 1px 4px !important;
+
+  border-radius: 3px !important;
+
+  line-height: 1.1 !important;
+
+  display: inline-block !important;
+
+  letter-spacing: -0.3px !important;
+
+}
+
+/* 공장/창고 라벨 색상 (네이비/블루 톤) */
+
+.factory-card .lp-area-lbl {
+
+  background-color: #e0f2fe !important;
+
+  color: #0369a1 !important;
+
+  border: 1.5px solid #bae6fd !important;
+
+}
+
+/* 상가/빌딩 라벨 색상 (버건디/로즈 톤) */
+
+.store-card .lp-area-lbl {
+
+  background-color: #ffe4e6 !important;
+
+  color: #be123c !important;
+
+  border: 1.5px solid #fecdd3 !important;
+
+}
+
+/* 면적 숫자 강조 */
+
+.lp-area-val {
+
+  font-size: 12px !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -0.2px !important;
+
+}
+
+.factory-card .lp-area-val {
+
+  color: #0284c7 !important; /* 블루 계열 */
+
+}
+
+.store-card .lp-area-val {
+
+  color: #be123c !important; /* 버건디 계열 */
+}
+
+/* 부가 면적 정보 */
+
+.lp-area-extra {
+
+  font-size: 11px !important;
+
+  color: #64748b !important;
+
+  font-weight: 500 !important;
+
+}
+
+/* 다섯째 줄: 주소/지역 */
 
 .lp-rec-row-bot {
 
-  font-size: 11px !important; /* 5줄 맞춤 콤팩트화 */
+  font-size: 11.5px !important; /* 5줄 맞춤 가독성 보장 */
 
-  font-weight: 500 !important;
+  font-weight: 600 !important;
 
   color: #64748b !important;
 
