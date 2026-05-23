@@ -207,8 +207,7 @@
 
       if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
         location.href = 'admin.html';
-        return;
-      }
+      } else {
 
       const id             = new URLSearchParams(location.search).get('id');
       const area           = document.getElementById('detailArea');
@@ -271,6 +270,7 @@
           }
         })();
       }
+      } // end else (hitopAdminLoggedIn)
     </script>
   </body>
 </html>

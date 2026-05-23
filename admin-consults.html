@@ -207,9 +207,7 @@
       const tbody   = document.getElementById('consultAdminTbody');
       const countEl = document.getElementById('consultCount');
 
-      if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') return;
-
-      (async () => {
+      if (sessionStorage.getItem('hitopAdminLoggedIn') === 'true') (async () => {
         try {
           const q    = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
           const snap = await getDocs(q);
