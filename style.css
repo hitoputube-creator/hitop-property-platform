@@ -14,6 +14,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .site-header { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 10; }
 .nav-wrap { display: flex; align-items: center; justify-content: space-between; min-height: 64px; gap: 12px; }
 .brand { color: var(--navy); font-weight: 800; text-decoration: none; font-size: 1.1rem; }
+.brand-logo { height: 36px; width: auto; vertical-align: middle; max-width: 180px; }
 .nav-wrap { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 18px; }
 .brand-text { font-size: inherit; font-weight: inherit; }
 .nav-menu { display: flex; gap: 14px; align-items: center; }
