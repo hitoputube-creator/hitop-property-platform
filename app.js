@@ -1144,62 +1144,6 @@ const setupAdminDashboard = () => {
 
   // ── 필터 적용 ──
   const applyFilters = () => {
-    const ptEl = form.elements['propertyType'];
-    if (ptEl) {
-      // Toggle area fields based on selected property type
-      const toggleAreaFields = () => {
-        const isStore = ptEl.value === '상가';
-        const generalRow = document.querySelector('.area-general');
-        const storeRow = document.querySelector('.area-store');
-        if (generalRow) generalRow.classList.toggle('hidden', isStore);
-        if (storeRow) storeRow.classList.toggle('hidden', !isStore);
-      };
-      // Initial toggle
-      toggleAreaFields();
-      // Listen for changes to property type
-      ptEl.addEventListener('change', () => {
-        if (!isEditMode) {
-          const sel = ptEl.value; form.reset(); form.elements['id'].value=''; ptEl.value=sel;
-          resetImageFields();
-          const py=document.getElementById('areaPyeong'); if(py)py.textContent='';
-          const ko=document.getElementById('priceKorean'); if(ko)ko.textContent='';
-        }
-        updateListingNo();
-        toggleAreaFields();
-      });
-      // Auto‑calc for general area (㎡ ↔ 평)
-      const areaM2El = form.elements['areaM2'];
-      const areaPyEl = form.elements['areaPy'];
-      if (areaM2El && areaPyEl) {
-        areaM2El.addEventListener('input', () => {
-          if (areaM2El.value) areaPyEl.value = m2ToPy(areaM2El.value);
-        });
-        areaPyEl.addEventListener('input', () => {
-          if (areaPyEl.value) areaM2El.value = pyToM2(areaPyEl.value);
-        });
-      }
-      // Auto‑calc for store areas (전용 면적, 분양 면적)
-      const exclusiveM2El = form.elements['exclusiveAreaM2'];
-      const exclusivePyEl = form.elements['exclusiveAreaPy'];
-      if (exclusiveM2El && exclusivePyEl) {
-        exclusiveM2El.addEventListener('input', () => {
-          if (exclusiveM2El.value) exclusivePyEl.value = m2ToPy(exclusiveM2El.value);
-        });
-        exclusivePyEl.addEventListener('input', () => {
-          if (exclusivePyEl.value) exclusiveM2El.value = pyToM2(exclusivePyEl.value);
-        });
-      }
-      const supplyM2El = form.elements['supplyAreaM2'];
-      const supplyPyEl = form.elements['supplyAreaPy'];
-      if (supplyM2El && supplyPyEl) {
-        supplyM2El.addEventListener('input', () => {
-          if (supplyM2El.value) supplyPyEl.value = m2ToPy(supplyM2El.value);
-        });
-        supplyPyEl.addEventListener('input', () => {
-          if (supplyPyEl.value) supplyM2El.value = pyToM2(supplyPyEl.value);
-        });
-      }
-    }
     let listings = [..._allListings];
     if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
     if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
