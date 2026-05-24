@@ -184,8 +184,8 @@
 
     <script src="app.js?v=20260524"></script>
     <script type="module">
-      import { db, COLLECTION } from "./firebase-config.js";
-      import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { db, COLLECTION, PUBLIC_CONSULTATIONS_COLLECTION } from "./firebase-config.js";
+      import { doc, getDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
       function escHtml(s) {
         return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -263,6 +263,14 @@
                   if (!isAuthed) { alert('관리자 권한이 없습니다.'); statusSelect.value = prev; return; }
                 }
                 await updateDoc(doc(db, COLLECTION, id), { status: newStatus });
+
+                const qPublic = query(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), where("privateDocId", "==", id));
+                const snapPublic = await getDocs(qPublic);
+                const syncPromises = snapPublic.docs.map(publicDoc => 
+                  updateDoc(doc(db, PUBLIC_CONSULTATIONS_COLLECTION, publicDoc.id), { status: newStatus })
+                );
+                await Promise.all(syncPromises);
+
                 currentStatus = newStatus;
                 const badge = document.getElementById('statusBadge');
                 if (badge) { badge.className = 'status-badge ' + statusClass(newStatus); badge.textContent = newStatus; }

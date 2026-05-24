@@ -19,3 +19,4 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const COLLECTION = "consultations";
 export const LISTINGS_COLLECTION = "listings";
+export const PUBLIC_CONSULTATIONS_COLLECTION = "public_consultations";

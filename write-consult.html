@@ -307,8 +307,15 @@
 
     <script src="app.js?v=20260521"></script>
     <script type="module">
-      import { db, COLLECTION } from "./firebase-config.js";
+      import { db, COLLECTION, PUBLIC_CONSULTATIONS_COLLECTION } from "./firebase-config.js";
       import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      function maskName(n) {
+        if (!n) return '';
+        if (n.length === 1) return n;
+        if (n.length === 2) return n[0] + '*';
+        return n[0] + '*' + n[n.length - 1];
+      }
 
       document.getElementById('writeForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -328,7 +335,7 @@
         if (!privacy) { alert('개인정보 수집 및 이용에 동의해 주세요.'); return; }
 
         try {
-          await addDoc(collection(db, COLLECTION), {
+          const ref = await addDoc(collection(db, COLLECTION), {
             name:      name,
             phone:     phone,
             type:      type,
@@ -338,6 +345,16 @@
             status:    "접수완료",
             createdAt: serverTimestamp()
           });
+
+          await addDoc(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), {
+            type:         type,
+            subject:      subject,
+            maskedName:   maskName(name),
+            status:       "접수완료",
+            createdAt:    serverTimestamp(),
+            privateDocId: ref.id
+          });
+
           alert('상담문의가 등록되었습니다.');
           location.href = 'consult.html';
         } catch (err) {

@@ -183,8 +183,8 @@
 
     <script src="app.js?v=20260524"></script>
     <script type="module">
-      import { db, COLLECTION } from "./firebase-config.js";
-      import { collection, getDocs, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { db, COLLECTION, PUBLIC_CONSULTATIONS_COLLECTION } from "./firebase-config.js";
+      import { collection, getDocs, query, orderBy, doc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
       function escHtml(s) {
         return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -266,6 +266,14 @@
                   if (!isAuthed) { alert('관리자 권한이 없습니다.'); select.value = prev; return; }
                 }
                 await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
+
+                const qPublic = query(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), where("privateDocId", "==", docId));
+                const snapPublic = await getDocs(qPublic);
+                const syncPromises = snapPublic.docs.map(publicDoc => 
+                  updateDoc(doc(db, PUBLIC_CONSULTATIONS_COLLECTION, publicDoc.id), { status: newStatus })
+                );
+                await Promise.all(syncPromises);
+
                 post.status = newStatus;
                 /* 상태 뱃지 동기화 */
                 const badge = tr.querySelector('.status-badge');
