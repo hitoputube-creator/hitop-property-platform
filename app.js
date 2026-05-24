@@ -1447,9 +1447,17 @@ const setupAdminListingsMgmt = () => {
       })();
     }
     if (action==='done') {
-      const listings=readListings();
-      writeListings(listings.map(i=>i.id===id?{...i,status:i.status==='done'?'':'done',updatedAt:new Date().toISOString()}:i));
-      applyFilters();
+      const newStatus=(_allListings.find(i=>i.id===id)?.status==='done')?'':'done';
+      (async()=>{
+        try {
+          await updateListingInFirestore(id,{status:newStatus});
+          _allListings=_allListings.map(i=>i.id===id?{...i,status:newStatus}:i);
+          applyFilters();
+        } catch(err) {
+          console.error('거래완료 처리 오류:',err);
+          alert('거래완료 처리 중 오류가 발생했습니다.');
+        }
+      })();
     }
   });
 
