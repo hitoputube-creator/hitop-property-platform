@@ -203,10 +203,15 @@ const toKoreanPrice = (wanwon) => {
   return `${n.toLocaleString('ko-KR')}만원`;
 };
 
-const toPyeong = (sqm) => {
+const m2ToPy = (sqm) => {
   const n = Number(sqm);
   if (!n || isNaN(n) || n <= 0) return '';
-  return `약 ${(n * 0.3025).toFixed(1)}평`;
+  return (n / 3.305785).toFixed(2);
+};
+const pyToM2 = (py) => {
+  const n = Number(py);
+  if (!n || isNaN(n) || n <= 0) return '';
+  return (n * 3.305785).toFixed(2);
 };
 
 // 신형 매물번호: YYMMDD-N (예: 250521-1)
@@ -286,12 +291,43 @@ const openModal = (item) => {
   document.getElementById('modalPriceArea').innerHTML = priceHTML;
 
   let tableHTML = '';
+  // Build area rows with new fields
+  const isStore = item.propertyType === '상가';
+  const formatArea = (m2, py) => {
+    let m2Val = m2 !== undefined && m2 !== null ? Number(m2).toFixed(2) : null;
+    let pyVal = py !== undefined && py !== null ? Number(py).toFixed(2) : null;
+    if (!m2Val && pyVal) m2Val = (pyVal * 3.305785).toFixed(2);
+    if (!pyVal && m2Val) pyVal = (m2Val / 3.305785).toFixed(2);
+    if (m2Val && pyVal) return `${m2Val}㎡ / ${pyVal}평`;
+    return m2Val ? `${m2Val}㎡` : pyVal ? `${pyVal}평` : '';
+  };
+  if (isStore) {
+    const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
+    const exclPy = item.exclusiveAreaPy;
+    const supM2 = item.supplyAreaM2 ?? item.contractArea;
+    const supPy = item.supplyAreaPy;
+    if (exclM2 || exclPy) {
+      const exclStr = formatArea(exclM2, exclPy);
+      tableHTML += `<tr><td class="info-label">전용면적</td><td class="info-value">${exclStr}</td></tr>`;
+    }
+    if (supM2 || supPy) {
+      const supStr = formatArea(supM2, supPy);
+      tableHTML += `<tr><td class="info-label">분양면적</td><td class="info-value">${supStr}</td></tr>`;
+    }
+  } else {
+    const areaM2 = item.areaM2 ?? item.area;
+    const areaPy = item.areaPy;
+    if (areaM2 || areaPy) {
+      const areaStr = formatArea(areaM2, areaPy);
+      tableHTML += `<tr><td class="info-label">면적</td><td class="info-value">${areaStr}</td></tr>`;
+    }
+  }
+  // Append other info fields as before
   infoFields.forEach(f => {
     const val = item[f.key];
     if (!val && val !== 0) return;
     tableHTML += `<tr><td class="info-label">${f.label}</td><td class="info-value">${val}${f.suffix||''}</td></tr>`;
   });
-  if (!tableHTML && item.area) tableHTML = `<tr><td class="info-label">면적</td><td class="info-value">${item.area}㎡</td></tr>`;
   document.getElementById('modalInfoTable').innerHTML = tableHTML;
 
   const descEl = document.getElementById('modalDesc');
@@ -333,7 +369,7 @@ const setupMobileNav = () => {
   toggle.addEventListener('click', () => menu.classList.toggle('open'));
 };
 
-// ── 백그라운드 관리자 인증 대기 헬퍼 ──
+// ── 백그라운드 관리자 인증 대기 ──
 let adminAuthPromise = null;
 const waitForAdminAuth = () => {
   if (adminAuthPromise) return adminAuthPromise;
@@ -368,32 +404,27 @@ const requireAdminLogin = () => {
   const overlay = document.getElementById('loginOverlay');
   const mainEl  = document.getElementById('adminMain');
   if (!overlay || !mainEl) return true;
-  const ADMIN_PW = 'hitop2025'; // UI 호환용 레거시 패스워드 상수 보존
+  const ADMIN_PW = 'hitop2025';
   
-  // 백그라운드 Firebase Auth 세션 검사 및 sessionStorage 연동 감시 (진입 시 항상 즉시 실행)
   (async () => {
     try {
       const [{ onAuthStateChanged }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
       onAuthStateChanged(auth, (user) => {
         if (user && user.email === 'newpajucity@naver.com') {
-          // Auth 세션이 정상적이고 관리자 이메일인 경우
           const wasLoggedIn = sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
           sessionStorage.setItem('hitopAdminLoggedIn', 'true');
           overlay.classList.add('hidden');
           mainEl.classList.remove('hidden');
           
-          // 기존에 세션스토리지에 로그인 정보가 없었거나 비활성 상태였을 경우 리로드하여 전체 페이지 초기화
           if (!wasLoggedIn) {
             location.reload();
           }
         } else {
-          // Auth 세션이 없거나 비정상일 경우
           const wasLoggedIn = sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
           sessionStorage.removeItem('hitopAdminLoggedIn');
           overlay.classList.remove('hidden');
           mainEl.classList.add('hidden');
           
-          // 기존에 세션스토리지 로그인 처리가 되어 있었는데 만료된 경우 리로드하여 초기화
           if (wasLoggedIn) {
             location.reload();
           }
@@ -412,7 +443,6 @@ const requireAdminLogin = () => {
       const pw = loginPw.value;
       try {
         const [{ signInWithEmailAndPassword }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
-        // Firebase Auth 로그인 처리 (관리자 이메일 고정)
         await signInWithEmailAndPassword(auth, 'newpajucity@naver.com', pw);
         sessionStorage.setItem('hitopAdminLoggedIn', 'true');
         location.reload();
@@ -467,11 +497,10 @@ const setupListingsPage = () => {
   const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '' };
   let sortMode = 'date';
   let allPage  = 1;
-  const ALL_SIZE = 15; // 5열 × 3행
+  const ALL_SIZE = 15;
   let filtered = [];
   let _listings = [];
 
-  // ── 카테고리 전체보기 오른쪽 패널 동적 치환 시스템 ──
   let defaultPanelHTML = '';
 
   const saveDefaultPanelHTML = () => {
@@ -485,7 +514,6 @@ const setupListingsPage = () => {
     const lpPanel = document.getElementById('lpPanel');
     if (lpPanel && defaultPanelHTML) {
       lpPanel.innerHTML = defaultPanelHTML;
-      // 카테고리 카드 액티브 스타일 초기화
       document.querySelectorAll('.cat-card').forEach(card => {
         card.classList.remove('active');
       });
@@ -584,27 +612,52 @@ const setupListingsPage = () => {
       else if (isOfficetel) imgSrc = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400';
       else if (isHouse) imgSrc = 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400';
 
+      // Helper to format area display with both ㎡ and 평, handling missing values
+      const formatArea = (m2, py) => {
+        let m2Val = m2 !== undefined && m2 !== null ? Number(m2).toFixed(2) : null;
+        let pyVal = py !== undefined && py !== null ? Number(py).toFixed(2) : null;
+        if (!m2Val && pyVal) m2Val = (pyVal * 3.305785).toFixed(2);
+        if (!pyVal && m2Val) pyVal = (m2Val / 3.305785).toFixed(2);
+        if (m2Val && pyVal) return `${m2Val}㎡ / ${pyVal}평`;
+        return m2Val ? `${m2Val}㎡` : pyVal ? `${pyVal}평` : '';
+      };
+
       let areaHighlightHTML = '';
       if (isFactory) {
-        const areaVal = item.buildingArea || item.area || 250;
-        const landVal = item.landArea || 1200;
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">창고</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· 대지 ${landVal}㎡</span>`;
+        const m2 = item.areaM2 ?? item.area;
+        const py = item.areaPy;
+        const areaStr = formatArea(m2, py);
+        const landM2 = item.landArea;
+        const landStr = landM2 ? `${landM2}㎡` : '';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">면적</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
       } else if (isStore) {
-        const areaVal = item.exclusiveArea || item.area || 40;
-        const extraVal = item.floor || '1층 상가';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+        const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
+        const exclPy = item.exclusiveAreaPy;
+        const supM2 = item.supplyAreaM2 ?? item.contractArea;
+        const supPy = item.supplyAreaPy;
+        const exclStr = formatArea(exclM2, exclPy);
+        const supStr = formatArea(supM2, supPy);
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${exclStr}</strong>` + (supStr ? `· <span class="lp-area-lbl">분양</span> <strong class="lp-area-val">${supStr}</strong>` : '') + `</span>`;
       } else if (isLand) {
-        const areaVal = item.landArea || item.area || 450;
+        const m2 = item.landArea;
+        const py = m2 ? (m2 / 3.305785).toFixed(2) : null;
+        const areaStr = formatArea(m2, py);
         const extraVal = item.zoningArea || '계획관리';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">대지</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">대지</span> <strong class="lp-area-val">${areaStr}</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
       } else if (isOfficetel) {
-        const areaVal = item.exclusiveArea || item.area || 18;
+        const m2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
+        const py = item.exclusiveAreaPy;
+        const areaStr = formatArea(m2, py);
         const extraVal = item.floor || '고층';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaStr}</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
       } else if (isHouse) {
-        const areaVal = item.buildingArea || item.area || 45;
-        const landVal = item.landArea || 150;
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaVal}평</strong></span> <span class="lp-area-extra">· 대지 ${landVal}평</span>`;
+        const m2 = item.buildingArea || item.area;
+        const py = item.areaPy;
+        const areaStr = formatArea(m2, py);
+        const landM2 = item.landArea;
+        const landStr = landM2 ? `${landM2}㎡` : '';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
+      }
       }
 
       const cardThemeClass = isFactory ? 'factory-card' : 'store-card';
@@ -1092,6 +1145,62 @@ const setupAdminDashboard = () => {
 
   // ── 필터 적용 ──
   const applyFilters = () => {
+    const ptEl = form.elements['propertyType'];
+    if (ptEl) {
+      // Toggle area fields based on selected property type
+      const toggleAreaFields = () => {
+        const isStore = ptEl.value === '상가';
+        const generalRow = document.querySelector('.area-general');
+        const storeRow = document.querySelector('.area-store');
+        if (generalRow) generalRow.classList.toggle('hidden', isStore);
+        if (storeRow) storeRow.classList.toggle('hidden', !isStore);
+      };
+      // Initial toggle
+      toggleAreaFields();
+      // Listen for changes to property type
+      ptEl.addEventListener('change', () => {
+        if (!isEditMode) {
+          const sel = ptEl.value; form.reset(); form.elements['id'].value=''; ptEl.value=sel;
+          resetImageFields();
+          const py=document.getElementById('areaPyeong'); if(py)py.textContent='';
+          const ko=document.getElementById('priceKorean'); if(ko)ko.textContent='';
+        }
+        updateListingNo();
+        toggleAreaFields();
+      });
+      // Auto‑calc for general area (㎡ ↔ 평)
+      const areaM2El = form.elements['areaM2'];
+      const areaPyEl = form.elements['areaPy'];
+      if (areaM2El && areaPyEl) {
+        areaM2El.addEventListener('input', () => {
+          if (areaM2El.value) areaPyEl.value = m2ToPy(areaM2El.value);
+        });
+        areaPyEl.addEventListener('input', () => {
+          if (areaPyEl.value) areaM2El.value = pyToM2(areaPyEl.value);
+        });
+      }
+      // Auto‑calc for store areas (전용 면적, 분양 면적)
+      const exclusiveM2El = form.elements['exclusiveAreaM2'];
+      const exclusivePyEl = form.elements['exclusiveAreaPy'];
+      if (exclusiveM2El && exclusivePyEl) {
+        exclusiveM2El.addEventListener('input', () => {
+          if (exclusiveM2El.value) exclusivePyEl.value = m2ToPy(exclusiveM2El.value);
+        });
+        exclusivePyEl.addEventListener('input', () => {
+          if (exclusivePyEl.value) exclusiveM2El.value = pyToM2(exclusivePyEl.value);
+        });
+      }
+      const supplyM2El = form.elements['supplyAreaM2'];
+      const supplyPyEl = form.elements['supplyAreaPy'];
+      if (supplyM2El && supplyPyEl) {
+        supplyM2El.addEventListener('input', () => {
+          if (supplyM2El.value) supplyPyEl.value = m2ToPy(supplyM2El.value);
+        });
+        supplyPyEl.addEventListener('input', () => {
+          if (supplyPyEl.value) supplyM2El.value = pyToM2(supplyPyEl.value);
+        });
+      }
+    }();
     let listings = [..._allListings];
     if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
     if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
@@ -1230,8 +1339,7 @@ const setupAdminRegister = () => {
     });
   }
 
-  const areaEl  = form.elements['area'];
-  if (areaEl)  areaEl.addEventListener('input',  () => { const el=document.getElementById('areaPyeong'); if(el)el.textContent=toPyeong(areaEl.value); });
+
   const priceEl = form.elements['price'];
   if (priceEl) priceEl.addEventListener('input', () => { const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value); });
 
@@ -1257,9 +1365,16 @@ const setupAdminRegister = () => {
           if (el.type === 'checkbox') {
             el.checked = value === true || value === 'true';
           } else {
-            el.value = value ?? '';
+            // Ensure numeric fields are represented as strings for inputs
+            el.value = (value !== null && value !== undefined) ? value : '';
           }
         });
+        // Show correct area UI based on property type
+        const ptEl = form.elements['propertyType'];
+        if (ptEl) {
+          const event = new Event('change');
+          ptEl.dispatchEvent(event);
+        }
         syncFlagStyle(chkRec, lblRec);
         syncFlagStyle(chkUrg, lblUrg);
 
@@ -1293,9 +1408,28 @@ const setupAdminRegister = () => {
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
       .map(el => el.value.trim()).filter(v => v);
     payload.price = Number(payload.price);
-    payload.area  = Number(payload.area);
+    // Convert numeric area fields
+    if (payload.areaM2) payload.areaM2 = Number(payload.areaM2);
+    if (payload.areaPy) payload.areaPy = Number(payload.areaPy);
+    if (payload.exclusiveAreaM2) payload.exclusiveAreaM2 = Number(payload.exclusiveAreaM2);
+    if (payload.exclusiveAreaPy) payload.exclusiveAreaPy = Number(payload.exclusiveAreaPy);
+    if (payload.supplyAreaM2) payload.supplyAreaM2 = Number(payload.supplyAreaM2);
+    if (payload.supplyAreaPy) payload.supplyAreaPy = Number(payload.supplyAreaPy);
+    // Auto‑calculate missing counterparts
+    if (payload.areaM2 && !payload.areaPy) payload.areaPy = Number(m2ToPy(payload.areaM2));
+    if (payload.areaPy && !payload.areaM2) payload.areaM2 = Number(pyToM2(payload.areaPy));
+    if (payload.exclusiveAreaM2 && !payload.exclusiveAreaPy) payload.exclusiveAreaPy = Number(m2ToPy(payload.exclusiveAreaM2));
+    if (payload.exclusiveAreaPy && !payload.exclusiveAreaM2) payload.exclusiveAreaM2 = Number(pyToM2(payload.exclusiveAreaPy));
+    if (payload.supplyAreaM2 && !payload.supplyAreaPy) payload.supplyAreaPy = Number(m2ToPy(payload.supplyAreaM2));
+    if (payload.supplyAreaPy && !payload.supplyAreaM2) payload.supplyAreaM2 = Number(pyToM2(payload.supplyAreaPy));
+    // Legacy area handling for compatibility
+    if (payload.area) {
+      payload.area = Number(payload.area);
+    } else if (payload.areaM2) {
+      payload.area = Number(payload.areaM2);
+    }
     payload.isRecommended = chkRec?.checked === true;
-    payload.isUrgent      = chkUrg?.checked === true;
+    payload.isUrgent = chkUrg?.checked === true;
 
     if (payload.id) {
       // 수정 — Firestore updateDoc
@@ -1379,7 +1513,7 @@ const setupAdminListingsMgmt = () => {
               <span class="admin-item-date">등록 ${(item.createdAt||'').slice(0,10)||'-'}</span>
             </div>
             <p style="margin:4px 0;font-size:13px;">${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
-            <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.area}㎡</p>
+            <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.propertyType === '상가' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
             <div class="admin-item-actions">
               <a href="admin-register.html?edit=${item.id}" class="btn btn-outline">수정</a>
               <button class="btn btn-primary" data-action="delete" data-id="${item.id}" type="button">삭제</button>
