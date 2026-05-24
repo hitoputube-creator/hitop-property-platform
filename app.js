@@ -1349,6 +1349,26 @@ const setupAdminRegister = () => {
   const priceEl = form.elements['price'];
   if (priceEl) priceEl.addEventListener('input', () => { const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value); });
 
+  // ── 면적 양방향 자동 변환 (㎡ ↔ 평) ──
+  const _areaM2El = form.elements['areaM2'];
+  const _areaPyEl = form.elements['areaPy'];
+  if (_areaM2El && _areaPyEl) {
+    _areaM2El.addEventListener('input', () => { if (_areaM2El.value) _areaPyEl.value = m2ToPy(_areaM2El.value); });
+    _areaPyEl.addEventListener('input', () => { if (_areaPyEl.value) _areaM2El.value = pyToM2(_areaPyEl.value); });
+  }
+  const _exclM2El = form.elements['exclusiveAreaM2'];
+  const _exclPyEl = form.elements['exclusiveAreaPy'];
+  if (_exclM2El && _exclPyEl) {
+    _exclM2El.addEventListener('input', () => { if (_exclM2El.value) _exclPyEl.value = m2ToPy(_exclM2El.value); });
+    _exclPyEl.addEventListener('input', () => { if (_exclPyEl.value) _exclM2El.value = pyToM2(_exclPyEl.value); });
+  }
+  const _supM2El = form.elements['supplyAreaM2'];
+  const _supPyEl = form.elements['supplyAreaPy'];
+  if (_supM2El && _supPyEl) {
+    _supM2El.addEventListener('input', () => { if (_supM2El.value) _supPyEl.value = m2ToPy(_supM2El.value); });
+    _supPyEl.addEventListener('input', () => { if (_supPyEl.value) _supM2El.value = pyToM2(_supPyEl.value); });
+  }
+
   const editId = new URLSearchParams(window.location.search).get('edit');
   const prefillId = new URLSearchParams(window.location.search).get('prefill');
   const sourceParam = new URLSearchParams(window.location.search).get('source');
