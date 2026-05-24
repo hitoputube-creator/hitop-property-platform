@@ -1350,13 +1350,14 @@ const setupAdminListingsMgmt = () => {
   const paginationEl = document.getElementById('pagination');
   if (!listEl) return;
   const PAGE_SIZE=10; let currentPage=1, sortMode='date', filtered=[];
+  let _allListings = [];
 
   const applyFilters = () => {
     const search   = (document.getElementById('searchInput')?.value||'').toLowerCase();
     const category = document.getElementById('filterCategory')?.value||'';
     const dealType = document.getElementById('filterDealType')?.value||'';
     const status   = document.getElementById('filterStatus')?.value||'';
-    let listings = readListings();
+    let listings = [..._allListings];
     if (search)   listings=listings.filter(i=>i.title.toLowerCase().includes(search)||i.address.toLowerCase().includes(search)||(i.displayAddress||'').toLowerCase().includes(search));
     if (category) listings=listings.filter(i=>i.propertyType===category);
     if (dealType) listings=listings.filter(i=>i.dealType===dealType);
@@ -1418,7 +1419,18 @@ const setupAdminListingsMgmt = () => {
       applyFilters();
     }
   });
-  applyFilters();
+
+  (async () => {
+    listEl.innerHTML = '<p style="padding:24px;color:#6B7280;">매물 목록을 불러오는 중...</p>';
+    try {
+      _allListings = await readListingsFromFirestore();
+    } catch (err) {
+      console.error('Firestore 매물 조회 오류:', err);
+      listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">매물 정보를 불러오지 못했습니다.</p>';
+      return;
+    }
+    applyFilters();
+  })();
 };
 
 // ─────────────────────────────────────────────
