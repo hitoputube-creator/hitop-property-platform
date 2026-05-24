@@ -141,6 +141,7 @@ const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.strin
 // ── Firestore 매물 CRUD 헬퍼 (2단계 — 호출부는 아직 미연결) ──
 const _fsListings = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
 const _fsCfg      = () => import('./firebase-config.js');
+const _fsAuth     = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
 function normalizeFirestoreListing(docSnap) {
   const d = docSnap.data();
@@ -337,25 +338,82 @@ const requireAdminLogin = () => {
   const overlay = document.getElementById('loginOverlay');
   const mainEl  = document.getElementById('adminMain');
   if (!overlay || !mainEl) return true;
-  const ADMIN_PW = 'hitop2025';
+  const ADMIN_PW = 'hitop2025'; // UI 호환용 레거시 패스워드 상수 보존
+  
+  // 백그라운드 Firebase Auth 세션 검사 및 sessionStorage 연동 감시 (진입 시 항상 즉시 실행)
+  (async () => {
+    try {
+      const [{ onAuthStateChanged }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
+      onAuthStateChanged(auth, (user) => {
+        if (user && user.email === 'newpajucity@naver.com') {
+          // Auth 세션이 정상적이고 관리자 이메일인 경우
+          const wasLoggedIn = sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
+          sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+          overlay.classList.add('hidden');
+          mainEl.classList.remove('hidden');
+          
+          // 기존에 세션스토리지에 로그인 정보가 없었거나 비활성 상태였을 경우 리로드하여 전체 페이지 초기화
+          if (!wasLoggedIn) {
+            location.reload();
+          }
+        } else {
+          // Auth 세션이 없거나 비정상일 경우
+          const wasLoggedIn = sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
+          sessionStorage.removeItem('hitopAdminLoggedIn');
+          overlay.classList.remove('hidden');
+          mainEl.classList.add('hidden');
+          
+          // 기존에 세션스토리지 로그인 처리가 되어 있었는데 만료된 경우 리로드하여 초기화
+          if (wasLoggedIn) {
+            location.reload();
+          }
+        }
+      });
+    } catch (err) {
+      console.error('Auth 모니터링 초기화 실패:', err);
+    }
+  })();
+
   if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
     const loginBtn   = document.getElementById('loginBtn');
     const loginPw    = document.getElementById('loginPw');
     const loginError = document.getElementById('loginError');
-    const doLogin = () => {
-      if (loginPw.value === ADMIN_PW) { sessionStorage.setItem('hitopAdminLoggedIn','true'); location.reload(); }
-      else { loginError.classList.remove('hidden'); loginPw.value=''; loginPw.focus(); }
+    const doLogin = async () => {
+      const pw = loginPw.value;
+      try {
+        const [{ signInWithEmailAndPassword }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
+        // Firebase Auth 로그인 처리 (관리자 이메일 고정)
+        await signInWithEmailAndPassword(auth, 'newpajucity@naver.com', pw);
+        sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+        location.reload();
+      } catch (err) {
+        console.error('로그인 오류:', err);
+        loginError.classList.remove('hidden');
+        loginPw.value = '';
+        loginPw.focus();
+      }
     };
     loginBtn?.addEventListener('click', doLogin);
-    loginPw?.addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+    loginPw?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
     return false;
   }
+  
   overlay.classList.add('hidden');
   mainEl.classList.remove('hidden');
+
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.style.display = 'inline-flex';
-    logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('hitopAdminLoggedIn'); location.reload(); });
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        const [{ signOut }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
+        await signOut(auth);
+      } catch (err) {
+        console.error('로그아웃 중 오류:', err);
+      }
+      sessionStorage.removeItem('hitopAdminLoggedIn');
+      location.reload();
+    });
   }
   return true;
 };
