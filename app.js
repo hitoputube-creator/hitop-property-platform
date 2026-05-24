@@ -744,6 +744,8 @@ const setupListingsPage = () => {
           ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
           ${done ? '<div class="lp-all-sold">거래완료</div>' : ''}
           <span class="lp-all-cat-tag">${label}</span>
+          ${isRec(item) ? '<span style="position:absolute;top:6px;right:6px;background:#C9A84C;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">⭐ 추천</span>' : ''}
+          ${item.isUrgent===true ? '<span style="position:absolute;bottom:6px;right:6px;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">🔥 급매</span>' : ''}
         </div>
         <div class="lp-all-body">
           <span class="lp-deal-pill ${dc}">${item.dealType}</span>
