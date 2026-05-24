@@ -197,85 +197,24 @@
       <div class="container">
 
         <!-- 게시판 헤더 -->
-        <div class="board-header">
-          <div class="board-title-wrap">
-            <h1 class="board-title">상담문의 게시판</h1>
-            <p class="board-notice">
-              <span class="board-notice-lock">🔒</span>
-              상담 내용은 공개되지 않으며, 담당자 확인 후 개별 연락드립니다.
-            </p>
-          </div>
-          <a href="write-consult.html" class="board-write-btn">✏️ 상담문의 글쓰기</a>
+        <div class="board-header" style="flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; display: flex;">
+          <h1 class="board-title" style="font-size: 26px; color: #0A1F5C; margin-bottom: 8px;">🔒 상담문의 안내</h1>
+          <p class="board-notice" style="justify-content: center; font-size: 14px; color: #64748b;">
+            하이탑부동산은 고객님의 소중한 개인정보를 안전하게 보호합니다.
+          </p>
         </div>
 
-        <!-- 게시판 목록 -->
-        <div class="board-card">
-          <div class="board-table-wrap">
-            <table class="board-table">
-              <thead>
-                <tr>
-                  <th class="col-num">번호</th>
-                  <th class="col-type">상담유형</th>
-                  <th class="col-title">제목</th>
-                  <th class="col-author">작성자</th>
-                  <th class="col-date">등록일</th>
-                  <th class="col-status">상태</th>
-                </tr>
-              </thead>
-              <tbody id="boardTbody">
-                <tr>
-                  <td>5</td>
-                  <td><span class="type-badge">공장·창고</span></td>
-                  <td class="col-title">
-                    <span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 파주 탄현면 쪽 창고 임대 가능한 매물 문의드립니다</span>
-                  </td>
-                  <td>박*현</td>
-                  <td>2026.05.23</td>
-                  <td><span class="status-badge status-받침">접수완료</span></td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td><span class="type-badge">상가·빌딩</span></td>
-                  <td class="col-title">
-                    <span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 운정신도시 1층 상가 매매 상담 요청합니다</span>
-                  </td>
-                  <td>최*영</td>
-                  <td>2026.05.21</td>
-                  <td><span class="status-badge status-상담">상담중</span></td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td><span class="type-badge">토지·개발</span></td>
-                  <td class="col-title">
-                    <span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 개발 가능한 토지 매입 관련 문의드립니다</span>
-                  </td>
-                  <td>이*수</td>
-                  <td>2026.05.19</td>
-                  <td><span class="status-badge status-답변">답변완료</span></td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td><span class="type-badge">오피스텔</span></td>
-                  <td class="col-title">
-                    <span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 힐스테이트더운정 오피스텔 분양 관련 문의</span>
-                  </td>
-                  <td>김*희</td>
-                  <td>2026.05.16</td>
-                  <td><span class="status-badge status-답변">답변완료</span></td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td><span class="type-badge">매도·임대 의뢰</span></td>
-                  <td class="col-title">
-                    <span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 공장 건물 매도 의뢰 드리고 싶습니다</span>
-                  </td>
-                  <td>홍*동</td>
-                  <td>2026.05.13</td>
-                  <td><span class="status-badge status-답변">답변완료</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <!-- 안내 카드 -->
+        <div class="board-card" style="padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 24px; max-width: 640px; margin: 0 auto;">
+          <div style="font-size: 64px; margin-bottom: 8px; filter: drop-shadow(0 4px 10px rgba(10,31,92,0.1));">🛡️</div>
+          <h2 style="font-size: 20px; font-weight: 700; color: #0A1F5C; margin: 0;">상담문의 개인정보 보호 안내</h2>
+          <p style="font-size: 14px; line-height: 1.8; color: #475569; margin: 0; max-width: 500px; text-align: center;">
+            상담문의 내용은 개인정보 보호와 스팸 노출 예방을 위해 <strong>공개 목록으로 제공하지 않습니다.</strong><br>
+            아래 문의 작성 버튼을 클릭해 문의를 남겨주시면, 담당 중개사가 신속하게 확인한 후 <strong>개별적으로 연락</strong>을 드리겠습니다.
+          </p>
+          <a href="write-consult.html" class="board-write-btn" style="padding: 13px 36px; font-size: 15px; border-radius: 30px; box-shadow: 0 4px 15px rgba(10,31,92,0.15); transition: all 0.2s; font-weight: 700;">
+            ✏️ 상담문의 작성하기
+          </a>
         </div>
 
       </div>
@@ -307,62 +246,5 @@
     </footer>
 
     <script src="app.js?v=20260521"></script>
-    <script type="module">
-      import { db, COLLECTION } from "./firebase-config.js";
-      import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-      function maskName(n) {
-        if (!n) return '';
-        if (n.length === 1) return n;
-        if (n.length === 2) return n[0] + '*';
-        return n[0] + '*' + n[n.length - 1];
-      }
-      function statusClass(s) {
-        if (s === '접수완료') return 'status-받침';
-        if (s === '상담중')   return 'status-상담';
-        return 'status-답변';
-      }
-      function formatDate(ts) {
-        if (!ts) return '—';
-        try {
-          const d = ts.toDate();
-          return d.getFullYear() + '.' +
-            String(d.getMonth() + 1).padStart(2, '0') + '.' +
-            String(d.getDate()).padStart(2, '0');
-        } catch { return '—'; }
-      }
-
-      const tbody = document.getElementById('boardTbody');
-
-      (async () => {
-        try {
-          const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
-          const snap = await getDocs(q);
-          const docs = snap.docs;
-          if (!docs.length) return;
-
-          const total = 5 + docs.length;
-          const anchor = tbody.firstChild;
-
-          docs.forEach((doc, i) => {
-            const post = doc.data();
-            const tr = document.createElement('tr');
-            tr.innerHTML =
-              '<td>' + (total - i) + '</td>' +
-              '<td><span class="type-badge">' + post.type + '</span></td>' +
-              '<td class="col-title"><span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 ' + post.subject + '</span></td>' +
-              '<td>' + maskName(post.name) + '</td>' +
-              '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="status-badge ' + statusClass(post.status) + '">' + post.status + '</span></td>';
-            tbody.insertBefore(tr, anchor);
-          });
-        } catch (err) {
-          console.error('Firestore 목록 불러오기 오류:', err);
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td colspan="6" style="text-align:center;padding:20px;color:#e53e3e;">상담문의 목록을 불러오지 못했습니다.</td>';
-          tbody.insertBefore(tr, tbody.firstChild);
-        }
-      })();
-    </script>
   </body>
 </html>
