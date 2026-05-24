@@ -207,8 +207,15 @@
       const tbody   = document.getElementById('consultAdminTbody');
       const countEl = document.getElementById('consultCount');
 
-      if (sessionStorage.getItem('hitopAdminLoggedIn') === 'true') (async () => {
+      (async () => {
         try {
+          if (typeof window.waitForAdminAuth === 'function') {
+            const isAuthed = await window.waitForAdminAuth();
+            if (!isAuthed) return;
+          } else if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
+            return;
+          }
+
           const q    = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
           const snap = await getDocs(q);
           const docs = snap.docs;
@@ -254,6 +261,10 @@
               const prev      = post.status;
               const newStatus = select.value;
               try {
+                if (typeof window.waitForAdminAuth === 'function') {
+                  const isAuthed = await window.waitForAdminAuth();
+                  if (!isAuthed) { alert('관리자 권한이 없습니다.'); select.value = prev; return; }
+                }
                 await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
                 post.status = newStatus;
                 /* 상태 뱃지 동기화 */

@@ -333,6 +333,36 @@ const setupMobileNav = () => {
   toggle.addEventListener('click', () => menu.classList.toggle('open'));
 };
 
+// ── 백그라운드 관리자 인증 대기 헬퍼 ──
+let adminAuthPromise = null;
+const waitForAdminAuth = () => {
+  if (adminAuthPromise) return adminAuthPromise;
+  adminAuthPromise = new Promise(async (resolve) => {
+    try {
+      const [{ onAuthStateChanged }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
+      if (auth.currentUser) {
+        if (auth.currentUser.email === 'newpajucity@naver.com') {
+          resolve(true);
+          return;
+        }
+      }
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user && user.email === 'newpajucity@naver.com') {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    } catch (err) {
+      console.error('Auth 모니터링 오류:', err);
+      resolve(false);
+    }
+  });
+  return adminAuthPromise;
+};
+window.waitForAdminAuth = waitForAdminAuth;
+
 // ── 관리자 로그인 게이트 ──
 const requireAdminLogin = () => {
   const overlay = document.getElementById('loginOverlay');
@@ -1155,6 +1185,11 @@ const setupAdminDashboard = () => {
   (async () => {
     listEl.innerHTML = '<p style="padding:24px;color:#999;">대시보드 데이터를 불러오는 중...</p>';
     try {
+      const isAuthed = await waitForAdminAuth();
+      if (!isAuthed) {
+        listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">관리자 인증이 완료되지 않았습니다.</p>';
+        return;
+      }
       _allListings = await readListingsFromFirestore();
       applyFilters();
     } catch (err) {
@@ -1239,6 +1274,8 @@ const setupAdminRegister = () => {
   if (editId) {
     (async () => {
       try {
+        const isAuthed = await waitForAdminAuth();
+        if (!isAuthed) return;
         const [{ doc, getDoc }, { db, LISTINGS_COLLECTION }] = await Promise.all([_fsListings(), _fsCfg()]);
         const snap = await getDoc(doc(db, LISTINGS_COLLECTION, editId));
         if (!snap.exists()) { alert('매물을 찾을 수 없습니다.'); return; }
@@ -1303,6 +1340,8 @@ const setupAdminRegister = () => {
       delete payload.updatedAt;
       (async () => {
         try {
+          const isAuthed = await waitForAdminAuth();
+          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
           await updateListingInFirestore(docId, payload);
           window.location.href = 'admin-listings.html';
         } catch (err) {
@@ -1320,6 +1359,8 @@ const setupAdminRegister = () => {
       delete payload.updatedAt;
       (async () => {
         try {
+          const isAuthed = await waitForAdminAuth();
+          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
           await createListingInFirestore(payload);
           window.location.href = 'admin-listings.html';
         } catch (err) {
@@ -1406,6 +1447,8 @@ const setupAdminListingsMgmt = () => {
       if(!confirm('정말 삭제하시겠습니까?'))return;
       (async()=>{
         try {
+          const isAuthed = await waitForAdminAuth();
+          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
           await deleteListingFromFirestore(id);
           _allListings=_allListings.filter(i=>i.id!==id);
           applyFilters();
@@ -1419,6 +1462,8 @@ const setupAdminListingsMgmt = () => {
       const newStatus=(_allListings.find(i=>i.id===id)?.status==='done')?'':'done';
       (async()=>{
         try {
+          const isAuthed = await waitForAdminAuth();
+          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
           await updateListingInFirestore(id,{status:newStatus});
           _allListings=_allListings.map(i=>i.id===id?{...i,status:newStatus}:i);
           applyFilters();
@@ -1433,6 +1478,11 @@ const setupAdminListingsMgmt = () => {
   (async () => {
     listEl.innerHTML = '<p style="padding:24px;color:#6B7280;">매물 목록을 불러오는 중...</p>';
     try {
+      const isAuthed = await waitForAdminAuth();
+      if (!isAuthed) {
+        listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">관리자 인증이 완료되지 않았습니다.</p>';
+        return;
+      }
       _allListings = await readListingsFromFirestore();
     } catch (err) {
       console.error('Firestore 매물 조회 오류:', err);
