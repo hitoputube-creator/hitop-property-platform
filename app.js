@@ -447,9 +447,7 @@ const requireAdminLogin = () => {
         sessionStorage.setItem('hitopAdminLoggedIn', 'true');
         location.reload();
       } catch (err) {
-        console.error('Firebase login error code:', err?.code);
-        console.error('Firebase login error message:', err?.message);
-        console.error('Full Firebase login error:', err);
+        console.error('로그인 오류:', err);
         loginError.classList.remove('hidden');
         loginPw.value = '';
         loginPw.focus();
@@ -660,7 +658,6 @@ const setupListingsPage = () => {
         const landStr = landM2 ? `${landM2}㎡` : '';
         areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
       }
-      
 
       const cardThemeClass = isFactory ? 'factory-card' : 'store-card';
       const typeLabel = catNames[categoryKey] || categoryKey;
@@ -793,28 +790,14 @@ const setupListingsPage = () => {
   // ── 지도 초기화 (autoload=false 방식) ──
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
-    if (!mapEl) {
-      console.error('Map container with id="map" not found');
-      return;
-    }
-    if (!window.kakao || !window.kakao.maps) {
-      console.error('Kakao SDK not loaded');
-      return;
-    }
+    if (!mapEl || typeof kakao === 'undefined') return;
     kakao.maps.load(() => {
-      try {
-        mapEl.innerHTML = '';
-        map = new kakao.maps.Map(mapEl, {
-          center: new kakao.maps.LatLng(37.7512, 126.7820),
-          level: 7
-        });
-        applyFilters();
-      } catch (e) {
-        console.error('Map initialization failed:', e);
-        if (e && e.message && (e.message.includes('InvalidKey') || e.message.includes('RefererNotAllowedMapError'))) {
-          console.error('Kakao JavaScript Key 또는 등록 도메인 확인 필요');
-        }
-      }
+      mapEl.innerHTML = '';
+      map = new kakao.maps.Map(mapEl, {
+        center: new kakao.maps.LatLng(37.7512, 126.7820),
+        level: 7
+      });
+      applyFilters();
     });
   });
 
@@ -1216,7 +1199,7 @@ const setupAdminDashboard = () => {
           if (supplyPyEl.value) supplyM2El.value = pyToM2(supplyPyEl.value);
         });
       }
-
+    }
     let listings = [..._allListings];
     if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
     if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
