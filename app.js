@@ -1344,7 +1344,29 @@ const setupAdminRegister = () => {
 
   const editId = new URLSearchParams(window.location.search).get('edit');
   const prefillId = new URLSearchParams(window.location.search).get('prefill');
-  
+  const sourceParam = new URLSearchParams(window.location.search).get('source');
+
+  if (sourceParam === 'haitop') {
+    const raw = localStorage.getItem('hitopHomepagePrefill');
+    if (raw) {
+      try {
+        const data = JSON.parse(raw);
+        localStorage.removeItem('hitopHomepagePrefill');
+        const ptEl = form.elements['propertyType'];
+        if (ptEl && data.propertyType) {
+          ptEl.value = data.propertyType;
+          ptEl.dispatchEvent(new Event('change'));
+        }
+        const titleEl = form.elements['title'];
+        if (titleEl && data.title) titleEl.value = data.title;
+        const descEl = form.elements['description'];
+        if (descEl && data.description) descEl.value = data.description;
+        const fmTitleEl = document.getElementById('formTitle');
+        if (fmTitleEl) fmTitleEl.textContent = '홈페이지 매물 등록 (기존매물)';
+      } catch(err) { console.error('prefill 파싱 오류:', err); }
+    }
+  }
+
   if (editId || prefillId) {
     (async () => {
       try {
