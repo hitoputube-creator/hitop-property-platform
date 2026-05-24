@@ -5194,4 +5194,152 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 }
 
 
+/* ================================================================
+   consult.html 모바일 반응형 카드식 변환 패치 (max-width: 640px)
+   ================================================================ */
+@media (max-width: 640px) {
+  
+  /* 1. 테이블 기본 구조를 블록형으로 파격 개조 */
+  body[data-page="consult"] .board-table {
+    display: block !important;
+    min-width: 0 !important; /* 모바일 min-width 560px 제약 완전 무력화 */
+    border: none !important;
+  }
+
+  body[data-page="consult"] .board-table thead {
+    display: none !important; /* 테이블 머리말 완전 은닉 */
+  }
+
+  body[data-page="consult"] .board-table tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* 2. 각 행(tr)을 하나의 예쁜 카드 아이템 상자로 포장 */
+  body[data-page="consult"] .board-table tbody tr {
+    display: block !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 16px 16px 14px 16px !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+    box-shadow: 0 4px 10px rgba(10, 31, 92, 0.02) !important;
+    box-sizing: border-box !important;
+  }
+
+  body[data-page="consult"] .board-table tbody tr:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  body[data-page="consult"] .board-table tbody tr:hover {
+    background: #ffffff !important; /* 모버 아웃 시 색상 고정 */
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(10, 31, 92, 0.04) !important;
+  }
+
+  /* 3. 테이블 셀(td) 요소를 카드 내 정보 조각으로 재배치 */
+  body[data-page="consult"] .board-table td {
+    display: block !important;
+    width: auto !important;
+    padding: 0 !important;
+    text-align: left !important;
+    border-bottom: none !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ① 순서 번호: 모바일에서는 숨김 처리 */
+  body[data-page="consult"] .board-table td:nth-child(1) {
+    display: none !important;
+  }
+
+  /* ② 상담 유형: 카드의 우아한 왼쪽 상단 뱃지 배치 */
+  body[data-page="consult"] .board-table td:nth-child(2) {
+    display: inline-flex !important;
+    margin-bottom: 8px !important;
+  }
+  
+  body[data-page="consult"] .board-table td:nth-child(2) .type-badge {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  /* ⑥ 상태 뱃지: 카드의 절대적 오른쪽 상단 뱃지 배치 (겹침 완벽 차단) */
+  body[data-page="consult"] .board-table td:nth-child(6) {
+    position: absolute !important;
+    top: 14px !important;
+    right: 16px !important;
+    display: inline-flex !important;
+  }
+
+  body[data-page="consult"] .board-table td:nth-child(6) .status-badge {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+  }
+
+  /* ③ 상담 제목: 카드의 핵심 바디로 중심부에 강조 노출 */
+  body[data-page="consult"] .board-table td.col-title {
+    display: block !important;
+    margin-bottom: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  body[data-page="consult"] .board-table td.col-title span {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  /* ④ 작성자(Masked Name) 및 ⑤ 등록일: 카드 최하단의 메타 가이드 라인 병렬화 */
+  body[data-page="consult"] .board-table td:nth-child(4) {
+    display: inline-block !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+  }
+
+  /* 작성자와 등록일 사이에 예쁜 구분선(Dot) 삽입 기법 */
+  body[data-page="consult"] .board-table td:nth-child(4)::after {
+    content: "·" !important;
+    margin: 0 6px !important;
+    color: #cbd5e1 !important;
+    display: inline-block !important;
+    font-weight: normal !important;
+  }
+
+  body[data-page="consult"] .board-table td:nth-child(5) {
+    display: inline-block !important;
+    font-size: 12px !important;
+    color: #94a3b8 !important;
+  }
+
+  /* 4. 기타 게시판 모바일 헤더 요소 간 정렬 붕괴 완벽 패치 */
+  body[data-page="consult"] .board-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    margin-bottom: 20px !important;
+  }
+
+  body[data-page="consult"] .board-title-wrap {
+    text-align: left !important;
+  }
+
+  body[data-page="consult"] .board-write-btn {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important; /* 모바일에서는 글쓰기 버튼을 하단 풀 와이드로 제공해 터치 극대화 */
+    padding: 12px !important;
+    font-size: 14px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+
+
 
