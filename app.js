@@ -1433,9 +1433,21 @@ const setupAdminListingsMgmt = () => {
   listEl.addEventListener('click',e=>{
     const btn=e.target.closest('button[data-action]'); if(!btn)return;
     const {action,id}=btn.dataset;
-    const listings=readListings();
-    if (action==='delete') { if(!confirm('정말 삭제하시겠습니까?'))return; writeListings(listings.filter(i=>i.id!==id)); applyFilters(); }
+    if (action==='delete') {
+      if(!confirm('정말 삭제하시겠습니까?'))return;
+      (async()=>{
+        try {
+          await deleteListingFromFirestore(id);
+          _allListings=_allListings.filter(i=>i.id!==id);
+          applyFilters();
+        } catch(err) {
+          console.error('매물 삭제 오류:',err);
+          alert('매물 삭제 중 오류가 발생했습니다.');
+        }
+      })();
+    }
     if (action==='done') {
+      const listings=readListings();
       writeListings(listings.map(i=>i.id===id?{...i,status:i.status==='done'?'':'done',updatedAt:new Date().toISOString()}:i));
       applyFilters();
     }
