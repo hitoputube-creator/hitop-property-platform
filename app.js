@@ -1028,11 +1028,8 @@ const setupAdminDashboard = () => {
                 <div class="adm-item-title">${item.title}</div>
                 <div class="adm-item-info">${getDisplayAddress(item)} · ${formatPrice(price)}만원 · ${item.area || 0}㎡</div>
                 <div class="adm-item-actions">
-                  <button class="adm-btn${rec   ? ' adm-btn-rec-on' : ''}" data-action="rec"  data-id="${item.id}">⭐ 추천</button>
-                  <button class="adm-btn${isnew ? ' adm-btn-new-on' : ''}" data-action="new"  data-id="${item.id}">🔥 최신</button>
-                  <button class="adm-btn adm-btn-done${done ? ' done-active' : ''}" data-action="done" data-id="${item.id}">${done ? '완료취소' : '거래완료'}</button>
-                  <button class="adm-btn adm-btn-edit" data-action="edit" data-id="${item.id}">✏️ 수정</button>
-                  <button class="adm-btn adm-btn-del"  data-action="del"  data-id="${item.id}">🗑️ 삭제</button>
+                  <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
+                  <a href="admin-listings.html" class="adm-btn adm-btn-manage" style="text-decoration:none; background:#4a5568; color:#fff;">📂 관리</a>
                 </div>
               </div>
             </article>`;
@@ -1061,105 +1058,6 @@ const setupAdminDashboard = () => {
     const tc = document.getElementById('adminTotalCount');
     if (tc) tc.textContent = `총 ${listings.length}개`;
   };
-
-  // ── 액션 핸들러 ──
-  listEl.addEventListener('click', e => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, id } = btn.dataset;
-    const listings = readListings();
-
-    if (action === 'del') {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      writeListings(listings.filter(i => i.id !== id));
-      applyFilters();
-    }
-
-    if (action === 'done') {
-      const target = listings.find(i => i.id === id);
-      if (!target) return;
-      const nowDone = !isCompleted(target);
-      if (nowDone && !confirm('거래완료 처리하시겠습니까?')) return;
-      writeListings(listings.map(i => i.id === id
-        ? { ...i, is_completed: nowDone, status: nowDone ? 'done' : '', updatedAt: new Date().toISOString() }
-        : i));
-      applyFilters();
-    }
-
-    if (action === 'rec') {
-      const target = listings.find(i => i.id === id);
-      if (!target) return;
-      const nowRec = !isRec(target);
-      writeListings(listings.map(i => i.id === id
-        ? { ...i, is_recommended: nowRec, isRecommended: nowRec, updatedAt: new Date().toISOString() }
-        : i));
-      applyFilters();
-    }
-
-    if (action === 'new') {
-      const target = listings.find(i => i.id === id);
-      if (!target) return;
-      const nowNew = !isNew(target);
-      writeListings(listings.map(i => i.id === id
-        ? { ...i, is_new: nowNew, updatedAt: new Date().toISOString() }
-        : i));
-      applyFilters();
-    }
-
-    if (action === 'edit') {
-      const target = listings.find(i => i.id === id);
-      if (target) openEditModal(target);
-    }
-  });
-
-  // ── 수정 모달 ──
-  const editModal = document.getElementById('editModal');
-
-  const openEditModal = (item) => {
-    document.getElementById('editId').value        = item.id;
-    document.getElementById('editTitle').value     = item.title || '';
-    document.getElementById('editType').value      = item.propertyType || '공장창고';
-    document.getElementById('editDeal').value      = item.dealType || '매매';
-    document.getElementById('editPrice').value     = item.price || item.salePrice || item.deposit || '';
-    document.getElementById('editArea').value      = item.area || item.landArea || '';
-    document.getElementById('editAddress').value   = item.displayAddress || item.address || '';
-    document.getElementById('editDesc').value      = item.description || '';
-    document.getElementById('editImageUrl').value  = (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
-    editModal?.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeEditModal = () => {
-    editModal?.classList.add('hidden');
-    document.body.style.overflow = '';
-  };
-
-  document.getElementById('editModalClose')?.addEventListener('click', closeEditModal);
-  document.getElementById('editCancelBtn')?.addEventListener('click', closeEditModal);
-  editModal?.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
-
-  document.getElementById('editForm')?.addEventListener('submit', e => {
-    e.preventDefault();
-    const id = document.getElementById('editId').value;
-    const listings = readListings();
-    const updates = {
-      title:        document.getElementById('editTitle').value,
-      propertyType: document.getElementById('editType').value,
-      dealType:     document.getElementById('editDeal').value,
-      displayAddress: document.getElementById('editAddress').value,
-      description:  document.getElementById('editDesc').value,
-      updatedAt:    new Date().toISOString(),
-    };
-    const priceVal = Number(document.getElementById('editPrice').value);
-    const areaVal  = Number(document.getElementById('editArea').value);
-    if (priceVal) updates.price = priceVal;
-    if (areaVal)  updates.area  = areaVal;
-    const imgUrl = document.getElementById('editImageUrl').value.trim();
-    if (imgUrl) updates.imageUrls = [imgUrl];
-    writeListings(listings.map(i => i.id === id ? { ...i, ...updates } : i));
-    closeEditModal();
-    applyFilters();
-  });
 
   // ── 검색·필터 이벤트 ──
   document.getElementById('adminSearchBtn')?.addEventListener('click', () => {
