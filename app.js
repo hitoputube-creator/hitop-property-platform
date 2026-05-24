@@ -1216,7 +1216,7 @@ const setupAdminDashboard = () => {
           if (supplyPyEl.value) supplyM2El.value = pyToM2(supplyPyEl.value);
         });
       }
-    }();
+    })();
     let listings = [..._allListings];
     if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
     if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
