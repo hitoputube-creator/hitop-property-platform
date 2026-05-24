@@ -660,7 +660,7 @@ const setupListingsPage = () => {
         const landStr = landM2 ? `${landM2}㎡` : '';
         areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
       }
-      }
+      
 
       const cardThemeClass = isFactory ? 'factory-card' : 'store-card';
       const typeLabel = catNames[categoryKey] || categoryKey;
