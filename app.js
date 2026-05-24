@@ -447,7 +447,9 @@ const requireAdminLogin = () => {
         sessionStorage.setItem('hitopAdminLoggedIn', 'true');
         location.reload();
       } catch (err) {
-        console.error('로그인 오류:', err);
+        console.error('Firebase login error code:', err?.code);
+        console.error('Firebase login error message:', err?.message);
+        console.error('Full Firebase login error:', err);
         loginError.classList.remove('hidden');
         loginPw.value = '';
         loginPw.focus();
@@ -791,14 +793,28 @@ const setupListingsPage = () => {
   // ── 지도 초기화 (autoload=false 방식) ──
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
-    if (!mapEl || typeof kakao === 'undefined') return;
+    if (!mapEl) {
+      console.error('Map container with id="map" not found');
+      return;
+    }
+    if (!window.kakao || !window.kakao.maps) {
+      console.error('Kakao SDK not loaded');
+      return;
+    }
     kakao.maps.load(() => {
-      mapEl.innerHTML = '';
-      map = new kakao.maps.Map(mapEl, {
-        center: new kakao.maps.LatLng(37.7512, 126.7820),
-        level: 7
-      });
-      applyFilters();
+      try {
+        mapEl.innerHTML = '';
+        map = new kakao.maps.Map(mapEl, {
+          center: new kakao.maps.LatLng(37.7512, 126.7820),
+          level: 7
+        });
+        applyFilters();
+      } catch (e) {
+        console.error('Map initialization failed:', e);
+        if (e && e.message && (e.message.includes('InvalidKey') || e.message.includes('RefererNotAllowedMapError'))) {
+          console.error('Kakao JavaScript Key 또는 등록 도메인 확인 필요');
+        }
+      }
     });
   });
 
