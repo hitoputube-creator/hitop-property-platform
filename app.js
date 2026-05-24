@@ -1344,34 +1344,46 @@ const setupAdminRegister = () => {
   if (priceEl) priceEl.addEventListener('input', () => { const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value); });
 
   const editId = new URLSearchParams(window.location.search).get('edit');
-  if (editId) {
+  const prefillId = new URLSearchParams(window.location.search).get('prefill');
+  
+  if (editId || prefillId) {
     (async () => {
       try {
         const isAuthed = await waitForAdminAuth();
         if (!isAuthed) return;
+        const targetId = editId || prefillId;
         const [{ doc, getDoc }, { db, LISTINGS_COLLECTION }] = await Promise.all([_fsListings(), _fsCfg()]);
-        const snap = await getDoc(doc(db, LISTINGS_COLLECTION, editId));
+        const snap = await getDoc(doc(db, LISTINGS_COLLECTION, targetId));
         if (!snap.exists()) { alert('매물을 찾을 수 없습니다.'); return; }
         const target = normalizeFirestoreListing(snap);
 
-        isEditMode = true;
-        const titleEl = document.getElementById('formTitle');
-        if (titleEl) titleEl.textContent = '매물 수정';
+        if (editId) {
+          isEditMode = true;
+          const titleEl = document.getElementById('formTitle');
+          if (titleEl) titleEl.textContent = '매물 수정';
+        } else if (prefillId) {
+          const titleEl = document.getElementById('formTitle');
+          if (titleEl) titleEl.textContent = '홈페이지 매물 등록';
+        }
 
         Object.entries(target).forEach(([key, value]) => {
-          if (key === 'imageUrls') return;
+          if (key === 'imageUrls' || (prefillId && key === 'id')) return;
           const el = form.elements[key];
           if (!el) return;
           if (el.type === 'checkbox') {
             el.checked = value === true || value === 'true';
           } else {
-            // Ensure numeric fields are represented as strings for inputs
             el.value = (value !== null && value !== undefined) ? value : '';
           }
         });
-        // Show correct area UI based on property type
+        
         const ptEl = form.elements['propertyType'];
-        if (ptEl) {
+        // Clear hidden id in prefill mode
+if (prefillId) {
+  const hiddenId = form.elements['id'];
+  if (hiddenId) hiddenId.value = '';
+}
+if (ptEl) {
           const event = new Event('change');
           ptEl.dispatchEvent(event);
         }
@@ -1383,14 +1395,18 @@ const setupAdminRegister = () => {
           ? target.imageUrls : (target.imageUrl ? [target.imageUrl] : []);
         urls.forEach((url) => addImageRow(url));
         if (!urls.length) addImageRow();
-        const noDisp = document.getElementById('listingNoDisplay');
-        if (noDisp) noDisp.textContent = target.listingNo || '-';
+        
+        if (editId) {
+          const noDisp = document.getElementById('listingNoDisplay');
+          if (noDisp) noDisp.textContent = target.listingNo || '-';
+          const cancelBtn = document.getElementById('cancelEditBtn');
+          if (cancelBtn) cancelBtn.classList.remove('hidden');
+        }
+        
         const pyEl = document.getElementById('areaPyeong');
         if (pyEl && target.area) pyEl.textContent = toPyeong(target.area);
         const koEl = document.getElementById('priceKorean');
         if (koEl && target.price) koEl.textContent = toKoreanPrice(target.price);
-        const cancelBtn = document.getElementById('cancelEditBtn');
-        if (cancelBtn) cancelBtn.classList.remove('hidden');
       } catch (err) {
         console.error('매물 조회 오류:', err);
         alert('매물을 불러오지 못했습니다.');
@@ -1516,6 +1532,7 @@ const setupAdminListingsMgmt = () => {
             <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.propertyType === '상가' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
             <div class="admin-item-actions">
               <a href="admin-register.html?edit=${item.id}" class="btn btn-outline">수정</a>
+              <button class="btn btn-primary" data-action="prefill" data-id="${item.id}" type="button">홈페이지로 보내기</button>
               <button class="btn btn-primary" data-action="delete" data-id="${item.id}" type="button">삭제</button>
               <button class="btn btn-outline done-btn${isDone?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${isDone?'완료취소':'거래완료'}</button>
             </div>
@@ -1556,6 +1573,10 @@ const setupAdminListingsMgmt = () => {
           alert('매물 삭제 중 오류가 발생했습니다.');
         }
       })();
+    }
+    if (action==='prefill') {
+      window.location.href = `admin-register.html?prefill=${id}`;
+      return;
     }
     if (action==='done') {
       const newStatus=(_allListings.find(i=>i.id===id)?.status==='done')?'':'done';
