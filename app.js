@@ -1351,7 +1351,6 @@ const setupAdminRegister = () => {
     if (raw) {
       try {
         const data = JSON.parse(raw);
-        localStorage.removeItem('hitopHomepagePrefill');
         const ptEl = form.elements['propertyType'];
         if (ptEl && data.propertyType) {
           ptEl.value = data.propertyType;
@@ -1363,6 +1362,23 @@ const setupAdminRegister = () => {
         if (descEl && data.description) descEl.value = data.description;
         const fmTitleEl = document.getElementById('formTitle');
         if (fmTitleEl) fmTitleEl.textContent = '홈페이지 매물 등록 (기존매물)';
+
+        if (descEl) {
+          const clearBtn = document.createElement('button');
+          clearBtn.type = 'button';
+          clearBtn.textContent = '가져온 메모 삭제';
+          clearBtn.className = 'btn btn-outline';
+          clearBtn.style.cssText = 'font-size:0.85rem;margin-top:4px;';
+          clearBtn.addEventListener('click', () => {
+            if (confirm('가져온 메모를 삭제하고 현재 메모 입력칸도 비울까요?')) {
+              localStorage.removeItem('hitopHomepagePrefill');
+              const d = form.elements['description'];
+              if (d) d.value = '';
+              clearBtn.remove();
+            }
+          });
+          descEl.insertAdjacentElement('afterend', clearBtn);
+        }
       } catch(err) { console.error('prefill 파싱 오류:', err); }
     }
   }
