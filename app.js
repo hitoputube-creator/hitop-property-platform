@@ -1013,44 +1013,7 @@ const setupListingsPage = () => {
 // index.html
 // ─────────────────────────────────────────────
 const setupHomePage = () => {
-  const recentEl      = document.getElementById('homeRecentListings');
-  const recommendedEl = document.getElementById('homeRecommendedListings');
-  if (!recentEl && !recommendedEl) return;
-
-  const cardHTML = item => `
-    <a class="home-listing-card" href="listings.html" title="${item.title}">
-      <div class="hlc-img">
-        ${getThumbnail(item) ? `<img src="${getThumbnail(item)}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
-        <span class="card-badge">${item.propertyType}</span>
-      </div>
-      <div class="hlc-body">
-        <div class="hlc-address">${getDisplayAddress(item)}</div>
-        <div class="hlc-title">${item.title}</div>
-        <div class="hlc-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</div>
-      </div>
-    </a>
-  `;
-
-  const renderSection = (el, items, emptyMsg) => {
-    if (!el) return;
-    el.innerHTML = items.length
-      ? items.map(cardHTML).join('')
-      : `<p style="color:#999;padding:16px 0;">${emptyMsg}</p>`;
-  };
-
-  (async () => {
-    try {
-      const all    = await readListingsFromFirestore();
-      const active = all.filter(i => i.status !== 'done');
-      renderSection(recommendedEl, active.filter(i => i.isRecommended === true).slice(0, 6), '등록된 추천매물이 없습니다.');
-      renderSection(recentEl,      active.slice(0, 6), '등록된 매물이 없습니다.');
-    } catch (err) {
-      console.error('Firestore 메인페이지 매물 조회 오류:', err);
-      [recommendedEl, recentEl].forEach(el => {
-        if (el) el.innerHTML = '<p style="color:#999;padding:16px 0;">매물 정보를 불러오지 못했습니다.</p>';
-      });
-    }
-  })();
+  // 메인페이지는 더 이상 추천/최신 매물 목록을 직접 조회 및 렌더링하지 않습니다.
 };
 
 // ─────────────────────────────────────────────
