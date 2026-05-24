@@ -137,6 +137,56 @@ const readListings  = () => {
   try { return JSON.parse(raw); } catch { return [...sampleListings]; }
 };
 const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+
+// ── Firestore 매물 CRUD 헬퍼 (2단계 — 호출부는 아직 미연결) ──
+const _fsListings = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+const _fsCfg      = () => import('./firebase-config.js');
+
+function normalizeFirestoreListing(docSnap) {
+  const d = docSnap.data();
+  return {
+    ...d,
+    id: docSnap.id,
+    createdAt: d.createdAt ? d.createdAt.toDate().toISOString() : null,
+    updatedAt: d.updatedAt ? d.updatedAt.toDate().toISOString() : null,
+  };
+}
+
+async function readListingsFromFirestore() {
+  const [{ collection, getDocs, query, orderBy }, { db, LISTINGS_COLLECTION }] =
+    await Promise.all([_fsListings(), _fsCfg()]);
+  const q    = query(collection(db, LISTINGS_COLLECTION), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map(normalizeFirestoreListing);
+}
+
+async function createListingInFirestore(listing) {
+  const [{ collection, addDoc, serverTimestamp }, { db, LISTINGS_COLLECTION }] =
+    await Promise.all([_fsListings(), _fsCfg()]);
+  const now = serverTimestamp();
+  const ref = await addDoc(collection(db, LISTINGS_COLLECTION), {
+    ...listing,
+    createdAt: now,
+    updatedAt: now,
+  });
+  return ref.id;
+}
+
+async function updateListingInFirestore(id, data) {
+  const [{ doc, updateDoc, serverTimestamp }, { db, LISTINGS_COLLECTION }] =
+    await Promise.all([_fsListings(), _fsCfg()]);
+  await updateDoc(doc(db, LISTINGS_COLLECTION, id), {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+async function deleteListingFromFirestore(id) {
+  const [{ doc, deleteDoc }, { db, LISTINGS_COLLECTION }] =
+    await Promise.all([_fsListings(), _fsCfg()]);
+  await deleteDoc(doc(db, LISTINGS_COLLECTION, id));
+}
+
 const formatPrice   = (n) => Number(n).toLocaleString('ko-KR');
 const getThumbnail  = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
 const getDisplayAddress = (item) => item.displayAddress || item.address;
@@ -331,6 +381,7 @@ const setupListingsPage = () => {
   let allPage  = 1;
   const ALL_SIZE = 15; // 5열 × 3행
   let filtered = [];
+  let _listings = [];
 
   // ── 카테고리 전체보기 오른쪽 패널 동적 치환 시스템 ──
   let defaultPanelHTML = '';
@@ -424,11 +475,8 @@ const setupListingsPage = () => {
       }
     });
 
-    // 실제 매물 데이터 조회 (나중에 실제 데이터 연동 시 이 영역을 교체하세요)
-    // -------------------------------------------------------------
-    const allListings = readListings();
+    const allListings = _listings;
     let categoryListings = allListings.filter(item => item.propertyType === categoryKey && item.status !== 'done');
-    // -------------------------------------------------------------
 
     // 데이터가 전혀 없을 경우 데모용 프리미엄 샘플 데이터 활용
     if (categoryListings.length === 0) {
@@ -561,7 +609,7 @@ const setupListingsPage = () => {
 
   // ── 카운트 업데이트 ──
   const updateCounts = () => {
-    const all = readListings();
+    const all = _listings;
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = `(${v})`; };
     set('cnt-all', all.length);
     ['공장창고','상가','토지','오피스텔','힐스테이트더운정','단독주택'].forEach(cat => {
@@ -647,7 +695,7 @@ const setupListingsPage = () => {
 
   // ── 오른쪽 패널: 추천 + 최신 미니카드 ──
   const renderSpecialPanels = () => {
-    const all  = readListings();
+    const all  = _listings;
     const recItems = all.filter(i => isRec(i) && !isCompleted(i)).slice(0, 3);
     const newItems = all.filter(i => isNew(i) && !isCompleted(i)).slice(0, 3);
 
@@ -674,7 +722,7 @@ const setupListingsPage = () => {
         : `<div class="lp-mini-empty">${label} 매물 없음</div>`;
       el.querySelectorAll('.lp-mini-card').forEach(card => {
         card.addEventListener('click', () => {
-          const found = readListings().find(x => x.id === card.dataset.id);
+          const found = _listings.find(x => x.id === card.dataset.id);
           if (found) openModalFull(found);
         });
       });
@@ -742,7 +790,7 @@ const setupListingsPage = () => {
   const applyFilters = () => {
     const effectiveCat  = flt.cat  || flt.formCat;
     const effectiveDeal = flt.deal || flt.formDeal;
-    let items = readListings();
+    let items = [..._listings];
     if (effectiveCat)  items = items.filter(i => i.propertyType === effectiveCat);
     if (effectiveDeal) items = items.filter(i => i.dealType === effectiveDeal);
     if (flt.kw)        items = items.filter(i =>
@@ -855,17 +903,20 @@ const setupListingsPage = () => {
 
   // 초기 렌더
   saveDefaultPanelHTML();
-  applyFilters();
-  if (typeof renderPreviewSections === 'function') {
-    renderPreviewSections();
-  }
 
-  // URL 카테고리 파라미터 자동 트리거
-  if (urlCat) {
-    setTimeout(() => {
-      renderCategoryPanel(urlCat);
-    }, 100);
-  }
+  (async () => {
+    const cardsEl = document.getElementById('listingCards');
+    if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 목록을 불러오는 중...</div>';
+    try {
+      _listings = await readListingsFromFirestore();
+    } catch (err) {
+      console.error('Firestore 매물 조회 오류:', err);
+      if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 정보를 불러오지 못했습니다.</div>';
+      return;
+    }
+    applyFilters();
+    if (urlCat) renderCategoryPanel(urlCat);
+  })();
 };
 
 // ─────────────────────────────────────────────
@@ -1245,21 +1296,30 @@ const setupAdminRegister = () => {
     payload.isRecommended = chkRec?.checked === true;
     payload.isUrgent      = chkUrg?.checked === true;
 
-    let listings = readListings();
     if (payload.id) {
+      // 수정 — localStorage 방식 유지
       payload.updatedAt = new Date().toISOString();
-      listings = listings.map(item => item.id===payload.id ? {...item,...payload} : item);
+      const listings = readListings().map(item => item.id===payload.id ? {...item,...payload} : item);
+      writeListings(listings);
+      window.location.href = 'admin-listings.html';
     } else {
-      payload.id        = `id_${Date.now()}`;
-      payload.createdAt = new Date().toISOString();
-      payload.updatedAt = new Date().toISOString();
+      // 신규 등록 — Firestore 저장
       if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
       if (!payload.property_number) payload.property_number = payload.listingNo;
       if (!payload.status) payload.status = '';
-      listings.unshift(payload);
+      delete payload.id;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      (async () => {
+        try {
+          await createListingInFirestore(payload);
+          window.location.href = 'admin-listings.html';
+        } catch (err) {
+          console.error('매물 등록 오류:', err);
+          alert('매물 등록 중 오류가 발생했습니다.');
+        }
+      })();
     }
-    writeListings(listings);
-    window.location.href = 'admin-listings.html';
   });
 };
 
