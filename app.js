@@ -1282,7 +1282,8 @@ const setupAdminRegister = () => {
   const imageContainer = document.getElementById('imageUrlContainer');
   const addImageBtn    = document.getElementById('addImageBtn');
   const MAX_IMAGES     = 5;
-  let isEditMode       = false;
+  let isEditMode           = false;
+  let importedLegacyDesc   = '';
 
   const addImageRow = (value='') => {
     if (!imageContainer) return;
@@ -1333,6 +1334,12 @@ const setupAdminRegister = () => {
         resetImageFields();
         const py=document.getElementById('areaPyeong'); if(py)py.textContent='';
         const ko=document.getElementById('priceKorean'); if(ko)ko.textContent='';
+        setTimeout(() => {
+          if (importedLegacyDesc) {
+            const d = form.elements['description'];
+            if (d && !d.value.trim()) d.value = importedLegacyDesc;
+          }
+        }, 0);
       }
       updateListingNo();
     });
@@ -1351,6 +1358,7 @@ const setupAdminRegister = () => {
     if (raw) {
       try {
         const data = JSON.parse(raw);
+        importedLegacyDesc = data.description || '';
         const ptEl = form.elements['propertyType'];
         if (ptEl && data.propertyType) {
           ptEl.value = data.propertyType;
@@ -1372,6 +1380,7 @@ const setupAdminRegister = () => {
           clearBtn.addEventListener('click', () => {
             if (confirm('가져온 메모를 삭제하고 현재 메모 입력칸도 비울까요?')) {
               localStorage.removeItem('hitopHomepagePrefill');
+              importedLegacyDesc = '';
               const d = form.elements['description'];
               if (d) d.value = '';
               clearBtn.remove();
