@@ -1268,36 +1268,48 @@ const setupAdminRegister = () => {
 
   const editId = new URLSearchParams(window.location.search).get('edit');
   if (editId) {
-    const target = readListings().find(item => item.id===editId);
-    if (target) {
-      isEditMode = true;
-      const titleEl = document.getElementById('formTitle');
-      if (titleEl) titleEl.textContent = '매물 수정';
+    (async () => {
+      try {
+        const [{ doc, getDoc }, { db, LISTINGS_COLLECTION }] = await Promise.all([_fsListings(), _fsCfg()]);
+        const snap = await getDoc(doc(db, LISTINGS_COLLECTION, editId));
+        if (!snap.exists()) { alert('매물을 찾을 수 없습니다.'); return; }
+        const target = normalizeFirestoreListing(snap);
 
-      Object.entries(target).forEach(([key, value]) => {
-        if (key === 'imageUrls') return;
-        const el = form.elements[key];
-        if (!el) return;
-        if (el.type === 'checkbox') {
-          el.checked = value === true || value === 'true';
-        } else {
-          el.value = value;
-        }
-      });
-      // 체크박스 라벨 스타일 동기화
-      syncFlagStyle(chkRec, lblRec);
-      syncFlagStyle(chkUrg, lblUrg);
+        isEditMode = true;
+        const titleEl = document.getElementById('formTitle');
+        if (titleEl) titleEl.textContent = '매물 수정';
 
-      imageContainer.innerHTML = '';
-      const urls = (target.imageUrls && target.imageUrls.length)
-        ? target.imageUrls : (target.imageUrl ? [target.imageUrl] : []);
-      urls.forEach((url) => addImageRow(url));
-      if (!urls.length) addImageRow();
-      const noDisp=document.getElementById('listingNoDisplay'); if(noDisp)noDisp.textContent=target.listingNo||'-';
-      const pyEl=document.getElementById('areaPyeong'); if(pyEl&&target.area)pyEl.textContent=toPyeong(target.area);
-      const koEl=document.getElementById('priceKorean'); if(koEl&&target.price)koEl.textContent=toKoreanPrice(target.price);
-      const cancelBtn=document.getElementById('cancelEditBtn'); if(cancelBtn)cancelBtn.classList.remove('hidden');
-    }
+        Object.entries(target).forEach(([key, value]) => {
+          if (key === 'imageUrls') return;
+          const el = form.elements[key];
+          if (!el) return;
+          if (el.type === 'checkbox') {
+            el.checked = value === true || value === 'true';
+          } else {
+            el.value = value ?? '';
+          }
+        });
+        syncFlagStyle(chkRec, lblRec);
+        syncFlagStyle(chkUrg, lblUrg);
+
+        imageContainer.innerHTML = '';
+        const urls = (target.imageUrls && target.imageUrls.length)
+          ? target.imageUrls : (target.imageUrl ? [target.imageUrl] : []);
+        urls.forEach((url) => addImageRow(url));
+        if (!urls.length) addImageRow();
+        const noDisp = document.getElementById('listingNoDisplay');
+        if (noDisp) noDisp.textContent = target.listingNo || '-';
+        const pyEl = document.getElementById('areaPyeong');
+        if (pyEl && target.area) pyEl.textContent = toPyeong(target.area);
+        const koEl = document.getElementById('priceKorean');
+        if (koEl && target.price) koEl.textContent = toKoreanPrice(target.price);
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        if (cancelBtn) cancelBtn.classList.remove('hidden');
+      } catch (err) {
+        console.error('매물 조회 오류:', err);
+        alert('매물을 불러오지 못했습니다.');
+      }
+    })();
   }
 
   document.getElementById('cancelEditBtn')?.addEventListener('click', () => { window.location.href='admin-listings.html'; });
@@ -1315,11 +1327,20 @@ const setupAdminRegister = () => {
     payload.isUrgent      = chkUrg?.checked === true;
 
     if (payload.id) {
-      // 수정 — localStorage 방식 유지
-      payload.updatedAt = new Date().toISOString();
-      const listings = readListings().map(item => item.id===payload.id ? {...item,...payload} : item);
-      writeListings(listings);
-      window.location.href = 'admin-listings.html';
+      // 수정 — Firestore updateDoc
+      const docId = payload.id;
+      delete payload.id;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      (async () => {
+        try {
+          await updateListingInFirestore(docId, payload);
+          window.location.href = 'admin-listings.html';
+        } catch (err) {
+          console.error('매물 수정 오류:', err);
+          alert('매물 수정 중 오류가 발생했습니다.');
+        }
+      })();
     } else {
       // 신규 등록 — Firestore 저장
       if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
