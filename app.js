@@ -977,6 +977,7 @@ const setupAdminDashboard = () => {
   let sortMode = 'date';
   let filterCat = '', filterDeal = '', filterKw = '';
   let filtered = [];
+  let _allListings = [];
 
   // ── 필드 헬퍼 (신·구 호환) ──
   const isCompleted = i => i.is_completed === true || i.status === 'done';
@@ -986,9 +987,10 @@ const setupAdminDashboard = () => {
 
   // ── 통계 업데이트 ──
   const updateStats = () => {
-    const all  = readListings();
+    const all  = _allListings;
     const done = all.filter(isCompleted).length;
     const rec  = all.filter(isRec).length;
+    const urgent = all.filter(i => i.isUrgent === true).length; // 급매물 수 계산 지원
     const set  = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('statTotal',       all.length);
     set('statPublic',      all.length - done);
@@ -1040,7 +1042,7 @@ const setupAdminDashboard = () => {
 
   // ── 필터 적용 ──
   const applyFilters = () => {
-    let listings = readListings();
+    let listings = [..._allListings];
     if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
     if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
     if (filterKw) {
@@ -1194,7 +1196,16 @@ const setupAdminDashboard = () => {
     applyFilters();
   });
 
-  applyFilters();
+  (async () => {
+    listEl.innerHTML = '<p style="padding:24px;color:#999;">대시보드 데이터를 불러오는 중...</p>';
+    try {
+      _allListings = await readListingsFromFirestore();
+      applyFilters();
+    } catch (err) {
+      console.error('Firestore 대시보드 매물 조회 오류:', err);
+      listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">대시보드 데이터를 불러오지 못했습니다.</p>';
+    }
+  })();
 };
 
 // ─────────────────────────────────────────────
