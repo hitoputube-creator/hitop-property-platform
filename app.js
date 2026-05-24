@@ -713,6 +713,8 @@ const setupListingsPage = () => {
     if (openIw) { openIw.close(); openIw = null; }
     const geocoder = new kakao.maps.services.Geocoder();
     items.slice(0, 30).forEach(item => {
+      // Skip completed listings and items without a valid address
+      if (isCompleted(item) || !item.address) return;
       geocoder.addressSearch(item.address, (result, status) => {
         if (status !== kakao.maps.services.Status.OK) return;
         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
