@@ -528,24 +528,29 @@
           </div>
         </div>
         <div class="modal-body">
+          <!-- 왼쪽: 이미지 + 매물정보 표 + 설명 -->
           <div class="modal-left">
             <div class="modal-main-img">
               <img id="modalMainImg" src="" alt="매물사진" />
             </div>
             <div class="modal-thumbs" id="modalThumbs"></div>
+            <div class="modal-info-section">
+              <h4 class="modal-section-title">📋 매물 정보</h4>
+              <table class="modal-info-table" id="modalInfoTable"></table>
+            </div>
             <div class="modal-desc-section">
-              <h4>매물 설명</h4>
+              <h4 class="modal-section-title">📝 매물 설명</h4>
               <div id="modalDesc" class="modal-desc"></div>
             </div>
           </div>
+          <!-- 오른쪽: 요약 카드 -->
           <div class="modal-right">
-            <div>
+            <div class="modal-summary">
               <span class="modal-badge" id="modalBadge"></span>
-              <h2 class="modal-title" id="modalTitle" style="margin-top:8px;"></h2>
+              <h2 class="modal-title" id="modalTitle"></h2>
               <p class="modal-address" id="modalAddress"></p>
             </div>
             <div class="modal-price-area" id="modalPriceArea"></div>
-            <table class="modal-info-table" id="modalInfoTable"></table>
             <div class="modal-contact">
               <a href="tel:031-949-8969" class="btn modal-tel">📞 문의전화 031-949-8969</a>
               <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="modal-kakao-btn">💬 카카오톡 문의</a>

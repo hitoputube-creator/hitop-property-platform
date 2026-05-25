@@ -412,7 +412,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-overlay.hidden { display: none; }
 
-.modal-box { background: #fff; border-radius: 14px; width: 100%; max-width: 1080px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-box { background: #fff; border-radius: 16px; width: 100%; max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
 
 .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #e5e9f0; background: #f6f8fb; flex-shrink: 0; }
 
@@ -424,7 +424,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-close:hover { background: #e5e9f0; }
 
-.modal-body { display: grid; grid-template-columns: 55% 45%; overflow: hidden; flex: 1; }
+.modal-body { display: grid; grid-template-columns: 1fr 380px; overflow: hidden; flex: 1; }
 
 .modal-left { border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; overflow-y: auto; }
 
@@ -444,9 +444,9 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-desc-section h4 { font-size: 15px; font-weight: 700; color: #12335a; margin: 0 0 10px; }
 
-.modal-desc { font-size: 15px; color: #374151; line-height: 2.0; }
+.modal-desc { font-size: 15px; color: #374151; line-height: 1.9; background: #f8fafc; padding: 14px 16px; border-radius: 8px; border: 1px solid #e2e8f0; }
 
-.modal-right { overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+.modal-right { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; background: #f8fafc; }
 
 .modal-badge { display: inline-flex; align-items: center; gap: 6px; background: none; color: #374151; font-size: 14px; font-weight: 600; padding: 0; border-radius: 0; margin-bottom: 6px; }
 
@@ -454,7 +454,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-address { font-size: 14px; color: #64748b; }
 
-.modal-price-area { display: flex; flex-direction: column; gap: 6px; }
+.modal-price-area { display: flex; flex-direction: column; gap: 2px; background: #fff; border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; }
 
 .modal-price-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
 
@@ -462,17 +462,17 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .price-label { font-size: 14px; color: #64748b; }
 
-.price-value { font-size: 21px; font-weight: 800; color: #1f8f63; }
+.price-value { font-size: 26px; font-weight: 800; color: #0a7c55; letter-spacing: -0.3px; }
 
-.modal-info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.modal-info-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
 
 .modal-info-table tr { border-bottom: 1px solid #f1f5f9; }
 
 .modal-info-table tr:last-child { border-bottom: none; }
 
-.info-label { padding: 9px 10px 9px 0; color: #64748b; width: 42%; vertical-align: top; }
+.info-label { padding: 10px 14px 10px 0; color: #64748b; width: 36%; vertical-align: top; font-size: 14px; white-space: nowrap; }
 
-.info-value { padding: 8px 0; color: #1e293b; font-weight: 500; }
+.info-value { padding: 10px 0; color: #1e293b; font-weight: 600; font-size: 14.5px; }
 
 .modal-contact { display: flex; flex-direction: column; gap: 8px; }
 
@@ -480,9 +480,15 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; padding: 14px; font-size: 15px; text-decoration: none; display: flex; align-items: center; border-radius: 10px; font-weight: 700; }
 
-.modal-agent { background: #f6f8fb; border-radius: 10px; padding: 14px; font-size: 13px; color: #64748b; display: flex; flex-direction: column; gap: 4px; }
+.modal-agent { background: #fff; border-radius: 10px; padding: 14px; font-size: 13px; color: #64748b; display: flex; flex-direction: column; gap: 4px; border: 1px solid #e2e8f0; }
 
 .modal-agent strong { color: #12335a; font-size: 14px; }
+
+.modal-summary { display: flex; flex-direction: column; gap: 6px; }
+
+.modal-info-section { padding: 20px; border-top: 1px solid #e5e9f0; }
+
+.modal-section-title { font-size: 15px; font-weight: 700; color: #12335a; margin: 0 0 12px; }
 
 /* ===== 라이트박스 ===== */
 
