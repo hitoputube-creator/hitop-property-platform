@@ -19,8 +19,8 @@ const PROPERTY_FIELDS = {
   '상가': {
     dealTypes: ['매매','임대'],
     priceConfig: {
-      '매매': [{key:'salePrice',label:'매매가',money:true}],
-      '임대': [{key:'deposit',label:'보증금',money:true},{key:'monthlyRent',label:'월세',money:true},{key:'managementFee',label:'관리비'}]
+      '매매': [{key:'salePrice',label:'매매가',money:true},{key:'presalePrice',label:'분양가',money:true},{key:'premium',label:'권리금'}],
+      '임대': [{key:'deposit',label:'보증금',money:true},{key:'monthlyRent',label:'월세',money:true},{key:'premium',label:'권리금'},{key:'managementFee',label:'관리비'}]
     },
     infoFields: [
       {key:'contractArea',label:'계약면적',suffix:'㎡'},{key:'exclusiveArea',label:'전용면적',suffix:'㎡'},
@@ -63,7 +63,7 @@ const PROPERTY_FIELDS = {
   '힐스테이트더운정': {
     dealTypes: ['매매','전세','월세'],
     priceConfig: {
-      '매매': [{key:'salePrice',label:'매매가',money:true}],
+      '매매': [{key:'salePrice',label:'매매가',money:true},{key:'presalePrice',label:'분양가',money:true}],
       '전세': [{key:'deposit',label:'보증금',money:true}],
       '월세': [{key:'deposit',label:'보증금',money:true},{key:'monthlyRent',label:'월세',money:true},{key:'managementFee',label:'관리비'}]
     },
@@ -273,13 +273,18 @@ const openModal = (item) => {
   document.getElementById('modalBadge').textContent = `${item.propertyType} | ${item.dealType}`;
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
 
+  const renderPriceVal = (f, val) => {
+    if (!f.money) return val;
+    const n = Number(String(val).replace(/,/g, ''));
+    return isNaN(n) ? String(val) : n.toLocaleString('ko-KR') + '만원';
+  };
   let priceHTML = '';
   priceFields.forEach(f => {
     const val = item[f.key];
     if (!val && val !== 0) return;
     priceHTML += `<div class="modal-price-row">
       <span class="price-label">${f.label}</span>
-      <strong class="price-value">${f.money ? formatPrice(val)+'만원' : val}</strong>
+      <strong class="price-value">${renderPriceVal(f, val)}</strong>
     </div>`;
   });
   if (!priceHTML && item.price) {
@@ -1475,6 +1480,13 @@ if (ptEl) {
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
       .map(el => el.value.trim()).filter(v => v);
     payload.price = Number(payload.price);
+    // 가격 필드: 순수 숫자(콤마 포함)이면 Number로 변환, 텍스트("12억 5,000만")는 문자열 유지, 빈값 제거
+    ['salePrice', 'deposit', 'monthlyRent', 'presalePrice'].forEach(k => {
+      if (payload[k] === '' || payload[k] === undefined) { delete payload[k]; return; }
+      const n = Number(String(payload[k]).replace(/,/g, ''));
+      if (!isNaN(n)) payload[k] = n;
+    });
+    if (payload.premium === '' || payload.premium === undefined) delete payload.premium;
     // Convert numeric area fields
     if (payload.areaM2) payload.areaM2 = Number(payload.areaM2);
     if (payload.areaPy) payload.areaPy = Number(payload.areaPy);
