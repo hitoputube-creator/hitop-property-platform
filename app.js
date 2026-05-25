@@ -734,13 +734,23 @@ const setupListingsPage = () => {
 
 
       const typeLabel = catNames[categoryKey] || categoryKey;
-      const ribbonText = item.ribbon || '추천매물';
+      
+      let ribbonHTML = '';
+      let ribbonText = '';
+      if (item.stickers && Array.isArray(item.stickers) && item.stickers.length > 0) {
+        ribbonText = item.stickers[0];
+      } else if (item.ribbon) {
+        ribbonText = item.ribbon;
+      }
+      if (ribbonText) {
+        ribbonHTML = `<div class="lp-rec-ribbon">${ribbonText}</div>`;
+      }
 
       return `
         <div class="lp-rec-card ${cardThemeClass}" data-id="${item.id || ''}" style="cursor: pointer;">
           <div class="lp-rec-img-wrap">
             <img src="${imgSrc}" alt="${typeLabel}" class="lp-rec-img" />
-            <div class="lp-rec-ribbon">${ribbonText}</div>
+            ${ribbonHTML}
           </div>
           <div class="lp-rec-body">
             <div class="lp-rec-row lp-rec-row-top">
@@ -1452,7 +1462,7 @@ const setupAdminRegister = () => {
         }
 
         Object.entries(target).forEach(([key, value]) => {
-          if (key === 'imageUrls' || (prefillId && key === 'id')) return;
+          if (key === 'imageUrls' || (prefillId && key === 'id') || key === 'stickers') return;
           const el = form.elements[key];
           if (!el) return;
           if (el.type === 'checkbox') {
@@ -1461,6 +1471,15 @@ const setupAdminRegister = () => {
             el.value = (value !== null && value !== undefined) ? value : '';
           }
         });
+
+        // stickers 체크박스 상태 초기화 및 설정
+        form.querySelectorAll('input[name="stickers"]').forEach(el => el.checked = false);
+        if (target.stickers && Array.isArray(target.stickers)) {
+          target.stickers.forEach(sticker => {
+            const chk = form.querySelector(`input[name="stickers"][value="${sticker}"]`);
+            if (chk) chk.checked = true;
+          });
+        }
         
         const ptEl = form.elements['propertyType'];
         // Clear hidden id in prefill mode
@@ -1538,6 +1557,7 @@ if (ptEl) {
     }
     payload.isRecommended = chkRec?.checked === true;
     payload.isUrgent = chkUrg?.checked === true;
+    payload.stickers = Array.from(form.querySelectorAll('input[name="stickers"]:checked')).map(el => el.value);
 
     if (payload.id) {
       // 수정 — Firestore updateDoc

@@ -107,6 +107,37 @@
             </label>
           </div>
 
+          <!-- 홍보스티커 선택 영역 (여러 개 선택 가능) -->
+          <div style="margin-top:16px; margin-bottom:16px;">
+            <label style="display:block; font-size:13px; font-weight:bold; color:var(--gray-800); margin-bottom:8px;">📌 홍보스티커 (중복 선택 가능)</label>
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background:#f9f9f9; padding:12px; border-radius:6px; border:1px solid #e5e7eb;">
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="추천매물" /> 추천매물
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="급매물" /> 급매물
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="즉시입주" /> 즉시입주
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="역세권" /> 역세권
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="도로변" /> 도로변
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="단독공장" /> 단독공장
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="수익형" /> 수익형
+              </label>
+              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+                <input type="checkbox" name="stickers" value="권리금없음" /> 권리금없음
+              </label>
+            </div>
+          </div>
+
           <textarea name="description" rows="4" placeholder="특이사항 / 메모" required></textarea>
 
           <div id="imageUrlContainer"></div>
