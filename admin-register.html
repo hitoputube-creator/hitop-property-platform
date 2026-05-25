@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>하이탑부동산 | 매물 등록</title>
     <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="admin-register">
     <header class="site-header">
@@ -51,6 +52,8 @@
           <input type="hidden" name="id" />
           <input type="hidden" name="listingNo" />
           <input type="hidden" name="createdAt" />
+          <input type="hidden" name="lat" />
+          <input type="hidden" name="lng" />
 
           <select name="propertyType" required>
             <option value="">매물종류 선택</option>

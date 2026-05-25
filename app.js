@@ -873,26 +873,40 @@ const setupListingsPage = () => {
     activeMarkers.length = 0;
     if (openIw) { openIw.close(); openIw = null; }
     const geocoder = new kakao.maps.services.Geocoder();
-    items.slice(0, 30).forEach(item => {
-      // Skip completed listings and items without a valid address
-      if (isCompleted(item) || !item.address) return;
-      geocoder.addressSearch(item.address, (result, status) => {
-        if (status !== kakao.maps.services.Status.OK) return;
-        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-        const marker = new kakao.maps.Marker({ map, position: coords, title: item.title });
-        const iw = new kakao.maps.InfoWindow({
-          content:`<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
-            ${item.title}<br>
-            <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
-          </div>`
-        });
-        kakao.maps.event.addListener(marker, 'click', () => {
-          if (openIw) openIw.close();
-          iw.open(map, marker); openIw = iw;
-          openModalFull(item);
-        });
-        activeMarkers.push(marker);
+
+    const addMarkerAtCoords = (coords, item) => {
+      const marker = new kakao.maps.Marker({ map, position: coords, title: item.title });
+      const iw = new kakao.maps.InfoWindow({
+        content:`<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
+          ${item.title}<br>
+          <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
+        </div>`
       });
+      kakao.maps.event.addListener(marker, 'click', () => {
+        if (openIw) openIw.close();
+        iw.open(map, marker); openIw = iw;
+        openModalFull(item);
+      });
+      activeMarkers.push(marker);
+    };
+
+    items.slice(0, 30).forEach(item => {
+      // Skip completed listings
+      if (isCompleted(item)) return;
+
+      // 1. lat/lng가 이미 저장되어 있는 경우 즉시 마커 렌더링
+      if (item.lat && item.lng && !isNaN(Number(item.lat)) && !isNaN(Number(item.lng))) {
+        const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
+        addMarkerAtCoords(coords, item);
+      } 
+      // 2. lat/lng가 없는 경우 기존 address 기반 geocoder 검색으로 하위 호환성 유지
+      else if (item.address) {
+        geocoder.addressSearch(item.address, (result, status) => {
+          if (status !== kakao.maps.services.Status.OK) return;
+          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+          addMarkerAtCoords(coords, item);
+        });
+      }
     });
   };
 
@@ -943,15 +957,25 @@ const setupListingsPage = () => {
     const minimapEl   = document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
     minimapWrap.style.display = 'none';
-    if (typeof kakao === 'undefined' || !kakao.maps.services || !item.address) return;
-    new kakao.maps.services.Geocoder().addressSearch(item.address, (result, status) => {
-      if (status !== kakao.maps.services.Status.OK) return;
-      const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+    if (typeof kakao === 'undefined') return;
+
+    const renderMinimap = (coords) => {
       minimapWrap.style.display = 'block';
       minimapEl.innerHTML = '';
       const mm = new kakao.maps.Map(minimapEl, { center: coords, level: 4 });
       new kakao.maps.Marker({ map: mm, position: coords });
-    });
+    };
+
+    if (item.lat && item.lng && !isNaN(Number(item.lat)) && !isNaN(Number(item.lng))) {
+      const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
+      renderMinimap(coords);
+    } else if (item.address && kakao.maps.services) {
+      new kakao.maps.services.Geocoder().addressSearch(item.address, (result, status) => {
+        if (status !== kakao.maps.services.Status.OK) return;
+        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        renderMinimap(coords);
+      });
+    }
   };
 
   // ── 페이지네이션 HTML ──
@@ -1609,13 +1633,28 @@ if (ptEl) {
     payload.stickers = Array.from(form.querySelectorAll('input[name="stickers"]:checked')).map(el => el.value);
     if (!payload.status) payload.status = '거래가능';
 
-    if (payload.id) {
-      // 수정 — Firestore updateDoc
-      const docId = payload.id;
-      delete payload.id;
-      delete payload.createdAt;
-      delete payload.updatedAt;
-      (async () => {
+    const address = payload.address ? payload.address.trim() : '';
+
+    const performSave = async (lat = null, lng = null) => {
+      // geocoder 결과 우선 적용 (null이면 FormData 기존값 유지)
+      if (lat !== null) payload.lat = Number(lat);
+      if (lng !== null) payload.lng = Number(lng);
+
+      // lat/lng 정리: 빈 값·NaN 제거, 문자열 숫자는 Number로 변환
+      ['lat', 'lng'].forEach(k => {
+        const v = payload[k];
+        if (v === '' || v === null || v === undefined) { delete payload[k]; return; }
+        const n = Number(v);
+        if (isNaN(n)) delete payload[k];
+        else payload[k] = n;
+      });
+
+      if (payload.id) {
+        // 수정 — Firestore updateDoc
+        const docId = payload.id;
+        delete payload.id;
+        delete payload.createdAt;
+        delete payload.updatedAt;
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
@@ -1625,16 +1664,14 @@ if (ptEl) {
           console.error('매물 수정 오류:', err);
           alert('매물 수정 중 오류가 발생했습니다.');
         }
-      })();
-    } else {
-      // 신규 등록 — Firestore 저장
-      if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
-      if (!payload.property_number) payload.property_number = payload.listingNo;
-      if (!payload.status) payload.status = '거래가능';
-      delete payload.id;
-      delete payload.createdAt;
-      delete payload.updatedAt;
-      (async () => {
+      } else {
+        // 신규 등록 — Firestore 저장
+        if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
+        if (!payload.property_number) payload.property_number = payload.listingNo;
+        if (!payload.status) payload.status = '거래가능';
+        delete payload.id;
+        delete payload.createdAt;
+        delete payload.updatedAt;
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
@@ -1644,7 +1681,26 @@ if (ptEl) {
           console.error('매물 등록 오류:', err);
           alert('매물 등록 중 오류가 발생했습니다.');
         }
-      })();
+      }
+    };
+
+    // 카카오 Geocoder를 활용하여 주소를 좌표(lat/lng)로 변환
+    if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services && address) {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch(address, (result, status) => {
+        if (status === kakao.maps.services.Status.OK && result && result[0]) {
+          const lat = result[0].y;
+          const lng = result[0].x;
+          console.log(`[주소 좌표 변환 성공] ${address} -> lat: ${lat}, lng: ${lng}`);
+          performSave(lat, lng);
+        } else {
+          console.warn(`[주소 좌표 변환 실패] ${address}, status: ${status}. 좌표 없이 저장을 시도합니다.`);
+          performSave(null, null);
+        }
+      });
+    } else {
+      console.warn('[카카오 지도 Geocoder 사용 불가] geocoder가 로드되지 않았거나 주소가 비어있습니다.');
+      performSave(null, null);
     }
   });
 };
