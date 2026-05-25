@@ -193,6 +193,28 @@ const getThumbnail  = (item) => (item.imageUrls && item.imageUrls[0]) || item.im
 const getDisplayAddress = (item) => item.displayAddress || item.address;
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
+const formatCardPrice = (item) => {
+  if (item.priceText) return item.priceText;
+  const fmt = (v) => {
+    if (v === undefined || v === null || v === '') return null;
+    const n = Number(String(v).replace(/[,\s]/g, ''));
+    if (!isNaN(n) && n > 0) return toKoreanPrice(n);
+    const s = String(v).trim();
+    return s || null;
+  };
+  const deal = item.dealType || '';
+  if (deal === '매매') { const p = fmt(item.salePrice ?? item.price); return p ? `매매 ${p}` : '가격문의'; }
+  if (deal === '전세') { const p = fmt(item.deposit ?? item.price); return p ? `전세 ${p}` : '가격문의'; }
+  if (deal === '월세' || deal === '임대') {
+    const dep = fmt(item.deposit), rent = fmt(item.monthlyRent ?? item.rent);
+    if (dep && rent) return `${dep}/${rent}`;
+    return dep || (rent ? `월세 ${rent}` : fmt(item.price) || '가격문의');
+  }
+  if (deal === '분양') { const p = fmt(item.presalePrice ?? item.salePrice); return p ? `분양 ${p}` : '가격문의'; }
+  const p = fmt(item.salePrice ?? item.deposit ?? item.price);
+  return p || '가격문의';
+};
+
 const toKoreanPrice = (wanwon) => {
   const n = Number(wanwon);
   if (!n || isNaN(n) || n <= 0) return '';
@@ -595,7 +617,7 @@ const setupListingsPage = () => {
     const catNames = {
       '공장창고': '공장·창고',
       '상가': '상가·빌딩',
-      '토지': '토지·개발',
+      '토지': '토지',
       '오피스텔': '오피스텔',
       '단독주택': '단독·전원주택'
     };
@@ -662,8 +684,8 @@ const setupListingsPage = () => {
         const m2 = item.landArea;
         const py = m2 ? (m2 / 3.305785).toFixed(2) : null;
         const areaStr = formatArea(m2, py);
-        const extraVal = item.zoningArea || '계획관리';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">대지</span> <strong class="lp-area-val">${areaStr}</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+        const extraVal = item.zoningArea || '';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">대지</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (extraVal ? ` <span class="lp-area-extra">· ${extraVal}</span>` : '');
       } else if (isOfficetel) {
         const m2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
         const py = item.exclusiveAreaPy;
@@ -718,7 +740,7 @@ const setupListingsPage = () => {
               <span class="lp-badge-deal ${badgeTheme}">${item.dealType}</span>
             </div>
             <div class="lp-rec-row lp-rec-row-price">
-              <div class="lp-rec-price">${item.priceText || (item.dealType + ' ' + formatPrice(getMainPrice(item)) + '만원')}</div>
+              <div class="lp-rec-price">${formatCardPrice(item)}</div>
             </div>
             <div class="lp-rec-row lp-rec-row-mid">
               ${item.title || item.description}
