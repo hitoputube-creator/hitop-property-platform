@@ -3814,8 +3814,6 @@ body[data-page="listings"] .lp-panel {
 
   box-sizing: border-box !important;
 
-  padding-right: 96px !important; /* 플로팅 버튼과의 겹침 완전히 방지 */
-
 }
 
 /* ── 하단 매물 카테고리 카드바 (그리드 2열 2행 단독 배치) ── */
@@ -3999,15 +3997,6 @@ body[data-page="listings"] .lp-panel {
   overflow-x: hidden !important; /* 가로 스크롤 방지 */
 
   box-sizing: border-box !important;
-
-  padding-right: 96px !important; /* 플로팅 버튼과의 겹침 완전히 방지 */
-
-}
-
-/* 카테고리 전체보기 표시 중에는 padding-right 제거 (전폭 사용) */
-body[data-page="listings"] .lp-panel:has(.lp-cat-view) {
-
-  padding-right: 0 !important;
 
 }
 
