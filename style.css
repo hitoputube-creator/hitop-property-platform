@@ -460,7 +460,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-right { overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
 
-.modal-badge { display: inline-block; background: #12335a; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px; margin-bottom: 4px; }
+.modal-badge { display: inline-flex; align-items: center; gap: 6px; background: none; color: #374151; font-size: 13px; font-weight: 600; padding: 0; border-radius: 0; margin-bottom: 6px; }
 
 .modal-title { font-size: 18px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.3; }
 
@@ -5358,6 +5358,28 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     box-sizing: border-box !important;
   }
 }
+
+/* ── 거래유형 공통 색상 배지 ── */
+.deal-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 18px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  line-height: 1;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.deal-badge-mae  { background: #fee2e2; color: #b91c1c; }
+.deal-badge-im   { background: #dbeafe; color: #1d4ed8; }
+.deal-badge-jeon { background: #ede9fe; color: #6d28d9; }
+.deal-badge-wol  { background: #ccfbf1; color: #0f766e; }
+.deal-badge-bun  { background: #ffedd5; color: #c2410c; }
+.deal-badge-etc  { background: #f3f4f6; color: #374151; }
 
 
 

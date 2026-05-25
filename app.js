@@ -193,6 +193,19 @@ const getThumbnail  = (item) => (item.imageUrls && item.imageUrls[0]) || item.im
 const getDisplayAddress = (item) => item.displayAddress || item.address;
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
+const getDealBadgeHTML = (dealType) => {
+  if (!dealType) return '';
+  const classMap = {
+    '매매': 'deal-badge-mae',
+    '임대': 'deal-badge-im',
+    '전세': 'deal-badge-jeon',
+    '월세': 'deal-badge-wol',
+    '분양': 'deal-badge-bun'
+  };
+  const cls = classMap[dealType] || 'deal-badge-etc';
+  return `<span class="deal-badge ${cls}">${dealType}</span>`;
+};
+
 const formatCardPrice = (item) => {
   if (item.priceText) return item.priceText;
   const fmt = (v) => {
@@ -292,7 +305,8 @@ const openModal = (item) => {
 
   document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
   document.getElementById('modalTitle').textContent = item.title;
-  document.getElementById('modalBadge').textContent = `${item.propertyType} | ${item.dealType}`;
+  const modalBadgeEl = document.getElementById('modalBadge');
+  if (modalBadgeEl) modalBadgeEl.innerHTML = `${item.propertyType}&nbsp;${getDealBadgeHTML(item.dealType)}`;
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
 
   const renderPriceVal = (f, val) => {
@@ -718,12 +732,6 @@ const setupListingsPage = () => {
         : isOfficetel ? 'type-officetel'
         : 'type-house';
 
-      // 거래유형 배지 테마 클래스
-      const badgeTheme = isFactory ? 'lp-badge-factory-rent'
-        : isStore ? 'lp-badge-store-rent'
-        : isLand ? 'lp-badge-land'
-        : isOfficetel ? 'lp-badge-officetel'
-        : 'lp-badge-house';
 
       const typeLabel = catNames[categoryKey] || categoryKey;
       const ribbonText = item.ribbon || '추천매물';
@@ -737,7 +745,7 @@ const setupListingsPage = () => {
           <div class="lp-rec-body">
             <div class="lp-rec-row lp-rec-row-top">
               <div class="lp-rec-type ${typeLabelTheme}">${typeLabel}</div>
-              <span class="lp-badge-deal ${badgeTheme}">${item.dealType}</span>
+              ${getDealBadgeHTML(item.dealType)}
             </div>
             <div class="lp-rec-row lp-rec-row-price">
               <div class="lp-rec-price">${formatCardPrice(item)}</div>
@@ -947,7 +955,6 @@ const setupListingsPage = () => {
     const sqm    = Number(item.area || item.landArea || item.contractArea || item.exclusiveArea || 0);
     const area   = sqm ? `${sqm}㎡ · ${(sqm * 0.3025).toFixed(0)}평` : '';
     const imgSrc = getThumbnail(item);
-    const dc     = dealClass(item.dealType);
     return `
       <article class="lp-all-card${done ? ' lp-all-done' : ''}" data-id="${item.id}">
         <div class="lp-all-img">
@@ -958,9 +965,9 @@ const setupListingsPage = () => {
           ${item.isUrgent===true ? '<span style="position:absolute;bottom:6px;right:6px;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">🔥 급매</span>' : ''}
         </div>
         <div class="lp-all-body">
-          <span class="lp-deal-pill ${dc}">${item.dealType}</span>
+          ${getDealBadgeHTML(item.dealType)}
           <div class="lp-all-title">${item.title}</div>
-          <div class="lp-all-price">${formatPrice(price)}만원</div>
+          <div class="lp-all-price">${formatCardPrice(item)}</div>
           ${area ? `<div class="lp-all-area">${area}</div>` : ''}
           <div class="lp-all-addr">${getDisplayAddress(item)}</div>
         </div>
