@@ -844,6 +844,11 @@ const setupListingsPage = () => {
 
     // 스크롤 상단으로 초기화
     document.querySelector('.lp-cat-2col-scroll')?.scrollTo(0, 0);
+
+    // 해당 카테고리 실제 매물 기준으로 지도 마커 업데이트
+    // (renderCategoryPanel은 applyFilters를 거치지 않으므로 직접 placeMarkers 호출)
+    const forMap = _listings.filter(item => item.propertyType === categoryKey);
+    if (forMap.length > 0 && map) placeMarkers(forMap);
   };
 
   // ── 카카오맵 ──
@@ -899,6 +904,16 @@ const setupListingsPage = () => {
       const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
       addMarkerAtCoords(coords, item);
     });
+
+    // withCoords 마커 기준으로 지도 bounds 조정 (마커가 항상 뷰포트 안에 보이도록)
+    if (withCoords.length === 1) {
+      map.setCenter(new kakao.maps.LatLng(Number(withCoords[0].lat), Number(withCoords[0].lng)));
+      map.setLevel(5);
+    } else if (withCoords.length > 1) {
+      const bounds = new kakao.maps.LatLngBounds();
+      withCoords.slice(0, 100).forEach(i => bounds.extend(new kakao.maps.LatLng(Number(i.lat), Number(i.lng))));
+      map.setBounds(bounds);
+    }
 
     // 그룹 2: lat/lng 없음 → geocoder 사용, 최대 30개 (API 과부하 방지)
     if (withoutCoords.length > 0 && kakao.maps.services) {
