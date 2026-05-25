@@ -572,48 +572,39 @@
       <button class="lightbox-next" id="lightboxNext" type="button" aria-label="다음">›</button>
     </div>
 
-<!-- ✅ 플로팅 버튼 (우측 중하단 고정) - 흰색 원형 카드형 -->
-<div class="floating-btns">
 
-  <!-- 전화상담 -->
-  <a class="float-btn-card fbc-tel" href="tel:031-949-8969" title="전화상담">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/>
-    </svg>
-    <span class="float-btn-card-label">전화상담</span>
-  </a>
-
-  <!-- 블로그 -->
-  <a class="float-btn-card fbc-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" title="네이버 블로그">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-    </svg>
-    <span class="float-btn-card-label">블로그</span>
-  </a>
-
-  <!-- 카카오톡 -->
-  <a class="float-btn-card fbc-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" title="카카오톡 문의">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/>
-    </svg>
-    <span class="float-btn-card-label">카카오톡</span>
-  </a>
-
-  <!-- 매물문의 -->
-  <a class="float-btn-card fbc-inquiry" href="#sideInquiryForm" title="매물문의"
-     onclick="document.getElementById('sideInquiryForm')?.scrollIntoView({behavior:'smooth',block:'center'}); return false;">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-    </svg>
-    <span class="float-btn-card-label">매물문의</span>
-  </a>
-
-</div>
-<!-- // 플로팅 버튼 끝 -->
 
 
     <footer class="site-footer compact-footer">
       <div class="container footer-inner">
+        <!-- 푸터 내 가로형 빠른 바로가기 버튼 셋 -->
+        <div class="footer-quick-btns">
+          <a class="footer-quick-btn fbc-tel" href="tel:031-949-8969">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/>
+            </svg>
+            <span>전화상담</span>
+          </a>
+          <a class="footer-quick-btn fbc-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            <span>블로그</span>
+          </a>
+          <a class="footer-quick-btn fbc-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/>
+            </svg>
+            <span>카카오톡</span>
+          </a>
+          <a class="footer-quick-btn fbc-inquiry" href="#sideInquiryForm"
+             onclick="document.getElementById('sideInquiryForm')?.scrollIntoView({behavior:'smooth',block:'center'}); return false;">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <span>매물문의</span>
+          </a>
+        </div>
         <p class="footer-main">
           <strong>하이탑부동산공인중개사사무소</strong>
           <span>대표: 주현희</span>

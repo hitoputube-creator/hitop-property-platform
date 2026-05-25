@@ -268,19 +268,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .floating-btns {
 
-  position: fixed;
-
-  right: 24px;
-
-  bottom: 100px;
-
-  z-index: 9999;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 12px;
+  display: none !important;
 
 }
 
@@ -5166,7 +5154,7 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   }
 
   body[data-page="listings"] .site-footer {
-    padding-bottom: 96px !important; /* 플로팅 버튼 여백 세이프 마진 */
+    padding-bottom: 30px !important; /* 플로팅 버튼 여백 제거 및 기본 패딩 복구 */
   }
 
   /* 9. 매물 상세 정보 모달 모바일 Safe area 보호막 패치 */
@@ -5380,6 +5368,79 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 .deal-badge-wol  { background: #ccfbf1; color: #0f766e; }
 .deal-badge-bun  { background: #ffedd5; color: #c2410c; }
 .deal-badge-etc  { background: #f3f4f6; color: #374151; }
+
+/* ===== 푸터 내 가로형 빠른 바로가기 버튼 셋 ===== */
+.footer-quick-btns {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.footer-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.footer-quick-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  display: block;
+}
+
+/* 각 버튼별 호버 액션 효과 */
+.footer-quick-btn.fbc-tel:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.footer-quick-btn.fbc-blog:hover {
+  background: #2db400;
+  border-color: #2db400;
+  color: #ffffff;
+}
+
+.footer-quick-btn.fbc-kakao:hover {
+  background: #fee500;
+  border-color: #fee500;
+  color: #191919;
+}
+
+.footer-quick-btn.fbc-inquiry:hover {
+  background: #071f5f;
+  border-color: #071f5f;
+  color: #ffffff;
+}
+
+/* 모바일 전용 반응형 튜닝 */
+@media (max-width: 640px) {
+  .footer-quick-btns {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  
+  .footer-quick-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+}
 
 
 
