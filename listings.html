@@ -575,53 +575,77 @@
 
 
 
-    <footer class="site-footer compact-footer">
-      <div class="container footer-inner">
-        <!-- 푸터 내 가로형 빠른 바로가기 버튼 셋 -->
-        <div class="footer-quick-btns">
-          <a class="footer-quick-btn fbc-tel" href="tel:031-949-8969">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/>
-            </svg>
-            <span>전화상담</span>
-          </a>
-          <a class="footer-quick-btn fbc-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-            </svg>
-            <span>블로그</span>
-          </a>
-          <a class="footer-quick-btn fbc-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/>
-            </svg>
-            <span>카카오톡</span>
-          </a>
-          <a class="footer-quick-btn fbc-inquiry" href="#sideInquiryForm"
-             onclick="document.getElementById('sideInquiryForm')?.scrollIntoView({behavior:'smooth',block:'center'}); return false;">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-            </svg>
-            <span>매물문의</span>
-          </a>
+    <footer class="site-footer listings-footer-new">
+      <div class="container footer-new-inner">
+        <!-- 왼쪽 영역: 회사정보 -->
+        <div class="footer-company-info">
+          <h4 class="company-title">하이탑부동산공인중개사사무소</h4>
+          <div class="info-grid">
+            <div class="info-row">
+              <span class="info-item">대표: 주현희</span>
+              <span class="info-bar">|</span>
+              <span class="info-item">주소: 경기도 파주시 책향기로 830, 1층</span>
+            </div>
+            <div class="info-row">
+              <span class="info-item">전화: 031-949-8969</span>
+              <span class="info-bar">|</span>
+              <span class="info-item">팩스: 031-944-1108</span>
+              <span class="info-bar">|</span>
+              <span class="info-item">이메일: newpajucity@naver.com</span>
+            </div>
+            <div class="info-row">
+              <span class="info-item">중개사무소 등록번호: 41480-2016-00026</span>
+              <span class="info-bar">|</span>
+              <span class="info-item">사업자등록번호: 305-48-62183</span>
+            </div>
+          </div>
+          <div class="footer-links-new">
+            <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+            <span class="info-bar">|</span>
+            <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+            <span class="info-bar">|</span>
+            <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+            <span class="info-bar">|</span>
+            <a href="admin.html" class="footer-admin-link">관리자</a>
+          </div>
+          <p class="copyright-text">Copyright © 2026 하이탑부동산. All rights reserved.</p>
         </div>
-        <p class="footer-main">
-          <strong>하이탑부동산공인중개사사무소</strong>
-          <span>대표: 주현희</span>
-          <span>주소: 경기도 파주시 책향기로830, 1층</span>
-          <span>전화: 031-949-8969</span>
-        </p>
-        <p class="footer-sub">
-          <span>중개사무소 등록번호: 41480-2016-00026</span>
-          <span>사업자등록번호: 305-48-62183</span>
-          <span>Copyright © 2026 하이탑부동산. All rights reserved.</span>
-        </p>
-        <p class="footer-links">
-          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
-          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
-          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-          <a href="admin.html" class="footer-admin-link">관리자</a>
-        </p>
+
+        <!-- 오른쪽 영역: 대표전화 및 퀵버튼 -->
+        <div class="footer-call-action">
+          <div class="call-center-box">
+            <span class="call-subtitle">대표전화 CALL CENTER</span>
+            <a href="tel:031-949-8969" class="call-main-number">031-949-8969</a>
+            <span class="call-hours-text">📅 평일 10:00 ~ 19:00</span>
+          </div>
+          <div class="footer-new-quick-btns">
+            <a class="fnq-btn fbc-tel" href="tel:031-949-8969" title="전화상담">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/>
+              </svg>
+              <span>전화상담</span>
+            </a>
+            <a class="fnq-btn fbc-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer" title="네이버 블로그">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
+              <span>블로그</span>
+            </a>
+            <a class="fnq-btn fbc-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" title="카카오톡 문의">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/>
+              </svg>
+              <span>카카오톡</span>
+            </a>
+            <a class="fnq-btn fbc-inquiry" href="#sideInquiryForm" title="매물문의"
+               onclick="document.getElementById('sideInquiryForm')?.scrollIntoView({behavior:'smooth',block:'center'}); return false;">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+              <span>매물문의</span>
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
 

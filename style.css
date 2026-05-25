@@ -5442,6 +5442,208 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   }
 }
 
+/* ===== 2컬럼 레이아웃 푸터 스타일 개편 (listings.html용) ===== */
+body[data-page="listings"] .site-footer.listings-footer-new {
+  background-color: #071f5f !important; /* 기존 딥 네이비 색상 */
+  color: #cbd5e1 !important;
+  padding: 40px 36px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  text-align: left !important; /* 전체 정렬은 왼쪽 */
+  box-sizing: border-box !important;
+}
+
+body[data-page="listings"] .footer-new-inner {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 40px !important;
+}
+
+/* 왼쪽 회사 정보 영역 */
+.footer-company-info {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.footer-company-info .company-title {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+}
+
+.footer-company-info .info-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.footer-company-info .info-row {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  font-size: 13px !important;
+  color: #94a3b8 !important;
+}
+
+.footer-company-info .info-bar {
+  color: rgba(255, 255, 255, 0.15) !important;
+  font-weight: 300 !important;
+}
+
+.footer-company-info .footer-links-new {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+
+.footer-company-info .footer-links-new a {
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+.footer-company-info .footer-links-new a:hover {
+  color: #38bdf8 !important;
+}
+
+.footer-company-info .copyright-text {
+  font-size: 12px !important;
+  color: #64748b !important;
+  margin: 12px 0 0 0 !important;
+}
+
+/* 오른쪽 연락 / 퀵버튼 영역 */
+.footer-call-action {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important; /* 오른쪽 정렬 */
+  gap: 20px !important;
+  flex-shrink: 0 !important;
+}
+
+.call-center-box {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 4px !important;
+}
+
+.call-center-box .call-subtitle {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  color: #94a3b8 !important;
+}
+
+.call-center-box .call-main-number {
+  font-size: 32px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1 !important;
+  transition: color 0.15s ease !important;
+}
+
+.call-center-box .call-main-number:hover {
+  color: #38bdf8 !important;
+}
+
+.call-center-box .call-hours-text {
+  font-size: 12px !important;
+  color: #64748b !important;
+  margin-top: 4px !important;
+}
+
+/* 퀵버튼 셋팅 */
+.footer-new-quick-btns {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.fnq-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.fnq-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  fill: currentColor !important;
+}
+
+/* 퀵버튼 호버 스타일 */
+.fnq-btn.fbc-tel:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.fnq-btn.fbc-blog:hover {
+  background: #2db400 !important;
+  border-color: #2db400 !important;
+}
+
+.fnq-btn.fbc-kakao:hover {
+  background: #fee500 !important;
+  border-color: #fee500 !important;
+  color: #191919 !important;
+}
+
+.fnq-btn.fbc-inquiry:hover {
+  background: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  color: #0b1f4d !important;
+}
+
+/* 모바일 전용 미디어 쿼리 패치 */
+@media (max-width: 768px) {
+  body[data-page="listings"] .site-footer.listings-footer-new {
+    padding: 30px 20px !important;
+  }
+  
+  body[data-page="listings"] .footer-new-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 30px !important;
+  }
+  
+  .footer-call-action {
+    align-items: flex-start !important;
+    width: 100% !important;
+  }
+  
+  .call-center-box {
+    align-items: flex-start !important;
+  }
+  
+  .footer-new-quick-btns {
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+}
+
 
 
 
