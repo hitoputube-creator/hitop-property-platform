@@ -872,14 +872,13 @@ const setupListingsPage = () => {
     activeMarkers.forEach(m => m.setMap(null));
     activeMarkers.length = 0;
     if (openIw) { openIw.close(); openIw = null; }
-    const geocoder = new kakao.maps.services.Geocoder();
 
     const addMarkerAtCoords = (coords, item) => {
       const marker = new kakao.maps.Marker({ map, position: coords, title: item.title });
       const iw = new kakao.maps.InfoWindow({
         content:`<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
           ${item.title}<br>
-          <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatPrice(getMainPrice(item))}만원</span>
+          <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatCardPrice(item)}</span>
         </div>`
       });
       kakao.maps.event.addListener(marker, 'click', () => {
@@ -890,24 +889,28 @@ const setupListingsPage = () => {
       activeMarkers.push(marker);
     };
 
-    items.slice(0, 30).forEach(item => {
-      // Skip completed listings
-      if (isCompleted(item)) return;
+    // 거래완료 제외 후 두 그룹으로 분리
+    const active = items.filter(i => !isCompleted(i));
+    const withCoords    = active.filter(i => i.lat && i.lng && !isNaN(Number(i.lat)) && !isNaN(Number(i.lng)));
+    const withoutCoords = active.filter(i => !(i.lat && i.lng && !isNaN(Number(i.lat)) && !isNaN(Number(i.lng))) && i.address);
 
-      // 1. lat/lng가 이미 저장되어 있는 경우 즉시 마커 렌더링
-      if (item.lat && item.lng && !isNaN(Number(item.lat)) && !isNaN(Number(item.lng))) {
-        const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
-        addMarkerAtCoords(coords, item);
-      } 
-      // 2. lat/lng가 없는 경우 기존 address 기반 geocoder 검색으로 하위 호환성 유지
-      else if (item.address) {
+    // 그룹 1: lat/lng 보유 → 최대 100개 즉시 표시 (API 호출 없음)
+    withCoords.slice(0, 100).forEach(item => {
+      const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
+      addMarkerAtCoords(coords, item);
+    });
+
+    // 그룹 2: lat/lng 없음 → geocoder 사용, 최대 30개 (API 과부하 방지)
+    if (withoutCoords.length > 0 && kakao.maps.services) {
+      const geocoder = new kakao.maps.services.Geocoder();
+      withoutCoords.slice(0, 30).forEach(item => {
         geocoder.addressSearch(item.address, (result, status) => {
           if (status !== kakao.maps.services.Status.OK) return;
           const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
           addMarkerAtCoords(coords, item);
         });
-      }
-    });
+      });
+    }
   };
 
   // ── 지도 초기화 (autoload=false 방식) ──
