@@ -514,6 +514,7 @@ const setupListingsPage = () => {
     const lpPanel = document.getElementById('lpPanel');
     if (lpPanel && defaultPanelHTML) {
       lpPanel.innerHTML = defaultPanelHTML;
+      lpPanel.classList.remove('cat-view-mode'); // 패딩 복원
       document.querySelectorAll('.cat-card').forEach(card => {
         card.classList.remove('active');
       });
@@ -528,7 +529,11 @@ const setupListingsPage = () => {
         { id: 'f3', dealType: '임대', priceText: '7,000/700만원', title: '단독공장 가능 / 마당 넓음', buildingArea: 300, landArea: 1500, displayAddress: '파주시 상지석동', ribbon: '즉시입주' },
         { id: 'f4', dealType: '매매', priceText: '25억원', title: '대형 물류창고 / 야드 우수', buildingArea: 600, landArea: 2000, displayAddress: '파주시 월롱면', ribbon: '추천매물' },
         { id: 'f5', dealType: '임대', priceText: '3,000/250만원', title: '마당 넓고 민원 없는 단독 공장', buildingArea: 150, landArea: 800, displayAddress: '파주시 탄현면', ribbon: '단독공장' },
-        { id: 'f6', dealType: '매매', priceText: '15억원', title: '신축 공장 / 층고 10m 최상급', buildingArea: 200, landArea: 800, displayAddress: '파주시 월롱IC 인근', ribbon: '신축공장' }
+        { id: 'f6', dealType: '매매', priceText: '15억원', title: '신축 공장 / 층고 10m 최상급', buildingArea: 200, landArea: 800, displayAddress: '파주시 월롱IC 인근', ribbon: '신축공장' },
+        { id: 'f7', dealType: '임대', priceText: '1,000/120만원', title: '소형 물류창고 / 실속형 추천', buildingArea: 80, landArea: 300, displayAddress: '파주시 파주읍', ribbon: '실속창고' },
+        { id: 'f8', dealType: '매매', priceText: '42억원', title: '대형 제조 공장 / 동력 300kW', buildingArea: 1200, landArea: 3500, displayAddress: '파주시 법원읍', ribbon: '대형공장' },
+        { id: 'f9', dealType: '임대', priceText: '4,500/400만원', title: '식품 공장 가능 / HACCP 인증 완료', buildingArea: 220, landArea: 900, displayAddress: '파주시 조리읍', ribbon: '식품HACCP' },
+        { id: 'f10', dealType: '매매', priceText: '18억원', title: 'IC 바로 옆 물류창고 / 입지 우수', buildingArea: 240, landArea: 750, displayAddress: '파주시 월롱면', ribbon: '입지최상' }
       ],
       '상가': [
         { id: 's1', dealType: '임대', priceText: '3,000/350만원', title: '유동인구 우수 / 수익형', exclusiveArea: 40, floor: '1층 상가', displayAddress: '운정역 인근', ribbon: '수익형' },
@@ -536,7 +541,11 @@ const setupListingsPage = () => {
         { id: 's3', dealType: '임대', priceText: '5,000/290만원', title: '단지내 상가 / 추천업종 다수', exclusiveArea: 28, floor: '1층 코너', displayAddress: '초롱꽃마을', ribbon: '즉시입주' },
         { id: 's4', dealType: '임대', priceText: '6,000/500만원', title: '1층 식당 추천 / 권리금 없음', exclusiveArea: 55, floor: '2층 대로변', displayAddress: '운정역 중심상권', ribbon: '수익형' },
         { id: 's5', dealType: '임대', priceText: '4,000/320만원', title: '야당역 역세권 유동인구 최우수', exclusiveArea: 35, floor: '야당동', displayAddress: '야당동', ribbon: '역세권' },
-        { id: 's6', dealType: '매매', priceText: '35억원', title: '올근생 꼬마빌딩 / 안정적 수익', exclusiveArea: 120, floor: '5층 건물', displayAddress: '운정역 역세권', ribbon: '수익형빌딩' }
+        { id: 's6', dealType: '매매', priceText: '35억원', title: '올근생 꼬마빌딩 / 안정적 수익', exclusiveArea: 120, floor: '5층 건물', displayAddress: '운정역 역세권', ribbon: '수익형빌딩' },
+        { id: 's7', dealType: '임대', priceText: '2,000/180만원', title: '테라스 보유형 카페 강추', exclusiveArea: 18, floor: '1층 테라스', displayAddress: '야당동 카페거리', ribbon: '테라스카페' },
+        { id: 's8', dealType: '매매', priceText: '8억 5,000만원', title: '단지 내 편의점 독점 운영중', exclusiveArea: 15, floor: '1층 코너', displayAddress: '초롱꽃마을', ribbon: '편의점독점' },
+        { id: 's9', dealType: '임대', priceText: '1,000/80만원', title: '소형 네일샵/피부관리실 추천', exclusiveArea: 10, floor: '3층 엘베', displayAddress: '운정신도시', ribbon: '여성뷰티추천' },
+        { id: 's10', dealType: '매매', priceText: '55억원', title: '대로변 빌딩 / 전층 만실 운용중', exclusiveArea: 380, floor: '8층 빌딩', displayAddress: '파주시 금촌동', ribbon: '전층만실' }
       ],
       '토지': [
         { id: 't1', dealType: '매매', priceText: '12억원', title: '건축 허가 완료 / 즉시 개발 가능', landArea: 450, zoningArea: '계획관리지역', displayAddress: '파주시 송촌동', ribbon: '즉시개발' },
@@ -544,7 +553,9 @@ const setupListingsPage = () => {
         { id: 't3', dealType: '매매', priceText: '28억원', title: '개발 용지 / 야드 공장 부지 추천', landArea: 1500, zoningArea: '계획관리지역', displayAddress: '파주시 파주읍', ribbon: '공장부지' },
         { id: 't4', dealType: '매매', priceText: '6억원', title: '주말농장 가능 / 장기 투자 가치 우수', landArea: 600, zoningArea: '농림지역', displayAddress: '파주시 법원읍', ribbon: '주말농장' },
         { id: 't5', dealType: '매매', priceText: '18억원', title: '창고 건축 부지 / 민원 소지 없음', landArea: 900, zoningArea: '계획관리지역', displayAddress: '파주시 광탄면', ribbon: '창고부지' },
-        { id: 't6', dealType: '매매', priceText: '9억 8,000만원', title: '상가주택 용지 / 코너 필지 추천', landArea: 110, zoningArea: '제1종일반주거', displayAddress: '운정신도시', ribbon: '상가용지' }
+        { id: 't6', dealType: '매매', priceText: '9억 8,000만원', title: '상가주택 용지 / 코너 필지 추천', landArea: 110, zoningArea: '제1종일반주거', displayAddress: '운정신도시', ribbon: '상가용지' },
+        { id: 't7', dealType: '매매', priceText: '4억 2,000만원', title: '소규모 전원주택 필지 / 토목 완료', landArea: 150, zoningArea: '계획관리지역', displayAddress: '파주시 탄현면', ribbon: '토목완료' },
+        { id: 't8', dealType: '매매', priceText: '45억원', title: '대형 물류 부지 / 도로 조건 최상급', landArea: 3200, zoningArea: '계획관리지역', displayAddress: '파주시 조리읍', ribbon: '대형물류부지' }
       ],
       '오피스텔': [
         { id: 'o1', dealType: '매매', priceText: '2억 8,000만원', title: 'GTX-A 운정역 초역세권 / 풀옵션', exclusiveArea: 18, floor: '고층', displayAddress: '운정신도시', ribbon: '초역세권' },
@@ -552,7 +563,9 @@ const setupListingsPage = () => {
         { id: 'o3', dealType: '월세', priceText: '1,000/85만원', title: '풀옵션 원룸 / 즉시입주 가능', exclusiveArea: 9, floor: '남향', displayAddress: '운정역 부근', ribbon: '원룸풀옵션' },
         { id: 'o4', dealType: '매매', priceText: '3억 2,000만원', title: '복층 구조 / 공간 활용도 최우수', exclusiveArea: 22, floor: '복층', displayAddress: '야당역 초인근', ribbon: '복층구조' },
         { id: 'o5', dealType: '월세', priceText: '2,000/110만원', title: '투룸 오피스텔 / 신혼부부 추천', exclusiveArea: 16, floor: '투룸', displayAddress: '운정신도시', ribbon: '신혼추천' },
-        { id: 'o6', dealType: '전세', priceText: '1억 8,000만원', title: '야당역 도보 3분 / 관리 상태 양호', exclusiveArea: 12, floor: '8층', displayAddress: '야당동', ribbon: '초역세권' }
+        { id: 'o6', dealType: '전세', priceText: '1억 8,000만원', title: '야당역 도보 3분 / 관리 상태 양호', exclusiveArea: 12, floor: '8층', displayAddress: '야당동', ribbon: '초역세권' },
+        { id: 'o7', dealType: '월세', priceText: '500/50만원', title: '단기 임대 가능 / 복층 원룸', exclusiveArea: 7, floor: '복층', displayAddress: '야당동', ribbon: '단기임대' },
+        { id: 'o8', dealType: '매매', priceText: '1억 9,000만원', title: '수익률 높은 월세 매물 승계', exclusiveArea: 11, floor: '5층', displayAddress: '파주시 금촌동', ribbon: '수익형피스텔' }
       ],
       '단독주택': [
         { id: 'h1', dealType: '매매', priceText: '9억 5,000만원', title: '정원 넓은 친환경 전원주택', buildingArea: 45, landArea: 150, displayAddress: '파주시 야당동', ribbon: '정원넓음' },
@@ -560,7 +573,9 @@ const setupListingsPage = () => {
         { id: 'h3', dealType: '매매', priceText: '7억 8,000만원', title: '숲세권 단독주택 / 공기 맑고 조용함', buildingArea: 38, landArea: 120, displayAddress: '파주시 탄현면', ribbon: '숲세권' },
         { id: 'h4', dealType: '전세', priceText: '5억원', title: '신축 단독주택 / 마당 관리 양호', buildingArea: 40, landArea: 130, displayAddress: '파주시 다율동', ribbon: '신축마당' },
         { id: 'h5', dealType: '매매', priceText: '15억원', title: '럭셔리 대저택 / 최고급 마당 조경', buildingArea: 80, landArea: 250, displayAddress: '파주시 운정동', ribbon: '최고급조경' },
-        { id: 'h6', dealType: '매매', priceText: '6억 5,000만원', title: '가성비 우수한 단독주택 / 정원 있음', buildingArea: 32, landArea: 100, displayAddress: '파주시 조리읍', ribbon: '가성비단독' }
+        { id: 'h6', dealType: '매매', priceText: '6억 5,000만원', title: '가성비 우수한 단독주택 / 정원 있음', buildingArea: 32, landArea: 100, displayAddress: '파주시 조리읍', ribbon: '가성비단독' },
+        { id: 'h7', dealType: '매매', priceText: '8억 2,000만원', title: '모던 스타일 복층 단독주택', buildingArea: 42, landArea: 140, displayAddress: '파주시 문산읍', ribbon: '모던복층' },
+        { id: 'h8', dealType: '전세', priceText: '3억 8,000만원', title: '가성비 좋은 조용한 전원생활 추천', buildingArea: 30, landArea: 110, displayAddress: '파주시 탄현면', ribbon: '실속전원' }
       ]
     };
     return samples[categoryKey] || [];
@@ -659,7 +674,30 @@ const setupListingsPage = () => {
         areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
       }
 
-      const cardThemeClass = isFactory ? 'factory-card' : 'store-card';
+      // 카테고리별 카드 테마 클래스 매핑
+      const themeMap = {
+        '공장창고': 'factory-card',
+        '상가': 'store-card',
+        '토지': 'land-card',
+        '오피스텔': 'officetel-card',
+        '단독주택': 'house-card'
+      };
+      const cardThemeClass = themeMap[categoryKey] || 'factory-card';
+
+      // 유형 레이블의 테마 컴제란 뮣 클래스
+      const typeLabelTheme = isFactory ? 'type-factory'
+        : isStore ? 'type-store'
+        : isLand ? 'type-land'
+        : isOfficetel ? 'type-officetel'
+        : 'type-house';
+
+      // 거래유형 배지 테마 클래스
+      const badgeTheme = isFactory ? 'lp-badge-factory-rent'
+        : isStore ? 'lp-badge-store-rent'
+        : isLand ? 'lp-badge-land'
+        : isOfficetel ? 'lp-badge-officetel'
+        : 'lp-badge-house';
+
       const typeLabel = catNames[categoryKey] || categoryKey;
       const ribbonText = item.ribbon || '추천매물';
 
@@ -671,8 +709,8 @@ const setupListingsPage = () => {
           </div>
           <div class="lp-rec-body">
             <div class="lp-rec-row lp-rec-row-top">
-              <div class="lp-rec-type ${isFactory ? 'type-factory' : 'type-store'}">${typeLabel}</div>
-              <span class="lp-badge-deal ${isFactory ? 'lp-badge-factory-rent' : 'lp-badge-store-rent'}">${item.dealType}</span>
+              <div class="lp-rec-type ${typeLabelTheme}">${typeLabel}</div>
+              <span class="lp-badge-deal ${badgeTheme}">${item.dealType}</span>
             </div>
             <div class="lp-rec-row lp-rec-row-price">
               <div class="lp-rec-price">${item.priceText || (item.dealType + ' ' + formatPrice(getMainPrice(item)) + '만원')}</div>
@@ -697,6 +735,9 @@ const setupListingsPage = () => {
 
     const leftHTML = leftListings.map(renderCard).join('');
     const rightHTML = rightListings.map(renderCard).join('');
+
+    // lpPanel에 카테고리뷰 모드 클래스 추가 (패딩-라이트 제어)
+    lpPanel.classList.add('cat-view-mode');
 
     lpPanel.innerHTML = `
       <div class="lp-cat-view" id="lpCatView">

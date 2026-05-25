@@ -3994,11 +3994,20 @@ body[data-page="listings"] .lp-panel {
 
   border-left: 1px solid #E5E7EB !important;
 
+  overflow: hidden !important; /* 내부 스크롤 컨테이너만 스크롤 허용 */
+
   overflow-x: hidden !important; /* 가로 스크롤 방지 */
 
   box-sizing: border-box !important;
 
   padding-right: 96px !important; /* 플로팅 버튼과의 겹침 완전히 방지 */
+
+}
+
+/* 카테고리 전체보기 표시 중에는 padding-right 제거 (전폭 사용) */
+body[data-page="listings"] .lp-panel:has(.lp-cat-view) {
+
+  padding-right: 0 !important;
 
 }
 
@@ -4788,34 +4797,45 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 }
 
 /* ── 카테고리 전체 매물 뷰 스타일 ── */
+/* ══════════════════════════════════════
+   카테고리 전체보기 패널 — 오른쪽 패널 내부 전용 스크롤 구조
+   ══════════════════════════════════════ */
+
+/* 전체보기 뷰 래퍼: lpPanel 내 flex 전체 채움 */
 .lp-cat-view {
   display: flex !important;
   flex-direction: column !important;
-  height: 100% !important;
+  flex: 1 !important;          /* 패널 남은 높이 전체 차지 */
+  min-height: 0 !important;    /* flex child 높이 축소 허용 (필수) */
   width: 100% !important;
-  min-height: 0 !important;
+  height: 100% !important;
   box-sizing: border-box !important;
+  overflow: hidden !important; /* 내부 스크롤 외 누수 방지 */
 }
 
+/* 고정 헤더 영역: 제목 + 돌아가기 버튼 */
 .lp-cat-view-header {
-  flex-shrink: 0 !important;
+  flex-shrink: 0 !important;   /* 고정: 절대 찌그러지지 않음 */
   background: #ffffff !important;
   z-index: 10 !important;
-  padding: 10px 12px 8px !important;
-  border-bottom: 2px solid #C9A84C !important; /* 골드 시그니처 컬러 경계선 */
+  padding: 10px 14px 10px !important;
+  border-bottom: 2px solid #C9A84C !important; /* 골드 시그니처 경계선 */
+  box-sizing: border-box !important;
 }
 
 .lp-cat-view-title {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
+  flex-wrap: nowrap !important;
   font-family: "Pretendard", "Noto Sans KR", sans-serif !important;
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: 800 !important;
   color: #071f5f !important;
   margin: 0 !important;
   padding: 0 !important;
   letter-spacing: -0.4px !important;
+  gap: 8px !important;
 }
 
 /* 추천매물 보기로 돌아가기 버튼 */
@@ -4823,70 +4843,80 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
   font-size: 12px !important;
   font-weight: 700 !important;
   color: #ffffff !important;
-  background-color: #071f5f !important; /* 네이비 기본 */
+  background-color: #071f5f !important;
   padding: 5px 12px !important;
   border-radius: 4px !important;
   border: none !important;
   cursor: pointer !important;
   transition: background-color 0.15s ease, transform 0.15s ease !important;
-  line-height: 1.1 !important;
+  line-height: 1.2 !important;
   letter-spacing: -0.3px !important;
 }
 
 .lp-cat-back-btn:hover {
-  background-color: #C9A84C !important; /* 골드로 마우스오버 하이라이트 */
+  background-color: #C9A84C !important;
   color: #111827 !important;
   transform: translateY(-1px) !important;
 }
 
-/* 카테고리 2컬럼 뷰 스크롤 영역 */
+/* ── 핵심: 유일한 스크롤 컨테이너 ──
+   이 div 하나만 overflow-y: auto
+   나머지 조상/형제는 모두 overflow: hidden 또는 visible */
 .lp-cat-2col-scroll {
-  flex: 1 !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-  padding: 10px 12px 12px !important;
+  flex: 1 !important;           /* 헤더 아래 남은 높이 전부 */
+  min-height: 0 !important;     /* flex child 높이 축소 허용 (필수) */
+  overflow-x: hidden !important;
+  overflow-y: auto !important;  /* 여기서만 세로 스크롤 */
+  padding: 10px 12px 16px !important;
   box-sizing: border-box !important;
   scrollbar-width: thin !important;
   scrollbar-color: #cbd5e1 transparent !important;
 }
 
-.lp-cat-2col-scroll::-webkit-scrollbar {
-  width: 4px !important;
-}
-
+.lp-cat-2col-scroll::-webkit-scrollbar { width: 4px !important; }
 .lp-cat-2col-scroll::-webkit-scrollbar-thumb {
   background: #cbd5e1 !important;
   border-radius: 2px !important;
 }
+.lp-cat-2col-scroll::-webkit-scrollbar-track { background: transparent !important; }
 
-.lp-cat-2col-scroll::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
+/* 2컬럼 그리드: 좌열/우열 컨테이너 배치 */
 .lp-cat-2col-grid {
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; /* 좌우 2컬럼 분할 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
   gap: 8px !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  /* height는 설정하지 않음 → 내용물 높이에 따라 자연스럽게 늘어남 */
+  align-items: start !important;
 }
 
+/* 각 열: 카드 세로 스택 */
 .lp-cat-col-left,
 .lp-cat-col-right {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
   min-width: 0 !important;
+  /* height 지정 없음 → 카드 수에 따라 아래로 자연스럽게 늘어남 */
 }
 
-/* 카테고리 2컬럼 뷰 내 카드 크기 고정 */
+/* 카테고리 전체보기 뷰 내 카드 크기:
+   - 고정 높이 유지 (카드 일관성)
+   - max-height 제거 → 내용이 많아도 잘리지 않음
+   - flex-shrink: 0 → 찌그러짐 방지 */
 .lp-cat-view .lp-rec-card {
-  height: 126px !important; /* 5줄 레이아웃 최적화 고정 높이 */
-  flex-shrink: 0 !important; /* 찌그러짐 차단 */
+  min-height: 116px !important;
+  height: 126px !important;
+  max-height: none !important;  /* 핵심: 상위 규칙의 max-height 145px 해제 */
+  flex: 0 0 auto !important;    /* 고정 크기, 늘어나거나 줄어들지 않음 */
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* ── 푸터 관리자 캡슐 링크 ── */
