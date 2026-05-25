@@ -189,7 +189,27 @@ async function deleteListingFromFirestore(id) {
 }
 
 const formatPrice   = (n) => Number(n).toLocaleString('ko-KR');
-const getThumbnail  = (item) => (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
+const normalizeImageUrl = (url) => {
+  if (!url) return '';
+  const str = String(url).trim();
+
+  const driveMatch = str.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (driveMatch && driveMatch[1]) {
+    return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
+  }
+
+  const idMatch = str.match(/[?&]id=([^&]+)/);
+  if (str.includes('drive.google.com') && idMatch && idMatch[1]) {
+    return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+  }
+
+  return str;
+};
+
+const getThumbnail  = (item) => {
+  const raw = (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
+  return normalizeImageUrl(raw);
+};
 const getDisplayAddress = (item) => item.displayAddress || item.address;
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
@@ -377,19 +397,19 @@ const openModal = (item) => {
   const mainImg  = document.getElementById('modalMainImg');
   const thumbsEl = document.getElementById('modalThumbs');
   if (images.length > 0) {
-    mainImg.src = images[0]; mainImg.dataset.index = 0;
+    mainImg.src = normalizeImageUrl(images[0]); mainImg.dataset.index = 0;
     thumbsEl.innerHTML = images.map((url,i) =>
-      `<img src="${url}" class="modal-thumb${i===0?' active':''}" data-index="${i}" />`
+      `<img src="${normalizeImageUrl(url)}" class="modal-thumb${i===0?' active':''}" data-index="${i}" />`
     ).join('');
     thumbsEl.querySelectorAll('.modal-thumb').forEach(thumb => {
       thumb.addEventListener('click', () => {
         const idx = parseInt(thumb.dataset.index);
-        mainImg.src = images[idx]; mainImg.dataset.index = idx;
+        mainImg.src = normalizeImageUrl(images[idx]); mainImg.dataset.index = idx;
         thumbsEl.querySelectorAll('.modal-thumb').forEach(t => t.classList.remove('active'));
         thumb.classList.add('active');
       });
     });
-    mainImg.onclick = () => openLightbox(images, parseInt(mainImg.dataset.index));
+    mainImg.onclick = () => openLightbox(images.map(normalizeImageUrl), parseInt(mainImg.dataset.index));
   } else {
     mainImg.src = ''; thumbsEl.innerHTML = ''; mainImg.onclick = null;
   }
@@ -667,6 +687,9 @@ const setupListingsPage = () => {
       else if (isLand) imgSrc = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400';
       else if (isOfficetel) imgSrc = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400';
       else if (isHouse) imgSrc = 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400';
+
+      const actualThumb = getThumbnail(item);
+      if (actualThumb) imgSrc = actualThumb;
 
       // Helper to format area display with both ㎡ and 평, handling missing values
       const formatArea = (m2, py) => {
