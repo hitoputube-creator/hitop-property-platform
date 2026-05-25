@@ -5663,9 +5663,9 @@ body[data-page="listings"] .fbc-admin-btn:hover {
    모든 페이지 공통 적용 — 좌: 회사정보 | 구분선 | 우: 퀵버튼
    ═══════════════════════════════════════════════════════ */
 .site-footer-v2 {
-  background: #071f5f;
-  color: #94a3b8;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  background: #1f2937;
+  color: #d1d5db;
+  border-top: 1px solid rgba(255,255,255,0.08);
   padding: 18px 0;
   font-size: 12px;
   flex-shrink: 0;
@@ -5701,7 +5701,7 @@ body[data-page="listings"] .fbc-admin-btn:hover {
   column-gap: 0;
 }
 .footer-v2-info span {
-  color: #8fa3c8;
+  color: #9ca3af;
   font-size: 11.5px;
   line-height: 1.7;
   padding-right: 10px;
@@ -5713,7 +5713,7 @@ body[data-page="listings"] .fbc-admin-btn:hover {
 }
 .footer-v2-copy {
   font-size: 10.5px;
-  color: #3d5073;
+  color: #4b5563;
   margin: 3px 0 0;
 }
 
@@ -5775,7 +5775,7 @@ body[data-page="listings"] .fbc-admin-btn:hover {
   border-radius: 4px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
-  color: #4a6080;
+  color: #6b7280;
   font-size: 10.5px;
   font-weight: 400;
   text-decoration: none;
@@ -5783,7 +5783,7 @@ body[data-page="listings"] .fbc-admin-btn:hover {
 }
 .fv2-admin-btn:hover {
   background: rgba(255,255,255,0.1);
-  color: #94a3b8;
+  color: #9ca3af;
 }
 
 /* ── 관리자 페이지: footer 하단 고정 ── */
