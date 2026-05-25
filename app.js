@@ -391,6 +391,26 @@ const openModal = (item) => {
   });
   document.getElementById('modalInfoTable').innerHTML = tableHTML;
 
+  // 면적 하이라이트 카드 (오른쪽 요약 패널)
+  const areaHlEl = document.getElementById('modalAreaHighlight');
+  if (areaHlEl) {
+    let areaHlHTML = '';
+    if (isStore) {
+      const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
+      const exclPy = item.exclusiveAreaPy;
+      const supM2  = item.supplyAreaM2 ?? item.contractArea;
+      const supPy  = item.supplyAreaPy;
+      if (exclM2 || exclPy) areaHlHTML += `<div class="area-hl-row"><span class="area-hl-label">전용면적</span><span class="area-hl-value">${formatArea(exclM2, exclPy)}</span></div>`;
+      if (supM2  || supPy)  areaHlHTML += `<div class="area-hl-row"><span class="area-hl-label">분양면적</span><span class="area-hl-value">${formatArea(supM2,  supPy)}</span></div>`;
+    } else {
+      const areaM2 = item.areaM2 ?? item.area;
+      const areaPy = item.areaPy;
+      if (areaM2 || areaPy) areaHlHTML = `<div class="area-hl-row"><span class="area-hl-label">면적</span><span class="area-hl-value">${formatArea(areaM2, areaPy)}</span></div>`;
+    }
+    areaHlEl.innerHTML  = areaHlHTML;
+    areaHlEl.style.display = areaHlHTML ? '' : 'none';
+  }
+
   const descEl = document.getElementById('modalDesc');
   descEl.innerHTML = item.description ? item.description.replace(/\n/g,'<br>') : '';
 
