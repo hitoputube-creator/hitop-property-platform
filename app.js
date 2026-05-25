@@ -828,7 +828,7 @@ const setupListingsPage = () => {
   const activeMarkers = [];
 
   // ── 필드 헬퍼 ──
-  const isCompleted = i => i.is_completed === true || i.status === 'done';
+  const isCompleted = i => i.is_completed === true || i.status === 'done' || i.status === '거래완료';
   const isRec       = i => i.is_recommended === true || i.isRecommended === true;
   const isNew       = i => i.is_new === true;
   const dealClass   = t => t === '매매' ? 'deal-mae' : t === '전세' ? 'deal-jeon' : t === '월세' ? 'deal-wol' : 'deal-im';
@@ -887,11 +887,35 @@ const setupListingsPage = () => {
     });
   });
 
-  // ── 모달 열기 (미니맵 + 거래완료 표시) ──
+  // ── 모달 열기 (미니맵 + 거래상태 배지 표시) ──
   const openModalFull = (item) => {
     openModal(item);
     const doneTag = document.getElementById('modalDoneTag');
-    if (doneTag) doneTag.classList.toggle('hidden', !isCompleted(item));
+    if (doneTag) {
+      const completed = isCompleted(item);
+      const statusText = item.status || (completed ? '거래완료' : '거래가능');
+      if (statusText) {
+        doneTag.textContent = statusText;
+        doneTag.classList.remove('hidden');
+        
+        // 상태별 테마 색상 (CSS 클래스를 유지하되 인라인 스타일로 안전하고 유려하게 대입)
+        if (statusText === '거래완료') {
+          doneTag.style.background = '#fee2e2';
+          doneTag.style.color = '#dc2626';
+        } else if (statusText === '상담중') {
+          doneTag.style.background = '#ffedd5';
+          doneTag.style.color = '#ea580c';
+        } else if (statusText === '계약진행') {
+          doneTag.style.background = '#f3e8ff';
+          doneTag.style.color = '#7c3aed';
+        } else { // 거래가능
+          doneTag.style.background = '#e0f2fe';
+          doneTag.style.color = '#0284c7';
+        }
+      } else {
+        doneTag.classList.add('hidden');
+      }
+    }
     const minimapWrap = document.getElementById('modalMinimapWrap');
     const minimapEl   = document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
@@ -1170,7 +1194,7 @@ const setupAdminDashboard = () => {
   let _allListings = [];
 
   // ── 필드 헬퍼 (신·구 호환) ──
-  const isCompleted = i => i.is_completed === true || i.status === 'done';
+  const isCompleted = i => i.is_completed === true || i.status === 'done' || i.status === '거래완료';
   const isRec       = i => i.is_recommended === true || i.isRecommended === true;
   const isNew       = i => i.is_new === true;
   const getPropNo   = i => i.property_number || i.listingNo || '-';
@@ -1558,6 +1582,7 @@ if (ptEl) {
     payload.isRecommended = chkRec?.checked === true;
     payload.isUrgent = chkUrg?.checked === true;
     payload.stickers = Array.from(form.querySelectorAll('input[name="stickers"]:checked')).map(el => el.value);
+    if (!payload.status) payload.status = '거래가능';
 
     if (payload.id) {
       // 수정 — Firestore updateDoc
@@ -1580,7 +1605,7 @@ if (ptEl) {
       // 신규 등록 — Firestore 저장
       if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
       if (!payload.property_number) payload.property_number = payload.listingNo;
-      if (!payload.status) payload.status = '';
+      if (!payload.status) payload.status = '거래가능';
       delete payload.id;
       delete payload.createdAt;
       delete payload.updatedAt;
