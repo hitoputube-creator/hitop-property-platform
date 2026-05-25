@@ -855,6 +855,19 @@ const setupListingsPage = () => {
   let map = null, openIw = null;
   const activeMarkers = [];
 
+  // 매물종류별 숫자 원형 마커 색상
+  const MARKER_COLORS = {
+    '공장창고':         '#0f766e',
+    '상가':             '#d6336c',
+    '토지':             '#b7791f',
+    '오피스텔':         '#6d28d9',
+    '힐스테이트더운정': '#1d4ed8',
+    '단독주택':         '#16a34a',
+  };
+  const MARKER_COLOR_MIXED = '#334155';
+  let _mhId = 0;
+  window._mhHandlers = {};
+
   // ── 필드 헬퍼 ──
   const isCompleted = i => i.is_completed === true || i.status === 'done' || i.status === '거래완료';
   const isRec       = i => i.is_recommended === true || i.isRecommended === true;
@@ -871,39 +884,55 @@ const setupListingsPage = () => {
     });
   };
 
-  // ── 지도 마커 ──
+  // ── 지도 마커 (숫자 원형 마커) ──
   const placeMarkers = (items) => {
     if (!map || typeof kakao === 'undefined') return;
     activeMarkers.forEach(m => m.setMap(null));
     activeMarkers.length = 0;
     if (openIw) { openIw.close(); openIw = null; }
 
-    const addMarkerAtCoords = (coords, item) => {
-      const marker = new kakao.maps.Marker({ map, position: coords, title: item.title });
-      const iw = new kakao.maps.InfoWindow({
-        content:`<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;max-width:200px;">
-          ${item.title}<br>
-          <span style="color:#0A1F5C;font-weight:700;">${item.dealType} ${formatCardPrice(item)}</span>
-        </div>`
-      });
-      kakao.maps.event.addListener(marker, 'click', () => {
-        if (openIw) openIw.close();
-        iw.open(map, marker); openIw = iw;
-        openModalFull(item);
-      });
-      activeMarkers.push(marker);
+    // 그룹 컬러: 단일 종류 → 해당 색, 혼합 → 슬레이트
+    const getGroupColor = (gi) => {
+      const types = [...new Set(gi.map(i => i.propertyType))];
+      return types.length === 1 ? (MARKER_COLORS[types[0]] || MARKER_COLOR_MIXED) : MARKER_COLOR_MIXED;
+    };
+
+    // 숫자 원형 CustomOverlay HTML
+    const makeMarkerContent = (count, color) => {
+      const size = count >= 10 ? 38 : 32;
+      const fs   = count >= 10 ? 12 : 13;
+      const hid  = `mh_${++_mhId}`;
+      return { hid, html: `<div onclick="window._mhHandlers['${hid}']()" style="width:${size}px;height:${size}px;background:${color};border-radius:50%;border:2.5px solid rgba(255,255,255,0.85);box-shadow:0 2px 8px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;color:#fff;font-size:${fs}px;font-weight:800;cursor:pointer;line-height:1;user-select:none;">${count}</div>` };
+    };
+
+    // CustomOverlay 생성 + 클릭 핸들러 등록
+    const addOverlay = (coords, gi) => {
+      const { hid, html } = makeMarkerContent(gi.length, getGroupColor(gi));
+      const overlay = new kakao.maps.CustomOverlay({ map, position: coords, content: html, yAnchor: 0.5, zIndex: 3 });
+      window._mhHandlers[hid] = () => {
+        if (gi.length === 1) {
+          openModalFull(gi[0]);
+        } else {
+          map.setCenter(coords);
+          map.setLevel(Math.max(1, map.getLevel() - 2));
+        }
+      };
+      activeMarkers.push(overlay);
     };
 
     // 거래완료 제외 후 두 그룹으로 분리
-    const active = items.filter(i => !isCompleted(i));
+    const active        = items.filter(i => !isCompleted(i));
     const withCoords    = active.filter(i => i.lat && i.lng && !isNaN(Number(i.lat)) && !isNaN(Number(i.lng)));
     const withoutCoords = active.filter(i => !(i.lat && i.lng && !isNaN(Number(i.lat)) && !isNaN(Number(i.lng))) && i.address);
 
-    // 그룹 1: lat/lng 보유 → 최대 100개 즉시 표시 (API 호출 없음)
+    // 그룹 1: lat/lng 보유 → 좌표 기준 그룹핑 후 숫자 원형 마커 즉시 표시
+    const groups = new Map();
     withCoords.slice(0, 100).forEach(item => {
-      const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
-      addMarkerAtCoords(coords, item);
+      const key = `${Number(item.lat).toFixed(4)}_${Number(item.lng).toFixed(4)}`;
+      if (!groups.has(key)) groups.set(key, { lat: Number(item.lat), lng: Number(item.lng), items: [] });
+      groups.get(key).items.push(item);
     });
+    groups.forEach(({ lat, lng, items: gi }) => addOverlay(new kakao.maps.LatLng(lat, lng), gi));
 
     // withCoords 마커 기준으로 지도 bounds 조정 (마커가 항상 뷰포트 안에 보이도록)
     if (withCoords.length === 1) {
@@ -921,8 +950,7 @@ const setupListingsPage = () => {
       withoutCoords.slice(0, 30).forEach(item => {
         geocoder.addressSearch(item.address, (result, status) => {
           if (status !== kakao.maps.services.Status.OK) return;
-          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          addMarkerAtCoords(coords, item);
+          addOverlay(new kakao.maps.LatLng(result[0].y, result[0].x), [item]);
         });
       });
     }
