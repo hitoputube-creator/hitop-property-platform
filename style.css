@@ -5658,5 +5658,179 @@ body[data-page="listings"] .fbc-admin-btn:hover {
 }
 
 
+/* ═══════════════════════════════════════════════════════
+   통일 푸터 v2 (site-footer-v2)
+   모든 페이지 공통 적용 — 좌: 회사정보 | 구분선 | 우: 퀵버튼
+   ═══════════════════════════════════════════════════════ */
+.site-footer-v2 {
+  background: #071f5f;
+  color: #94a3b8;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 18px 0;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.footer-v2-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+}
+
+/* 왼쪽: 회사 정보 */
+.footer-v2-company {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.footer-v2-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 2px;
+}
+.footer-v2-info {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 1px;
+  column-gap: 0;
+}
+.footer-v2-info span {
+  color: #8fa3c8;
+  font-size: 11.5px;
+  line-height: 1.7;
+  padding-right: 10px;
+  margin-right: 4px;
+  border-right: 1px solid rgba(255,255,255,0.12);
+}
+.footer-v2-info span:last-child {
+  border-right: none;
+}
+.footer-v2-copy {
+  font-size: 10.5px;
+  color: #3d5073;
+  margin: 3px 0 0;
+}
+
+/* 세로 구분선 (PC용) */
+.footer-v2-divider {
+  width: 1px;
+  height: 52px;
+  background: rgba(255,255,255,0.12);
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0 24px;
+}
+
+/* 오른쪽: 퀵버튼 + 관리자 */
+.footer-v2-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.footer-v2-btns {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+}
+.fv2-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #e2e8f0;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+.fv2-btn svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.fv2-btn:hover          { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); }
+.fv2-blog:hover         { background: #2db400; border-color: #2db400; color: #fff; }
+.fv2-kakao:hover        { background: #fee500; border-color: #fee500; color: #191919; }
+.fv2-inquiry:hover      { background: #38bdf8; border-color: #38bdf8; color: #0b1f4d; }
+.fv2-youtube:hover      { background: #ff0000; border-color: #ff0000; color: #fff; }
+
+/* 관리자 버튼 — 튀지 않는 회색 계열 */
+.fv2-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #4a6080;
+  font-size: 10.5px;
+  font-weight: 400;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+.fv2-admin-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #94a3b8;
+}
+
+/* ── 관리자 페이지: footer 하단 고정 ── */
+body[data-page="admin-dashboard"],
+body[data-page="admin-listings"],
+body[data-page="admin-register"],
+body[data-page="admin-consults"],
+body[data-page="admin-consult-detail"] {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+body[data-page="admin-dashboard"] #adminMain,
+body[data-page="admin-listings"] #adminMain,
+body[data-page="admin-register"] #adminMain,
+body[data-page="admin-consults"] #adminMain,
+body[data-page="admin-consult-detail"] #adminMain {
+  flex: 1;
+}
+/* login overlay가 hidden일 때도 footer가 항상 최하단에 */
+body[data-page="admin-dashboard"] > .site-footer-v2,
+body[data-page="admin-listings"]  > .site-footer-v2,
+body[data-page="admin-register"]  > .site-footer-v2,
+body[data-page="admin-consults"]  > .site-footer-v2,
+body[data-page="admin-consult-detail"] > .site-footer-v2 {
+  margin-top: auto;
+}
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 768px) {
+  .footer-v2-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .footer-v2-divider { display: none; }
+  .footer-v2-right {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .footer-v2-btns {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .fv2-btn { font-size: 11px; padding: 5px 8px; }
+}
+
+
 
 
