@@ -2898,7 +2898,7 @@ body[data-page="listings"] .lp-header-search {
 
   max-width: 600px;
 
-  margin: 0 12px;
+  margin: 0 0 0 auto;
 
   display: flex;
 

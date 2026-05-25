@@ -1116,14 +1116,16 @@ const setupListingsPage = () => {
   // ── 오버레이 검색 폼 ──
   filterForm.addEventListener('submit', e => {
     e.preventDefault();
-    flt.kw       = (document.getElementById('kwInput')?.value || '').toLowerCase();
+    const kwInput = document.getElementById('kwInput');
+    flt.kw       = (kwInput?.value || '').toLowerCase();
     flt.formCat  = document.getElementById('formCatSelect')?.value  || '';
     flt.formDeal = document.getElementById('formDealSelect')?.value || '';
     applyFilters();
-  });
-  document.getElementById('kwInput')?.addEventListener('input', e => {
-    flt.kw = e.target.value.toLowerCase();
-    applyFilters();
+
+    // 검색 실행 후 검색어 input 값은 빈 값으로 초기화 (결과는 유지)
+    if (kwInput) {
+      kwInput.value = '';
+    }
   });
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
     Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '' });
