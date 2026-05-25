@@ -5576,10 +5576,44 @@ body[data-page="listings"] .footer-divider-vertical {
   color: #ffffff !important;
 }
 
-.fnq-btn.fbc-admin:hover {
-  background: #64748b !important;
-  border-color: #64748b !important;
-  color: #ffffff !important;
+/* 오른쪽 영역 레이아웃 (퀵버튼 & 관리자) */
+body[data-page="listings"] .footer-right-area {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important; /* PC 기준 오른쪽 정렬 */
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+  max-width: 320px !important;
+  width: 100% !important;
+}
+
+body[data-page="listings"] .footer-admin-wrap {
+  display: flex !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  margin-top: 2px !important;
+}
+
+/* 관리자 버튼: 작고 덜 눈에 띄는 회색 디자인 */
+body[data-page="listings"] .fbc-admin-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #94a3b8 !important; /* 연한 회색 글씨 */
+  font-size: 10px !important; /* 크기 작게 */
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+body[data-page="listings"] .fbc-admin-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important; /* 호버 시 약간 밝아짐 */
 }
 
 /* 모바일 전용 미디어 쿼리 패치 */
@@ -5596,6 +5630,16 @@ body[data-page="listings"] .footer-divider-vertical {
   
   body[data-page="listings"] .footer-divider-vertical {
     display: none !important; /* 모바일에서는 구분선 숨김 */
+  }
+
+  body[data-page="listings"] .footer-right-area {
+    align-items: flex-start !important;
+    max-width: none !important;
+  }
+
+  body[data-page="listings"] .footer-admin-wrap {
+    justify-content: flex-start !important;
+    margin-top: 4px !important;
   }
   
   .footer-new-quick-btns {
