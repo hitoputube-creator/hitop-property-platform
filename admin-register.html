@@ -75,15 +75,42 @@
           <input name="address" placeholder="정확한 주소 (지도 마커용 — 비공개)" required />
           <input name="displayAddress" placeholder="표시용 주소 (예: 파주시 탄현면)" required />
 
+          <!-- 일반 면적 (공장창고/상가 외 매물종류) -->
           <div class="area-row area-general">
             <input type="number" name="areaM2" min="0" step="0.01" placeholder="면적(㎡)" />
             <input type="number" name="areaPy" min="0" step="0.01" placeholder="면적(평)" />
           </div>
+          <!-- 기존 상가 면적 (레거시 호환용 — 숨김) -->
           <div class="area-row area-store hidden">
             <input type="number" name="exclusiveAreaM2" min="0" step="0.01" placeholder="전용면적(㎡)" />
             <input type="number" name="exclusiveAreaPy" min="0" step="0.01" placeholder="전용면적(평)" />
             <input type="number" name="supplyAreaM2" min="0" step="0.01" placeholder="분양면적(㎡)" />
             <input type="number" name="supplyAreaPy" min="0" step="0.01" placeholder="분양면적(평)" />
+          </div>
+
+          <!-- ─ 공장창고 / 상가 전용 면적 필드 ─ -->
+          <div class="area-row area-new-detail hidden">
+            <span class="area-field-label">대지면적</span>
+            <input type="number" name="landAreaM2" min="0" step="0.01" placeholder="대지(㎡)" />
+            <input type="number" name="landAreaPy" min="0" step="0.01" placeholder="대지(평)" />
+          </div>
+          <div class="area-row area-new-detail hidden">
+            <span class="area-field-label">건축면적</span>
+            <input type="number" name="buildingAreaM2" min="0" step="0.01" placeholder="건축(㎡)" />
+            <input type="number" name="buildingAreaPy" min="0" step="0.01" placeholder="건축(평)" />
+          </div>
+          <div class="area-row area-new-detail area-factory-total hidden">
+            <span class="area-field-label">연면적</span>
+            <input type="number" name="totalFloorAreaM2" min="0" step="0.01" placeholder="연면적(㎡)" />
+            <input type="number" name="totalFloorAreaPy" min="0" step="0.01" placeholder="연면적(평)" />
+          </div>
+
+          <!-- ─ 공장창고 / 상가 공통 세부 정보 ─ -->
+          <div class="detail-fields-section hidden">
+            <input name="floorInfo" placeholder="층정보 (예: 지상 1층 / 총 1층)" />
+            <input name="zoning" placeholder="용도지역 (예: 준공업지역, 일반상업지역)" />
+            <input name="parkingCount" placeholder="주차대수 (예: 10대, 건물 내 주차)" />
+            <input name="approvalDate" placeholder="사용승인일 (예: 2010-03-15)" />
           </div>
 
           <input name="title" placeholder="제목" required />
@@ -142,7 +169,8 @@
             </div>
           </div>
 
-          <textarea name="description" rows="4" placeholder="특이사항 / 메모" required></textarea>
+          <textarea name="detailDescription" rows="5" placeholder="매물설명 — 입지, 도로접근성, 추천업종, 임대조건, 특이사항 등 (상세보기에 표시됩니다)"></textarea>
+          <textarea name="description" rows="3" placeholder="내부 메모 / 특이사항 (관리용)" required></textarea>
 
           <div id="imageUrlContainer"></div>
           <button type="button" id="addImageBtn" class="btn btn-outline" style="font-size:0.85rem;">사진 추가 +</button>

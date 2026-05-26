@@ -412,7 +412,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-overlay.hidden { display: none; }
 
-.modal-box { background: #fff; border-radius: 16px; width: 100%; max-width: 1240px; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-box { background: #fff; border-radius: 16px; width: 95vw; max-width: 1600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
 
 .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #e5e9f0; background: #f6f8fb; flex-shrink: 0; }
 
@@ -424,11 +424,11 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-close:hover { background: #e5e9f0; }
 
-.modal-body { display: grid; grid-template-columns: 1fr 380px; overflow: hidden; flex: 1; }
+.modal-body { display: grid; grid-template-columns: 1fr 390px; overflow: hidden; flex: 1; min-height: 0; }
 
 .modal-left { border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; overflow-y: auto; }
 
-.modal-main-img { position: relative; background: #eee; aspect-ratio: 16/9; overflow: hidden; flex-shrink: 0; }
+.modal-main-img { position: relative; background: #eee; height: 420px; overflow: hidden; flex-shrink: 0; }
 
 .modal-main-img img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; transition: transform 0.2s; }
 
@@ -462,7 +462,18 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .info-area-row td { background: #f0fdf4; }
 .info-area-row .info-label { color: #0f766e; font-weight: 700; }
-.info-area-row .info-value { color: #065f46; font-weight: 700; }
+.info-area-row .info-value { color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.info-price-row td { background: #fffbeb; }
+.info-price-row .info-label { color: #92400e; font-weight: 700; }
+.info-price-value { color: #b45309; font-weight: 800; font-size: 15px; }
+
+.area-unit-btn { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; cursor: pointer; flex-shrink: 0; transition: background 0.15s; }
+.area-unit-btn:hover { background: #a7f3d0; }
+
+.area-field-label { font-size: 12px; font-weight: 700; color: #475569; white-space: nowrap; min-width: 52px; }
+.detail-fields-section { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+.detail-fields-section input { width: 100%; box-sizing: border-box; }
 
 .modal-title { font-size: 19px; font-weight: 700; color: #1e293b; margin: 0; line-height: 1.4; }
 
@@ -620,7 +631,9 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
   .modal-body { grid-template-columns: 1fr; }
 
-  .modal-left { border-right: none; border-bottom: 1px solid #e5e9f0; max-height: 280px; }
+  .modal-left { border-right: none; border-bottom: 1px solid #e5e9f0; }
+
+  .modal-main-img { height: 220px; }
 
   .top-bar-hours { display: none; }
 
@@ -1856,7 +1869,8 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
   .modal-body { grid-template-columns: 1fr; }
 
-  .modal-left { border-right: none; border-bottom: 1px solid #e5e9f0; max-height: 260px; }
+  .modal-left { border-right: none; border-bottom: 1px solid #e5e9f0; }
+  .modal-main-img { height: 200px; }
 
 }
 

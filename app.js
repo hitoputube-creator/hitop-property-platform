@@ -333,28 +333,33 @@ const lightboxNav = (dir) => {
 const openModal = (item) => {
   const modal = document.getElementById('listingModal');
   if (!modal) return;
-  const cfg        = PROPERTY_FIELDS[item.propertyType] || {};
-  const priceFields = (cfg.priceConfig || {})[item.dealType] || [];
-  const infoFields  = cfg.infoFields || [];
-  const images      = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
+  const pt     = item.propertyType || '';
+  const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
+  const isFactory   = pt === '공장창고' || pt === '공장·창고';
+  const isStoreType = pt === '상가' || pt === '상가·빌딩' || pt === '상가빌딩';
 
+  // ── 헤더 ──
   document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
   document.getElementById('modalTitle').textContent = item.title;
+
+  // ── 뱃지 ──
   const modalBadgeEl = document.getElementById('modalBadge');
   if (modalBadgeEl) {
     const propClassMap = {
       '공장창고': 'prop-factory', '공장·창고': 'prop-factory',
       '상가': 'prop-store', '상가·빌딩': 'prop-store', '상가빌딩': 'prop-store',
-      '토지': 'prop-land',
-      '오피스텔': 'prop-officetel',
+      '토지': 'prop-land', '오피스텔': 'prop-officetel',
       '힐스테이트더운정': 'prop-hillstate',
       '단독주택': 'prop-house', '단독·전원주택': 'prop-house',
     };
-    const propCls = propClassMap[item.propertyType] || 'prop-etc';
-    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${item.propertyType}</span>${getDealBadgeHTML(item.dealType)}`;
+    const propCls = propClassMap[pt] || 'prop-etc';
+    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${pt}</span>${getDealBadgeHTML(item.dealType)}`;
   }
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
 
+  // ── 오른쪽 패널: 가격 표시 ──
+  const cfg = PROPERTY_FIELDS[pt] || {};
+  const priceFields = (cfg.priceConfig || {})[item.dealType] || [];
   const renderPriceVal = (f, val) => {
     if (!f.money) return val;
     const n = Number(String(val).replace(/,/g, ''));
@@ -364,87 +369,154 @@ const openModal = (item) => {
   priceFields.forEach(f => {
     const val = item[f.key];
     if (!val && val !== 0) return;
-    priceHTML += `<div class="modal-price-row">
-      <span class="price-label">${f.label}</span>
-      <strong class="price-value">${renderPriceVal(f, val)}</strong>
-    </div>`;
+    priceHTML += `<div class="modal-price-row"><span class="price-label">${f.label}</span><strong class="price-value">${renderPriceVal(f, val)}</strong></div>`;
   });
   if (!priceHTML && item.price) {
-    priceHTML = `<div class="modal-price-row">
-      <span class="price-label">${item.dealType}</span>
-      <strong class="price-value">${formatPrice(item.price)}만원</strong>
-    </div>`;
+    priceHTML = `<div class="modal-price-row"><span class="price-label">${item.dealType}</span><strong class="price-value">${formatPrice(item.price)}만원</strong></div>`;
   }
   document.getElementById('modalPriceArea').innerHTML = priceHTML;
 
-  let tableHTML = '';
-  // Build area rows with new fields
-  const isStore = item.propertyType === '상가';
-  const formatArea = (m2, py) => {
-    const m2Num = (m2 !== undefined && m2 !== null) ? Number(m2) : null;
-    const pyNum = (py !== undefined && py !== null) ? Number(py) : null;
-    const hasM2 = m2Num !== null && !isNaN(m2Num) && m2Num > 0;
-    const hasPy = pyNum !== null && !isNaN(pyNum) && pyNum > 0;
-    const finalM2 = hasM2 ? m2Num : (hasPy ? pyNum * 3.305785 : null);
-    const finalPy = hasPy ? pyNum : (hasM2 ? m2Num / 3.305785 : null);
-    const fmtM2 = v => v.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const fmtPy = v => Math.round(v).toLocaleString('ko-KR');
-    if (finalM2 !== null && finalPy !== null) return `${fmtM2(finalM2)}㎡ (${fmtPy(finalPy)}평)`;
-    if (finalM2 !== null) return `${fmtM2(finalM2)}㎡`;
-    if (finalPy !== null) return `${fmtPy(finalPy)}평`;
-    return '';
+  // ── 면적 계산 헬퍼 ──
+  const _calcArea = (m2val, pyval) => {
+    const m2 = (m2val != null && m2val !== '') ? Number(m2val) : NaN;
+    const py = (pyval != null && pyval !== '') ? Number(pyval) : NaN;
+    const hasM2 = !isNaN(m2) && m2 > 0;
+    const hasPy = !isNaN(py) && py > 0;
+    if (!hasM2 && !hasPy) return null;
+    return { m2: hasM2 ? m2 : py * 3.3058, py: hasPy ? py : m2 / 3.3058 };
   };
-  if (isStore) {
-    const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
-    const exclPy = item.exclusiveAreaPy;
-    const supM2 = item.supplyAreaM2 ?? item.contractArea;
-    const supPy = item.supplyAreaPy;
-    if (exclM2 || exclPy) {
-      const exclStr = formatArea(exclM2, exclPy);
-      tableHTML += `<tr class="info-area-row"><td class="info-label">전용면적</td><td class="info-value">${exclStr}</td></tr>`;
-    }
-    if (supM2 || supPy) {
-      const supStr = formatArea(supM2, supPy);
-      tableHTML += `<tr class="info-area-row"><td class="info-label">분양면적</td><td class="info-value">${supStr}</td></tr>`;
-    }
-  } else {
-    const areaM2 = item.areaM2 ?? item.area;
-    const areaPy = item.areaPy;
-    if (areaM2 || areaPy) {
-      const areaStr = formatArea(areaM2, areaPy);
-      tableHTML += `<tr class="info-area-row"><td class="info-label">면적</td><td class="info-value">${areaStr}</td></tr>`;
-    }
-  }
-  // Append other info fields as before
-  infoFields.forEach(f => {
-    const val = item[f.key];
-    if (!val && val !== 0) return;
-    tableHTML += `<tr><td class="info-label">${f.label}</td><td class="info-value">${val}${f.suffix||''}</td></tr>`;
-  });
-  document.getElementById('modalInfoTable').innerHTML = tableHTML;
+  const _fmtM2 = v => Number(v).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const _fmtPy = v => Math.round(Number(v)).toLocaleString('ko-KR');
 
-  // 면적 하이라이트 카드 (오른쪽 요약 패널)
+  // ── 면적정보 통합 (m2str/pystr 반환) ──
+  const buildAreaInfo = () => {
+    const parts = [];
+    if (isFactory) {
+      const land  = _calcArea(item.landAreaM2  ?? item.landArea,    item.landAreaPy);
+      const bldg  = _calcArea(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
+      const total = _calcArea(item.totalFloorAreaM2 ?? item.totalArea, item.totalFloorAreaPy);
+      if (land)  parts.push({ label: '대지', ...land });
+      if (bldg)  parts.push({ label: '건축', ...bldg });
+      if (total) parts.push({ label: '연',   ...total });
+    } else if (isStoreType) {
+      const land = _calcArea(item.landAreaM2 ?? item.landArea, item.landAreaPy);
+      const bldg = _calcArea(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
+      // 신규필드 없으면 기존 상가 필드로 폴백
+      if (land || bldg) {
+        if (land) parts.push({ label: '대지', ...land });
+        if (bldg) parts.push({ label: '건축', ...bldg });
+      } else {
+        const excl = _calcArea(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
+        const sup  = _calcArea(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
+        if (excl) parts.push({ label: '전용', ...excl });
+        if (sup)  parts.push({ label: '분양', ...sup });
+      }
+    } else {
+      const area = _calcArea(item.areaM2 ?? item.area, item.areaPy);
+      if (area) parts.push({ label: '', ...area });
+    }
+    if (!parts.length) return null;
+    const m2str = parts.map(p => p.label ? `${p.label} ${_fmtM2(p.m2)}㎡` : `${_fmtM2(p.m2)}㎡`).join(' / ');
+    const pystr = parts.map(p => p.label ? `${p.label} ${_fmtPy(p.py)}평` : `${_fmtPy(p.py)}평`).join(' / ');
+    return { m2str, pystr };
+  };
+  const areaInfo = buildAreaInfo();
+
+  // ── 오른쪽 패널: 면적 하이라이트 ──
   const areaHlEl = document.getElementById('modalAreaHighlight');
   if (areaHlEl) {
-    let areaHlHTML = '';
-    if (isStore) {
-      const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
-      const exclPy = item.exclusiveAreaPy;
-      const supM2  = item.supplyAreaM2 ?? item.contractArea;
-      const supPy  = item.supplyAreaPy;
-      if (exclM2 || exclPy) areaHlHTML += `<div class="area-hl-row"><span class="area-hl-label">전용면적</span><span class="area-hl-value">${formatArea(exclM2, exclPy)}</span></div>`;
-      if (supM2  || supPy)  areaHlHTML += `<div class="area-hl-row"><span class="area-hl-label">분양면적</span><span class="area-hl-value">${formatArea(supM2,  supPy)}</span></div>`;
+    if (areaInfo) {
+      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">${areaInfo.m2str}</span></div>`;
+      areaHlEl.style.display = '';
     } else {
-      const areaM2 = item.areaM2 ?? item.area;
-      const areaPy = item.areaPy;
-      if (areaM2 || areaPy) areaHlHTML = `<div class="area-hl-row"><span class="area-hl-label">면적</span><span class="area-hl-value">${formatArea(areaM2, areaPy)}</span></div>`;
+      areaHlEl.style.display = 'none';
     }
-    areaHlEl.innerHTML  = areaHlHTML;
-    areaHlEl.style.display = areaHlHTML ? '' : 'none';
   }
 
+  // ── 왼쪽 패널: 매물정보 표 (구조화된 고정 항목) ──
+  const _fmtPrice = (val) => {
+    if (val === null || val === undefined || val === '') return null;
+    const n = Number(String(val).replace(/,/g, ''));
+    return isNaN(n) ? String(val) : n.toLocaleString('ko-KR') + '만원';
+  };
+
+  const tableRows = [];
+  const addRow = (label, value, cls) => {
+    const v = (value !== null && value !== undefined && value !== '') ? String(value) : null;
+    if (v) tableRows.push({ label, value: v, cls: cls || '' });
+  };
+
+  addRow('주소',    getDisplayAddress(item));
+  addRow('매물종류', pt);
+  addRow('거래유형', item.dealType);
+
+  // 가격 항목 (강조 스타일)
+  const dep  = _fmtPrice(item.deposit);
+  const rent = _fmtPrice(item.monthlyRent ?? item.rent);
+  const sale = _fmtPrice(item.salePrice);
+  const mgmt = item.managementFee;
+  const prem = item.premium;
+  if (dep)  addRow('보증금', dep,  'info-price-row');
+  if (rent) addRow('월세',   rent, 'info-price-row');
+  if (sale && !dep) addRow('매매가', sale, 'info-price-row');
+  if (mgmt) addRow('관리비', mgmt, 'info-price-row');
+  if (prem) addRow('권리금', prem, 'info-price-row');
+
+  // 면적정보 (토글 버튼 포함)
+  let areaRowHTML = '';
+  if (areaInfo) {
+    areaRowHTML = `<tr class="info-area-row">
+      <td class="info-label">면적정보</td>
+      <td class="info-value">
+        <span class="area-info-text" data-m2="${areaInfo.m2str}" data-py="${areaInfo.pystr}">${areaInfo.m2str}</span>
+        <button type="button" class="area-unit-btn" data-unit="m2">평</button>
+      </td>
+    </tr>`;
+  }
+
+  addRow('층정보',   item.floorInfo   ?? item.floor);
+  addRow('용도지역', item.zoning      ?? item.zoningArea);
+  addRow('주차대수', item.parkingCount ?? item.parking);
+  addRow('사용승인일', item.approvalDate);
+
+  let tableHTML = tableRows.map(r => {
+    const isPrice = r.cls === 'info-price-row';
+    return `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value${isPrice ? ' info-price-value' : ''}">${r.value}</td></tr>`;
+  }).join('');
+
+  // 면적 행은 주소~거래유형 뒤, 가격 뒤, 다른 항목 앞에 삽입
+  // 가격 rows 다음, 층정보 앞에 삽입하기 위해 slice 전략 사용
+  const priceEndIdx = tableRows.filter(r => r.cls === 'info-price-row').length;
+  const fixedRows = tableRows.slice(0, 3).map(r => `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value">${r.value}</td></tr>`).join('');
+  const priceRows = tableRows.slice(3, 3 + priceEndIdx).map(r => `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value info-price-value">${r.value}</td></tr>`).join('');
+  const otherRows = tableRows.slice(3 + priceEndIdx).map(r => `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value">${r.value}</td></tr>`).join('');
+  tableHTML = fixedRows + priceRows + areaRowHTML + otherRows;
+
+  const infoTableEl = document.getElementById('modalInfoTable');
+  if (infoTableEl) {
+    infoTableEl.innerHTML = tableHTML;
+    infoTableEl.querySelectorAll('.area-unit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const span = btn.previousElementSibling;
+        if (btn.dataset.unit === 'm2') {
+          span.textContent = span.dataset.py;
+          btn.textContent = '㎡'; btn.dataset.unit = 'py';
+        } else {
+          span.textContent = span.dataset.m2;
+          btn.textContent = '평'; btn.dataset.unit = 'm2';
+        }
+      });
+    });
+  }
+
+  // ── 매물설명 (detailDescription 우선, 없으면 description 폴백) ──
   const descEl = document.getElementById('modalDesc');
-  descEl.innerHTML = item.description ? item.description.replace(/\n/g,'<br>') : '';
+  if (descEl) {
+    const descText = item.detailDescription || item.description || item.memo || item.note || '';
+    descEl.innerHTML = descText ? descText.replace(/\n/g, '<br>') : '';
+    const descSection = descEl.closest('.modal-desc-section');
+    if (descSection) descSection.style.display = descText ? '' : 'none';
+  }
 
   const mainImg  = document.getElementById('modalMainImg');
   const thumbsEl = document.getElementById('modalThumbs');
@@ -1638,6 +1710,19 @@ const setupAdminRegister = () => {
     else { if(noDisplay)noDisplay.textContent='-'; if(noInput)noInput.value=''; }
   };
 
+  // ── 매물종류별 섹션 표시/숨김 ──
+  const syncAreaSections = () => {
+    const pt = form.elements['propertyType']?.value || '';
+    const isFactory = pt === '공장창고';
+    const isStore   = pt === '상가';
+    const hasNewDetail = isFactory || isStore;
+    form.querySelectorAll('.area-general').forEach(el => el.classList.toggle('hidden', hasNewDetail));
+    form.querySelectorAll('.area-store').forEach(el => el.classList.add('hidden'));
+    form.querySelectorAll('.area-new-detail').forEach(el => el.classList.toggle('hidden', !hasNewDetail));
+    form.querySelectorAll('.area-factory-total').forEach(el => el.classList.toggle('hidden', !isFactory));
+    form.querySelectorAll('.detail-fields-section').forEach(el => el.classList.toggle('hidden', !hasNewDetail));
+  };
+
   const ptEl = form.elements['propertyType'];
   if (ptEl) {
     ptEl.addEventListener('change', () => {
@@ -1654,7 +1739,9 @@ const setupAdminRegister = () => {
         }, 0);
       }
       updateListingNo();
+      syncAreaSections();
     });
+    syncAreaSections();
   }
 
 
@@ -1680,6 +1767,15 @@ const setupAdminRegister = () => {
     _supM2El.addEventListener('input', () => { if (_supM2El.value) _supPyEl.value = m2ToPy(_supM2El.value); });
     _supPyEl.addEventListener('input', () => { if (_supPyEl.value) _supM2El.value = pyToM2(_supPyEl.value); });
   }
+
+  // 신규 면적 필드 자동변환 (landArea, buildingArea, totalFloorArea)
+  [['landAreaM2','landAreaPy'],['buildingAreaM2','buildingAreaPy'],['totalFloorAreaM2','totalFloorAreaPy']].forEach(([m2n,pyn]) => {
+    const m2el = form.elements[m2n], pyel = form.elements[pyn];
+    if (m2el && pyel) {
+      m2el.addEventListener('input', () => { if (m2el.value) pyel.value = m2ToPy(m2el.value); });
+      pyel.addEventListener('input', () => { if (pyel.value) m2el.value = pyToM2(pyel.value); });
+    }
+  });
 
   const editId = new URLSearchParams(window.location.search).get('edit');
   const prefillId = new URLSearchParams(window.location.search).get('prefill');
@@ -1819,12 +1915,9 @@ if (ptEl) {
     });
     if (payload.premium === '' || payload.premium === undefined) delete payload.premium;
     // Convert numeric area fields
-    if (payload.areaM2) payload.areaM2 = Number(payload.areaM2);
-    if (payload.areaPy) payload.areaPy = Number(payload.areaPy);
-    if (payload.exclusiveAreaM2) payload.exclusiveAreaM2 = Number(payload.exclusiveAreaM2);
-    if (payload.exclusiveAreaPy) payload.exclusiveAreaPy = Number(payload.exclusiveAreaPy);
-    if (payload.supplyAreaM2) payload.supplyAreaM2 = Number(payload.supplyAreaM2);
-    if (payload.supplyAreaPy) payload.supplyAreaPy = Number(payload.supplyAreaPy);
+    ['areaM2','areaPy','exclusiveAreaM2','exclusiveAreaPy','supplyAreaM2','supplyAreaPy',
+     'landAreaM2','landAreaPy','buildingAreaM2','buildingAreaPy','totalFloorAreaM2','totalFloorAreaPy'
+    ].forEach(k => { if (payload[k]) payload[k] = Number(payload[k]); else if (payload[k] === '') delete payload[k]; });
     // Auto‑calculate missing counterparts
     if (payload.areaM2 && !payload.areaPy) payload.areaPy = Number(m2ToPy(payload.areaM2));
     if (payload.areaPy && !payload.areaM2) payload.areaM2 = Number(pyToM2(payload.areaPy));
@@ -1832,6 +1925,14 @@ if (ptEl) {
     if (payload.exclusiveAreaPy && !payload.exclusiveAreaM2) payload.exclusiveAreaM2 = Number(pyToM2(payload.exclusiveAreaPy));
     if (payload.supplyAreaM2 && !payload.supplyAreaPy) payload.supplyAreaPy = Number(m2ToPy(payload.supplyAreaM2));
     if (payload.supplyAreaPy && !payload.supplyAreaM2) payload.supplyAreaM2 = Number(pyToM2(payload.supplyAreaPy));
+    if (payload.landAreaM2 && !payload.landAreaPy) payload.landAreaPy = Number(m2ToPy(payload.landAreaM2));
+    if (payload.landAreaPy && !payload.landAreaM2) payload.landAreaM2 = Number(pyToM2(payload.landAreaPy));
+    if (payload.buildingAreaM2 && !payload.buildingAreaPy) payload.buildingAreaPy = Number(m2ToPy(payload.buildingAreaM2));
+    if (payload.buildingAreaPy && !payload.buildingAreaM2) payload.buildingAreaM2 = Number(pyToM2(payload.buildingAreaPy));
+    if (payload.totalFloorAreaM2 && !payload.totalFloorAreaPy) payload.totalFloorAreaPy = Number(m2ToPy(payload.totalFloorAreaM2));
+    if (payload.totalFloorAreaPy && !payload.totalFloorAreaM2) payload.totalFloorAreaM2 = Number(pyToM2(payload.totalFloorAreaPy));
+    // 빈 텍스트 필드 정리
+    ['floorInfo','zoning','parkingCount','approvalDate','detailDescription'].forEach(k => { if (payload[k] === '') delete payload[k]; });
     // Legacy area handling for compatibility
     if (payload.area) {
       payload.area = Number(payload.area);
