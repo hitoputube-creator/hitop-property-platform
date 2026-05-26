@@ -684,6 +684,28 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; padding: 14px; font-size: 15px; text-decoration: none; display: flex; align-items: center; border-radius: 10px; font-weight: 700; }
 
+.modal-print-btn {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+  justify-content: center;
+  padding: 14px;
+  font-size: 15px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.15s, color 0.15s;
+}
+.modal-print-btn:hover {
+  background: var(--gray-100);
+  color: var(--navy);
+}
+
 .modal-agent { background: #fff; border-radius: 10px; padding: 14px; font-size: 13px; color: #64748b; display: flex; flex-direction: column; gap: 4px; border: 1px solid #e2e8f0; }
 
 .modal-agent strong { color: #12335a; font-size: 14px; }

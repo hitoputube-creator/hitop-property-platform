@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>매물 요약 보고서 - 하이탑부동산</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+  <!-- 카카오 지도 SDK -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
+  <style>
+    :root {
+      --navy: #12335a;
+      --navy-dark: #0c2340;
+      --green: #1f8f63;
+      --white: #ffffff;
+      --gray-100: #f8fafc;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-700: #334155;
+      --gray-900: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+      color: var(--gray-900);
+      background-color: #f1f5f9;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* 상단 비인쇄용 제어바 */
+    .print-control-bar {
+      background-color: var(--navy-dark);
+      color: var(--white);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .print-control-bar h1 {
+      font-size: 1.1rem;
+      margin: 0;
+      font-weight: 700;
+    }
+    .btn-print-action {
+      background-color: var(--green);
+      color: var(--white);
+      border: none;
+      padding: 8px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.15s;
+    }
+    .btn-print-action:hover {
+      background-color: #157347;
+    }
+
+    /* A4 출력용 컨테이너 */
+    .print-paper {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 20px auto;
+      background-color: var(--white);
+      padding: 20mm 15mm;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* 헤더 영역 */
+    .print-header {
+      border-bottom: 2px solid var(--navy);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .brand-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+    .brand-sub {
+      font-size: 0.8rem;
+      color: var(--gray-700);
+      font-weight: 500;
+      margin: 0;
+    }
+    .listing-meta {
+      text-align: right;
+    }
+    .listing-no-badge {
+      display: inline-block;
+      background-color: var(--navy);
+      color: var(--white);
+      font-size: 0.85rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+    .listing-date {
+      font-size: 0.8rem;
+      color: var(--gray-700);
+    }
+
+    /* 매물 타이틀 영역 */
+    .title-section {
+      margin-bottom: 20px;
+    }
+    .listing-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin: 0 0 6px 0;
+      line-height: 1.3;
+    }
+    .listing-address {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin: 0;
+    }
+
+    /* 본문 상단 3분할 그리드 */
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr 1fr;
+      gap: 15px;
+      margin-bottom: 24px;
+      height: 250px;
+    }
+    .grid-card {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--gray-100);
+      height: 100%;
+    }
+    .grid-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy);
+      background-color: #eceff3;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--gray-200);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    /* 1. 이미지 카드 */
+    .image-card-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background-color: #000;
+    }
+    .main-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    /* 2. 지도 카드 */
+    .map-card-body {
+      flex: 1;
+      position: relative;
+      background-color: #e2e8f0;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* 3. 핵심 요약 카드 */
+    .summary-card-body {
+      flex: 1;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: var(--white);
+    }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed var(--gray-200);
+      padding: 5px 0;
+      font-size: 0.88rem;
+    }
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+    .summary-lbl {
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+    .summary-val {
+      font-weight: 700;
+      color: var(--gray-900);
+      text-align: right;
+    }
+    .summary-val.price {
+      color: var(--green);
+      font-size: 0.95rem;
+    }
+
+    /* 본문 하단 상세 표 */
+    .details-section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 0 0 8px 0;
+      border-left: 4px solid var(--navy);
+      padding-left: 8px;
+    }
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+    }
+    .info-table th, .info-table td {
+      border: 1px solid var(--gray-300);
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .info-table th {
+      background-color: #f1f5f9;
+      color: var(--gray-700);
+      font-weight: 700;
+      width: 20%;
+    }
+    .info-table td {
+      width: 30%;
+      font-weight: 600;
+    }
+
+    /* 매물 설명 박스 */
+    .description-box {
+      border: 1px solid var(--gray-200);
+      background-color: var(--gray-100);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      color: #334155;
+      min-height: 100px;
+      margin-bottom: 24px;
+    }
+
+    /* 중개업소 정보 최하단 */
+    .print-footer {
+      border-top: 2px solid var(--navy);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    .office-info {
+      font-size: 0.8rem;
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+    .office-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 0 0 4px 0;
+    }
+    .office-contact {
+      text-align: right;
+    }
+    .office-tel {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--green);
+      margin: 0 0 2px 0;
+    }
+    .office-hint {
+      font-size: 0.75rem;
+      color: var(--gray-700);
+      margin: 0;
+    }
+
+    /* 로딩 및 에러 처리 */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .loading-spinner {
+      border: 4px solid var(--gray-200);
+      border-top: 4px solid var(--navy);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 인쇄 시 스타일 제어 */
+    @media print {
+      body {
+        background-color: var(--white);
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-paper {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 12mm 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 제어바 -->
+  <div class="print-control-bar no-print">
+    <h1>📄 하이탑부동산 매물 요약 보고서</h1>
+    <button class="btn-print-action" id="printBtn">
+      <span>🖨</span> 인쇄하기 (A4)
+    </button>
+  </div>
+
+  <!-- 로딩 오버레이 -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div id="loadingText">매물 정보를 불러오는 중입니다...</div>
+  </div>
+
+  <!-- A4 출력 컨테이너 -->
+  <div class="print-paper" id="printPaper">
+    
+    <div>
+      <!-- 헤더 -->
+      <header class="print-header">
+        <div class="brand-wrap">
+          <h2 class="brand-title">하이탑부동산공인중개사사무소</h2>
+          <p class="brand-sub">H I T O P   R E A L   E S T A T E</p>
+        </div>
+        <div class="listing-meta">
+          <div class="listing-no-badge" id="listingNoDisplay">매물번호: -</div>
+          <div class="listing-date" id="createdAtDisplay">등록일: -</div>
+        </div>
+      </header>
+
+      <!-- 타이틀 -->
+      <section class="title-section">
+        <h1 class="listing-title" id="titleDisplay">-</h1>
+        <p class="listing-address" id="addressDisplay">-</p>
+      </section>
+
+      <!-- 본문 상단 3분할 -->
+      <section class="top-grid">
+        <!-- 1. 대표사진 -->
+        <div class="grid-card">
+          <h3 class="grid-card-title">📸 매물 대표사진</h3>
+          <div class="image-card-body">
+            <img id="mainPhoto" class="main-photo" src="" alt="대표사진" />
+          </div>
+        </div>
+        <!-- 2. 카카오 지도 -->
+        <div class="grid-card">
+          <h3 class="grid-card-title">📍 위치 안내 약도</h3>
+          <div class="map-card-body">
+            <div id="map"></div>
+          </div>
+        </div>
+        <!-- 3. 핵심 요약 카드 -->
+        <div class="grid-card">
+          <h3 class="grid-card-title">📋 매물 핵심 요약</h3>
+          <div class="summary-card-body">
+            <div class="summary-item">
+              <span class="summary-lbl">매물구분</span>
+              <span class="summary-val" id="cat1Display">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-lbl">거래유형</span>
+              <span class="summary-val" id="dealTypeDisplay">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-lbl">가격조건</span>
+              <span class="summary-val price" id="priceDisplay">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-lbl">면적정보</span>
+              <span class="summary-val" id="areaDisplay">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-lbl">층정보</span>
+              <span class="summary-val" id="floorDisplay">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-lbl">사용승인일</span>
+              <span class="summary-val" id="approvalDateDisplay">-</span>
+            </div>
+            <div class="summary-item" style="border: none; padding-top: 10px; margin-top: 5px; border-top: 1px solid var(--gray-200);">
+              <span class="summary-lbl" style="color:var(--navy); font-weight: 800;">문의전화</span>
+              <span class="summary-val" style="color:var(--green); font-weight: 800; font-size:1.05rem;">031-949-8969</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 본문 하단 상세 표 -->
+      <section class="details-section">
+        <h3 class="section-title">📊 상세 정보 안내</h3>
+        <table class="info-table">
+          <tr>
+            <th>매물구분</th>
+            <td id="tableCat">-</td>
+            <th>거래유형</th>
+            <td id="tableDealType">-</td>
+          </tr>
+          <tr>
+            <th>가격정보</th>
+            <td id="tablePrice">-</td>
+            <th>관리비/권리금</th>
+            <td id="tableExtraPrice">-</td>
+          </tr>
+          <tr>
+            <th>주소 (위치)</th>
+            <td id="tableAddress" colspan="3">-</td>
+          </tr>
+          <tr>
+            <th>면적 상세</th>
+            <td id="tableArea" colspan="3">-</td>
+          </tr>
+          <tr>
+            <th>층 정보</th>
+            <td id="tableFloor">-</td>
+            <th>용도지역</th>
+            <td id="tableZoning">-</td>
+          </tr>
+          <tr>
+            <th>주차여부</th>
+            <td id="tableParking">-</td>
+            <th>사용승인일</th>
+            <td id="tableApprovalDate">-</td>
+          </tr>
+        </table>
+
+        <h3 class="section-title">📝 공개 매물설명</h3>
+        <div class="description-box" id="detailDescDisplay">등록된 상세 매물 설명이 없습니다.</div>
+      </section>
+    </div>
+
+    <!-- 하단 중개소 정보 -->
+    <footer class="print-footer">
+      <div class="office-info">
+        <p class="office-name">하이탑부동산공인중개사사무소</p>
+        <span>대표자: 주현희 | 주소: 경기도 파주시 책향기로 830, 1층</span><br>
+        <span>사업자등록번호: 305-48-62183 | 중개사무소 등록번호: 41480-2016-00026</span>
+      </div>
+      <div class="office-contact">
+        <p class="office-tel">☎ 031-949-8969</p>
+        <p class="office-hint">※ 본 요약표는 고객 제공용으로, 법적 효력이 없으며 실거래 시 공부서류를 확인해야 합니다.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- 데이터 바인딩 모듈 스크립트 -->
+  <script type="module">
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { db, LISTINGS_COLLECTION } from "./firebase-config.js";
+
+    // ── 가격 정보 포맷팅 헬퍼들 (app.js와 일관되게 맞춤) ──
+    const toKoreanPrice = (wanwon) => {
+      const n = Number(wanwon);
+      if (!n || isNaN(n) || n <= 0) return '';
+      const eok = Math.floor(n / 10000);
+      const man = n % 10000;
+      if (eok && man) return `${eok}억 ${man.toLocaleString('ko-KR')}만원`;
+      if (eok) return `${eok}억원`;
+      return `${n.toLocaleString('ko-KR')}만원`;
+    };
+
+    const formatPriceText = (item) => {
+      const deal = item.dealType || '';
+      const fmt = (v) => {
+        if (v === undefined || v === null || v === '') return '';
+        const n = Number(String(v).replace(/[,\s]/g, ''));
+        if (!isNaN(n) && n > 0) return toKoreanPrice(n);
+        return String(v).trim();
+      };
+
+      if (deal === '매매') {
+        const p = fmt(item.salePrice ?? item.price);
+        return p ? `매매 ${p}` : '가격문의';
+      }
+      if (deal === '전세') {
+        const p = fmt(item.deposit ?? item.price);
+        return p ? `전세 ${p}` : '가격문의';
+      }
+      if (deal === '월세' || deal === '임대') {
+        const dep = fmt(item.deposit);
+        const rent = fmt(item.monthlyRent ?? item.rent);
+        if (dep && rent) return `${dep}/${rent}`;
+        return dep || (rent ? `월세 ${rent}` : fmt(item.price) || '가격문의');
+      }
+      if (deal === '분양') {
+        const p = fmt(item.presalePrice ?? item.salePrice);
+        return p ? `분양 ${p}` : '가격문의';
+      }
+      return fmt(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
+    };
+
+    const normalizeImageUrl = (url) => {
+      if (!url) return 'images/factory_recommend.png'; // 기본 플레이스홀더
+      const str = String(url).trim();
+      const driveMatch = str.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+      if (driveMatch && driveMatch[1]) {
+        return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
+      }
+      const idMatch = str.match(/[?&]id=([^&]+)/);
+      if (str.includes('drive.google.com') && idMatch && idMatch[1]) {
+        return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+      }
+      return str;
+    };
+
+    // ── 면적정보 통합 계산기 (㎡ 및 평 환산) ──
+    const formatAreaInfo = (item) => {
+      const cat1 = item.category1 || '';
+      const isBuilding = cat1 === '공장창고' || cat1 === '단독전원주택' || cat1 === '건물빌딩';
+      const isExclusive = cat1 === '상가사무실' || cat1 === '주거용';
+      const isLand = cat1 === '토지';
+
+      const _calc = (m2val, pyval) => {
+        const m2 = (m2val != null && m2val !== '') ? Number(m2val) : NaN;
+        const py = (pyval != null && pyval !== '') ? Number(pyval) : NaN;
+        if (isNaN(m2) && isNaN(py)) return null;
+        const finalM2 = !isNaN(m2) ? m2 : py * 3.3058;
+        const finalPy = !isNaN(py) ? py : m2 / 3.3058;
+        return `${finalM2.toFixed(1)}㎡ (${Math.round(finalPy)}평)`;
+      };
+
+      if (isBuilding) {
+        const land = _calc(item.landAreaM2 ?? item.landArea, item.landAreaPy);
+        const bldg = _calc(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
+        const total = _calc(item.totalFloorAreaM2 ?? item.totalArea, item.totalFloorAreaPy);
+        const parts = [];
+        if (land) parts.push(`대지: ${land}`);
+        if (bldg) parts.push(`건물: ${bldg}`);
+        if (total) parts.push(`연면적: ${total}`);
+        return parts.length ? parts.join(' / ') : null;
+      }
+      if (isExclusive) {
+        const excl = _calc(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
+        const supply = _calc(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
+        const parts = [];
+        if (excl) parts.push(`전용: ${excl}`);
+        if (supply) parts.push(`공급: ${supply}`);
+        return parts.length ? parts.join(' / ') : null;
+      }
+      if (isLand) {
+        const land = _calc(item.areaM2 ?? item.area, item.areaPy);
+        return land ? `토지면적: ${land}` : null;
+      }
+      // 레거시 폴백
+      const area = _calc(item.areaM2 ?? item.area, item.areaPy);
+      return area ? `면적: ${area}` : null;
+    };
+
+    // ── Firestore 단건 로드 및 페이지 렌더링 ──
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+
+      const printBtn = document.getElementById('printBtn');
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+
+      if (!id) {
+        showError("잘못된 접근입니다. 매물 ID가 존재하지 않습니다.");
+        return;
+      }
+
+      try {
+        const docRef = doc(db, LISTINGS_COLLECTION, id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          showError("해당 매물이 존재하지 않거나 이미 삭제되었습니다.");
+          return;
+        }
+
+        const item = { id: docSnap.id, ...docSnap.data() };
+        bindListingData(item);
+      } catch (err) {
+        console.error('Firestore 로드 오류:', err);
+        showError("서버와의 통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    });
+
+    const bindListingData = (item) => {
+      // 1. 헤더 및 타이틀
+      document.getElementById('listingNoDisplay').textContent = `매물번호: ${item.property_number || item.listingNo || item.id}`;
+      if (item.createdAt) {
+        try {
+          const date = item.createdAt.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
+          document.getElementById('createdAtDisplay').textContent = `등록일: ${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        } catch (e) {
+          document.getElementById('createdAtDisplay').textContent = '';
+        }
+      } else {
+        document.getElementById('createdAtDisplay').textContent = '';
+      }
+      
+      document.getElementById('titleDisplay').textContent = item.title;
+      document.getElementById('addressDisplay').textContent = item.displayAddress || item.address;
+
+      // 2. 대표사진 이미지
+      const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
+      const mainPhotoEl = document.getElementById('mainPhoto');
+      if (images && images.length > 0) {
+        mainPhotoEl.src = normalizeImageUrl(images[0]);
+      } else {
+        mainPhotoEl.src = 'images/factory_recommend.png';
+      }
+
+      // 3. 우측 핵심 정보 바인딩
+      const priceText = formatPriceText(item);
+      document.getElementById('cat1Display').textContent = item.category1 || item.propertyType || '-';
+      document.getElementById('dealTypeDisplay').textContent = item.dealType || '-';
+      document.getElementById('priceDisplay').textContent = priceText;
+      
+      const areaFmt = formatAreaInfo(item);
+      document.getElementById('areaDisplay').textContent = areaFmt ? areaFmt.split(' / ')[0] : '-'; // 대표 면적 1개만
+      document.getElementById('floorDisplay').textContent = item.floorInfo || item.floor || '-';
+      document.getElementById('approvalDateDisplay').textContent = item.approvalDate || '-';
+
+      // 4. 하단 테이블 바인딩
+      document.getElementById('tableCat').textContent = `${item.category1 || item.propertyType || '-'} (${item.category2 || '-'})`;
+      document.getElementById('tableDealType').textContent = item.dealType || '-';
+      document.getElementById('tablePrice').textContent = priceText;
+      
+      const extraList = [];
+      if (item.managementFee) extraList.push(`관리비: ${item.managementFee}`);
+      if (item.premium) extraList.push(`권리금: ${item.premium}`);
+      document.getElementById('tableExtraPrice').textContent = extraList.length ? extraList.join(' / ') : '없음';
+
+      document.getElementById('tableAddress').textContent = item.displayAddress || item.address;
+      document.getElementById('tableArea').textContent = areaFmt || '-';
+      document.getElementById('tableFloor').textContent = item.floorInfo || item.floor || '-';
+      document.getElementById('tableZoning').textContent = item.zoning || item.zoningArea || '-';
+      document.getElementById('tableParking').textContent = item.parkingCount || item.parking || '-';
+      document.getElementById('tableApprovalDate').textContent = item.approvalDate || '-';
+
+      // 5. 공개 매물 설명
+      const descEl = document.getElementById('detailDescDisplay');
+      if (item.detailDescription) {
+        descEl.textContent = item.detailDescription;
+      } else {
+        descEl.textContent = "등록된 상세 매물 설명이 없습니다.";
+      }
+
+      // 6. 카카오 지도 그리기
+      drawKakaoMap(item);
+
+      // 로딩 숨김
+      document.getElementById('loadingOverlay').style.display = 'none';
+    };
+
+    const drawKakaoMap = (item) => {
+      const addressForMap = item.displayAddress || item.address;
+      if (!addressForMap) {
+        document.getElementById('map').innerHTML = '<div style="padding:40px 10px; text-align:center; color:#94a3b8;">지도 위치 정보가 존재하지 않습니다.</div>';
+        return;
+      }
+
+      const mapContainer = document.getElementById('map');
+      
+      // lat, lng가 존재하는지 검증
+      const lat = Number(item.lat);
+      const lng = Number(item.lng);
+      const hasCoords = !isNaN(lat) && !isNaN(lng) && lat > 0 && lng > 0;
+
+      if (hasCoords) {
+        const coords = new kakao.maps.LatLng(lat, lng);
+        const mapOption = {
+          center: coords,
+          level: 4
+        };
+        const map = new kakao.maps.Map(mapContainer, mapOption);
+        const marker = new kakao.maps.Marker({
+          map: map,
+          position: coords
+        });
+      } else {
+        // 지오코더를 사용하여 displayAddress 위치를 검색해 지도 매핑
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.addressSearch(addressForMap, function(result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            const mapOption = {
+              center: coords,
+              level: 4
+            };
+            const map = new kakao.maps.Map(mapContainer, mapOption);
+            const marker = new kakao.maps.Marker({
+              map: map,
+              position: coords
+            });
+          } else {
+            // 주소 검색 실패 시 대체 텍스트 표시
+            mapContainer.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center; color:#64748b; font-size:0.85rem; font-weight:700;">📍 ${addressForMap}</div>`;
+          }
+        });
+      }
+    };
+
+    const showError = (message) => {
+      const loader = document.getElementById('loadingOverlay');
+      if (loader) {
+        loader.innerHTML = `<div style="text-align:center; padding:20px;"><h2 style="color:#ef4444; margin-bottom:8px;">⚠️ 오류</h2><p>${message}</p><button onclick="window.close()" style="margin-top:14px; padding:6px 16px; border:1px solid #cbd5e1; border-radius:6px; background:#fff; cursor:pointer; font-weight:700;">창 닫기</button></div>`;
+      }
+    };
+  </script>
+</body>
+</html>

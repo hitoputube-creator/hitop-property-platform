@@ -617,6 +617,11 @@ const openModal = (item) => {
     mainImg.src = ''; thumbsEl.innerHTML = ''; mainImg.onclick = null;
   }
 
+  const printBtn = document.getElementById('modalPrintBtn');
+  if (printBtn) {
+    printBtn.dataset.id = item.id;
+  }
+
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 };
@@ -2508,6 +2513,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
   document.getElementById('listingModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+  document.getElementById('modalPrintBtn')?.addEventListener('click', () => {
+    const id = document.getElementById('modalPrintBtn').dataset.id;
+    if (id) {
+      window.open(`print-listing.html?id=${id}`, '_blank');
+    }
+  });
   document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
   document.getElementById('lightboxPrev')?.addEventListener('click', () => lightboxNav(-1));
   document.getElementById('lightboxNext')?.addEventListener('click', () => lightboxNav(1));
