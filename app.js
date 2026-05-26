@@ -2147,6 +2147,9 @@ const setupAdminRegister = () => {
           if (noDisp) noDisp.textContent = target.listingNo || '-';
           const cancelBtn = document.getElementById('cancelEditBtn');
           if (cancelBtn) cancelBtn.classList.remove('hidden');
+          // 수정모드에서만 삭제 버튼 표시
+          const deleteBtn = document.getElementById('deleteListingBtn');
+          if (deleteBtn) deleteBtn.classList.remove('hidden');
         }
         
         const pyEl = document.getElementById('areaPyeong');
@@ -2161,6 +2164,24 @@ const setupAdminRegister = () => {
   }
 
   document.getElementById('cancelEditBtn')?.addEventListener('click', () => { window.location.href='admin-listings.html'; });
+
+  // ── 삭제 버튼 (수정모드에서만 표시) ──
+  document.getElementById('deleteListingBtn')?.addEventListener('click', () => {
+    if (!editId) return;
+    if (!confirm('정말 이 매물을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.')) return;
+    (async () => {
+      try {
+        const isAuthed = await waitForAdminAuth();
+        if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
+        await deleteListingFromFirestore(editId);
+        alert('삭제되었습니다.');
+        window.location.href = 'admin-listings.html';
+      } catch (err) {
+        console.error('매물 삭제 오류:', err);
+        alert('매물 삭제 중 오류가 발생했습니다.');
+      }
+    })();
+  });
 
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -2369,13 +2390,14 @@ const setupAdminListingsMgmt = () => {
     const btn=e.target.closest('button[data-action]'); if(!btn)return;
     const {action,id}=btn.dataset;
     if (action==='delete') {
-      if(!confirm('정말 삭제하시겠습니까?'))return;
+      if(!confirm('정말 이 매물을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.'))return;
       (async()=>{
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
           await deleteListingFromFirestore(id);
           _allListings=_allListings.filter(i=>i.id!==id);
+          alert('삭제되었습니다.');
           applyFilters();
         } catch(err) {
           console.error('매물 삭제 오류:',err);
