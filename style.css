@@ -242,19 +242,23 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
    매물등록 카드형 레이아웃 v2
    ═══════════════════════════════════════════ */
 .admin-register-card {
-  max-width: 860px;
+  max-width: 1060px;
   margin: 0 auto;
-  padding: 0 16px 40px;
+  padding: 0 20px 28px;
 }
 
 /* 입력폼 v2 — 구역별 카드 */
-.admin-form-v2 { display: flex; flex-direction: column; gap: 14px; }
+.admin-form-v2 { display: flex; flex-direction: column; gap: 10px; }
 .admin-form-v2 input,
-.admin-form-v2 select,
+.admin-form-v2 select {
+  width: 100%; padding: 5px 8px; height: 36px; border-radius: 6px;
+  border: 1px solid #cbd5e1; font: inherit; font-size: 0.88rem;
+  box-sizing: border-box; transition: border-color 0.15s;
+}
 .admin-form-v2 textarea {
-  width: 100%; padding: 8px 10px; border-radius: 6px;
-  border: 1px solid #cbd5e1; font: inherit; font-size: 0.92rem;
-  transition: border-color 0.15s;
+  width: 100%; padding: 6px 8px; border-radius: 6px;
+  border: 1px solid #cbd5e1; font: inherit; font-size: 0.88rem;
+  box-sizing: border-box; resize: vertical; transition: border-color 0.15s;
 }
 .admin-form-v2 input:focus,
 .admin-form-v2 select:focus,
@@ -268,97 +272,99 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   border: 1px solid var(--gray-200);
   border-radius: 10px;
   background: var(--white);
-  padding: 16px 18px 14px;
+  padding: 10px 14px 10px;
   margin: 0;
 }
 .form-section-title {
-  font-size: 0.92rem; font-weight: 700; color: var(--navy);
-  padding: 0 4px; margin: 0;
+  display: block; font-size: 0.84rem; font-weight: 700; color: var(--navy);
+  padding: 0 2px; margin: 0 0 8px 0;
 }
 
 /* 라벨 */
 .form-label {
-  display: block; font-size: 0.82rem; font-weight: 600;
-  color: #475569; margin-bottom: 3px;
+  display: block; font-size: 0.76rem; font-weight: 600;
+  color: #475569; margin-bottom: 2px;
 }
-.form-hint {
-  font-weight: 400; color: #94a3b8; font-size: 0.78rem;
-}
+.form-hint { font-weight: 400; color: #94a3b8; font-size: 0.74rem; }
+.form-req  { color: #ef4444; font-weight: 700; font-size: 0.76rem; }
 
 /* 단일 입력 그룹 */
-.form-group { margin-bottom: 8px; }
+.form-group { margin-bottom: 5px; }
 .form-group:last-child { margin-bottom: 0; }
 
 /* 2열 배치 */
-.form-row-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+.form-row-half { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 5px; }
 .form-row-half:last-child { margin-bottom: 0; }
 
-/* 매물번호 인라인 */
+/* 3열 배치 */
+.form-row-thirds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 5px; }
+.form-row-thirds:last-child { margin-bottom: 0; }
+
+/* 4열 배치 */
+.form-row-quads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 5px; }
+.form-row-quads:last-child { margin-bottom: 0; }
+
+/* 매물번호 + 매물종류 + 거래유형 메타행 */
+.form-row-meta {
+  display: grid; grid-template-columns: 96px 1fr 1fr;
+  gap: 8px; margin-bottom: 5px; align-items: end;
+}
+
+/* 매물번호 표시 (읽기전용 인풋처럼) */
 .listing-no-display-inline {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 0;
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 8px; height: 36px; box-sizing: border-box;
+  border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc;
 }
-.listing-no-display-inline strong {
-  color: var(--navy); font-size: 1rem;
-}
-.listing-no-hint {
-  font-size: 0.75rem; color: #94a3b8;
-}
+.listing-no-display-inline strong { color: var(--navy); font-size: 0.90rem; }
+.listing-no-hint { font-size: 0.70rem; color: #94a3b8; white-space: nowrap; }
 
 /* 면적 인라인 */
 .area-inline {
   display: flex; align-items: center; gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .area-inline:last-child { margin-bottom: 0; }
-.area-label-w {
-  min-width: 60px; flex-shrink: 0; margin-bottom: 0;
-}
-.area-inline input[type="number"] {
-  flex: 1; min-width: 0; max-width: 140px;
-}
-.area-unit {
-  font-size: 0.82rem; color: #64748b; font-weight: 600;
-  flex-shrink: 0;
-}
+.area-label-w { min-width: 56px; flex-shrink: 0; margin-bottom: 0; }
+.area-inline input[type="number"] { flex: 1; min-width: 0; max-width: 130px; }
+.area-unit { font-size: 0.80rem; color: #64748b; font-weight: 600; flex-shrink: 0; }
 
-/* 홍보스티커 그리드 */
-.sticker-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-}
+/* 홍보스티커 그리드 — PC 5열 */
+.sticker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .sticker-chip {
-  display: flex; align-items: center; gap: 6px;
-  padding: 7px 10px; border-radius: 6px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 8px; border-radius: 6px;
   border: 1px solid #e5e7eb; background: #f9fafb;
-  font-size: 0.82rem; color: #374151;
+  font-size: 0.78rem; color: #374151;
   cursor: pointer; user-select: none;
   transition: background 0.12s, border-color 0.12s;
 }
 .sticker-chip:hover { background: #f0f4ff; border-color: #93c5fd; }
+.sticker-chip:has(input:checked) { background: #eff6ff; border-color: var(--navy); color: var(--navy); font-weight: 700; }
 .sticker-chip input[type="checkbox"] {
-  width: 15px; height: 15px; cursor: pointer; flex-shrink: 0;
+  width: 14px; height: 14px; cursor: pointer; flex-shrink: 0;
   accent-color: var(--navy);
 }
 
 /* 하단 버튼 */
-.form-actions {
-  display: flex; gap: 10px; margin-top: 4px;
-  padding-bottom: 24px;
-}
+.form-actions { display: flex; gap: 10px; margin-top: 2px; padding-bottom: 16px; }
 .form-actions .btn-primary { flex: 1; }
 .btn-sm { font-size: 0.82rem; padding: 6px 12px; }
-.btn-lg { padding: 12px 20px; font-size: 1rem; }
+.btn-lg { padding: 11px 20px; font-size: 0.95rem; }
 
 /* flag-check-row 조정 (v2 내부) */
 .admin-form-v2 .flag-check-row { margin-bottom: 6px; }
-.admin-form-v2 .flag-check-label { padding: 8px 12px; font-size: 0.88rem; min-width: 120px; }
+.admin-form-v2 .flag-check-label { padding: 7px 11px; font-size: 0.85rem; min-width: 110px; }
 
-/* ─ 반응형 (모바일) ─ */
-@media (max-width: 600px) {
-  .admin-register-card { padding: 0 10px 32px; }
-  .form-section { padding: 12px 12px 10px; }
-  .form-row-half { grid-template-columns: 1fr; gap: 6px; }
-  .sticker-grid { grid-template-columns: repeat(2, 1fr); }
+/* ─ 반응형 (태블릿/모바일) ─ */
+@media (max-width: 700px) {
+  .admin-register-card { padding: 0 10px 24px; }
+  .form-section { padding: 10px 12px 8px; }
+  .form-row-half,
+  .form-row-thirds,
+  .form-row-meta { grid-template-columns: 1fr; gap: 5px; }
+  .form-row-quads { grid-template-columns: 1fr 1fr; gap: 5px; }
+  .sticker-grid { grid-template-columns: repeat(3, 1fr); }
   .area-inline { flex-wrap: wrap; }
   .area-label-w { min-width: 100%; margin-bottom: 2px; }
   .area-inline input[type="number"] { max-width: none; }

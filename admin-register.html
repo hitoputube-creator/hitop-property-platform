@@ -54,17 +54,16 @@
           <fieldset class="form-section">
             <legend class="form-section-title">📋 기본정보</legend>
 
-            <div class="form-row">
-              <label class="form-label">매물번호</label>
-              <div class="listing-no-display-inline">
-                <strong id="listingNoDisplay">-</strong>
-                <span class="listing-no-hint">매물종류 선택 시 자동 부여</span>
+            <div class="form-row-meta">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">매물번호</label>
+                <div class="listing-no-display-inline">
+                  <strong id="listingNoDisplay">-</strong>
+                  <span class="listing-no-hint">자동부여</span>
+                </div>
               </div>
-            </div>
-
-            <div class="form-row-half">
-              <div class="form-group">
-                <label class="form-label">매물종류</label>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">매물종류 <span class="form-req">*</span></label>
                 <select name="propertyType" required>
                   <option value="">매물종류 선택</option>
                   <option>공장창고</option>
@@ -75,29 +74,31 @@
                   <option>단독주택</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label class="form-label">거래유형</label>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">거래유형 <span class="form-req">*</span></label>
                 <select name="dealType" required>
                   <option value="">거래유형 선택</option>
                   <option>매매</option>
                   <option>전세</option>
                   <option>월세</option>
+                  <option>임대</option>
                 </select>
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">주소 <span class="form-hint">(지도 마커용 — 비공개)</span></label>
-              <input name="address" placeholder="예: 경기도 파주시 와동동 1463" required />
+            <div class="form-row-half">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">주소 <span class="form-hint">(마커용·비공개)</span></label>
+                <input name="address" placeholder="예: 경기도 파주시 와동동 1463" required />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">표시주소</label>
+                <input name="displayAddress" placeholder="예: 파주시 와동동" required />
+              </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">표시주소</label>
-              <input name="displayAddress" placeholder="예: 파주시 와동동" required />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">제목</label>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">제목 <span class="form-req">*</span></label>
               <input name="title" placeholder="매물 제목을 입력하세요" required />
             </div>
           </fieldset>
@@ -106,34 +107,31 @@
           <fieldset class="form-section">
             <legend class="form-section-title">💰 가격정보</legend>
 
-            <div class="form-row-half">
-              <div class="form-group">
+            <div class="form-row-thirds">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">매매가격</label>
                 <input name="salePrice" type="text" placeholder="예: 12억 5,000만" />
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">분양가</label>
                 <input name="presalePrice" type="text" placeholder="예: 8억 9,000만" />
               </div>
-            </div>
-
-            <div class="form-row-half">
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">보증금</label>
                 <input name="deposit" type="text" placeholder="예: 5,000만" />
               </div>
-              <div class="form-group">
+            </div>
+
+            <div class="form-row-thirds" style="margin-top:6px;">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">월세</label>
                 <input name="monthlyRent" type="text" placeholder="예: 300만" />
               </div>
-            </div>
-
-            <div class="form-row-half">
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">관리비</label>
-                <input name="managementFee" type="text" placeholder="예: 15만원 또는 없음" />
+                <input name="managementFee" type="text" placeholder="예: 15만" />
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">권리금</label>
                 <input name="premium" type="text" placeholder="예: 없음 또는 2,000만" />
               </div>
@@ -195,24 +193,22 @@
 
           <!-- ═══ 구역 4. 추가정보 ═══ -->
           <fieldset class="form-section detail-fields-section hidden">
-            <legend class="form-section-title">🏢 추가정보</legend>
+            <legend class="form-section-title">🏢 추가정보 <span class="form-hint">(공장창고·상가)</span></legend>
 
-            <div class="form-row-half">
-              <div class="form-group">
+            <div class="form-row-quads" style="margin-bottom:0;">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">층정보</label>
-                <input name="floorInfo" placeholder="예: 지상 1층 / 총 1층" />
+                <input name="floorInfo" placeholder="예: 지상 1층" />
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">용도지역</label>
                 <input name="zoning" placeholder="예: 준공업지역" />
               </div>
-            </div>
-            <div class="form-row-half">
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">주차대수</label>
                 <input name="parkingCount" placeholder="예: 10대" />
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">사용승인일</label>
                 <input name="approvalDate" placeholder="예: 2010-03-15" />
               </div>
@@ -271,17 +267,21 @@
             <legend class="form-section-title">📝 매물설명</legend>
 
             <div class="form-group">
-              <label class="form-label">공개 매물설명 <span class="form-hint">(상세보기에 표시)</span></label>
-              <textarea name="detailDescription" rows="4" placeholder="입지, 도로접근성, 추천업종, 임대조건, 특이사항 등"></textarea>
+              <label class="form-label">공개 매물설명 <span class="form-hint">(상세보기 표시)</span></label>
+              <textarea name="detailDescription" rows="3" placeholder="입지, 도로접근성, 추천업종, 임대조건, 특이사항 등"></textarea>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">내부 메모 <span class="form-hint">(관리용 — 비공개)</span></label>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">내부 메모 <span class="form-hint">(비공개)</span></label>
               <textarea name="description" rows="2" placeholder="관리용 메모 / 특이사항" required></textarea>
             </div>
+          </fieldset>
 
-            <div class="form-group">
-              <label class="form-label">사진 URL</label>
+          <!-- ═══ 구역 7. 사진 ═══ -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📷 사진</legend>
+
+            <div class="form-group" style="margin-bottom:0;">
               <div id="imageUrlContainer"></div>
               <button type="button" id="addImageBtn" class="btn btn-outline btn-sm" style="margin-top:6px;">사진 추가 +</button>
             </div>
@@ -327,6 +327,6 @@
         </div>
       </div>
     </footer>
-    <script src="app.js?v=20260526"></script>
+    <script src="app.js?v=20260526b"></script>
   </body>
 </html>
