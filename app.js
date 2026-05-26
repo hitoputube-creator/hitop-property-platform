@@ -587,13 +587,14 @@ const openModal = (item) => {
     });
   }
 
-  // ── 매물설명 (detailDescription 우선, 없으면 description 폴백) ──
+  // ── 매물설명 (detailDescription 우선, 없으면 description 폴백, 없으면 안내문구) ──
   const descEl = document.getElementById('modalDesc');
   if (descEl) {
     const descText = item.detailDescription || item.description || item.memo || item.note || '';
-    descEl.innerHTML = descText ? descText.replace(/\n/g, '<br>') : '';
+    descEl.style.whiteSpace = 'pre-line';
+    descEl.textContent = descText || '등록된 매물설명이 없습니다.';
     const descSection = descEl.closest('.modal-desc-section');
-    if (descSection) descSection.style.display = descText ? '' : 'none';
+    if (descSection) descSection.style.display = '';  // 항상 표시
   }
 
   const mainImg  = document.getElementById('modalMainImg');

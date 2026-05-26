@@ -587,11 +587,12 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .modal-body { display: grid; grid-template-columns: 42fr 33fr 25fr; overflow: hidden; flex: 1; min-height: 0; }
 
 /* ── 3열 컬럼 ── */
-.modal-col-photo { border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; overflow: hidden; background: #1e293b; }
+/* HTML order: photo | side | info → CSS order restores desktop as photo | info | side */
+.modal-col-photo { order: 1; border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; overflow: hidden; background: #1e293b; }
 
-.modal-col-info { border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; overflow-y: auto; background: #fff; }
+.modal-col-info { order: 2; border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; overflow-y: auto; background: #fff; }
 
-.modal-col-side { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: #f8fafc; }
+.modal-col-side { order: 3; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: #f8fafc; }
 
 .modal-main-img { flex: 1; min-height: 0; overflow: hidden; }
 
@@ -609,7 +610,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-desc-section h4 { font-size: 15px; font-weight: 700; color: #12335a; margin: 0 0 10px; }
 
-.modal-desc { font-size: 15px; color: #374151; line-height: 1.9; background: #f8fafc; padding: 14px 16px; border-radius: 8px; border: 1px solid #e2e8f0; }
+.modal-desc { font-size: 15px; color: #374151; line-height: 1.9; background: #f8fafc; padding: 14px 16px; border-radius: 8px; border: 1px solid #e2e8f0; white-space: pre-line; }
 
 /* .modal-right → .modal-col-side 로 이동 */
 
@@ -750,13 +751,13 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
   .listing-filter-grid input, .listing-filter-grid select { flex: 1 1 calc(50% - 4px); }
 
-  .modal-box { border-radius: 0; max-height: 100vh; height: 100vh; }
+  .modal-box { border-radius: 0; max-height: 92vh; height: auto; }
 
   .modal-body { grid-template-columns: 1fr; overflow-y: auto; }
-  .modal-col-photo { border-right: none; border-bottom: 1px solid #e5e9f0; background: #1e293b; flex-shrink: 0; }
-  .modal-col-info { border-right: none; border-bottom: 1px solid #e5e9f0; }
+  .modal-col-photo { order: 1; border-right: none; border-bottom: 1px solid #e5e9f0; background: #1e293b; flex-shrink: 0; overflow: visible; }
+  .modal-col-side { order: 2; overflow-y: visible; }
+  .modal-col-info { order: 3; border-right: none; border-bottom: 1px solid #e5e9f0; overflow-y: visible; height: auto; }
   .modal-main-img { flex: none; height: 240px; }
-  .modal-col-side { overflow-y: visible; }
 
 .floating-btns {
 
@@ -798,10 +799,10 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
   .footer-main strong { display: block; margin: 0 0 4px; }
 
-  .modal-body { grid-template-columns: 1fr; }
-  .modal-col-photo { border-right: none; border-bottom: 1px solid #e5e9f0; background: #1e293b; flex-shrink: 0; }
-  .modal-col-info { border-right: none; border-bottom: 1px solid #e5e9f0; }
-  .modal-col-side { overflow-y: visible; }
+  .modal-body { grid-template-columns: 1fr; overflow-y: auto; }
+  .modal-col-photo { order: 1; border-right: none; border-bottom: 1px solid #e5e9f0; background: #1e293b; flex-shrink: 0; overflow: visible; }
+  .modal-col-side { order: 2; overflow-y: visible; }
+  .modal-col-info { order: 3; border-right: none; border-bottom: 1px solid #e5e9f0; overflow-y: visible; height: auto; }
   .modal-main-img { flex: none; height: 220px; }
 
   .top-bar-hours { display: none; }
@@ -2034,12 +2035,12 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
   .lp-search-submit { flex: 1; text-align: center; }
 
-  .modal-box { border-radius: 0; max-height: 100vh; height: 100%; }
+  .modal-box { border-radius: 0; max-height: 92vh; height: auto; }
 
-  .modal-body { grid-template-columns: 1fr; }
-  .modal-col-photo { border-right: none; border-bottom: 1px solid #e5e9f0; background: #1e293b; flex-shrink: 0; }
-  .modal-col-info { border-right: none; border-bottom: 1px solid #e5e9f0; }
-  .modal-col-side { overflow-y: visible; }
+  .modal-body { grid-template-columns: 1fr; overflow-y: auto; }
+  .modal-col-photo { order: 1; border-right: none; border-bottom: 1px solid #e5e9f0; background: #1e293b; flex-shrink: 0; overflow: visible; }
+  .modal-col-side { order: 2; overflow-y: visible; }
+  .modal-col-info { order: 3; border-right: none; border-bottom: 1px solid #e5e9f0; overflow-y: visible; height: auto; }
   .modal-main-img { flex: none; height: 200px; }
 
 }
@@ -5394,35 +5395,39 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     padding-bottom: 30px !important; /* 플로팅 버튼 여백 제거 및 기본 패딩 복구 */
   }
 
-  /* 9. 매물 상세 정보 모달 모바일 Safe area 보호막 패치 */
+  /* 9. 매물 상세 정보 모달 모바일 최적화 */
   .modal-box {
-    max-height: 100vh !important;
-    height: 100vh !important;
+    max-height: 92vh !important;
+    height: auto !important;
     border-radius: 0 !important;
   }
 
+  /* modal-body가 단일 스크롤 컨테이너 역할 — 자식 컬럼은 overflow 제한 없음 */
   .modal-body {
-    padding-bottom: 90px !important;
+    overflow-y: auto !important;
+    padding-bottom: 0 !important;
   }
 
+  /* 모바일 1열 적층 순서: ①사진 → ②요약/가격/면적/지도/문의 → ③정보표/설명 */
+  .modal-col-photo { order: 1 !important; overflow: visible !important; }
+  .modal-col-side  { order: 2 !important; position: static !important; overflow-y: visible !important; }
+  .modal-col-info  { order: 3 !important; overflow-y: visible !important; height: auto !important; }
+
+  /* 문의 버튼: fixed 해제 → 일반 흐름 */
   .modal-contact {
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 12px)) !important;
-    background: #ffffff !important;
-    border-top: 1px solid #e5e9f0 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 100 !important;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    position: static !important;
+    padding: 12px 16px !important;
+    background: transparent !important;
+    border-top: none !important;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 8px !important;
   }
 
   .modal-contact a {
     margin: 0 !important;
-    padding: 10px !important;
-    font-size: 13px !important;
+    padding: 12px !important;
+    font-size: 14px !important;
     justify-content: center !important;
   }
 }

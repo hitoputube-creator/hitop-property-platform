@@ -544,18 +544,7 @@
             </div>
             <div class="modal-thumbs" id="modalThumbs"></div>
           </div>
-          <!-- ② 가운데: 매물정보 표 + 매물설명 -->
-          <div class="modal-col-info">
-            <div class="modal-info-section">
-              <h4 class="modal-section-title">📋 매물 정보</h4>
-              <table class="modal-info-table" id="modalInfoTable"></table>
-            </div>
-            <div class="modal-desc-section">
-              <h4 class="modal-section-title">📝 매물 설명</h4>
-              <div id="modalDesc" class="modal-desc"></div>
-            </div>
-          </div>
-          <!-- ③ 오른쪽: 요약 + 가격 + 문의 + 중개소 + 지도 -->
+          <!-- ② 오른쪽: 요약 + 가격 + 문의 + 중개소 + 지도 (HTML상 2번째, 데스크톱은 CSS order로 3번째) -->
           <div class="modal-col-side">
             <div class="modal-summary">
               <span class="modal-badge" id="modalBadge"></span>
@@ -564,10 +553,6 @@
             </div>
             <div class="modal-price-area" id="modalPriceArea"></div>
             <div id="modalAreaHighlight" class="modal-area-highlight" style="display:none;"></div>
-            <div class="modal-contact">
-              <a href="tel:031-949-8969" class="btn modal-tel">📞 문의전화 031-949-8969</a>
-              <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="modal-kakao-btn">💬 카카오톡 문의</a>
-            </div>
             <div class="modal-agent">
               <strong>하이탑부동산공인중개사사무소</strong>
               <span>대표: 주현희 · 031-949-8969</span>
@@ -576,6 +561,21 @@
             <div class="modal-minimap-wrap" id="modalMinimapWrap" style="display:none;">
               <h4>📍 위치</h4>
               <div id="modalMiniMap"></div>
+            </div>
+            <div class="modal-contact">
+              <a href="tel:031-949-8969" class="btn modal-tel">📞 문의전화 031-949-8969</a>
+              <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="modal-kakao-btn">💬 카카오톡 문의</a>
+            </div>
+          </div>
+          <!-- ③ 가운데: 매물정보 표 + 매물설명 (HTML상 3번째, 데스크톱은 CSS order로 2번째) -->
+          <div class="modal-col-info">
+            <div class="modal-info-section">
+              <h4 class="modal-section-title">📋 매물 정보</h4>
+              <table class="modal-info-table" id="modalInfoTable"></table>
+            </div>
+            <div class="modal-desc-section">
+              <h4 class="modal-section-title">📝 매물 설명</h4>
+              <div id="modalDesc" class="modal-desc"></div>
             </div>
           </div>
         </div>
@@ -624,6 +624,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260525"></script>
+    <script src="app.js?v=20260526d"></script>
   </body>
 </html>
