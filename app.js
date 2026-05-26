@@ -157,6 +157,7 @@ const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.strin
 const _fsListings = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
 const _fsCfg      = () => import('./firebase-config.js');
 const _fsAuth     = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+const _fsStorage  = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
 
 function normalizeFirestoreListing(docSnap) {
   const d = docSnap.data();
@@ -1657,6 +1658,26 @@ const setupAdminDashboard = () => {
 };
 
 // ─────────────────────────────────────────────
+// Firebase Storage 이미지 업로드 헬퍼
+// ─────────────────────────────────────────────
+async function uploadListingImage(file) {
+  const [storageModule, cfgModule] = await Promise.all([_fsStorage(), _fsCfg()]);
+  const { ref, uploadBytes, getDownloadURL } = storageModule;
+  const { storage, auth } = cfgModule;
+
+  // 익명 로그인으로 Storage 쓰기 권한 확보
+  if (!auth.currentUser) {
+    const authModule = await _fsAuth();
+    try { await authModule.signInAnonymously(auth); } catch (_) { /* already signed in */ }
+  }
+
+  const ext      = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+  const safeName = `listings/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const snapshot = await uploadBytes(ref(storage, safeName), file);
+  return await getDownloadURL(snapshot.ref);
+}
+
+// ─────────────────────────────────────────────
 // admin-register.html
 // ─────────────────────────────────────────────
 const setupAdminRegister = () => {
@@ -1669,22 +1690,79 @@ const setupAdminRegister = () => {
   let isEditMode           = false;
   let importedLegacyDesc   = '';
 
-  const addImageRow = (value='') => {
+  const addImageRow = (value = '') => {
     if (!imageContainer) return;
     if (imageContainer.querySelectorAll('.image-url-row').length >= MAX_IMAGES) return;
     const count = imageContainer.querySelectorAll('.image-url-row').length;
-    const row   = document.createElement('div');
+    const row = document.createElement('div');
     row.className = 'image-url-row';
+
+    // ① 썸네일 미리보기 (업로드 성공 후 표시)
+    const thumb = document.createElement('img');
+    thumb.className = 'img-thumb hidden';
+    thumb.alt = '미리보기';
+
+    // ② URL 입력창
     const input = document.createElement('input');
-    input.name = 'imageUrls'; input.type = 'url'; input.placeholder = `사진 URL ${count+1}`; input.value = value;
+    input.name = 'imageUrls'; input.type = 'url';
+    input.placeholder = `사진 URL ${count + 1}`;
+    input.value = value;
     if (count === 0) input.required = true;
+    // 기존 URL 입력 시 썸네일 업데이트
+    input.addEventListener('blur', () => {
+      if (input.value.trim()) { thumb.src = input.value.trim(); thumb.classList.remove('hidden'); }
+      else thumb.classList.add('hidden');
+    });
+    if (value) { thumb.src = value; thumb.classList.remove('hidden'); }
+
+    // ③ 파일 업로드 버튼 (Firebase Storage)
+    const fileLabel = document.createElement('label');
+    fileLabel.className = 'btn btn-outline btn-sm img-file-label';
+    fileLabel.title = '로컬 파일을 Firebase Storage에 업로드';
+    fileLabel.innerHTML = '📎 파일';
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
+    fileLabel.appendChild(fileInput);
+
+    // ④ 업로드 상태 표시
+    const statusEl = document.createElement('span');
+    statusEl.className = 'img-upload-status';
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      statusEl.textContent = '⏳ 업로드 중…';
+      statusEl.className = 'img-upload-status uploading';
+      input.disabled = true; fileLabel.classList.add('disabled');
+      try {
+        const url = await uploadListingImage(file);
+        input.value = url; input.disabled = false; fileLabel.classList.remove('disabled');
+        statusEl.textContent = '✅ 완료'; statusEl.className = 'img-upload-status done';
+        thumb.src = url; thumb.classList.remove('hidden');
+      } catch (err) {
+        input.disabled = false; fileLabel.classList.remove('disabled');
+        statusEl.textContent = '❌ ' + (err.code === 'storage/unauthorized' ? '권한 오류 — Storage 규칙 확인 필요' : (err.message || '업로드 실패'));
+        statusEl.className = 'img-upload-status error';
+        console.error('[Storage 업로드 오류]', err);
+      }
+      fileInput.value = '';
+    });
+
+    // ⑤ 삭제 버튼
     const removeBtn = document.createElement('button');
-    removeBtn.type = 'button'; removeBtn.className = 'btn btn-outline img-remove-btn'; removeBtn.textContent = '삭제 X';
+    removeBtn.type = 'button'; removeBtn.className = 'btn btn-outline img-remove-btn';
+    removeBtn.textContent = '삭제';
     removeBtn.addEventListener('click', () => {
       if (imageContainer.querySelectorAll('.image-url-row').length > 1) row.remove();
-      else input.value = '';
+      else { input.value = ''; statusEl.textContent = ''; thumb.classList.add('hidden'); }
     });
-    row.appendChild(input); row.appendChild(removeBtn); imageContainer.appendChild(row);
+
+    row.appendChild(thumb);
+    row.appendChild(input);
+    row.appendChild(fileLabel);
+    row.appendChild(statusEl);
+    row.appendChild(removeBtn);
+    imageContainer.appendChild(row);
   };
 
   const resetImageFields = () => { if(imageContainer){imageContainer.innerHTML=''; addImageRow();} };
@@ -1901,6 +1979,11 @@ if (ptEl) {
 
   form.addEventListener('submit', e => {
     e.preventDefault();
+    // 업로드 진행 중이면 저장 차단
+    if (imageContainer?.querySelector('.img-upload-status.uploading')) {
+      alert('이미지 업로드가 진행 중입니다. 완료 후 저장해주세요.');
+      return;
+    }
     const fd = new FormData(form);
     const payload = {};
     for (const [key,value] of fd.entries()) { if(key!=='imageUrls') payload[key]=value; }
