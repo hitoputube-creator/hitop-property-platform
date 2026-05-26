@@ -36,147 +36,260 @@
     </div>
 
     <main class="section hidden" id="adminMain">
-      <div class="container" style="max-width:640px;">
+      <div class="admin-register-card">
 
         <div class="admin-page-header">
-          <a href="admin.html" class="btn btn-outline">← 대시보드</a>
+          <a href="admin.html" class="btn btn-outline btn-sm">← 대시보드</a>
           <h1 id="formTitle">매물 등록</h1>
         </div>
 
-        <div class="listing-no-display">
-          매물번호: <strong id="listingNoDisplay">-</strong>
-          <span style="font-size:11px;color:var(--gray-700);margin-left:8px;">매물종류 선택 시 자동 부여됩니다</span>
-        </div>
-
-        <form id="adminForm" class="admin-form">
+        <form id="adminForm" class="admin-form-v2">
           <input type="hidden" name="id" />
           <input type="hidden" name="listingNo" />
           <input type="hidden" name="createdAt" />
           <input type="hidden" name="lat" />
           <input type="hidden" name="lng" />
 
-          <select name="propertyType" required>
-            <option value="">매물종류 선택</option>
-            <option>공장창고</option>
-            <option>상가</option>
-            <option>오피스텔</option>
-            <option>토지</option>
-            <option>힐스테이트더운정</option>
-            <option>단독주택</option>
-          </select>
+          <!-- ═══ 구역 1. 기본정보 ═══ -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📋 기본정보</legend>
 
-          <select name="dealType" required>
-            <option value="">거래유형 선택</option>
-            <option>매매</option>
-            <option>전세</option>
-            <option>월세</option>
-          </select>
+            <div class="form-row">
+              <label class="form-label">매물번호</label>
+              <div class="listing-no-display-inline">
+                <strong id="listingNoDisplay">-</strong>
+                <span class="listing-no-hint">매물종류 선택 시 자동 부여</span>
+              </div>
+            </div>
 
-          <input name="address" placeholder="정확한 주소 (지도 마커용 — 비공개)" required />
-          <input name="displayAddress" placeholder="표시용 주소 (예: 파주시 탄현면)" required />
+            <div class="form-row-half">
+              <div class="form-group">
+                <label class="form-label">매물종류</label>
+                <select name="propertyType" required>
+                  <option value="">매물종류 선택</option>
+                  <option>공장창고</option>
+                  <option>상가</option>
+                  <option>오피스텔</option>
+                  <option>토지</option>
+                  <option>힐스테이트더운정</option>
+                  <option>단독주택</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">거래유형</label>
+                <select name="dealType" required>
+                  <option value="">거래유형 선택</option>
+                  <option>매매</option>
+                  <option>전세</option>
+                  <option>월세</option>
+                </select>
+              </div>
+            </div>
 
-          <!-- 일반 면적 (공장창고/상가 외 매물종류) -->
-          <div class="area-row area-general">
-            <input type="number" name="areaM2" min="0" step="0.01" placeholder="면적(㎡)" />
-            <input type="number" name="areaPy" min="0" step="0.01" placeholder="면적(평)" />
-          </div>
-          <!-- 기존 상가 면적 (레거시 호환용 — 숨김) -->
-          <div class="area-row area-store hidden">
-            <input type="number" name="exclusiveAreaM2" min="0" step="0.01" placeholder="전용면적(㎡)" />
-            <input type="number" name="exclusiveAreaPy" min="0" step="0.01" placeholder="전용면적(평)" />
-            <input type="number" name="supplyAreaM2" min="0" step="0.01" placeholder="분양면적(㎡)" />
-            <input type="number" name="supplyAreaPy" min="0" step="0.01" placeholder="분양면적(평)" />
-          </div>
+            <div class="form-group">
+              <label class="form-label">주소 <span class="form-hint">(지도 마커용 — 비공개)</span></label>
+              <input name="address" placeholder="예: 경기도 파주시 와동동 1463" required />
+            </div>
 
-          <!-- ─ 공장창고 / 상가 전용 면적 필드 ─ -->
-          <div class="area-row area-new-detail hidden">
-            <span class="area-field-label">대지면적</span>
-            <input type="number" name="landAreaM2" min="0" step="0.01" placeholder="대지(㎡)" />
-            <input type="number" name="landAreaPy" min="0" step="0.01" placeholder="대지(평)" />
-          </div>
-          <div class="area-row area-new-detail hidden">
-            <span class="area-field-label">건축면적</span>
-            <input type="number" name="buildingAreaM2" min="0" step="0.01" placeholder="건축(㎡)" />
-            <input type="number" name="buildingAreaPy" min="0" step="0.01" placeholder="건축(평)" />
-          </div>
-          <div class="area-row area-new-detail area-factory-total hidden">
-            <span class="area-field-label">연면적</span>
-            <input type="number" name="totalFloorAreaM2" min="0" step="0.01" placeholder="연면적(㎡)" />
-            <input type="number" name="totalFloorAreaPy" min="0" step="0.01" placeholder="연면적(평)" />
-          </div>
+            <div class="form-group">
+              <label class="form-label">표시주소</label>
+              <input name="displayAddress" placeholder="예: 파주시 와동동" required />
+            </div>
 
-          <!-- ─ 공장창고 / 상가 공통 세부 정보 ─ -->
-          <div class="detail-fields-section hidden">
-            <input name="floorInfo" placeholder="층정보 (예: 지상 1층 / 총 1층)" />
-            <input name="zoning" placeholder="용도지역 (예: 준공업지역, 일반상업지역)" />
-            <input name="parkingCount" placeholder="주차대수 (예: 10대, 건물 내 주차)" />
-            <input name="approvalDate" placeholder="사용승인일 (예: 2010-03-15)" />
-          </div>
+            <div class="form-group">
+              <label class="form-label">제목</label>
+              <input name="title" placeholder="매물 제목을 입력하세요" required />
+            </div>
+          </fieldset>
 
-          <input name="title" placeholder="제목" required />
+          <!-- ═══ 구역 2. 가격정보 ═══ -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">💰 가격정보</legend>
 
-          <!-- ─ 가격 정보 ─ -->
-          <div class="price-row">
-            <input name="salePrice" type="text" placeholder="매매가격 (예: 12억 5,000만)" />
-            <input name="presalePrice" type="text" placeholder="분양가 (예: 8억 9,000만)" />
-          </div>
-          <div class="price-row">
-            <input name="deposit" type="text" placeholder="보증금 (예: 5,000만)" />
-            <input name="monthlyRent" type="text" placeholder="월세 (예: 300만)" />
-          </div>
-          <input name="premium" type="text" placeholder="권리금 (예: 없음 또는 2,000만)" />
+            <div class="form-row-half">
+              <div class="form-group">
+                <label class="form-label">매매가격</label>
+                <input name="salePrice" type="text" placeholder="예: 12억 5,000만" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">분양가</label>
+                <input name="presalePrice" type="text" placeholder="예: 8억 9,000만" />
+              </div>
+            </div>
 
-          <!-- 추천매물 / 급매물 체크박스 -->
-          <div class="flag-check-row">
-            <label class="flag-check-label flag-recommended" id="labelRecommended">
-              <input type="checkbox" name="isRecommended" id="chkRecommended" />
-              ⭐ 추천매물로 등록
-            </label>
-            <label class="flag-check-label flag-urgent" id="labelUrgent">
-              <input type="checkbox" name="isUrgent" id="chkUrgent" />
-              🔥 급매물로 등록
-            </label>
-          </div>
+            <div class="form-row-half">
+              <div class="form-group">
+                <label class="form-label">보증금</label>
+                <input name="deposit" type="text" placeholder="예: 5,000만" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">월세</label>
+                <input name="monthlyRent" type="text" placeholder="예: 300만" />
+              </div>
+            </div>
 
-          <!-- 홍보스티커 선택 영역 (여러 개 선택 가능) -->
-          <div style="margin-top:16px; margin-bottom:16px;">
-            <label style="display:block; font-size:13px; font-weight:bold; color:var(--gray-800); margin-bottom:8px;">📌 홍보스티커 (중복 선택 가능)</label>
-            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background:#f9f9f9; padding:12px; border-radius:6px; border:1px solid #e5e7eb;">
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+            <div class="form-row-half">
+              <div class="form-group">
+                <label class="form-label">관리비</label>
+                <input name="managementFee" type="text" placeholder="예: 15만원 또는 없음" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">권리금</label>
+                <input name="premium" type="text" placeholder="예: 없음 또는 2,000만" />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ═══ 구역 3. 면적정보 ═══ -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📐 면적정보</legend>
+
+            <!-- 일반 면적 (공장창고/상가 외 매물종류) -->
+            <div class="area-general">
+              <div class="area-inline">
+                <label class="form-label area-label-w">면적</label>
+                <input type="number" name="areaM2" min="0" step="0.01" placeholder="0.00" />
+                <span class="area-unit">㎡</span>
+                <input type="number" name="areaPy" min="0" step="1" placeholder="0" />
+                <span class="area-unit">평</span>
+              </div>
+            </div>
+
+            <!-- 기존 상가 면적 (레거시 호환용 — 완전 숨김) -->
+            <div class="area-store hidden">
+              <input type="hidden" name="exclusiveAreaM2" />
+              <input type="hidden" name="exclusiveAreaPy" />
+              <input type="hidden" name="supplyAreaM2" />
+              <input type="hidden" name="supplyAreaPy" />
+            </div>
+
+            <!-- ─ 공장창고 / 상가 전용 면적 필드 ─ -->
+            <div class="area-new-detail hidden">
+              <div class="area-inline">
+                <label class="form-label area-label-w">대지면적</label>
+                <input type="number" name="landAreaM2" min="0" step="0.01" placeholder="0.00" />
+                <span class="area-unit">㎡</span>
+                <input type="number" name="landAreaPy" min="0" step="1" placeholder="0" />
+                <span class="area-unit">평</span>
+              </div>
+            </div>
+            <div class="area-new-detail hidden">
+              <div class="area-inline">
+                <label class="form-label area-label-w">건축면적</label>
+                <input type="number" name="buildingAreaM2" min="0" step="0.01" placeholder="0.00" />
+                <span class="area-unit">㎡</span>
+                <input type="number" name="buildingAreaPy" min="0" step="1" placeholder="0" />
+                <span class="area-unit">평</span>
+              </div>
+            </div>
+            <div class="area-new-detail area-factory-total hidden">
+              <div class="area-inline">
+                <label class="form-label area-label-w">연면적</label>
+                <input type="number" name="totalFloorAreaM2" min="0" step="0.01" placeholder="0.00" />
+                <span class="area-unit">㎡</span>
+                <input type="number" name="totalFloorAreaPy" min="0" step="1" placeholder="0" />
+                <span class="area-unit">평</span>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ═══ 구역 4. 추가정보 ═══ -->
+          <fieldset class="form-section detail-fields-section hidden">
+            <legend class="form-section-title">🏢 추가정보</legend>
+
+            <div class="form-row-half">
+              <div class="form-group">
+                <label class="form-label">층정보</label>
+                <input name="floorInfo" placeholder="예: 지상 1층 / 총 1층" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">용도지역</label>
+                <input name="zoning" placeholder="예: 준공업지역" />
+              </div>
+            </div>
+            <div class="form-row-half">
+              <div class="form-group">
+                <label class="form-label">주차대수</label>
+                <input name="parkingCount" placeholder="예: 10대" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">사용승인일</label>
+                <input name="approvalDate" placeholder="예: 2010-03-15" />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ═══ 구역 5. 홍보스티커 ═══ -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">🏷️ 홍보스티커</legend>
+
+            <div class="flag-check-row">
+              <label class="flag-check-label flag-recommended" id="labelRecommended">
+                <input type="checkbox" name="isRecommended" id="chkRecommended" />
+                ⭐ 추천매물
+              </label>
+              <label class="flag-check-label flag-urgent" id="labelUrgent">
+                <input type="checkbox" name="isUrgent" id="chkUrgent" />
+                🔥 급매물
+              </label>
+            </div>
+
+            <label class="form-label" style="margin-top:10px;">📌 홍보스티커 <span class="form-hint">(중복 선택 가능)</span></label>
+            <div class="sticker-grid">
+              <label class="sticker-chip">
                 <input type="checkbox" name="stickers" value="추천매물" /> 추천매물
               </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+              <label class="sticker-chip">
                 <input type="checkbox" name="stickers" value="급매물" /> 급매물
               </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
-                <input type="checkbox" name="stickers" value="즉시입주" /> 즉시입주
-              </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
-                <input type="checkbox" name="stickers" value="역세권" /> 역세권
-              </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
-                <input type="checkbox" name="stickers" value="도로변" /> 도로변
-              </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
-                <input type="checkbox" name="stickers" value="단독공장" /> 단독공장
-              </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+              <label class="sticker-chip">
                 <input type="checkbox" name="stickers" value="수익형" /> 수익형
               </label>
-              <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; color:#374151;">
+              <label class="sticker-chip">
+                <input type="checkbox" name="stickers" value="역세권" /> 역세권
+              </label>
+              <label class="sticker-chip">
+                <input type="checkbox" name="stickers" value="즉시입주" /> 즉시입주
+              </label>
+              <label class="sticker-chip">
+                <input type="checkbox" name="stickers" value="단독공장" /> 단독공장
+              </label>
+              <label class="sticker-chip">
+                <input type="checkbox" name="stickers" value="민원적음" /> 민원적음
+              </label>
+              <label class="sticker-chip">
+                <input type="checkbox" name="stickers" value="추천업종" /> 추천업종
+              </label>
+              <label class="sticker-chip">
                 <input type="checkbox" name="stickers" value="권리금없음" /> 권리금없음
               </label>
             </div>
-          </div>
+          </fieldset>
 
-          <textarea name="detailDescription" rows="5" placeholder="매물설명 — 입지, 도로접근성, 추천업종, 임대조건, 특이사항 등 (상세보기에 표시됩니다)"></textarea>
-          <textarea name="description" rows="3" placeholder="내부 메모 / 특이사항 (관리용)" required></textarea>
+          <!-- ═══ 구역 6. 매물설명 ═══ -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📝 매물설명</legend>
 
-          <div id="imageUrlContainer"></div>
-          <button type="button" id="addImageBtn" class="btn btn-outline" style="font-size:0.85rem;">사진 추가 +</button>
+            <div class="form-group">
+              <label class="form-label">공개 매물설명 <span class="form-hint">(상세보기에 표시)</span></label>
+              <textarea name="detailDescription" rows="4" placeholder="입지, 도로접근성, 추천업종, 임대조건, 특이사항 등"></textarea>
+            </div>
 
-          <div style="display:flex;gap:10px;margin-top:8px;">
-            <button type="submit" class="btn btn-primary" style="flex:1;">저장</button>
+            <div class="form-group">
+              <label class="form-label">내부 메모 <span class="form-hint">(관리용 — 비공개)</span></label>
+              <textarea name="description" rows="2" placeholder="관리용 메모 / 특이사항" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">사진 URL</label>
+              <div id="imageUrlContainer"></div>
+              <button type="button" id="addImageBtn" class="btn btn-outline btn-sm" style="margin-top:6px;">사진 추가 +</button>
+            </div>
+          </fieldset>
+
+          <!-- ═══ 하단 버튼 ═══ -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">💾 저장</button>
             <button type="button" id="cancelEditBtn" class="btn btn-outline hidden">수정 취소</button>
           </div>
         </form>
@@ -214,6 +327,6 @@
         </div>
       </div>
     </footer>
-    <script src="app.js?v=20260520"></script>
+    <script src="app.js?v=20260526"></script>
   </body>
 </html>

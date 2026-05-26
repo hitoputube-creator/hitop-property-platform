@@ -238,6 +238,132 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .admin-form input, .admin-form select, .admin-form textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font: inherit; }
 
+/* ═══════════════════════════════════════════
+   매물등록 카드형 레이아웃 v2
+   ═══════════════════════════════════════════ */
+.admin-register-card {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+/* 입력폼 v2 — 구역별 카드 */
+.admin-form-v2 { display: flex; flex-direction: column; gap: 14px; }
+.admin-form-v2 input,
+.admin-form-v2 select,
+.admin-form-v2 textarea {
+  width: 100%; padding: 8px 10px; border-radius: 6px;
+  border: 1px solid #cbd5e1; font: inherit; font-size: 0.92rem;
+  transition: border-color 0.15s;
+}
+.admin-form-v2 input:focus,
+.admin-form-v2 select:focus,
+.admin-form-v2 textarea:focus {
+  outline: none; border-color: var(--navy);
+  box-shadow: 0 0 0 2px rgba(18,51,90,0.10);
+}
+
+/* 섹션 카드 (fieldset) */
+.form-section {
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--white);
+  padding: 16px 18px 14px;
+  margin: 0;
+}
+.form-section-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--navy);
+  padding: 0 4px; margin: 0;
+}
+
+/* 라벨 */
+.form-label {
+  display: block; font-size: 0.82rem; font-weight: 600;
+  color: #475569; margin-bottom: 3px;
+}
+.form-hint {
+  font-weight: 400; color: #94a3b8; font-size: 0.78rem;
+}
+
+/* 단일 입력 그룹 */
+.form-group { margin-bottom: 8px; }
+.form-group:last-child { margin-bottom: 0; }
+
+/* 2열 배치 */
+.form-row-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+.form-row-half:last-child { margin-bottom: 0; }
+
+/* 매물번호 인라인 */
+.listing-no-display-inline {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+}
+.listing-no-display-inline strong {
+  color: var(--navy); font-size: 1rem;
+}
+.listing-no-hint {
+  font-size: 0.75rem; color: #94a3b8;
+}
+
+/* 면적 인라인 */
+.area-inline {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 8px;
+}
+.area-inline:last-child { margin-bottom: 0; }
+.area-label-w {
+  min-width: 60px; flex-shrink: 0; margin-bottom: 0;
+}
+.area-inline input[type="number"] {
+  flex: 1; min-width: 0; max-width: 140px;
+}
+.area-unit {
+  font-size: 0.82rem; color: #64748b; font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* 홍보스티커 그리드 */
+.sticker-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.sticker-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 10px; border-radius: 6px;
+  border: 1px solid #e5e7eb; background: #f9fafb;
+  font-size: 0.82rem; color: #374151;
+  cursor: pointer; user-select: none;
+  transition: background 0.12s, border-color 0.12s;
+}
+.sticker-chip:hover { background: #f0f4ff; border-color: #93c5fd; }
+.sticker-chip input[type="checkbox"] {
+  width: 15px; height: 15px; cursor: pointer; flex-shrink: 0;
+  accent-color: var(--navy);
+}
+
+/* 하단 버튼 */
+.form-actions {
+  display: flex; gap: 10px; margin-top: 4px;
+  padding-bottom: 24px;
+}
+.form-actions .btn-primary { flex: 1; }
+.btn-sm { font-size: 0.82rem; padding: 6px 12px; }
+.btn-lg { padding: 12px 20px; font-size: 1rem; }
+
+/* flag-check-row 조정 (v2 내부) */
+.admin-form-v2 .flag-check-row { margin-bottom: 6px; }
+.admin-form-v2 .flag-check-label { padding: 8px 12px; font-size: 0.88rem; min-width: 120px; }
+
+/* ─ 반응형 (모바일) ─ */
+@media (max-width: 600px) {
+  .admin-register-card { padding: 0 10px 32px; }
+  .form-section { padding: 12px 12px 10px; }
+  .form-row-half { grid-template-columns: 1fr; gap: 6px; }
+  .sticker-grid { grid-template-columns: repeat(2, 1fr); }
+  .area-inline { flex-wrap: wrap; }
+  .area-label-w { min-width: 100%; margin-bottom: 2px; }
+  .area-inline input[type="number"] { max-width: none; }
+}
+
 .admin-list { display: grid; gap: 10px; }
 
 .admin-item { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 12px; }
@@ -477,8 +603,8 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .area-unit-btn:hover { background: #a7f3d0; }
 
 .area-field-label { font-size: 12px; font-weight: 700; color: #475569; white-space: nowrap; min-width: 52px; }
-.detail-fields-section { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
-.detail-fields-section input { width: 100%; box-sizing: border-box; }
+.admin-form .detail-fields-section { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+.admin-form .detail-fields-section input { width: 100%; box-sizing: border-box; }
 
 .modal-title { font-size: 19px; font-weight: 700; color: #1e293b; margin: 0; line-height: 1.4; }
 

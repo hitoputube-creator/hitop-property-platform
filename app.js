@@ -276,7 +276,7 @@ const toKoreanPrice = (wanwon) => {
 const m2ToPy = (sqm) => {
   const n = Number(sqm);
   if (!n || isNaN(n) || n <= 0) return '';
-  return (n / 3.305785).toFixed(2);
+  return String(Math.round(n / 3.305785));
 };
 const pyToM2 = (py) => {
   const n = Number(py);
@@ -1932,7 +1932,7 @@ if (ptEl) {
     if (payload.totalFloorAreaM2 && !payload.totalFloorAreaPy) payload.totalFloorAreaPy = Number(m2ToPy(payload.totalFloorAreaM2));
     if (payload.totalFloorAreaPy && !payload.totalFloorAreaM2) payload.totalFloorAreaM2 = Number(pyToM2(payload.totalFloorAreaPy));
     // 빈 텍스트 필드 정리
-    ['floorInfo','zoning','parkingCount','approvalDate','detailDescription'].forEach(k => { if (payload[k] === '') delete payload[k]; });
+    ['floorInfo','zoning','parkingCount','approvalDate','detailDescription','managementFee'].forEach(k => { if (payload[k] === '') delete payload[k]; });
     // Legacy area handling for compatibility
     if (payload.area) {
       payload.area = Number(payload.area);
