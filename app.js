@@ -341,7 +341,18 @@ const openModal = (item) => {
   document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
   document.getElementById('modalTitle').textContent = item.title;
   const modalBadgeEl = document.getElementById('modalBadge');
-  if (modalBadgeEl) modalBadgeEl.innerHTML = `${item.propertyType}&nbsp;${getDealBadgeHTML(item.dealType)}`;
+  if (modalBadgeEl) {
+    const propClassMap = {
+      '공장창고': 'prop-factory', '공장·창고': 'prop-factory',
+      '상가': 'prop-store', '상가·빌딩': 'prop-store', '상가빌딩': 'prop-store',
+      '토지': 'prop-land',
+      '오피스텔': 'prop-officetel',
+      '힐스테이트더운정': 'prop-hillstate',
+      '단독주택': 'prop-house', '단독·전원주택': 'prop-house',
+    };
+    const propCls = propClassMap[item.propertyType] || 'prop-etc';
+    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${item.propertyType}</span>${getDealBadgeHTML(item.dealType)}`;
+  }
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
 
   const renderPriceVal = (f, val) => {
@@ -370,12 +381,18 @@ const openModal = (item) => {
   // Build area rows with new fields
   const isStore = item.propertyType === '상가';
   const formatArea = (m2, py) => {
-    let m2Val = m2 !== undefined && m2 !== null ? Number(m2).toFixed(2) : null;
-    let pyVal = py !== undefined && py !== null ? Number(py).toFixed(2) : null;
-    if (!m2Val && pyVal) m2Val = (pyVal * 3.305785).toFixed(2);
-    if (!pyVal && m2Val) pyVal = (m2Val / 3.305785).toFixed(2);
-    if (m2Val && pyVal) return `${m2Val}㎡ / ${pyVal}평`;
-    return m2Val ? `${m2Val}㎡` : pyVal ? `${pyVal}평` : '';
+    const m2Num = (m2 !== undefined && m2 !== null) ? Number(m2) : null;
+    const pyNum = (py !== undefined && py !== null) ? Number(py) : null;
+    const hasM2 = m2Num !== null && !isNaN(m2Num) && m2Num > 0;
+    const hasPy = pyNum !== null && !isNaN(pyNum) && pyNum > 0;
+    const finalM2 = hasM2 ? m2Num : (hasPy ? pyNum * 3.305785 : null);
+    const finalPy = hasPy ? pyNum : (hasM2 ? m2Num / 3.305785 : null);
+    const fmtM2 = v => v.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPy = v => Math.round(v).toLocaleString('ko-KR');
+    if (finalM2 !== null && finalPy !== null) return `${fmtM2(finalM2)}㎡ (${fmtPy(finalPy)}평)`;
+    if (finalM2 !== null) return `${fmtM2(finalM2)}㎡`;
+    if (finalPy !== null) return `${fmtPy(finalPy)}평`;
+    return '';
   };
   if (isStore) {
     const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
@@ -384,18 +401,18 @@ const openModal = (item) => {
     const supPy = item.supplyAreaPy;
     if (exclM2 || exclPy) {
       const exclStr = formatArea(exclM2, exclPy);
-      tableHTML += `<tr><td class="info-label">전용면적</td><td class="info-value">${exclStr}</td></tr>`;
+      tableHTML += `<tr class="info-area-row"><td class="info-label">전용면적</td><td class="info-value">${exclStr}</td></tr>`;
     }
     if (supM2 || supPy) {
       const supStr = formatArea(supM2, supPy);
-      tableHTML += `<tr><td class="info-label">분양면적</td><td class="info-value">${supStr}</td></tr>`;
+      tableHTML += `<tr class="info-area-row"><td class="info-label">분양면적</td><td class="info-value">${supStr}</td></tr>`;
     }
   } else {
     const areaM2 = item.areaM2 ?? item.area;
     const areaPy = item.areaPy;
     if (areaM2 || areaPy) {
       const areaStr = formatArea(areaM2, areaPy);
-      tableHTML += `<tr><td class="info-label">면적</td><td class="info-value">${areaStr}</td></tr>`;
+      tableHTML += `<tr class="info-area-row"><td class="info-label">면적</td><td class="info-value">${areaStr}</td></tr>`;
     }
   }
   // Append other info fields as before
