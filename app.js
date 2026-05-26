@@ -1667,7 +1667,9 @@ const setupAdminDashboard = () => {
                 <div class="adm-item-info">${getDisplayAddress(item)} · ${formatPrice(price)}만원 · ${item.area || 0}㎡</div>
                 <div class="adm-item-actions">
                   <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
-                  <a href="admin-listings.html" class="adm-btn adm-btn-manage" style="text-decoration:none; background:#4a5568; color:#fff;">📂 관리</a>
+                  <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
+                  <button class="adm-btn adm-btn-done${done?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${done?'↩ 완료취소':'✅ 거래완료'}</button>
+                  <button class="adm-btn adm-btn-del" data-action="delete" data-id="${item.id}" type="button">🗑 삭제</button>
                 </div>
               </div>
             </article>`;
@@ -1730,6 +1732,50 @@ const setupAdminDashboard = () => {
     document.getElementById('adminSortPrice')?.classList.add('active');
     document.getElementById('adminSortDate')?.classList.remove('active');
     applyFilters();
+  });
+
+  // ── 대시보드 버튼 핸들러 (홈페이지·거래완료·삭제) ──
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const { action, id } = btn.dataset;
+    if (action === 'prefill') {
+      window.location.href = `admin-register.html?prefill=${id}`;
+      return;
+    }
+    if (action === 'done') {
+      const newStatus = (_allListings.find(i => i.id === id)?.status === 'done') ? '' : 'done';
+      const doneMsg = newStatus === 'done' ? '이 매물을 거래완료로 변경하시겠습니까?' : '거래완료를 취소하시겠습니까?';
+      if (!confirm(doneMsg)) return;
+      (async () => {
+        try {
+          const isAuthed = await waitForAdminAuth();
+          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
+          await updateListingInFirestore(id, { status: newStatus });
+          _allListings = _allListings.map(i => i.id === id ? { ...i, status: newStatus } : i);
+          applyFilters();
+        } catch (err) {
+          console.error('거래완료 처리 오류:', err);
+          alert('거래완료 처리 중 오류가 발생했습니다.');
+        }
+      })();
+    }
+    if (action === 'delete') {
+      if (!confirm('정말 이 매물을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.')) return;
+      (async () => {
+        try {
+          const isAuthed = await waitForAdminAuth();
+          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
+          await deleteListingFromFirestore(id);
+          _allListings = _allListings.filter(i => i.id !== id);
+          alert('삭제되었습니다.');
+          applyFilters();
+        } catch (err) {
+          console.error('매물 삭제 오류:', err);
+          alert('매물 삭제 중 오류가 발생했습니다.');
+        }
+      })();
+    }
   });
 
   (async () => {
@@ -2361,10 +2407,10 @@ const setupAdminListingsMgmt = () => {
             <p style="margin:4px 0;font-size:13px;">${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
             <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.propertyType === '상가' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
             <div class="admin-item-actions">
-              <a href="admin-register.html?edit=${item.id}" class="btn btn-outline">수정</a>
-              <button class="btn btn-primary" data-action="prefill" data-id="${item.id}" type="button">홈페이지로 보내기</button>
-              <button class="btn btn-primary" data-action="delete" data-id="${item.id}" type="button">삭제</button>
-              <button class="btn btn-outline done-btn${isDone?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${isDone?'완료취소':'거래완료'}</button>
+              <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
+              <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
+              <button class="adm-btn adm-btn-done${isDone?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${isDone?'↩ 완료취소':'✅ 거래완료'}</button>
+              <button class="adm-btn adm-btn-del" data-action="delete" data-id="${item.id}" type="button">🗑 삭제</button>
             </div>
           </article>`;
         }).join('')
@@ -2411,6 +2457,8 @@ const setupAdminListingsMgmt = () => {
     }
     if (action==='done') {
       const newStatus=(_allListings.find(i=>i.id===id)?.status==='done')?'':'done';
+      const doneMsg = newStatus==='done' ? '이 매물을 거래완료로 변경하시겠습니까?' : '거래완료를 취소하시겠습니까?';
+      if (!confirm(doneMsg)) return;
       (async()=>{
         try {
           const isAuthed = await waitForAdminAuth();

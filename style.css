@@ -383,7 +383,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .admin-item { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 12px; }
 
-.admin-item-actions { display: flex; gap: 8px; margin-top: 8px; }
+.admin-item-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 
 .admin-item-done { opacity: 0.65; border-left: 3px solid #dc2626; }
 
@@ -2230,9 +2230,24 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .adm-btn-edit:hover { background: #EFF6FF; }
 
+.adm-btn-hp      { border-color: #0a7c55; color: #0a7c55; background: #f0fdf4; }
+
+.adm-btn-hp:hover  { background: #dcfce7; }
+
+.adm-btn-done    { border-color: #6b7280; color: #6b7280; }
+
+.adm-btn-done:hover { background: #f1f5f9; }
+
+.adm-btn-done.done-active { border-color: #7c3aed; color: #7c3aed; background: #f5f3ff; }
+
 .adm-btn-del     { border-color: #dc2626; color: #dc2626; }
 
 .adm-btn-del:hover  { background: #FEF2F2; }
+
+@media (max-width: 640px) {
+  .admin-item-actions .adm-btn,
+  .adm-item-actions .adm-btn { font-size: 13px; padding: 7px 10px; }
+}
 
 /* 수정 모달 */
 
