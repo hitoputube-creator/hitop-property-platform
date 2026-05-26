@@ -1,6 +1,21 @@
 console.log('app.js 로드됨!');
 const STORAGE_KEY = 'hitop_listings_v1';
 
+// 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
+const CAT_LABELS = {
+  '공장창고':         '공장·창고',
+  '공장·창고':        '공장·창고',
+  '상가':             '상가·빌딩',
+  '상가빌딩':         '상가·빌딩',
+  '상가·빌딩':        '상가·빌딩',
+  '토지':             '토지',
+  '오피스텔':         '오피스텔',
+  '힐스테이트더운정': '힐스테이트더운정',
+  '단독주택':         '단독·전원주택',
+  '단독전원주택':     '단독·전원주택',
+  '단독·전원주택':    '단독·전원주택',
+};
+
 const PROPERTY_FIELDS = {
   '공장창고': {
     dealTypes: ['매매','임대'],
@@ -575,6 +590,15 @@ const setupListingsPage = () => {
   const filterForm = document.getElementById('filterForm');
   if (!filterForm) return;
 
+  const CAT_LABELS = {
+    '공장창고':         '공장·창고',
+    '상가':             '상가·빌딩',
+    '토지':             '토지',
+    '오피스텔':         '오피스텔',
+    '힐스테이트더운정': '힐스테이트더운정',
+    '단독주택':         '단독·전원주택',
+  };
+
   const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '' };
   let sortMode = 'date';
   let allPage  = 1;
@@ -866,27 +890,39 @@ const setupListingsPage = () => {
     document.querySelector('.lp-cat-2col-scroll')?.scrollTo(0, 0);
 
     // 해당 카테고리 실제 매물 기준으로 지도 마커 업데이트
-    // (renderCategoryPanel은 applyFilters를 거치지 않으므로 직접 placeMarkers 호출)
     const forMap = _listings.filter(item => item.propertyType === categoryKey);
-    if (forMap.length > 0 && map) placeMarkers(forMap);
+    if (map) placeMarkers(forMap.length > 0 ? forMap : []);
   };
 
   // ── 카카오맵 ──
   let map = null, openIw = null;
+  let _mapReady = false;   // 지도 초기화 완료 플래그
+  let _dataReady = false;  // Firestore 로드 완료 플래그
   const activeMarkers = [];
 
   // 매물종류별 숫자 원형 마커 색상
   const MARKER_COLORS = {
-    '공장창고':         '#0f766e',
-    '상가':             '#d6336c',
-    '토지':             '#b7791f',
-    '오피스텔':         '#6d28d9',
-    '힐스테이트더운정': '#1d4ed8',
-    '단독주택':         '#16a34a',
+    '공장창고':         '#0d9488',  // 청록색
+    '상가':             '#e53e3e',  // 빨간색
+    '토지':             '#f97316',  // 주황색
+    '오피스텔':         '#2563eb',  // 파란색
+    '힐스테이트더운정': '#7c3aed',  // 보라색
+    '단독주택':         '#16a34a',  // 초록색
   };
-  const MARKER_COLOR_MIXED = '#334155';
+  const MARKER_COLOR_MIXED = '#64748b';
   let _mhId = 0;
   window._mhHandlers = {};
+
+  // ── 좌표 필드명 추출 헬퍼 (lat/lng, latitude/longitude 등 모두 지원) ──
+  const _getLat = i => {
+    const v = i.lat ?? i.latitude ?? i.coordY ?? i.y ?? null;
+    return (v !== null && !isNaN(Number(v))) ? Number(v) : null;
+  };
+  const _getLng = i => {
+    const v = i.lng ?? i.longitude ?? i.coordX ?? i.x ?? null;
+    return (v !== null && !isNaN(Number(v))) ? Number(v) : null;
+  };
+  const _hasCoord = i => _getLat(i) !== null && _getLng(i) !== null;
 
   // ── 필드 헬퍼 ──
   const isCompleted = i => i.is_completed === true || i.status === 'done' || i.status === '거래완료';
@@ -906,7 +942,11 @@ const setupListingsPage = () => {
 
   // ── 지도 마커 (숫자 원형 마커) ──
   const placeMarkers = (items) => {
-    if (!map || typeof kakao === 'undefined') return;
+    console.log('[placeMarkers] 호출됨 | map준비:', _mapReady, '| 매물수:', items.length);
+    if (!map || typeof kakao === 'undefined') {
+      console.warn('[placeMarkers] 지도 미초기화 — 건너뜀');
+      return;
+    }
     activeMarkers.forEach(m => m.setMap(null));
     activeMarkers.length = 0;
     if (openIw) { openIw.close(); openIw = null; }
@@ -942,51 +982,130 @@ const setupListingsPage = () => {
 
     // 거래완료 제외 후 두 그룹으로 분리
     const active        = items.filter(i => !isCompleted(i));
-    const withCoords    = active.filter(i => i.lat && i.lng && !isNaN(Number(i.lat)) && !isNaN(Number(i.lng)));
-    const withoutCoords = active.filter(i => !(i.lat && i.lng && !isNaN(Number(i.lat)) && !isNaN(Number(i.lng))) && i.address);
+    const withCoords    = active.filter(i => _hasCoord(i));
+    const withoutCoords = active.filter(i => !_hasCoord(i) && (i.address || i.displayAddress));
 
-    // 그룹 1: lat/lng 보유 → 좌표 기준 그룹핑 후 숫자 원형 마커 즉시 표시
+    // 진단 로그: 실제 데이터 필드 확인
+    console.log('[placeMarkers] 좌표O:', withCoords.length, '| 좌표X(주소검색):', withoutCoords.length);
+    if (active.length > 0) {
+      const s = active[0];
+      console.log('[매물 샘플]', {
+        propertyType: s.propertyType, category: s.category, type: s.type,
+        lat: s.lat, lng: s.lng, latitude: s.latitude, longitude: s.longitude,
+        coordX: s.coordX, coordY: s.coordY,
+        address: s.address, displayAddress: s.displayAddress
+      });
+    }
+
+    // 그룹 1: 좌표 보유 → 좌표 기준 그룹핑 후 숫자 원형 마커 즉시 표시
     const groups = new Map();
     withCoords.slice(0, 100).forEach(item => {
-      const key = `${Number(item.lat).toFixed(4)}_${Number(item.lng).toFixed(4)}`;
-      if (!groups.has(key)) groups.set(key, { lat: Number(item.lat), lng: Number(item.lng), items: [] });
+      const lat = _getLat(item), lng = _getLng(item);
+      const key = `${lat.toFixed(4)}_${lng.toFixed(4)}`;
+      if (!groups.has(key)) groups.set(key, { lat, lng, items: [] });
       groups.get(key).items.push(item);
     });
     groups.forEach(({ lat, lng, items: gi }) => addOverlay(new kakao.maps.LatLng(lat, lng), gi));
 
-    // withCoords 마커 기준으로 지도 bounds 조정 (마커가 항상 뷰포트 안에 보이도록)
+    // 좌표 기준 bounds 조정
     if (withCoords.length === 1) {
-      map.setCenter(new kakao.maps.LatLng(Number(withCoords[0].lat), Number(withCoords[0].lng)));
+      map.setCenter(new kakao.maps.LatLng(_getLat(withCoords[0]), _getLng(withCoords[0])));
       map.setLevel(5);
     } else if (withCoords.length > 1) {
       const bounds = new kakao.maps.LatLngBounds();
-      withCoords.slice(0, 100).forEach(i => bounds.extend(new kakao.maps.LatLng(Number(i.lat), Number(i.lng))));
+      withCoords.slice(0, 100).forEach(i => bounds.extend(new kakao.maps.LatLng(_getLat(i), _getLng(i))));
       map.setBounds(bounds);
     }
 
-    // 그룹 2: lat/lng 없음 → geocoder 사용, 최대 30개 (API 과부하 방지)
-    if (withoutCoords.length > 0 && kakao.maps.services) {
+    // 그룹 2: 좌표 없음 → geocoder로 주소 변환 (최대 30개)
+    if (withoutCoords.length > 0) {
+      if (!kakao.maps.services) {
+        console.warn('[placeMarkers] kakao.maps.services 미로드 — 주소검색 불가');
+        return;
+      }
       const geocoder = new kakao.maps.services.Geocoder();
+
+      // displayAddress + address 합성: 중복 동명 제거 후 번지만 붙임
+      // 예: "파주시 와동동" + "와동동 1463" → "파주시 와동동 1463"
+      const mergeAddr = (disp, addr) => {
+        if (!addr) return disp;
+        if (!disp) return addr;
+        // addr 자체에 상위 행정구역이 있으면(시·군·구 + 공백) 그대로 사용
+        if (/[시군구]\s/.test(addr) || /^경기|^서울|^인천|^부산|^대전|^대구|^광주|^울산|^세종/.test(addr)) return addr;
+        // disp 마지막 토큰이 addr 앞부분과 겹치면 중복 제거 후 합성
+        const lastPart = disp.split(/\s+/).pop();
+        if (addr.startsWith(lastPart)) {
+          const rest = addr.slice(lastPart.length).trim();
+          return rest ? disp + ' ' + rest : disp;
+        }
+        return disp + ' ' + addr;
+      };
+
+      // 우선순위별 주소 후보 배열 반환
+      const buildAddrList = (item) => {
+        const addr = (item.address || '').trim();
+        const disp = (item.displayAddress || '').trim();
+        const merged = mergeAddr(disp, addr);
+        const list = [];
+        // 1순위: 경기도 + 합성주소
+        if (merged) list.push('경기도 ' + merged);
+        // 2순위: 합성주소
+        if (merged) list.push(merged);
+        // 3순위: address 단독
+        if (addr && addr !== merged) list.push(addr);
+        // 중복 제거
+        return [...new Set(list)].filter(Boolean);
+      };
+
       withoutCoords.slice(0, 30).forEach(item => {
-        geocoder.addressSearch(item.address, (result, status) => {
-          if (status !== kakao.maps.services.Status.OK) return;
-          addOverlay(new kakao.maps.LatLng(result[0].y, result[0].x), [item]);
-        });
+        const addrList = buildAddrList(item);
+        if (!addrList.length) return;
+
+        const tryNext = (idx) => {
+          if (idx >= addrList.length) return;
+          const addr = addrList[idx];
+          geocoder.addressSearch(addr, (result, status) => {
+            if (status !== kakao.maps.services.Status.OK) {
+              console.log(`[지오코딩 실패 ${idx + 1}순위] ${addr}`);
+              tryNext(idx + 1);
+              return;
+            }
+            console.log(`[지오코딩 성공 ${idx + 1}순위] ${addr}`);
+            addOverlay(new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x)), [item]);
+          });
+        };
+
+        tryNext(0);
       });
     }
   };
 
-  // ── 지도 초기화 (autoload=false 방식) ──
+  // ── 지도+데이터 모두 준비됐을 때 마커 표시 ──
+  const _tryShowMarkers = () => {
+    if (!_mapReady || !_dataReady) return;
+    const cat = flt.cat || flt.formCat;
+    const toShow = cat ? _listings.filter(i => i.propertyType === cat) : _listings;
+    console.log('[_tryShowMarkers] 마커 표시 시작 | 필터:', cat || '전체', '| 표시할 매물수:', toShow.length);
+    placeMarkers(toShow);
+  };
+
+  // ── 지도 초기화 ──
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
-    if (!mapEl || typeof kakao === 'undefined') return;
+    if (!mapEl || typeof kakao === 'undefined') {
+      console.warn('[Map] kakao 미정의 또는 map 엘리먼트 없음');
+      return;
+    }
     kakao.maps.load(() => {
       mapEl.innerHTML = '';
       map = new kakao.maps.Map(mapEl, {
         center: new kakao.maps.LatLng(37.7512, 126.7820),
         level: 7
       });
+      _mapReady = true;
+      console.log('[Map] 카카오맵 초기화 완료');
       applyFilters();
+      _tryShowMarkers();
     });
   });
 
@@ -1282,7 +1401,15 @@ const setupListingsPage = () => {
       if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 정보를 불러오지 못했습니다.</div>';
       return;
     }
+    _dataReady = true;
+    console.log('[Firestore] 로드 완료 | 총 매물수:', _listings.length);
+    if (_listings.length > 0) {
+      const s = _listings[0];
+      console.log('[Firestore] 첫 매물 키 목록:', Object.keys(s).join(', '));
+      console.log('[Firestore] 첫 매물 샘플:', JSON.stringify(s));
+    }
     applyFilters();
+    _tryShowMarkers();
     if (urlCat) renderCategoryPanel(urlCat);
   })();
 };
