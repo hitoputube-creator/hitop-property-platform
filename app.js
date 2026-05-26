@@ -157,7 +157,7 @@ const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.strin
 const _fsListings = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
 const _fsCfg      = () => import('./firebase-config.js');
 const _fsAuth     = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-const _fsStorage  = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+const _supabaseCfg = () => import('./supabase-config.js');
 
 function normalizeFirestoreListing(docSnap) {
   const d = docSnap.data();
@@ -1658,23 +1658,29 @@ const setupAdminDashboard = () => {
 };
 
 // ─────────────────────────────────────────────
-// Firebase Storage 이미지 업로드 헬퍼
+// Supabase Storage 이미지 업로드 헬퍼
+// bucket: listing-images (Public)
+// 경로:   listings/{listingNo}/{timestamp}_{filename}
 // ─────────────────────────────────────────────
-async function uploadListingImage(file) {
-  const [storageModule, cfgModule] = await Promise.all([_fsStorage(), _fsCfg()]);
-  const { ref, uploadBytes, getDownloadURL } = storageModule;
-  const { storage, auth } = cfgModule;
+async function uploadListingImage(file, listingNo = '') {
+  const { supabase, LISTING_IMAGES_BUCKET } = await _supabaseCfg();
 
-  // 익명 로그인으로 Storage 쓰기 권한 확보
-  if (!auth.currentUser) {
-    const authModule = await _fsAuth();
-    try { await authModule.signInAnonymously(auth); } catch (_) { /* already signed in */ }
-  }
+  // 파일명 안전하게 처리 (한글·특수문자 제거)
+  const safeFname  = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const folder     = listingNo ? `listings/${listingNo}` : 'listings/temp';
+  const uploadPath = `${folder}/${Date.now()}_${safeFname}`;
 
-  const ext      = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-  const safeName = `listings/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const snapshot = await uploadBytes(ref(storage, safeName), file);
-  return await getDownloadURL(snapshot.ref);
+  const { data, error } = await supabase.storage
+    .from(LISTING_IMAGES_BUCKET)
+    .upload(uploadPath, file, { upsert: false, contentType: file.type });
+
+  if (error) throw new Error(error.message);
+
+  const { data: { publicUrl } } = supabase.storage
+    .from(LISTING_IMAGES_BUCKET)
+    .getPublicUrl(data.path);
+
+  return publicUrl;
 }
 
 // ─────────────────────────────────────────────
@@ -1735,7 +1741,8 @@ const setupAdminRegister = () => {
       statusEl.className = 'img-upload-status uploading';
       input.disabled = true; fileLabel.classList.add('disabled');
       try {
-        const url = await uploadListingImage(file);
+        const listingNo = form.elements['listingNo']?.value?.trim() || '';
+        const url = await uploadListingImage(file, listingNo);
         input.value = url; input.disabled = false; fileLabel.classList.remove('disabled');
         statusEl.textContent = '✅ 완료'; statusEl.className = 'img-upload-status done';
         thumb.src = url; thumb.classList.remove('hidden');
