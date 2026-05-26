@@ -528,12 +528,15 @@
           </div>
         </div>
         <div class="modal-body">
-          <!-- 왼쪽: 이미지 + 매물정보 표 + 설명 -->
-          <div class="modal-left">
+          <!-- ① 왼쪽: 사진 + 썸네일 -->
+          <div class="modal-col-photo">
             <div class="modal-main-img">
               <img id="modalMainImg" src="" alt="매물사진" />
             </div>
             <div class="modal-thumbs" id="modalThumbs"></div>
+          </div>
+          <!-- ② 가운데: 매물정보 표 + 매물설명 -->
+          <div class="modal-col-info">
             <div class="modal-info-section">
               <h4 class="modal-section-title">📋 매물 정보</h4>
               <table class="modal-info-table" id="modalInfoTable"></table>
@@ -543,8 +546,8 @@
               <div id="modalDesc" class="modal-desc"></div>
             </div>
           </div>
-          <!-- 오른쪽: 요약 카드 -->
-          <div class="modal-right">
+          <!-- ③ 오른쪽: 요약 + 가격 + 문의 + 중개소 + 지도 -->
+          <div class="modal-col-side">
             <div class="modal-summary">
               <span class="modal-badge" id="modalBadge"></span>
               <h2 class="modal-title" id="modalTitle"></h2>
