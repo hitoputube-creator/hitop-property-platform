@@ -314,7 +314,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 /* 매물번호 + 1차구분 + 2차구분 + 거래유형 (4열) */
 .form-row-meta4 {
-  display: grid; grid-template-columns: 96px 1fr 1fr 1fr;
+  display: grid; grid-template-columns: 150px 1fr 1fr 1fr;
   gap: 8px; margin-bottom: 5px; align-items: end;
 }
 
@@ -323,6 +323,16 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   display: flex; align-items: center; gap: 5px;
   padding: 4px 8px; height: 36px; box-sizing: border-box;
   border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc;
+}
+#listingNoDisplay,
+.listing-no-display {
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
 }
 .listing-no-display-inline strong { color: var(--navy); font-size: 0.90rem; }
 .listing-no-hint { font-size: 0.70rem; color: #94a3b8; white-space: nowrap; }
