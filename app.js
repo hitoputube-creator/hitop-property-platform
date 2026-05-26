@@ -3,17 +3,84 @@ const STORAGE_KEY = 'hitop_listings_v1';
 
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
 const CAT_LABELS = {
+  // ── 레거시 propertyType 라벨 ──
   '공장창고':         '공장·창고',
   '공장·창고':        '공장·창고',
-  '상가':             '상가·빌딩',
-  '상가빌딩':         '상가·빌딩',
-  '상가·빌딩':        '상가·빌딩',
+  '상가':             '상가·사무실',
+  '상가빌딩':         '상가·사무실',
+  '상가·빌딩':        '상가·사무실',
   '토지':             '토지',
   '오피스텔':         '오피스텔',
-  '힐스테이트더운정': '힐스테이트더운정',
+  '힐스테이트더운정': '아파트',
   '단독주택':         '단독·전원주택',
   '단독전원주택':     '단독·전원주택',
   '단독·전원주택':    '단독·전원주택',
+  // ── 신규 category1 라벨 ──
+  '상가사무실':     '상가·사무실',
+  '주거용':         '주거용',
+  '단독전원주택_c': '단독·전원주택',  // category1 키는 아래 CATEGORY_MAP 참조
+  '건물빌딩':       '건물·빌딩',
+};
+
+// 1차 매물구분 → 2차 옵션 매핑
+const CATEGORY_MAP = {
+  '공장창고':     ['공장', '창고'],
+  '상가사무실':   ['상가', '사무실'],
+  '토지':         ['토지'],
+  '주거용':       ['아파트', '오피스텔'],
+  '단독전원주택': ['단독주택', '전원주택'],
+  '건물빌딩':     ['건물', '빌딩'],
+};
+
+// 기존 propertyType → category1 매핑 (레거시 폴백)
+const PT_TO_CAT1 = {
+  '공장창고': '공장창고', '공장·창고': '공장창고',
+  '상가': '상가사무실', '상가빌딩': '상가사무실', '상가·빌딩': '상가사무실',
+  '상가·빌딩·사무실': '상가사무실', '사무실': '상가사무실', '오피스': '상가사무실',
+  '토지': '토지',
+  '오피스텔': '주거용',
+  '힐스테이트더운정': '주거용',
+  '단독주택': '단독전원주택', '단독전원주택': '단독전원주택', '단독·전원주택': '단독전원주택',
+  '건물': '건물빌딩', '빌딩': '건물빌딩', '건물빌딩': '건물빌딩',
+};
+
+// 기존 propertyType → category2 매핑
+const PT_TO_CAT2 = {
+  '공장창고': '공장', '공장·창고': '공장',
+  '상가': '상가', '상가빌딩': '상가', '상가·빌딩': '상가', '상가·빌딩·사무실': '상가',
+  '사무실': '사무실', '오피스': '사무실',
+  '토지': '토지',
+  '오피스텔': '오피스텔',
+  '힐스테이트더운정': '아파트',
+  '단독주택': '단독주택', '단독전원주택': '단독주택', '단독·전원주택': '단독주택',
+  '건물': '건물', '빌딩': '빌딩', '건물빌딩': '빌딩',
+};
+
+// 신규 category1/category2 → 하위호환 propertyType 도출
+const derivePropertyType = (cat1, cat2) => {
+  if (cat1 === '공장창고')     return '공장창고';
+  if (cat1 === '상가사무실')   return '상가';
+  if (cat1 === '토지')         return '토지';
+  if (cat1 === '주거용')       return cat2 === '아파트' ? '힐스테이트더운정' : '오피스텔';
+  if (cat1 === '단독전원주택') return '단독주택';
+  if (cat1 === '건물빌딩')     return '건물빌딩';
+  return cat1 || '';
+};
+
+// item에서 category1 도출 (신규 필드 우선, 없으면 레거시 매핑)
+const getCategory1 = (item) => {
+  if (item.category1) return item.category1;
+  return PT_TO_CAT1[item.propertyType || ''] || item.propertyType || '';
+};
+
+// category1 표시 라벨 (사이드바·카드 등)
+const CAT1_DISPLAY = {
+  '공장창고':     '공장·창고',
+  '상가사무실':   '상가·사무실',
+  '토지':         '토지',
+  '주거용':       '주거용',
+  '단독전원주택': '단독·전원주택',
+  '건물빌딩':     '건물·빌딩',
 };
 
 const PROPERTY_FIELDS = {
@@ -336,8 +403,13 @@ const openModal = (item) => {
   if (!modal) return;
   const pt     = item.propertyType || '';
   const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
-  const isFactory   = pt === '공장창고' || pt === '공장·창고';
-  const isStoreType = pt === '상가' || pt === '상가·빌딩' || pt === '상가빌딩';
+  const _mCat1      = item.category1 || PT_TO_CAT1[pt] || '';
+  const _mCat2      = item.category2 || PT_TO_CAT2[pt] || '';
+  const isFactory   = _mCat1 === '공장창고';
+  const isStoreType = _mCat1 === '상가사무실';
+  const isBuildingType  = _mCat1 === '공장창고' || _mCat1 === '단독전원주택' || _mCat1 === '건물빌딩';
+  const isExclusiveType = _mCat1 === '상가사무실' || _mCat1 === '주거용';
+  const isLandType      = _mCat1 === '토지';
 
   // ── 헤더 ──
   document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
@@ -347,14 +419,20 @@ const openModal = (item) => {
   const modalBadgeEl = document.getElementById('modalBadge');
   if (modalBadgeEl) {
     const propClassMap = {
-      '공장창고': 'prop-factory', '공장·창고': 'prop-factory',
+      // 신규 category1
+      '공장창고': 'prop-factory', '상가사무실': 'prop-store',
+      '토지': 'prop-land', '주거용': 'prop-officetel',
+      '단독전원주택': 'prop-house', '건물빌딩': 'prop-store',
+      // 레거시 propertyType
+      '공장·창고': 'prop-factory',
       '상가': 'prop-store', '상가·빌딩': 'prop-store', '상가빌딩': 'prop-store',
-      '토지': 'prop-land', '오피스텔': 'prop-officetel',
-      '힐스테이트더운정': 'prop-hillstate',
+      '오피스텔': 'prop-officetel', '힐스테이트더운정': 'prop-hillstate',
       '단독주택': 'prop-house', '단독·전원주택': 'prop-house',
     };
-    const propCls = propClassMap[pt] || 'prop-etc';
-    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${pt}</span>${getDealBadgeHTML(item.dealType)}`;
+    const _badgeCat1 = _mCat1 || pt;
+    const propCls = propClassMap[_badgeCat1] || propClassMap[pt] || 'prop-etc';
+    const _badgeLabel = CAT1_DISPLAY[_mCat1] || CAT_LABELS[pt] || pt;
+    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${_badgeLabel}</span>${getDealBadgeHTML(item.dealType)}`;
   }
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
 
@@ -392,27 +470,26 @@ const openModal = (item) => {
   // ── 면적정보 통합 (m2str/pystr 반환) ──
   const buildAreaInfo = () => {
     const parts = [];
-    if (isFactory) {
+    if (isBuildingType) {
+      // 공장창고 / 단독전원주택 / 건물빌딩: 대지 + 건축 + 연
       const land  = _calcArea(item.landAreaM2  ?? item.landArea,    item.landAreaPy);
       const bldg  = _calcArea(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
       const total = _calcArea(item.totalFloorAreaM2 ?? item.totalArea, item.totalFloorAreaPy);
       if (land)  parts.push({ label: '대지', ...land });
       if (bldg)  parts.push({ label: '건축', ...bldg });
       if (total) parts.push({ label: '연',   ...total });
-    } else if (isStoreType) {
-      const land = _calcArea(item.landAreaM2 ?? item.landArea, item.landAreaPy);
-      const bldg = _calcArea(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
-      // 신규필드 없으면 기존 상가 필드로 폴백
-      if (land || bldg) {
-        if (land) parts.push({ label: '대지', ...land });
-        if (bldg) parts.push({ label: '건축', ...bldg });
-      } else {
-        const excl = _calcArea(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
-        const sup  = _calcArea(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
-        if (excl) parts.push({ label: '전용', ...excl });
-        if (sup)  parts.push({ label: '분양', ...sup });
-      }
+    } else if (isExclusiveType) {
+      // 상가사무실 / 주거용: 전용 + 공급
+      const excl = _calcArea(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
+      const sup  = _calcArea(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
+      if (excl) parts.push({ label: '전용', ...excl });
+      if (sup)  parts.push({ label: '공급', ...sup });
+    } else if (isLandType) {
+      // 토지: 토지면적
+      const area = _calcArea(item.areaM2 ?? item.area, item.areaPy);
+      if (area) parts.push({ label: '토지', ...area });
     } else {
+      // 레거시 폴백
       const area = _calcArea(item.areaM2 ?? item.area, item.areaPy);
       if (area) parts.push({ label: '', ...area });
     }
@@ -783,11 +860,14 @@ const setupListingsPage = () => {
     saveDefaultPanelHTML();
 
     const catNames = {
-      '공장창고': '공장·창고',
-      '상가': '상가·빌딩',
-      '토지': '토지',
-      '오피스텔': '오피스텔',
-      '단독주택': '단독·전원주택'
+      '공장창고':     '공장·창고',
+      '상가사무실':   '상가·사무실',
+      '토지':         '토지',
+      '주거용':       '주거용',
+      '단독전원주택': '단독·전원주택',
+      '건물빌딩':     '건물·빌딩',
+      // 레거시
+      '상가': '상가·사무실', '오피스텔': '오피스텔', '단독주택': '단독·전원주택',
     };
     const catName = catNames[categoryKey] || categoryKey;
 
@@ -802,7 +882,7 @@ const setupListingsPage = () => {
     });
 
     const allListings = _listings;
-    let categoryListings = allListings.filter(item => item.propertyType === categoryKey && item.status !== 'done');
+    let categoryListings = allListings.filter(item => getCategory1(item) === categoryKey && item.status !== 'done');
 
     // 데이터가 전혀 없을 경우 데모용 프리미엄 샘플 데이터 활용
     if (categoryListings.length === 0) {
@@ -810,11 +890,11 @@ const setupListingsPage = () => {
     }
 
     const renderCard = (item) => {
-      const isFactory = categoryKey === '공장창고';
-      const isStore = categoryKey === '상가';
-      const isLand = categoryKey === '토지';
-      const isOfficetel = categoryKey === '오피스텔';
-      const isHouse = categoryKey === '단독주택';
+      const isFactory   = categoryKey === '공장창고';
+      const isStore     = categoryKey === '상가사무실';
+      const isLand      = categoryKey === '토지';
+      const isOfficetel = categoryKey === '주거용';
+      const isHouse     = categoryKey === '단독전원주택' || categoryKey === '건물빌딩';
 
       let imgSrc = 'images/factory_recommend.png';
       if (isStore) imgSrc = 'images/store_recommend.png';
@@ -837,38 +917,43 @@ const setupListingsPage = () => {
 
       let areaHighlightHTML = '';
       if (isFactory) {
-        const m2 = item.areaM2 ?? item.area;
-        const py = item.areaPy;
-        const areaStr = formatArea(m2, py);
-        const landM2 = item.landArea;
-        const landStr = landM2 ? `${landM2}㎡` : '';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">면적</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
+        // 공장창고: 건축면적 + 대지
+        const bldgM2 = item.buildingAreaM2 ?? item.buildingArea;
+        const bldgPy = item.buildingAreaPy;
+        const landM2 = item.landAreaM2 ?? item.landArea;
+        const areaStr = formatArea(bldgM2, bldgPy);
+        const landStr = landM2 ? `${Number(landM2).toFixed(2)}㎡` : '';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건축</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
       } else if (isStore) {
+        // 상가사무실: 전용 + 공급
         const exclM2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
         const exclPy = item.exclusiveAreaPy;
         const supM2 = item.supplyAreaM2 ?? item.contractArea;
         const supPy = item.supplyAreaPy;
         const exclStr = formatArea(exclM2, exclPy);
         const supStr = formatArea(supM2, supPy);
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${exclStr}</strong>` + (supStr ? `· <span class="lp-area-lbl">분양</span> <strong class="lp-area-val">${supStr}</strong>` : '') + `</span>`;
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${exclStr}</strong>` + (supStr ? ` · <span class="lp-area-lbl">공급</span> <strong class="lp-area-val">${supStr}</strong>` : '') + `</span>`;
       } else if (isLand) {
-        const m2 = item.landArea;
-        const py = m2 ? (m2 / 3.305785).toFixed(2) : null;
+        // 토지: 토지면적
+        const m2 = item.areaM2 ?? item.landArea ?? item.area;
+        const py = item.areaPy;
         const areaStr = formatArea(m2, py);
         const extraVal = item.zoningArea || '';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">대지</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (extraVal ? ` <span class="lp-area-extra">· ${extraVal}</span>` : '');
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">토지</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (extraVal ? ` <span class="lp-area-extra">· ${extraVal}</span>` : '');
       } else if (isOfficetel) {
+        // 주거용 (아파트/오피스텔): 전용면적
         const m2 = item.exclusiveAreaM2 ?? item.exclusiveArea;
         const py = item.exclusiveAreaPy;
         const areaStr = formatArea(m2, py);
-        const extraVal = item.floor || '고층';
-        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaStr}</strong></span> <span class="lp-area-extra">· ${extraVal}</span>`;
+        const extraVal = item.floorInfo || item.floor || '';
+        areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (extraVal ? ` <span class="lp-area-extra">· ${extraVal}</span>` : '');
       } else if (isHouse) {
-        const m2 = item.buildingArea || item.area;
-        const py = item.areaPy;
-        const areaStr = formatArea(m2, py);
-        const landM2 = item.landArea;
-        const landStr = landM2 ? `${landM2}㎡` : '';
+        // 단독전원주택/건물빌딩: 건물 + 대지
+        const bldgM2 = item.buildingAreaM2 ?? item.buildingArea ?? item.area;
+        const bldgPy = item.buildingAreaPy ?? item.areaPy;
+        const areaStr = formatArea(bldgM2, bldgPy);
+        const landM2 = item.landAreaM2 ?? item.landArea;
+        const landStr = landM2 ? `${Number(landM2).toFixed(2)}㎡` : '';
         areaHighlightHTML = `<span class="lp-area-highlight"><span class="lp-area-lbl">건물</span> <strong class="lp-area-val">${areaStr}</strong></span>` + (landStr ? ` <span class="lp-area-extra">· 대지 ${landStr}</span>` : '');
       }
 
@@ -980,7 +1065,7 @@ const setupListingsPage = () => {
     document.querySelector('.lp-cat-2col-scroll')?.scrollTo(0, 0);
 
     // 해당 카테고리 실제 매물 기준으로 지도 마커 업데이트
-    const forMap = _listings.filter(item => item.propertyType === categoryKey);
+    const forMap = _listings.filter(item => getCategory1(item) === categoryKey);
     if (map) placeMarkers(forMap.length > 0 ? forMap : []);
   };
 
@@ -1025,8 +1110,8 @@ const setupListingsPage = () => {
     const all = _listings;
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = `(${v})`; };
     set('cnt-all', all.length);
-    ['공장창고','상가','토지','오피스텔','힐스테이트더운정','단독주택'].forEach(cat => {
-      set(`cnt-${cat}`, all.filter(i => i.propertyType === cat).length);
+    ['공장창고','상가사무실','토지','주거용','단독전원주택','건물빌딩'].forEach(cat => {
+      set(`cnt-${cat}`, all.filter(i => getCategory1(i) === cat).length);
     });
   };
 
@@ -1366,7 +1451,7 @@ const setupListingsPage = () => {
     const effectiveCat  = flt.cat  || flt.formCat;
     const effectiveDeal = flt.deal || flt.formDeal;
     let items = [..._listings];
-    if (effectiveCat)  items = items.filter(i => i.propertyType === effectiveCat);
+    if (effectiveCat)  items = items.filter(i => getCategory1(i) === effectiveCat);
     if (effectiveDeal) items = items.filter(i => i.dealType === effectiveDeal);
     if (flt.kw)        items = items.filter(i =>
       (i.title || '').toLowerCase().includes(flt.kw) ||
@@ -1471,11 +1556,17 @@ const setupListingsPage = () => {
   });
 
   // ── URL 파라미터 ──
-  const urlCat = new URLSearchParams(window.location.search).get('category');
-  if (urlCat) {
+  const urlCatRaw = new URLSearchParams(window.location.search).get('category');
+  if (urlCatRaw) {
+    // 레거시 propertyType 값이 URL에 오면 category1 으로 변환
+    const urlCat = PT_TO_CAT1[urlCatRaw] || urlCatRaw;
     flt.cat = urlCat;
     const catSel = document.getElementById('formCatSelect');
     if (catSel) catSel.value = urlCat;
+    // 사이드바 active 상태
+    document.querySelectorAll('.lp-cat-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.cat === urlCat);
+    });
   }
 
   // 초기 렌더
@@ -1788,31 +1879,85 @@ const setupAdminRegister = () => {
   // 매물번호 자동생성
   const updateListingNo = () => {
     if (isEditMode) return;
-    const pt = form.elements['propertyType']?.value;
+    const cat1 = form.elements['category1']?.value;
     const noDisplay = document.getElementById('listingNoDisplay');
     const noInput   = form.elements['listingNo'];
-    if (pt) { const no=getNextListingNo(pt); if(noDisplay)noDisplay.textContent=no; if(noInput)noInput.value=no; }
+    if (cat1) { const no=getNextListingNo(); if(noDisplay)noDisplay.textContent=no; if(noInput)noInput.value=no; }
     else { if(noDisplay)noDisplay.textContent='-'; if(noInput)noInput.value=''; }
   };
 
-  // ── 매물종류별 섹션 표시/숨김 ──
-  const syncAreaSections = () => {
-    const pt = form.elements['propertyType']?.value || '';
-    const isFactory = pt === '공장창고';
-    const isStore   = pt === '상가';
-    const hasNewDetail = isFactory || isStore;
-    form.querySelectorAll('.area-general').forEach(el => el.classList.toggle('hidden', hasNewDetail));
-    form.querySelectorAll('.area-store').forEach(el => el.classList.add('hidden'));
-    form.querySelectorAll('.area-new-detail').forEach(el => el.classList.toggle('hidden', !hasNewDetail));
-    form.querySelectorAll('.area-factory-total').forEach(el => el.classList.toggle('hidden', !isFactory));
-    form.querySelectorAll('.detail-fields-section').forEach(el => el.classList.toggle('hidden', !hasNewDetail));
+  // ── category2 옵션 동적 업데이트 ──
+  const syncCategory2 = () => {
+    const cat1 = form.elements['category1']?.value || '';
+    const cat2El = document.getElementById('cat2Select');
+    if (!cat2El) return;
+    cat2El.innerHTML = '<option value="">2차 선택</option>';
+    const opts = CATEGORY_MAP[cat1] || [];
+    opts.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      cat2El.appendChild(o);
+    });
+    // 토지는 cat2 자동선택
+    if (opts.length === 1) cat2El.value = opts[0];
   };
 
-  const ptEl = form.elements['propertyType'];
-  if (ptEl) {
-    ptEl.addEventListener('change', () => {
+  // ── 카테고리별 섹션 표시/숨김 + disable 관리 ──
+  // disabled 사용: FormData는 disabled 필드를 제출하지 않으므로
+  // 중복 name 필드(floorInfo, unitNumber 등)의 충돌을 방지한다.
+  const setSection = (el, show) => {
+    if (!el) return;
+    el.classList.toggle('hidden', !show);
+    el.querySelectorAll('input, select, textarea').forEach(inp => {
+      // hidden type 제외 (값만 보유용)
+      if (inp.type !== 'hidden') inp.disabled = !show;
+    });
+  };
+
+  const syncFormByCategory = () => {
+    const cat1 = form.elements['category1']?.value || '';
+    const cat2 = form.elements['category2']?.value || '';
+
+    // 면적 블록
+    const blkLand      = form.querySelector('.area-blk-land');
+    const blkExclusive = form.querySelector('.area-blk-exclusive');
+    const blkBuilding  = form.querySelector('.area-blk-building');
+
+    // 추가정보 섹션
+    const detailCommercial = form.querySelector('.detail-commercial');
+    const detailOfficetel  = form.querySelector('.detail-officetel');
+    const detailApt        = form.querySelector('.detail-apt');
+
+    const isLand      = cat1 === '토지';
+    const isBuilding  = cat1 === '공장창고' || cat1 === '단독전원주택' || cat1 === '건물빌딩';
+    const isExclusive = cat1 === '상가사무실' || cat1 === '주거용';
+    const isCommercial = cat1 === '공장창고' || cat1 === '상가사무실' || cat1 === '건물빌딩';
+    const isOfficetel = cat1 === '주거용' && cat2 === '오피스텔';
+    const isApt       = cat1 === '주거용' && cat2 === '아파트';
+
+    setSection(blkLand,      isLand);
+    setSection(blkExclusive, isExclusive);
+    setSection(blkBuilding,  isBuilding);
+    setSection(detailCommercial, isCommercial);
+    setSection(detailOfficetel,  isOfficetel);
+    setSection(detailApt,        isApt);
+
+    // hiddenPropertyType 자동 설정
+    const hiddenPt = form.elements['propertyType'];
+    if (hiddenPt && cat1) hiddenPt.value = derivePropertyType(cat1, cat2);
+  };
+
+  // category1 변경 핸들러
+  const cat1El = document.getElementById('cat1Select');
+  if (cat1El) {
+    cat1El.addEventListener('change', () => {
+      syncCategory2();
       if (!isEditMode) {
-        const sel = ptEl.value; form.reset(); form.elements['id'].value=''; ptEl.value=sel;
+        const saved1 = cat1El.value;
+        form.reset();
+        form.elements['id'].value = '';
+        cat1El.value = saved1;
+        syncCategory2();
         resetImageFields();
         const py=document.getElementById('areaPyeong'); if(py)py.textContent='';
         const ko=document.getElementById('priceKorean'); if(ko)ko.textContent='';
@@ -1823,42 +1968,51 @@ const setupAdminRegister = () => {
           }
         }, 0);
       }
+      syncFormByCategory();
       updateListingNo();
-      syncAreaSections();
     });
-    syncAreaSections();
   }
+
+  // category2 변경 핸들러
+  const cat2El = document.getElementById('cat2Select');
+  if (cat2El) {
+    cat2El.addEventListener('change', () => {
+      syncFormByCategory();
+      updateListingNo();
+    });
+  }
+
+  // 초기화
+  syncCategory2();
+  syncFormByCategory();
 
 
   const priceEl = form.elements['price'];
   if (priceEl) priceEl.addEventListener('input', () => { const el=document.getElementById('priceKorean'); if(el)el.textContent=toKoreanPrice(priceEl.value); });
 
-  // ── 면적 양방향 자동 변환 (㎡ ↔ 평) ──
-  const _areaM2El = form.elements['areaM2'];
-  const _areaPyEl = form.elements['areaPy'];
-  if (_areaM2El && _areaPyEl) {
-    _areaM2El.addEventListener('input', () => { if (_areaM2El.value) _areaPyEl.value = m2ToPy(_areaM2El.value); });
-    _areaPyEl.addEventListener('input', () => { if (_areaPyEl.value) _areaM2El.value = pyToM2(_areaPyEl.value); });
-  }
-  const _exclM2El = form.elements['exclusiveAreaM2'];
-  const _exclPyEl = form.elements['exclusiveAreaPy'];
-  if (_exclM2El && _exclPyEl) {
-    _exclM2El.addEventListener('input', () => { if (_exclM2El.value) _exclPyEl.value = m2ToPy(_exclM2El.value); });
-    _exclPyEl.addEventListener('input', () => { if (_exclPyEl.value) _exclM2El.value = pyToM2(_exclPyEl.value); });
-  }
-  const _supM2El = form.elements['supplyAreaM2'];
-  const _supPyEl = form.elements['supplyAreaPy'];
-  if (_supM2El && _supPyEl) {
-    _supM2El.addEventListener('input', () => { if (_supM2El.value) _supPyEl.value = m2ToPy(_supM2El.value); });
-    _supPyEl.addEventListener('input', () => { if (_supPyEl.value) _supM2El.value = pyToM2(_supPyEl.value); });
-  }
-
-  // 신규 면적 필드 자동변환 (landArea, buildingArea, totalFloorArea)
-  [['landAreaM2','landAreaPy'],['buildingAreaM2','buildingAreaPy'],['totalFloorAreaM2','totalFloorAreaPy']].forEach(([m2n,pyn]) => {
-    const m2el = form.elements[m2n], pyel = form.elements[pyn];
-    if (m2el && pyel) {
-      m2el.addEventListener('input', () => { if (m2el.value) pyel.value = m2ToPy(m2el.value); });
-      pyel.addEventListener('input', () => { if (pyel.value) m2el.value = pyToM2(pyel.value); });
+  // ── 면적 양방향 자동 변환 (이벤트 위임 방식 — 중복 name 대응) ──
+  const _areaPairs = [
+    ['areaM2','areaPy'],
+    ['exclusiveAreaM2','exclusiveAreaPy'],
+    ['supplyAreaM2','supplyAreaPy'],
+    ['landAreaM2','landAreaPy'],
+    ['buildingAreaM2','buildingAreaPy'],
+    ['totalFloorAreaM2','totalFloorAreaPy'],
+  ];
+  form.addEventListener('input', (e) => {
+    const name = e.target.name;
+    if (!name || e.target.disabled) return;
+    for (const [m2n, pyn] of _areaPairs) {
+      if (name === m2n && e.target.value) {
+        const pyEl = form.querySelector(`[name="${pyn}"]:not([disabled])`);
+        if (pyEl) pyEl.value = m2ToPy(e.target.value);
+        break;
+      }
+      if (name === pyn && e.target.value) {
+        const m2El = form.querySelector(`[name="${m2n}"]:not([disabled])`);
+        if (m2El) m2El.value = pyToM2(e.target.value);
+        break;
+      }
     }
   });
 
@@ -1872,10 +2026,18 @@ const setupAdminRegister = () => {
       try {
         const data = JSON.parse(raw);
         importedLegacyDesc = data.description || '';
-        const ptEl = form.elements['propertyType'];
-        if (ptEl && data.propertyType) {
-          ptEl.value = data.propertyType;
-          ptEl.dispatchEvent(new Event('change'));
+        // 레거시 propertyType → category1/2로 변환
+        if (data.propertyType) {
+          const c1 = PT_TO_CAT1[data.propertyType] || data.category1 || '';
+          const c2 = PT_TO_CAT2[data.propertyType] || data.category2 || '';
+          const c1El = document.getElementById('cat1Select');
+          if (c1El && c1) {
+            c1El.value = c1;
+            c1El.dispatchEvent(new Event('change'));
+          }
+          const c2El = document.getElementById('cat2Select');
+          if (c2El && c2) c2El.value = c2;
+          syncFormByCategory();
         }
         const titleEl = form.elements['title'];
         if (titleEl && data.title) titleEl.value = data.title;
@@ -1927,13 +2089,16 @@ const setupAdminRegister = () => {
 
         Object.entries(target).forEach(([key, value]) => {
           if (key === 'imageUrls' || (prefillId && key === 'id') || key === 'stickers') return;
-          const el = form.elements[key];
-          if (!el) return;
-          if (el.type === 'checkbox') {
-            el.checked = value === true || value === 'true';
-          } else {
-            el.value = (value !== null && value !== undefined) ? value : '';
-          }
+          // querySelectorAll 로 같은 name 가진 여러 입력 모두 채움 (disabled 포함)
+          const els = form.querySelectorAll(`[name="${key}"]`);
+          if (!els.length) return;
+          els.forEach(el => {
+            if (el.type === 'checkbox') {
+              el.checked = value === true || value === 'true';
+            } else if (el.type !== 'hidden' || key === 'propertyType') {
+              el.value = (value !== null && value !== undefined) ? value : '';
+            }
+          });
         });
 
         // stickers 체크박스 상태 초기화 및 설정
@@ -1944,17 +2109,29 @@ const setupAdminRegister = () => {
             if (chk) chk.checked = true;
           });
         }
-        
-        const ptEl = form.elements['propertyType'];
+
         // Clear hidden id in prefill mode
-if (prefillId) {
-  const hiddenId = form.elements['id'];
-  if (hiddenId) hiddenId.value = '';
-}
-if (ptEl) {
-          const event = new Event('change');
-          ptEl.dispatchEvent(event);
+        if (prefillId) {
+          const hiddenId = form.elements['id'];
+          if (hiddenId) hiddenId.value = '';
         }
+
+        // category1 / category2 채우기 (신규 필드 우선, 없으면 레거시 propertyType 매핑)
+        const _tc1 = target.category1 || PT_TO_CAT1[target.propertyType || ''] || '';
+        const _tc2 = target.category2 || PT_TO_CAT2[target.propertyType || ''] || '';
+        const _c1El = document.getElementById('cat1Select');
+        if (_c1El && _tc1) {
+          _c1El.value = _tc1;
+          syncCategory2();
+        }
+        const _c2El = document.getElementById('cat2Select');
+        if (_c2El && _tc2) _c2El.value = _tc2;
+        syncFormByCategory();
+
+        // hiddenPropertyType 복원
+        const hiddenPt = form.elements['propertyType'];
+        if (hiddenPt && target.propertyType) hiddenPt.value = target.propertyType;
+
         syncFlagStyle(chkRec, lblRec);
         syncFlagStyle(chkUrg, lblUrg);
 
@@ -1996,6 +2173,17 @@ if (ptEl) {
     for (const [key,value] of fd.entries()) { if(key!=='imageUrls') payload[key]=value; }
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
       .map(el => el.value.trim()).filter(v => v);
+
+    // category1/category2 저장 + propertyType 하위호환 도출
+    const _sCat1 = form.elements['category1']?.value || '';
+    const _sCat2 = form.elements['category2']?.value || '';
+    if (_sCat1) {
+      payload.category1 = _sCat1;
+      if (_sCat2) payload.category2 = _sCat2;
+      // 기존 propertyType 필드 하위호환 유지
+      payload.propertyType = derivePropertyType(_sCat1, _sCat2);
+    }
+
     payload.price = Number(payload.price);
     // 가격 필드: 순수 숫자(콤마 포함)이면 Number로 변환, 텍스트("12억 5,000만")는 문자열 유지, 빈값 제거
     ['salePrice', 'deposit', 'monthlyRent', 'presalePrice'].forEach(k => {
@@ -2022,7 +2210,8 @@ if (ptEl) {
     if (payload.totalFloorAreaM2 && !payload.totalFloorAreaPy) payload.totalFloorAreaPy = Number(m2ToPy(payload.totalFloorAreaM2));
     if (payload.totalFloorAreaPy && !payload.totalFloorAreaM2) payload.totalFloorAreaM2 = Number(pyToM2(payload.totalFloorAreaPy));
     // 빈 텍스트 필드 정리
-    ['floorInfo','zoning','parkingCount','approvalDate','detailDescription','managementFee'].forEach(k => { if (payload[k] === '') delete payload[k]; });
+    ['floorInfo','zoning','parkingCount','approvalDate','detailDescription','managementFee',
+     'complexName','buildingDong','unitNumber','unitType'].forEach(k => { if (payload[k] === '' || payload[k] === undefined) delete payload[k]; });
     // Legacy area handling for compatibility
     if (payload.area) {
       payload.area = Number(payload.area);
@@ -2124,7 +2313,7 @@ const setupAdminListingsMgmt = () => {
     const status   = document.getElementById('filterStatus')?.value||'';
     let listings = [..._allListings];
     if (search)   listings=listings.filter(i=>i.title.toLowerCase().includes(search)||i.address.toLowerCase().includes(search)||(i.displayAddress||'').toLowerCase().includes(search));
-    if (category) listings=listings.filter(i=>i.propertyType===category);
+    if (category) listings=listings.filter(i=>getCategory1(i)===category);
     if (dealType) listings=listings.filter(i=>i.dealType===dealType);
     if (status==='done')   listings=listings.filter(i=>i.status==='done');
     else if (status==='public') listings=listings.filter(i=>i.status!=='done');

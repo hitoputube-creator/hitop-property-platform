@@ -49,12 +49,14 @@
           <input type="hidden" name="createdAt" />
           <input type="hidden" name="lat" />
           <input type="hidden" name="lng" />
+          <!-- 하위호환용 propertyType (JS가 자동 설정) -->
+          <input type="hidden" name="propertyType" id="hiddenPropertyType" />
 
           <!-- ═══ 구역 1. 기본정보 ═══ -->
           <fieldset class="form-section">
             <legend class="form-section-title">📋 기본정보</legend>
 
-            <div class="form-row-meta">
+            <div class="form-row-meta4">
               <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">매물번호</label>
                 <div class="listing-no-display-inline">
@@ -63,15 +65,21 @@
                 </div>
               </div>
               <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label">매물종류 <span class="form-req">*</span></label>
-                <select name="propertyType" required>
-                  <option value="">매물종류 선택</option>
-                  <option>공장창고</option>
-                  <option>상가</option>
-                  <option>오피스텔</option>
-                  <option>토지</option>
-                  <option>힐스테이트더운정</option>
-                  <option>단독주택</option>
+                <label class="form-label">1차구분 <span class="form-req">*</span></label>
+                <select name="category1" id="cat1Select" required>
+                  <option value="">1차 선택</option>
+                  <option value="공장창고">공장·창고</option>
+                  <option value="상가사무실">상가·사무실</option>
+                  <option value="토지">토지</option>
+                  <option value="주거용">주거용</option>
+                  <option value="단독전원주택">단독·전원주택</option>
+                  <option value="건물빌딩">건물·빌딩</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">2차구분 <span class="form-req">*</span></label>
+                <select name="category2" id="cat2Select">
+                  <option value="">2차 선택</option>
                 </select>
               </div>
               <div class="form-group" style="margin-bottom:0;">
@@ -142,75 +150,120 @@
           <fieldset class="form-section">
             <legend class="form-section-title">📐 면적정보</legend>
 
-            <!-- 일반 면적 (공장창고/상가 외 매물종류) -->
-            <div class="area-general">
+            <!-- ① 토지: 토지면적 -->
+            <div class="area-blk area-blk-land hidden">
               <div class="area-inline">
-                <label class="form-label area-label-w">면적</label>
-                <input type="number" name="areaM2" min="0" step="0.01" placeholder="0.00" />
+                <label class="form-label area-label-w">토지면적</label>
+                <input type="number" name="areaM2" min="0" step="0.01" placeholder="0.00" disabled />
                 <span class="area-unit">㎡</span>
-                <input type="number" name="areaPy" min="0" step="1" placeholder="0" />
+                <input type="number" name="areaPy" min="0" step="1" placeholder="0" disabled />
                 <span class="area-unit">평</span>
               </div>
             </div>
 
-            <!-- 기존 상가 면적 (레거시 호환용 — 완전 숨김) -->
-            <div class="area-store hidden">
-              <input type="hidden" name="exclusiveAreaM2" />
-              <input type="hidden" name="exclusiveAreaPy" />
-              <input type="hidden" name="supplyAreaM2" />
-              <input type="hidden" name="supplyAreaPy" />
+            <!-- ② 상가사무실·주거용(아파트·오피스텔): 전용 + 공급 -->
+            <div class="area-blk area-blk-exclusive hidden">
+              <div class="area-inline">
+                <label class="form-label area-label-w">전용면적</label>
+                <input type="number" name="exclusiveAreaM2" min="0" step="0.01" placeholder="0.00" disabled />
+                <span class="area-unit">㎡</span>
+                <input type="number" name="exclusiveAreaPy" min="0" step="1" placeholder="0" disabled />
+                <span class="area-unit">평</span>
+              </div>
+              <div class="area-inline" style="margin-top:4px;">
+                <label class="form-label area-label-w">공급면적</label>
+                <input type="number" name="supplyAreaM2" min="0" step="0.01" placeholder="0.00" disabled />
+                <span class="area-unit">㎡</span>
+                <input type="number" name="supplyAreaPy" min="0" step="1" placeholder="0" disabled />
+                <span class="area-unit">평</span>
+              </div>
             </div>
 
-            <!-- ─ 공장창고 / 상가 전용 면적 필드 ─ -->
-            <div class="area-new-detail hidden">
+            <!-- ③ 공장창고·단독전원주택·건물빌딩: 대지 + 건축 + 연 -->
+            <div class="area-blk area-blk-building hidden">
               <div class="area-inline">
                 <label class="form-label area-label-w">대지면적</label>
-                <input type="number" name="landAreaM2" min="0" step="0.01" placeholder="0.00" />
+                <input type="number" name="landAreaM2" min="0" step="0.01" placeholder="0.00" disabled />
                 <span class="area-unit">㎡</span>
-                <input type="number" name="landAreaPy" min="0" step="1" placeholder="0" />
+                <input type="number" name="landAreaPy" min="0" step="1" placeholder="0" disabled />
                 <span class="area-unit">평</span>
               </div>
-            </div>
-            <div class="area-new-detail hidden">
-              <div class="area-inline">
+              <div class="area-inline" style="margin-top:4px;">
                 <label class="form-label area-label-w">건축면적</label>
-                <input type="number" name="buildingAreaM2" min="0" step="0.01" placeholder="0.00" />
+                <input type="number" name="buildingAreaM2" min="0" step="0.01" placeholder="0.00" disabled />
                 <span class="area-unit">㎡</span>
-                <input type="number" name="buildingAreaPy" min="0" step="1" placeholder="0" />
+                <input type="number" name="buildingAreaPy" min="0" step="1" placeholder="0" disabled />
                 <span class="area-unit">평</span>
               </div>
-            </div>
-            <div class="area-new-detail area-factory-total hidden">
-              <div class="area-inline">
+              <div class="area-inline" style="margin-top:4px;">
                 <label class="form-label area-label-w">연면적</label>
-                <input type="number" name="totalFloorAreaM2" min="0" step="0.01" placeholder="0.00" />
+                <input type="number" name="totalFloorAreaM2" min="0" step="0.01" placeholder="0.00" disabled />
                 <span class="area-unit">㎡</span>
-                <input type="number" name="totalFloorAreaPy" min="0" step="1" placeholder="0" />
+                <input type="number" name="totalFloorAreaPy" min="0" step="1" placeholder="0" disabled />
                 <span class="area-unit">평</span>
               </div>
             </div>
           </fieldset>
 
           <!-- ═══ 구역 4. 추가정보 ═══ -->
-          <fieldset class="form-section detail-fields-section hidden">
-            <legend class="form-section-title">🏢 추가정보 <span class="form-hint">(공장창고·상가)</span></legend>
 
+          <!-- ④-A 상업용: 층정보·용도지역·주차·승인일 (공장창고·상가사무실·건물빌딩) -->
+          <fieldset class="form-section detail-commercial hidden">
+            <legend class="form-section-title">🏢 추가정보 <span class="form-hint">(공장·상가·건물)</span></legend>
             <div class="form-row-quads" style="margin-bottom:0;">
               <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">층정보</label>
-                <input name="floorInfo" placeholder="예: 지상 1층" />
+                <input name="floorInfo" placeholder="예: 지상 1층" disabled />
               </div>
               <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">용도지역</label>
-                <input name="zoning" placeholder="예: 준공업지역" />
+                <input name="zoning" placeholder="예: 준공업지역" disabled />
               </div>
               <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">주차대수</label>
-                <input name="parkingCount" placeholder="예: 10대" />
+                <input name="parkingCount" placeholder="예: 10대" disabled />
               </div>
               <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">사용승인일</label>
-                <input name="approvalDate" placeholder="예: 2010-03-15" />
+                <input name="approvalDate" placeholder="예: 2010-03-15" disabled />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ④-B 주거용/오피스텔: 단지명·호수·해당층 -->
+          <fieldset class="form-section detail-officetel hidden">
+            <legend class="form-section-title">🏠 주거정보 <span class="form-hint">(오피스텔)</span></legend>
+            <div class="form-row-thirds" style="margin-bottom:0;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">단지·건물명</label>
+                <input name="complexName" placeholder="예: 힐스테이트 더운정" disabled />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">호수</label>
+                <input name="unitNumber" placeholder="예: 201호" disabled />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">해당층</label>
+                <input name="floorInfo" placeholder="예: 5층" disabled />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ④-C 주거용/아파트: 동·호수·타입 -->
+          <fieldset class="form-section detail-apt hidden">
+            <legend class="form-section-title">🏠 주거정보 <span class="form-hint">(아파트)</span></legend>
+            <div class="form-row-thirds" style="margin-bottom:0;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">동</label>
+                <input name="buildingDong" placeholder="예: 101동" disabled />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">호수</label>
+                <input name="unitNumber" placeholder="예: 201호" disabled />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">타입</label>
+                <input name="unitType" placeholder="예: 84A" disabled />
               </div>
             </div>
           </fieldset>
@@ -327,6 +380,6 @@
         </div>
       </div>
     </footer>
-    <script src="app.js?v=20260526b"></script>
+    <script src="app.js?v=20260526c"></script>
   </body>
 </html>
