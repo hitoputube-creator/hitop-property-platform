@@ -1941,9 +1941,17 @@ const setupAdminRegister = () => {
         thumb.src = url; thumb.classList.remove('hidden');
       } catch (err) {
         input.disabled = false; fileLabel.classList.remove('disabled');
-        statusEl.textContent = '❌ ' + (err.code === 'storage/unauthorized' ? '권한 오류 — Storage 규칙 확인 필요' : (err.message || '업로드 실패'));
+        const msg = err.message || '';
+        let friendly = '업로드 실패 — 다시 시도해주세요.';
+        if (msg.includes('row-level security') || msg.includes('violates row') || msg.includes('security policy'))
+          friendly = '사진 업로드 권한 오류입니다. 관리자에게 문의하거나 페이지를 새로고침 후 다시 시도해주세요.';
+        else if (msg.includes('unauthorized') || msg.includes('403'))
+          friendly = '업로드 권한이 없습니다. 관리자 로그인 상태를 확인해주세요.';
+        else if (msg.includes('size') || msg.includes('too large'))
+          friendly = '파일 크기가 너무 큽니다. 5MB 이하 이미지를 사용해주세요.';
+        statusEl.textContent = '❌ ' + friendly;
         statusEl.className = 'img-upload-status error';
-        console.error('[Storage 업로드 오류]', err);
+        console.error('[Storage 업로드 오류]', err.message || err);
       }
       fileInput.value = '';
     });
