@@ -2629,6 +2629,28 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .lp-all-addr  { font-size: 11px; color: #6B7280; }
 
+/* 카드 상단 종류+거래유형 뱃지 행 */
+.lp-all-row-top { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-bottom: 2px; }
+
+/* 매물종류 인라인 태그 (카드 body 안) */
+.lp-all-type-tag {
+  font-size: 10px; font-weight: 700;
+  background: #f1f5f9; color: #475569;
+  padding: 2px 6px; border-radius: 4px;
+  border: 1px solid #e2e8f0; line-height: 1.4;
+}
+
+/* lp-all-card 안 면적 영역 래퍼 */
+.lp-all-area-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; margin-top: 1px; }
+
+/* lp-all-card 내부 lp-area-lbl 기본 색상 (파란 계열 통일) */
+.lp-all-card .lp-area-lbl {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1.5px solid #bae6fd !important;
+}
+.lp-all-card .lp-area-val { color: #0284c7 !important; }
+
 /* 플로팅 버튼 1.5배 */
 
 .float-btn-lg {

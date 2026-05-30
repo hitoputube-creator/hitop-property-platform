@@ -319,14 +319,14 @@ const formatCardPrice = (item) => {
     return s || null;
   };
   const deal = item.dealType || '';
-  if (deal === '매매') { const p = fmt(item.salePrice ?? item.price); return p ? `매매 ${p}` : '가격문의'; }
-  if (deal === '전세') { const p = fmt(item.deposit ?? item.price); return p ? `전세 ${p}` : '가격문의'; }
+  if (deal === '매매') { const p = fmt(item.salePrice ?? item.price); return p || '가격문의'; }
+  if (deal === '전세') { const p = fmt(item.deposit ?? item.price); return p || '가격문의'; }
   if (deal === '월세' || deal === '임대') {
     const dep = fmt(item.deposit), rent = fmt(item.monthlyRent ?? item.rent);
     if (dep && rent) return `${dep}/${rent}`;
-    return dep || (rent ? `월세 ${rent}` : fmt(item.price) || '가격문의');
+    return dep || rent || fmt(item.price) || '가격문의';
   }
-  if (deal === '분양') { const p = fmt(item.presalePrice ?? item.salePrice); return p ? `분양 ${p}` : '가격문의'; }
+  if (deal === '분양') { const p = fmt(item.presalePrice ?? item.salePrice); return p || '가격문의'; }
   const p = fmt(item.salePrice ?? item.deposit ?? item.price);
   return p || '가격문의';
 };
@@ -339,6 +339,50 @@ const toKoreanPrice = (wanwon) => {
   if (eok && man) return `${eok}억 ${man.toLocaleString('ko-KR')}만원`;
   if (eok) return `${eok}억원`;
   return `${n.toLocaleString('ko-KR')}만원`;
+};
+
+// 카드용 면적 HTML — 샘플 카드와 동일한 lp-area-highlight 스타일 사용
+const getCardAreaHTML = (item) => {
+  const cat1 = getCategory1(item);
+  const fmtA = (m2, py) => {
+    const m = m2 !== undefined && m2 !== null ? Number(m2).toFixed(2) : null;
+    const p = py !== undefined && py !== null ? Number(py).toFixed(2) : null;
+    const mv = m || (p ? (Number(p) * 3.305785).toFixed(2) : null);
+    const pv = p || (m ? (Number(m) / 3.305785).toFixed(2) : null);
+    if (mv && pv) return `${mv}㎡ / ${pv}평`;
+    return mv ? `${mv}㎡` : pv ? `${pv}평` : '';
+  };
+  const lbl = (tag, str, extra) =>
+    str ? `<span class="lp-area-highlight"><span class="lp-area-lbl">${tag}</span> <strong class="lp-area-val">${str}</strong></span>${extra ? ` <span class="lp-area-extra">· ${extra}</span>` : ''}` : '';
+
+  if (cat1 === '공장창고') {
+    const s = fmtA(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
+    const e = (item.landAreaM2 ?? item.landArea) ? `대지 ${Number(item.landAreaM2 ?? item.landArea).toFixed(2)}㎡` : '';
+    return lbl('건축', s, e);
+  }
+  if (cat1 === '상가사무실') {
+    const es = fmtA(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
+    const ss = fmtA(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
+    return es ? `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${es}</strong>${ss ? ` · <span class="lp-area-lbl">공급</span> <strong class="lp-area-val">${ss}</strong>` : ''}</span>` : '';
+  }
+  if (cat1 === '토지') {
+    const s = fmtA(item.areaM2 ?? item.landArea ?? item.area, item.areaPy);
+    return lbl('토지', s, item.zoningArea || '');
+  }
+  if (cat1 === '주거용') {
+    const s = fmtA(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
+    return lbl('전용', s, item.floorInfo || item.floor || '');
+  }
+  if (cat1 === '단독전원주택' || cat1 === '건물빌딩') {
+    const s = fmtA(item.buildingAreaM2 ?? item.buildingArea ?? item.area, item.buildingAreaPy ?? item.areaPy);
+    const e = (item.landAreaM2 ?? item.landArea) ? `대지 ${Number(item.landAreaM2 ?? item.landArea).toFixed(2)}㎡` : '';
+    return lbl('건물', s, e);
+  }
+  // 폴백: 어떤 면적이든 있으면 표시
+  const sqm = item.areaM2 ?? item.area ?? item.exclusiveArea ?? item.buildingArea ?? item.landArea;
+  const py  = item.areaPy ?? item.exclusiveAreaPy ?? item.buildingAreaPy;
+  const s   = fmtA(sqm, py);
+  return s ? `<span class="lp-area-highlight"><strong class="lp-area-val">${s}</strong></span>` : '';
 };
 
 const m2ToPy = (sqm) => {
@@ -1404,26 +1448,28 @@ const setupListingsPage = () => {
 
   // ── 전체 매물 그리드 카드 HTML ──
   const fullCardHTML = item => {
-    const done   = isCompleted(item);
-    const label  = CAT1_DISPLAY[getCategory1(item)] || CAT_LABELS[item.propertyType] || item.propertyType;
-    const price  = getMainPrice(item);
-    const sqm    = Number(item.area || item.landArea || item.contractArea || item.exclusiveArea || 0);
-    const area   = sqm ? `${sqm}㎡ · ${(sqm * 0.3025).toFixed(0)}평` : '';
-    const imgSrc = getThumbnail(item);
+    const done    = isCompleted(item);
+    const cat1    = getCategory1(item);
+    const catLabel = CAT1_DISPLAY[cat1] || CAT_LABELS[item.propertyType] || item.propertyType || '';
+    const imgSrc  = getThumbnail(item);
+    const areaHTML = getCardAreaHTML(item);
     return `
       <article class="lp-all-card${done ? ' lp-all-done' : ''}" data-id="${item.id}">
         <div class="lp-all-img">
           ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
           ${done ? '<div class="lp-all-sold">거래완료</div>' : ''}
-          <span class="lp-all-cat-tag">${label}</span>
+          <span class="lp-all-cat-tag">${catLabel}</span>
           ${isRec(item) ? '<span style="position:absolute;top:6px;right:6px;background:#C9A84C;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">⭐ 추천</span>' : ''}
           ${item.isUrgent===true ? '<span style="position:absolute;bottom:6px;right:6px;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">🔥 급매</span>' : ''}
         </div>
         <div class="lp-all-body">
-          ${getDealBadgeHTML(item.dealType)}
-          <div class="lp-all-title">${item.title}</div>
+          <div class="lp-all-row-top">
+            <span class="lp-all-type-tag">${catLabel}</span>
+            ${getDealBadgeHTML(item.dealType)}
+          </div>
           <div class="lp-all-price">${formatCardPrice(item)}</div>
-          ${area ? `<div class="lp-all-area">${area}</div>` : ''}
+          <div class="lp-all-title">${item.title || ''}</div>
+          ${areaHTML ? `<div class="lp-all-area-wrap">${areaHTML}</div>` : ''}
           <div class="lp-all-addr">${getDisplayAddress(item)}</div>
         </div>
       </article>`;
