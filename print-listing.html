@@ -559,8 +559,19 @@
       return fmt(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
     };
 
+    const _defaultImageMap = {
+      '공장창고':     'images/factory_recommend.png',
+      '상가사무실':   'images/store_recommend.png',
+      '토지':         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
+      '주거용':       'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+      '단독전원주택': 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+      '건물빌딩':     'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+    };
+    const getDefaultImage = (item) =>
+      _defaultImageMap[item.category1 || ''] || 'images/hitoplogo.png';
+
     const normalizeImageUrl = (url) => {
-      if (!url) return 'images/factory_recommend.png'; // 기본 플레이스홀더
+      if (!url) return '';
       const str = String(url).trim();
       const driveMatch = str.match(/drive\.google\.com\/file\/d\/([^/]+)/);
       if (driveMatch && driveMatch[1]) {
@@ -671,7 +682,7 @@
       if (images && images.length > 0) {
         mainPhotoEl.src = normalizeImageUrl(images[0]);
       } else {
-        mainPhotoEl.src = 'images/factory_recommend.png';
+        mainPhotoEl.src = getDefaultImage(item);
       }
 
       // 3. 우측 핵심 정보 바인딩

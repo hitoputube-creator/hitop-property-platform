@@ -289,9 +289,25 @@ const normalizeImageUrl = (url) => {
   return str;
 };
 
-const getThumbnail  = (item) => {
+// 매물종류별 기본 샘플 이미지 (사진 없을 때 fallback)
+const DEFAULT_IMAGES = {
+  '공장창고':     'images/factory_recommend.png',
+  '상가사무실':   'images/store_recommend.png',
+  '토지':         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
+  '주거용':       'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+  '단독전원주택': 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+  '건물빌딩':     'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+};
+const FALLBACK_IMAGE = 'images/hitoplogo.png';
+
+const getDefaultImageByCategory = (cat1) =>
+  DEFAULT_IMAGES[cat1] || FALLBACK_IMAGE;
+
+// 1순위: Supabase 업로드 URL  2순위: 직접 입력 URL  3순위: 매물종류 기본 이미지
+const getThumbnail = (item) => {
   const raw = (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
-  return normalizeImageUrl(raw);
+  if (raw) return normalizeImageUrl(raw);
+  return getDefaultImageByCategory(getCategory1(item));
 };
 const getDisplayAddress = (item) => item.displayAddress || item.address;
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;

@@ -343,6 +343,11 @@
             <div class="form-group" style="margin-bottom:0;">
               <div id="imageUrlContainer"></div>
               <button type="button" id="addImageBtn" class="btn btn-outline btn-sm" style="margin-top:6px;">사진 추가 +</button>
+              <div id="noPhotoNotice" style="display:none;margin-top:8px;padding:7px 12px;
+                background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;
+                font-size:12px;color:#1d4ed8;line-height:1.5;">
+                📷 사진을 등록하지 않으면 <strong>매물종류별 기본 샘플 이미지</strong>가 자동 표시됩니다.
+              </div>
             </div>
           </fieldset>
 
@@ -494,6 +499,29 @@
         if (comma === korean) return comma;          // 중복 방지
         return comma + ' (' + korean + ')';
       }
+
+      /* ── 사진 없을 때 안내문 표시/숨김 ──────────────────────────── */
+      function syncNoPhotoNotice() {
+        var notice = document.getElementById('noPhotoNotice');
+        var container = document.getElementById('imageUrlContainer');
+        if (!notice || !container) return;
+        var inputs = container.querySelectorAll('input[name="imageUrls"]');
+        var hasValue = Array.from(inputs).some(function (inp) { return inp.value.trim(); });
+        notice.style.display = hasValue ? 'none' : 'block';
+      }
+
+      // imageUrlContainer 변경 감지
+      var photoObserver = new MutationObserver(syncNoPhotoNotice);
+      document.addEventListener('DOMContentLoaded', function () {
+        var container = document.getElementById('imageUrlContainer');
+        if (container) {
+          photoObserver.observe(container, { childList: true, subtree: true });
+          container.addEventListener('input', syncNoPhotoNotice);
+          container.addEventListener('change', syncNoPhotoNotice);
+        }
+        // 초기 상태 체크 (수정 모드 포함)
+        setTimeout(syncNoPhotoNotice, 700);
+      });
 
       /* ── 미리보기 업데이트 ──────────────────────────────────────── */
       function updatePreview(inp, span, isFocused) {
