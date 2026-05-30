@@ -587,12 +587,12 @@ const openModal = (item) => {
     });
   }
 
-  // ── 매물설명 (detailDescription 우선, 없으면 description 폴백, 없으면 안내문구) ──
+  // ── 매물설명 (공개 필드 detailDescription만 사용 — 내부메모는 절대 표시 안 함) ──
   const descEl = document.getElementById('modalDesc');
   if (descEl) {
-    const descText = item.detailDescription || item.description || item.memo || item.note || '';
+    const descText = item.detailDescription || '';   // description/memo/note 는 내부메모이므로 제외
     descEl.style.whiteSpace = 'pre-line';
-    descEl.textContent = descText || '등록된 매물설명이 없습니다.';
+    descEl.textContent = descText || '상세 설명 준비중입니다.';
     const descSection = descEl.closest('.modal-desc-section');
     if (descSection) descSection.style.display = '';  // 항상 표시
   }
@@ -1472,8 +1472,7 @@ const setupListingsPage = () => {
       return (i.title        || '').toLowerCase().includes(kw) ||
              (i.address      || '').toLowerCase().includes(kw) ||
              (i.displayAddress || '').toLowerCase().includes(kw) ||
-             (i.description  || '').toLowerCase().includes(kw) ||
-             (i.memo         || '').toLowerCase().includes(kw) ||
+             (i.detailDescription || '').toLowerCase().includes(kw) ||
              (CAT1_DISPLAY[getCategory1(i)] || i.propertyType || '').toLowerCase().includes(kw);
     });
     if (sortMode === 'price') items.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
