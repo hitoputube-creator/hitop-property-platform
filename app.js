@@ -37,7 +37,7 @@ const PT_TO_CAT1 = {
   '공장창고': '공장창고', '공장·창고': '공장창고',
   '상가': '상가사무실', '상가빌딩': '상가사무실', '상가·빌딩': '상가사무실',
   '상가·빌딩·사무실': '상가사무실', '사무실': '상가사무실', '오피스': '상가사무실',
-  '토지': '토지',
+  '토지': '토지', '토지·개발': '토지',
   '오피스텔': '주거용',
   '힐스테이트더운정': '주거용',
   '단독주택': '단독전원주택', '단독전원주택': '단독전원주택', '단독·전원주택': '단독전원주택',
@@ -1265,7 +1265,7 @@ const setupListingsPage = () => {
   const _tryShowMarkers = () => {
     if (!_mapReady || !_dataReady) return;
     const cat = flt.cat || flt.formCat;
-    const toShow = cat ? _listings.filter(i => i.propertyType === cat) : _listings;
+    const toShow = cat ? _listings.filter(i => getCategory1(i) === cat) : _listings;
     console.log('[_tryShowMarkers] 마커 표시 시작 | 필터:', cat || '전체', '| 표시할 매물수:', toShow.length);
     placeMarkers(toShow);
   };
@@ -1358,38 +1358,46 @@ const setupListingsPage = () => {
     return html;
   };
 
-  // ── 오른쪽 패널: 추천 + 최신 미니카드 ──
+  // ── 오른쪽 패널: 추천 + 최신 미니카드 (실제 Firestore 데이터로 교체) ──
   const renderSpecialPanels = () => {
-    const all  = _listings;
-    const recItems = all.filter(i => isRec(i) && !isCompleted(i)).slice(0, 3);
-    const newItems = all.filter(i => isNew(i) && !isCompleted(i)).slice(0, 3);
+    const lpPanel = document.getElementById('lpPanel');
+    if (!lpPanel) return;
+
+    const all      = _listings.filter(i => !isCompleted(i));
+    const recItems = all.filter(isRec).slice(0, 5);
+    const newItems = all.filter(isNew).slice(0, 5);
 
     const miniCardHTML = item => {
       const thumb = getThumbnail(item);
-      return `<article class="lp-mini-card" data-id="${item.id}">
-        <div class="lp-mini-img${!thumb ? ' lp-mini-img-empty' : ''}">
-          ${thumb ? `<img src="${thumb}" alt="${item.title}" onerror="this.style.display='none'" />` : ''}
+      const label = CAT1_DISPLAY[getCategory1(item)] || item.propertyType || '';
+      return `<article class="lp-mini-card" data-id="${item.id}" style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;">
+        <div style="width:64px;height:64px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#f0f0f0;">
+          ${thumb ? `<img src="${thumb}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />` : ''}
         </div>
-        <div class="lp-mini-body">
-          <div class="lp-mini-title">${item.title}</div>
-          <div class="lp-mini-addr">${getDisplayAddress(item)}</div>
-          <div class="lp-mini-price">${item.dealType} ${formatPrice(getMainPrice(item))}만원</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:11px;color:#888;margin-bottom:2px;">${label} · ${item.dealType||''}</div>
+          <div style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title||'(제목 없음)'}</div>
+          <div style="font-size:12px;color:#555;margin-top:2px;">${formatCardPrice(item)}</div>
+          <div style="font-size:11px;color:#888;">${getDisplayAddress(item)}</div>
         </div>
       </article>`;
     };
 
-    [['recCards','추천'], ['newCards','최신']].forEach(([id, label], idx) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const items = idx === 0 ? recItems : newItems;
-      el.innerHTML = items.length
-        ? items.map(miniCardHTML).join('')
-        : `<div class="lp-mini-empty">${label} 매물 없음</div>`;
-      el.querySelectorAll('.lp-mini-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const found = _listings.find(x => x.id === card.dataset.id);
-          if (found) openModalFull(found);
-        });
+    const sectionHTML = (icon, title, items, emptyMsg) => `
+      <div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:800;color:#1a1a2e;padding:8px 0 4px;border-bottom:2px solid #C9A84C;margin-bottom:4px;">${icon} ${title}</div>
+        ${items.length ? items.map(miniCardHTML).join('') : `<div style="padding:12px 0;color:#888;font-size:12px;">${emptyMsg}</div>`}
+      </div>`;
+
+    lpPanel.innerHTML = `<div style="padding:12px 14px;overflow-y:auto;height:100%;">
+      ${sectionHTML('⭐', '추천 매물', recItems, '추천 매물이 없습니다.')}
+      ${sectionHTML('🆕', '최신 매물', newItems, '최신 매물이 없습니다.')}
+    </div>`;
+
+    lpPanel.querySelectorAll('.lp-mini-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const found = _listings.find(x => x.id === card.dataset.id);
+        if (found) openModalFull(found);
       });
     });
   };
@@ -1397,7 +1405,7 @@ const setupListingsPage = () => {
   // ── 전체 매물 그리드 카드 HTML ──
   const fullCardHTML = item => {
     const done   = isCompleted(item);
-    const label  = CAT_LABELS[item.propertyType] || item.propertyType;
+    const label  = CAT1_DISPLAY[getCategory1(item)] || CAT_LABELS[item.propertyType] || item.propertyType;
     const price  = getMainPrice(item);
     const sqm    = Number(item.area || item.landArea || item.contractArea || item.exclusiveArea || 0);
     const area   = sqm ? `${sqm}㎡ · ${(sqm * 0.3025).toFixed(0)}평` : '';
@@ -1459,11 +1467,15 @@ const setupListingsPage = () => {
     let items = [..._listings];
     if (effectiveCat)  items = items.filter(i => getCategory1(i) === effectiveCat);
     if (effectiveDeal) items = items.filter(i => i.dealType === effectiveDeal);
-    if (flt.kw)        items = items.filter(i =>
-      (i.title || '').toLowerCase().includes(flt.kw) ||
-      (i.address || '').toLowerCase().includes(flt.kw) ||
-      (i.displayAddress || '').toLowerCase().includes(flt.kw)
-    );
+    if (flt.kw)        items = items.filter(i => {
+      const kw = flt.kw;
+      return (i.title        || '').toLowerCase().includes(kw) ||
+             (i.address      || '').toLowerCase().includes(kw) ||
+             (i.displayAddress || '').toLowerCase().includes(kw) ||
+             (i.description  || '').toLowerCase().includes(kw) ||
+             (i.memo         || '').toLowerCase().includes(kw) ||
+             (CAT1_DISPLAY[getCategory1(i)] || i.propertyType || '').toLowerCase().includes(kw);
+    });
     if (sortMode === 'price') items.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
     else items.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
     filtered = items;
@@ -1511,11 +1523,6 @@ const setupListingsPage = () => {
     flt.formCat  = document.getElementById('formCatSelect')?.value  || '';
     flt.formDeal = document.getElementById('formDealSelect')?.value || '';
     applyFilters();
-
-    // 검색 실행 후 검색어 input 값은 빈 값으로 초기화 (결과는 유지)
-    if (kwInput) {
-      kwInput.value = '';
-    }
   });
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
     Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '' });
@@ -1546,16 +1553,11 @@ const setupListingsPage = () => {
   document.querySelectorAll('.cat-card').forEach(card => {
     card.addEventListener('click', e => {
       e.preventDefault();
-      
       const href = card.getAttribute('href') || '';
-      let cat = '';
-      if (href.includes('category=공장창고')) cat = '공장창고';
-      else if (href.includes('category=상가')) cat = '상가';
-      else if (href.includes('category=토지')) cat = '토지';
-      else if (href.includes('category=오피스텔')) cat = '오피스텔';
-      else if (href.includes('category=단독주택')) cat = '단독주택';
-      
-      if (cat) {
+      const m = href.match(/[?&]category=([^&]+)/);
+      if (m) {
+        // URL 값(공장창고, 상가사무실, 토지, 주거용, 단독전원주택, 건물빌딩)을 category1 키로 정규화
+        const cat = PT_TO_CAT1[decodeURIComponent(m[1])] || decodeURIComponent(m[1]);
         renderCategoryPanel(cat);
       }
     });
@@ -1584,12 +1586,15 @@ const setupListingsPage = () => {
     try {
       _listings = await readListingsFromFirestore();
     } catch (err) {
-      console.error('Firestore 매물 조회 오류:', err);
-      if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 정보를 불러오지 못했습니다.</div>';
+      console.error('[Firestore] 매물 조회 오류 — 원인:', err?.code || err?.message || err);
+      console.warn('[Firestore] Firestore 보안 규칙에서 비인증 읽기를 허용했는지 확인하세요.');
+      if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 정보를 불러오지 못했습니다. (F12 콘솔에서 오류 확인)</div>';
       return;
     }
+    // 공개 여부가 명시적으로 false인 매물은 공개 페이지에서 제외
+    _listings = _listings.filter(i => i.is_public !== false);
     _dataReady = true;
-    console.log('[Firestore] 로드 완료 | 총 매물수:', _listings.length);
+    console.log('[Firestore] 로드 완료 | 공개 매물수:', _listings.length);
     if (_listings.length > 0) {
       const s = _listings[0];
       console.log('[Firestore] 첫 매물 키 목록:', Object.keys(s).join(', '));
