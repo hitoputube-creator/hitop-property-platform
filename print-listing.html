@@ -537,35 +537,41 @@
       return n >= 10000 ? Math.round(n / 10000) : n;
     };
 
+    // ★ 단위 규칙
+    //   salePrice / presalePrice / deposit(전세) / price → 만원 단위 → toKoreanPrice 직접 적용
+    //   deposit(월세/임대) / monthlyRent              → 원 단위  → wonToManwon 후 표시
     const formatPriceText = (item) => {
       const deal = item.dealType || '';
 
-      const fmtKorean = (v) => {
-        const mw = wonToManwon(v);
-        return mw ? toKoreanPrice(mw) : '';
+      // 만원 단위 값 → 억/만원 한국어 변환
+      const fmtManwon = (v) => {
+        if (v === undefined || v === null || v === '') return '';
+        const n = Number(String(v).replace(/[,\s]/g, ''));
+        return (!isNaN(n) && n > 0) ? toKoreanPrice(n) : '';
       };
 
       if (deal === '매매') {
-        const p = fmtKorean(item.salePrice ?? item.price);
+        const p = fmtManwon(item.salePrice ?? item.price);
         return p ? `매매 ${p}` : '가격문의';
       }
       if (deal === '전세') {
-        const p = fmtKorean(item.deposit ?? item.price);
+        const p = fmtManwon(item.deposit ?? item.price);
         return p ? `전세 ${p}` : '가격문의';
       }
       if (deal === '월세' || deal === '임대') {
+        // deposit·monthlyRent 는 원 단위 → wonToManwon 적용
         const dep  = wonToManwon(item.deposit);
         const rent = wonToManwon(item.monthlyRent ?? item.rent);
         if (dep && rent) return `${dep.toLocaleString('ko-KR')}/${rent.toLocaleString('ko-KR')}만원`;
         if (dep)  return `${dep.toLocaleString('ko-KR')}만원`;
         if (rent) return `${rent.toLocaleString('ko-KR')}만원`;
-        return fmtKorean(item.price) || '가격문의';
+        return fmtManwon(item.price) || '가격문의';
       }
       if (deal === '분양') {
-        const p = fmtKorean(item.presalePrice ?? item.salePrice);
+        const p = fmtManwon(item.presalePrice ?? item.salePrice);
         return p ? `분양 ${p}` : '가격문의';
       }
-      return fmtKorean(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
+      return fmtManwon(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
     };
 
     const _defaultImageMap = {

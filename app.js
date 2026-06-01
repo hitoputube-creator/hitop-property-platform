@@ -345,38 +345,49 @@ const wonToManwon = (v) => {
 };
 
 // 모든 매물 카드·마커·패널에서 공통으로 사용하는 가격 표시 함수
-// - 월세/임대: "보증금/월세만원" (절대 억 단위 사용 안 함)
-// - 전세: "N억원" 또는 "N,NNN만원"
-// - 매매/분양: "N억원" 또는 "N,NNN만원"
-// - 값 없음: "가격문의"
+//
+// ★ 단위 저장 규칙
+//   - salePrice / presalePrice / deposit(전세) / price : 만원 단위 저장
+//     → toKoreanPrice() 직접 적용 (wonToManwon 불필요)
+//   - deposit(월세/임대) / monthlyRent                : 원 단위 저장
+//     → wonToManwon() 으로 만원 변환 후 표시
+//
+// 거래유형별 표시 예시
+//   매매  1,400,000 → "140억원"
+//   전세     23,000 → "2억 3,000만원"
+//   월세  deposit:10,000,000 / monthlyRent:600,000 → "1,000/60만원"
+//   없음                                           → "가격문의"
 const formatPropertyPrice = (item) => {
   if (item.priceText) return item.priceText;
 
-  const fmtKorean = (v) => {
-    const mw = wonToManwon(v);
-    return mw ? toKoreanPrice(mw) : null;
+  // 만원 단위 값을 억/만원 한국어 문자열로 변환
+  const fmtManwon = (v) => {
+    if (v === undefined || v === null || v === '') return null;
+    const n = Number(String(v).replace(/[,\s]/g, ''));
+    return (!isNaN(n) && n > 0) ? toKoreanPrice(n) : null;
   };
 
   const deal = item.dealType || '';
 
   if (deal === '매매') {
-    return fmtKorean(item.salePrice ?? item.price) || '가격문의';
+    return fmtManwon(item.salePrice ?? item.price) || '가격문의';
   }
   if (deal === '전세') {
-    return fmtKorean(item.deposit ?? item.price) || '가격문의';
+    return fmtManwon(item.deposit ?? item.price) || '가격문의';
   }
   if (deal === '월세' || deal === '임대') {
+    // deposit·monthlyRent 는 원 단위 → wonToManwon 적용
     const dep  = wonToManwon(item.deposit);
     const rent = wonToManwon(item.monthlyRent ?? item.rent);
     if (dep && rent) return `${dep.toLocaleString('ko-KR')}/${rent.toLocaleString('ko-KR')}만원`;
     if (dep)  return `${dep.toLocaleString('ko-KR')}만원`;
     if (rent) return `${rent.toLocaleString('ko-KR')}만원`;
-    return fmtKorean(item.price) || '가격문의';
+    return fmtManwon(item.price) || '가격문의';
   }
   if (deal === '분양') {
-    return fmtKorean(item.presalePrice ?? item.salePrice) || '가격문의';
+    return fmtManwon(item.presalePrice ?? item.salePrice) || '가격문의';
   }
-  return fmtKorean(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
+  return fmtManwon(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
 };
 
 // 하위 호환 별칭 (기존 코드에서 formatCardPrice 직접 참조가 남아 있을 경우 대비)
@@ -524,10 +535,19 @@ const openModal = (item) => {
   // ── 오른쪽 패널: 가격 표시 ──
   const cfg = PROPERTY_FIELDS[pt] || {};
   const priceFields = (cfg.priceConfig || {})[item.dealType] || [];
+  const _isRentDeal = item.dealType === '월세' || item.dealType === '임대';
   const renderPriceVal = (f, val) => {
     if (!f.money) return val;
-    const mw = wonToManwon(val);
-    return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
+    const n = Number(String(val).replace(/[,\s]/g, ''));
+    if (isNaN(n) || n <= 0) return String(val);
+    // deposit·monthlyRent 가 월세/임대인 경우만 원 단위 → 만원 변환
+    const isWonField = _isRentDeal && (f.key === 'deposit' || f.key === 'monthlyRent');
+    if (isWonField) {
+      const mw = wonToManwon(val);
+      return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
+    }
+    // 그 외(매매가·분양가·전세보증금 등)는 만원 단위로 저장됐으므로 직접 변환
+    return toKoreanPrice(n);
   };
   let priceHTML = '';
   priceFields.forEach(f => {
@@ -597,10 +617,17 @@ const openModal = (item) => {
   }
 
   // ── 왼쪽 패널: 매물정보 표 (구조화된 고정 항목) ──
-  const _fmtPrice = (val) => {
+  // isWon=true  → 원 단위 값 (deposit·monthlyRent for 월세/임대): wonToManwon 변환 후 만원 표시
+  // isWon=false → 만원 단위 값 (salePrice·전세deposit 등): toKoreanPrice 직접 변환
+  const _fmtPrice = (val, isWon = false) => {
     if (val === null || val === undefined || val === '') return null;
-    const mw = wonToManwon(val);
-    return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
+    const n = Number(String(val).replace(/[,\s]/g, ''));
+    if (isNaN(n) || n <= 0) return String(val) || null;
+    if (isWon) {
+      const mw = wonToManwon(val);
+      return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
+    }
+    return toKoreanPrice(n);
   };
 
   const tableRows = [];
@@ -614,9 +641,10 @@ const openModal = (item) => {
   addRow('거래유형', item.dealType);
 
   // 가격 항목 (강조 스타일)
-  const dep  = _fmtPrice(item.deposit);
-  const rent = _fmtPrice(item.monthlyRent ?? item.rent);
-  const sale = _fmtPrice(item.salePrice);
+  // 월세/임대의 deposit·monthlyRent 는 원 단위 → isWon=true
+  const dep  = _fmtPrice(item.deposit,                   _isRentDeal);
+  const rent = _fmtPrice(item.monthlyRent ?? item.rent,  true);
+  const sale = _fmtPrice(item.salePrice,                 false);
   const mgmt = item.managementFee;
   const prem = item.premium;
   if (dep)  addRow('보증금', dep,  'info-price-row');
