@@ -1515,9 +1515,13 @@ const setupListingsPage = () => {
       // 면적 정보: getCardAreaHTML 재사용 — 필드 없으면 빈 문자열
       const areaHTML = getCardAreaHTML(item);
 
+      // 로컬 샘플 이미지(images/*.png)는 contain 처리로 글자 잘림 방지
+      const isSample = thumb.startsWith('images/') || thumb === fallback;
+      const imgClass = `lp-mini-img${isSample ? ' lp-mini-img--sample' : ''}`;
+
       return `<article class="lp-mini-card" data-id="${item.id}">
         <div class="lp-mini-img-wrap">
-          <img src="${thumb}" alt="${safeTitle}" class="lp-mini-img"
+          <img src="${thumb}" alt="${safeTitle}" class="${imgClass}"
                onerror="this.onerror=null;this.src='${fallback}';" />
         </div>
         <div class="lp-mini-body">
