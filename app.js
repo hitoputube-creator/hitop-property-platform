@@ -347,24 +347,31 @@ const wonToManwon = (v) => {
 // 모든 매물 카드·마커·패널에서 공통으로 사용하는 가격 표시 함수
 //
 // ★ 단위 저장 규칙
-//   - salePrice / presalePrice / deposit(전세) / price : 만원 단위 저장
-//     → toKoreanPrice() 직접 적용 (wonToManwon 불필요)
-//   - deposit(월세/임대) / monthlyRent                : 원 단위 저장
-//     → wonToManwon() 으로 만원 변환 후 표시
+//   - salePrice / presalePrice / deposit(전세) / price
+//       admin form parseKoreanMoney 경유 → 원 단위 가능
+//       직접 입력 → 만원 단위 가능 (데이터 혼재)
+//       → smartFmtBig(): 1억(100,000,000) 이상이면 원 단위 간주 → 만원 변환 후 toKoreanPrice
+//                         1억 미만이면 만원 단위 간주 → toKoreanPrice 직접
+//   - deposit(월세/임대) / monthlyRent : 항상 원 단위 → wonToManwon 후 표시
 //
 // 거래유형별 표시 예시
-//   매매  1,400,000 → "140억원"
-//   전세     23,000 → "2억 3,000만원"
+//   매매 14,000,000,000원  → "140억원"   (원 단위 저장)
+//   매매      1,400,000만원 → "140억원"   (만원 단위 저장)
+//   전세         23,000만원 → "2억 3,000만원"
 //   월세  deposit:10,000,000 / monthlyRent:600,000 → "1,000/60만원"
 //   없음                                           → "가격문의"
 const formatPropertyPrice = (item) => {
   if (item.priceText) return item.priceText;
 
-  // 만원 단위 값을 억/만원 한국어 문자열로 변환
+  // 매매가·전세가·분양가용 스마트 변환
+  // 1억(100,000,000) 이상 → 원 단위로 간주해 만원 변환 후 toKoreanPrice
+  // 1억 미만             → 만원 단위로 간주해 toKoreanPrice 직접 적용
   const fmtManwon = (v) => {
     if (v === undefined || v === null || v === '') return null;
     const n = Number(String(v).replace(/[,\s]/g, ''));
-    return (!isNaN(n) && n > 0) ? toKoreanPrice(n) : null;
+    if (isNaN(n) || n <= 0) return null;
+    const mw = n >= 100000000 ? Math.round(n / 10000) : n;
+    return toKoreanPrice(mw);
   };
 
   const deal = item.dealType || '';
@@ -546,8 +553,9 @@ const openModal = (item) => {
       const mw = wonToManwon(val);
       return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
     }
-    // 그 외(매매가·분양가·전세보증금 등)는 만원 단위로 저장됐으므로 직접 변환
-    return toKoreanPrice(n);
+    // 그 외(매매가·분양가·전세보증금 등): 1억 이상이면 원 단위 간주 → 만원 변환
+    const mw = n >= 100000000 ? Math.round(n / 10000) : n;
+    return toKoreanPrice(mw);
   };
   let priceHTML = '';
   priceFields.forEach(f => {
@@ -627,7 +635,8 @@ const openModal = (item) => {
       const mw = wonToManwon(val);
       return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
     }
-    return toKoreanPrice(n);
+    const mw = n >= 100000000 ? Math.round(n / 10000) : n;
+    return toKoreanPrice(mw);
   };
 
   const tableRows = [];
@@ -1498,28 +1507,36 @@ const setupListingsPage = () => {
     const newItems = all.filter(isNew).slice(0, 5);
 
     const miniCardHTML = item => {
-      const thumb = getThumbnail(item);
-      const label = CAT1_DISPLAY[getCategory1(item)] || item.propertyType || '';
-      return `<article class="lp-mini-card" data-id="${item.id}" style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;">
-        <div style="width:64px;height:64px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#f0f0f0;">
-          ${thumb ? `<img src="${thumb}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />` : ''}
+      const thumb    = getThumbnail(item);   // imageUrls 없으면 카테고리 기본 이미지 자동 반환
+      const fallback = getDefaultImageByCategory(getCategory1(item));
+      const label    = CAT1_DISPLAY[getCategory1(item)] || item.propertyType || '';
+      const safeTitle = (item.title || '(제목 없음)').replace(/"/g, '&quot;');
+      return `<article class="lp-mini-card" data-id="${item.id}">
+        <div class="lp-mini-img-wrap">
+          <img src="${thumb}" alt="${safeTitle}" class="lp-mini-img"
+               onerror="this.onerror=null;this.src='${fallback}';" />
         </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:11px;color:#888;margin-bottom:2px;">${label} · ${item.dealType||''}</div>
-          <div style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title||'(제목 없음)'}</div>
-          <div style="font-size:12px;color:#555;margin-top:2px;">${formatCardPrice(item)}</div>
-          <div style="font-size:11px;color:#888;">${getDisplayAddress(item)}</div>
+        <div class="lp-mini-body">
+          <div class="lp-mini-meta">
+            ${getDealBadgeHTML(item.dealType)}
+            <span class="lp-mini-type-tag">${label}</span>
+          </div>
+          <div class="lp-mini-title">${item.title || '(제목 없음)'}</div>
+          <div class="lp-mini-price">${formatPropertyPrice(item)}</div>
+          <div class="lp-mini-addr">📍 ${getDisplayAddress(item) || '-'}</div>
         </div>
       </article>`;
     };
 
     const sectionHTML = (icon, title, items, emptyMsg) => `
-      <div style="margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:800;color:#1a1a2e;padding:8px 0 4px;border-bottom:2px solid #C9A84C;margin-bottom:4px;">${icon} ${title}</div>
-        ${items.length ? items.map(miniCardHTML).join('') : `<div style="padding:12px 0;color:#888;font-size:12px;">${emptyMsg}</div>`}
+      <div class="lp-panel-section">
+        <div class="lp-panel-section-hd">${icon} ${title}</div>
+        <div class="lp-panel-section-body">
+          ${items.length ? items.map(miniCardHTML).join('') : `<div class="lp-panel-empty">${emptyMsg}</div>`}
+        </div>
       </div>`;
 
-    lpPanel.innerHTML = `<div style="padding:12px 14px;overflow-y:auto;height:100%;">
+    lpPanel.innerHTML = `<div class="lp-panel-inner">
       ${sectionHTML('⭐', '추천 매물', recItems, '추천 매물이 없습니다.')}
       ${sectionHTML('🆕', '최신 매물', newItems, '최신 매물이 없습니다.')}
     </div>`;
