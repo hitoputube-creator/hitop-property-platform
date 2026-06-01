@@ -727,8 +727,25 @@ const openModal = (item) => {
     });
     mainImg.onclick = () => openLightbox(images.map(normalizeImageUrl), parseInt(mainImg.dataset.index));
   } else {
-    mainImg.src = ''; thumbsEl.innerHTML = ''; mainImg.onclick = null;
+    // 이미지 없을 때: img 숨기고 안내 문구 표시
+    mainImg.src = ''; mainImg.style.display = 'none'; mainImg.onclick = null;
+    thumbsEl.innerHTML = '';
+    const wrap = mainImg.closest('.modal-main-img');
+    if (wrap && !wrap.querySelector('.modal-no-img')) {
+      wrap.insertAdjacentHTML('beforeend',
+        `<div class="modal-no-img">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21,15 16,10 5,21"/>
+          </svg>
+          <span>등록된 이미지 없음</span>
+        </div>`
+      );
+    }
   }
+  // 모달 열릴 때마다 이미지가 있으면 img 다시 표시
+  if (images.length > 0) { mainImg.style.display = ''; mainImg.closest('.modal-main-img')?.querySelector('.modal-no-img')?.remove(); }
 
   const printBtn = document.getElementById('modalPrintBtn');
   if (printBtn) {

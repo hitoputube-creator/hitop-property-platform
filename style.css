@@ -613,6 +613,18 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-main-img img:hover { transform: scale(1.02); }
 
+/* 깨진 이미지(alt 텍스트·아이콘) 숨김 — JS onerror 로 숨기는 것과 동일 효과 */
+.modal-main-img img[src=""], .modal-main-img img:not([src]) { display: none; }
+
+/* 이미지 없을 때 기본 배경 메시지 */
+.modal-no-img {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: #94a3b8; font-size: 15px;
+  background: #1e293b;
+}
+.modal-no-img svg { width: 56px; height: 56px; opacity: 0.35; }
+
 .modal-thumbs { display: flex; gap: 6px; padding: 10px; overflow-x: auto; flex-shrink: 0; background: #f6f8fb; border-top: 1px solid #e5e9f0; }
 
 .modal-thumb { width: 80px; height: 58px; object-fit: cover; border-radius: 6px; cursor: pointer; flex-shrink: 0; border: 2px solid transparent; opacity: 0.7; transition: opacity 0.15s, border-color 0.15s; }
@@ -654,7 +666,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .admin-form .detail-fields-section { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
 .admin-form .detail-fields-section input { width: 100%; box-sizing: border-box; }
 
-.modal-title { font-size: 19px; font-weight: 700; color: #1e293b; margin: 0; line-height: 1.4; }
+.modal-title { font-size: 22px; font-weight: 700; color: #1e293b; margin: 0; line-height: 1.4; }
 
 .modal-address { font-size: 13px; color: #94a3b8; }
 
@@ -666,31 +678,31 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .price-label { font-size: 13px; color: #64748b; font-weight: 600; flex-shrink: 0; background: #e8f5ef; padding: 2px 7px; border-radius: 4px; }
 
-.price-value { font-size: 28px; font-weight: 800; color: #0a7c55; letter-spacing: -0.5px; line-height: 1.1; }
+.price-value { font-size: 32px; font-weight: 800; color: #0a7c55; letter-spacing: -0.5px; line-height: 1.1; }
 
-.modal-info-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.modal-info-table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
 
 .modal-info-table tr { border-bottom: 1px solid #f1f5f9; }
 
 .modal-info-table tr:last-child { border-bottom: none; }
 
-.info-label { padding: 10px 14px 10px 0; color: #64748b; width: 36%; vertical-align: top; font-size: 14px; white-space: nowrap; }
+.info-label { padding: 12px 14px 12px 0; color: #64748b; width: 36%; vertical-align: top; font-size: 14.5px; white-space: nowrap; }
 
-.info-value { padding: 10px 0; color: #1e293b; font-weight: 600; font-size: 14.5px; }
+.info-value { padding: 12px 0; color: #1e293b; font-weight: 600; font-size: 15.5px; }
 
 .modal-contact { display: flex; flex-direction: column; gap: 8px; }
 
-.modal-tel { background: #12335a; color: #fff; justify-content: center; padding: 14px; font-size: 15px; }
+.modal-tel { background: #12335a; color: #fff; justify-content: center; padding: 16px; font-size: 16px; }
 
-.modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; padding: 14px; font-size: 15px; text-decoration: none; display: flex; align-items: center; border-radius: 10px; font-weight: 700; }
+.modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; padding: 16px; font-size: 16px; text-decoration: none; display: flex; align-items: center; border-radius: 10px; font-weight: 700; }
 
 .modal-print-btn {
   background: var(--white);
   border: 1px solid var(--gray-200);
   color: var(--gray-700);
   justify-content: center;
-  padding: 14px;
-  font-size: 15px;
+  padding: 16px;
+  font-size: 16px;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -1234,7 +1246,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .modal-minimap-wrap h4 { font-size: 12px; font-weight: 700; color: var(--navy); margin: 0; padding: 8px 10px 6px; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); }
 
-#modalMiniMap { width: 100%; height: 180px; background: #e8f0f8; }
+#modalMiniMap { width: 100%; height: 220px; background: #e8f0f8; }
 
 /* ===== 메인(index.html) 최신매물 섹션 ===== */
 
@@ -3679,7 +3691,7 @@ body[data-page="listings"] .lp-body {
 
   display: grid !important;
 
-  grid-template-columns: 280px minmax(0, 1fr) 720px !important;
+  grid-template-columns: 280px minmax(0, 1fr) 820px !important;
 
   grid-template-rows: 1fr auto !important; /* 1행: 지도/추천패널, 2행: 매물 카테고리 카드바 */
 
@@ -4531,9 +4543,9 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   height: auto !important;
 
-  min-height: 100px !important;
+  min-height: 108px !important;
 
-  max-height: 112px !important;
+  max-height: 122px !important;
 
   min-width: 0 !important;
 
@@ -4609,15 +4621,15 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 왼쪽 이미지 영역 - 고정 130px 폭 */
+/* 왼쪽 이미지 영역 - 고정 140px 폭 */
 
 .lp-rec-img-wrap {
 
   position: relative !important;
 
-  width: 130px !important;
+  width: 140px !important;
 
-  min-width: 130px !important;
+  min-width: 140px !important;
 
   height: 100% !important;
 
@@ -4751,7 +4763,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-mid {
 
-  font-size: 12.5px !important; /* 가독성 위해 약간 확대 */
+  font-size: 13px !important; /* 가독성 위해 약간 확대 */
 
   font-weight: 700 !important;
 
@@ -4890,7 +4902,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-row-bot {
 
-  font-size: 11.5px !important; /* 5줄 맞춤 가독성 보장 */
+  font-size: 12px !important; /* 5줄 맞춤 가독성 보장 */
 
   font-weight: 600 !important;
 
@@ -4910,7 +4922,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-type {
 
-  font-size: 13.5px !important; /* 5줄 맞춤 콤팩트화 */
+  font-size: 14px !important; /* 5줄 맞춤 콤팩트화 */
 
   font-weight: 800 !important;
 
@@ -5006,7 +5018,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 16px !important; /* 5줄 맞춤 콤팩트화 */
+  font-size: 17px !important; /* 카드 가격 강조 확대 */
 
   font-weight: 900 !important; /* 가장 굵게 900 적용 */
 
@@ -5426,8 +5438,8 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   }
 
   body[data-page="listings"] .lp-rec-img-wrap {
-    width: 100px !important;
-    min-width: 100px !important;
+    width: 110px !important;
+    min-width: 110px !important;
   }
 
   body[data-page="listings"] .lp-rec-body {
