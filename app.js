@@ -325,28 +325,7 @@ const getDealBadgeHTML = (dealType) => {
   return `<span class="deal-badge ${cls}">${dealType}</span>`;
 };
 
-const formatCardPrice = (item) => {
-  if (item.priceText) return item.priceText;
-  const fmt = (v) => {
-    if (v === undefined || v === null || v === '') return null;
-    const n = Number(String(v).replace(/[,\s]/g, ''));
-    if (!isNaN(n) && n > 0) return toKoreanPrice(n);
-    const s = String(v).trim();
-    return s || null;
-  };
-  const deal = item.dealType || '';
-  if (deal === '매매') { const p = fmt(item.salePrice ?? item.price); return p || '가격문의'; }
-  if (deal === '전세') { const p = fmt(item.deposit ?? item.price); return p || '가격문의'; }
-  if (deal === '월세' || deal === '임대') {
-    const dep = fmt(item.deposit), rent = fmt(item.monthlyRent ?? item.rent);
-    if (dep && rent) return `${dep}/${rent}`;
-    return dep || rent || fmt(item.price) || '가격문의';
-  }
-  if (deal === '분양') { const p = fmt(item.presalePrice ?? item.salePrice); return p || '가격문의'; }
-  const p = fmt(item.salePrice ?? item.deposit ?? item.price);
-  return p || '가격문의';
-};
-
+// 만원 단위 숫자를 한국어 가격 문자열로 변환 (예: 15000 → "1억 5,000만원")
 const toKoreanPrice = (wanwon) => {
   const n = Number(wanwon);
   if (!n || isNaN(n) || n <= 0) return '';
@@ -356,6 +335,52 @@ const toKoreanPrice = (wanwon) => {
   if (eok) return `${eok}억원`;
   return `${n.toLocaleString('ko-KR')}만원`;
 };
+
+// 원(won) 단위 값을 만원 단위 정수로 변환 (10,000 이상이면 원 단위로 간주)
+const wonToManwon = (v) => {
+  if (v === undefined || v === null || v === '') return null;
+  const n = Number(String(v).replace(/[,\s]/g, ''));
+  if (isNaN(n) || n <= 0) return null;
+  return n >= 10000 ? Math.round(n / 10000) : n;
+};
+
+// 모든 매물 카드·마커·패널에서 공통으로 사용하는 가격 표시 함수
+// - 월세/임대: "보증금/월세만원" (절대 억 단위 사용 안 함)
+// - 전세: "N억원" 또는 "N,NNN만원"
+// - 매매/분양: "N억원" 또는 "N,NNN만원"
+// - 값 없음: "가격문의"
+const formatPropertyPrice = (item) => {
+  if (item.priceText) return item.priceText;
+
+  const fmtKorean = (v) => {
+    const mw = wonToManwon(v);
+    return mw ? toKoreanPrice(mw) : null;
+  };
+
+  const deal = item.dealType || '';
+
+  if (deal === '매매') {
+    return fmtKorean(item.salePrice ?? item.price) || '가격문의';
+  }
+  if (deal === '전세') {
+    return fmtKorean(item.deposit ?? item.price) || '가격문의';
+  }
+  if (deal === '월세' || deal === '임대') {
+    const dep  = wonToManwon(item.deposit);
+    const rent = wonToManwon(item.monthlyRent ?? item.rent);
+    if (dep && rent) return `${dep.toLocaleString('ko-KR')}/${rent.toLocaleString('ko-KR')}만원`;
+    if (dep)  return `${dep.toLocaleString('ko-KR')}만원`;
+    if (rent) return `${rent.toLocaleString('ko-KR')}만원`;
+    return fmtKorean(item.price) || '가격문의';
+  }
+  if (deal === '분양') {
+    return fmtKorean(item.presalePrice ?? item.salePrice) || '가격문의';
+  }
+  return fmtKorean(item.salePrice ?? item.deposit ?? item.price) || '가격문의';
+};
+
+// 하위 호환 별칭 (기존 코드에서 formatCardPrice 직접 참조가 남아 있을 경우 대비)
+const formatCardPrice = formatPropertyPrice;
 
 // 카드용 면적 HTML — 샘플 카드와 동일한 lp-area-highlight 스타일 사용
 const getCardAreaHTML = (item) => {
@@ -501,8 +526,8 @@ const openModal = (item) => {
   const priceFields = (cfg.priceConfig || {})[item.dealType] || [];
   const renderPriceVal = (f, val) => {
     if (!f.money) return val;
-    const n = Number(String(val).replace(/,/g, ''));
-    return isNaN(n) ? String(val) : n.toLocaleString('ko-KR') + '만원';
+    const mw = wonToManwon(val);
+    return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
   };
   let priceHTML = '';
   priceFields.forEach(f => {
@@ -510,8 +535,8 @@ const openModal = (item) => {
     if (!val && val !== 0) return;
     priceHTML += `<div class="modal-price-row"><span class="price-label">${f.label}</span><strong class="price-value">${renderPriceVal(f, val)}</strong></div>`;
   });
-  if (!priceHTML && item.price) {
-    priceHTML = `<div class="modal-price-row"><span class="price-label">${item.dealType}</span><strong class="price-value">${formatPrice(item.price)}만원</strong></div>`;
+  if (!priceHTML) {
+    priceHTML = `<div class="modal-price-row"><span class="price-label">${item.dealType}</span><strong class="price-value">${formatPropertyPrice(item)}</strong></div>`;
   }
   document.getElementById('modalPriceArea').innerHTML = priceHTML;
 
@@ -574,8 +599,8 @@ const openModal = (item) => {
   // ── 왼쪽 패널: 매물정보 표 (구조화된 고정 항목) ──
   const _fmtPrice = (val) => {
     if (val === null || val === undefined || val === '') return null;
-    const n = Number(String(val).replace(/,/g, ''));
-    return isNaN(n) ? String(val) : n.toLocaleString('ko-KR') + '만원';
+    const mw = wonToManwon(val);
+    return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
   };
 
   const tableRows = [];
@@ -1735,7 +1760,7 @@ const setupAdminDashboard = () => {
                   <span class="adm-item-date">${date}</span>
                 </div>
                 <div class="adm-item-title">${item.title}</div>
-                <div class="adm-item-info">${getDisplayAddress(item)} · ${formatPrice(price)}만원 · ${item.area || 0}㎡</div>
+                <div class="adm-item-info">${getDisplayAddress(item)} · ${formatPropertyPrice(item)} · ${item.area || 0}㎡</div>
                 <div class="adm-item-actions">
                   <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
                   <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
@@ -2484,7 +2509,7 @@ const setupAdminListingsMgmt = () => {
               <span class="admin-item-date">등록 ${(item.createdAt||'').slice(0,10)||'-'}</span>
             </div>
             <p style="margin:4px 0;font-size:13px;">${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
-            <p style="margin:4px 0;font-size:13px;">${formatPrice(getMainPrice(item))}만원 · ${item.propertyType === '상가' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
+            <p style="margin:4px 0;font-size:13px;">${formatPropertyPrice(item)} · ${item.propertyType === '상가' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
             <div class="admin-item-actions">
               <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
               <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>

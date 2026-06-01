@@ -4513,6 +4513,8 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   border: 1px solid #e2e8f0;
 
+  border-bottom: 2px solid #dde4ed;
+
   border-radius: 8px;
 
   overflow: hidden;
@@ -4521,7 +4523,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   flex-direction: row !important; /* 가로형 리스트 카드로 변경! */
 
-  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s, border-color 0.15s;
 
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 
@@ -4529,9 +4531,9 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   height: auto !important;
 
-  min-height: 116px !important; /* 5행 구조 최적화 최소 높이 */
+  min-height: 100px !important;
 
-  max-height: 145px !important; /* 5행 구조 최적화 최대 높이 */
+  max-height: 112px !important;
 
   min-width: 0 !important;
 
@@ -4543,11 +4545,19 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 .lp-rec-card:hover {
 
-  transform: translateY(-2px);
+  background: #f8fafc !important;
+
+  transform: translateY(-1px);
 
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 
   border-color: #cbd5e1;
+
+}
+
+.lp-rec-card:hover .lp-rec-img {
+
+  transform: scale(1.05);
 
 }
 
@@ -4599,13 +4609,15 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
 }
 
-/* 왼쪽 이미지 영역 (카드 폭의 약 35% 차지) */
+/* 왼쪽 이미지 영역 - 고정 130px 폭 */
 
 .lp-rec-img-wrap {
 
   position: relative !important;
 
-  width: 35% !important; /* 카드 폭의 약 35% */
+  width: 130px !important;
+
+  min-width: 130px !important;
 
   height: 100% !important;
 
@@ -4622,6 +4634,8 @@ body[data-page="listings"] .lp-panel-scroll-content {
   height: 100%;
 
   object-fit: cover;
+
+  transition: transform 0.2s ease;
 
 }
 
@@ -5407,8 +5421,13 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 
   /* 추천 매물 가로형 리스트 카드 모바일 미세 튜닝 */
   body[data-page="listings"] .lp-rec-card {
-    min-height: 100px !important;
+    min-height: 88px !important;
     max-height: none !important;
+  }
+
+  body[data-page="listings"] .lp-rec-img-wrap {
+    width: 100px !important;
+    min-width: 100px !important;
   }
 
   body[data-page="listings"] .lp-rec-body {
