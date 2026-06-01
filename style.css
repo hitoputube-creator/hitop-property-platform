@@ -2518,39 +2518,44 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   margin-bottom: 12px;
 }
 
-.lp-panel-section-body { display: flex; flex-direction: column; gap: 14px; }
+/* PC: 2열 그리드 */
+.lp-panel-section-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
 
-.lp-panel-empty { padding: 14px 0; color: #888; font-size: 13px; }
+.lp-panel-empty {
+  grid-column: 1 / -1;
+  padding: 14px 0; color: #888; font-size: 13px;
+}
 
-/* ── 가로형 큰 카드 (추천/최신 매물) ── */
+/* ── 세로형 2열 카드 (추천/최신 매물) ── */
 .lp-mini-card {
   display: flex;
-  gap: 14px;
-  padding: 14px 16px;
+  flex-direction: column;
   border-radius: 10px;
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-bottom: 2px solid #d8e0eb;
+  border-bottom: 3px solid #d0d9e8;
   cursor: pointer;
   transition: background 0.15s, box-shadow 0.15s, transform 0.12s;
-  min-height: 150px;
-  width: 100%;
+  overflow: hidden;
   box-sizing: border-box;
-  align-items: center;
+  width: 100%;
 }
 
 .lp-mini-card:hover {
   background: #f8fafc;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.09);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  transform: translateY(-2px);
 }
 
+/* 이미지 영역 — 카드 상단 전체 폭 */
 .lp-mini-img-wrap {
-  width: 200px;
-  min-width: 200px;
-  height: 130px;
+  width: 100%;
+  height: 140px;
   flex-shrink: 0;
-  border-radius: 8px;
   overflow: hidden;
   background: #dce8f5;
 }
@@ -2565,34 +2570,44 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 .lp-mini-card:hover .lp-mini-img { transform: scale(1.04); }
 
+/* 텍스트 영역 — 이미지 하단 */
 .lp-mini-body {
-  flex: 1;
-  min-width: 0;
+  padding: 12px 14px 13px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  justify-content: center;
+  gap: 5px;
+  flex: 1;
 }
 
-.lp-mini-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.lp-mini-meta {
+  display: flex; gap: 5px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 2px;
+}
 
-.lp-mini-type-tag { font-size: 13px; color: #64748b; font-weight: 600; }
+.lp-mini-type-tag {
+  font-size: 12px; color: #64748b; font-weight: 600;
+}
 
 .lp-mini-title {
-  font-size: 18px; font-weight: 700; color: #1e293b;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+  font-size: 14px; font-weight: 700; color: #1e293b;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35;
 }
 
 .lp-mini-price {
-  font-size: 20px; font-weight: 800; color: #0a7c55; letter-spacing: -0.3px;
+  font-size: 16px; font-weight: 800; color: #0a7c55; letter-spacing: -0.3px;
 }
 
 .lp-mini-addr {
-  font-size: 13px; color: #94a3b8;
+  font-size: 12px; color: #94a3b8;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* 구형 클래스 (혹시 남아 있을 경우 대비) */
+.lp-mini-area {
+  font-size: 12px; color: #475569; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* 구형 클래스 호환 */
 .lp-mini-img-empty { display: none; }
 .lp-mini-empty { font-size: 13px; color: #9CA3AF; padding: 16px 0; }
 
@@ -5506,14 +5521,13 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     white-space: normal !important; /* 모바일 가독성 향상 줄바꿈 */
   }
 
-  /* 6b. 모바일: lp-mini-card 이미지 축소 */
-  .lp-mini-img-wrap {
-    width: 120px !important;
-    min-width: 120px !important;
-    height: 90px !important;
+  /* 6b. 모바일: 추천매물 1열 전환 */
+  .lp-panel-section-body {
+    grid-template-columns: 1fr !important;
   }
-  .lp-mini-title { font-size: 15px !important; }
-  .lp-mini-price { font-size: 17px !important; }
+  .lp-mini-img-wrap {
+    height: 120px !important;
+  }
 
   /* 7. 하단 카테고리 카드 뷰 그리드 반응형 정리 */
   body[data-page="listings"] .cat-cards-section {

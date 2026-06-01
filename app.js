@@ -1511,6 +1511,10 @@ const setupListingsPage = () => {
       const fallback = getDefaultImageByCategory(getCategory1(item));
       const label    = CAT1_DISPLAY[getCategory1(item)] || item.propertyType || '';
       const safeTitle = (item.title || '(제목 없음)').replace(/"/g, '&quot;');
+
+      // 면적 정보: getCardAreaHTML 재사용 — 필드 없으면 빈 문자열
+      const areaHTML = getCardAreaHTML(item);
+
       return `<article class="lp-mini-card" data-id="${item.id}">
         <div class="lp-mini-img-wrap">
           <img src="${thumb}" alt="${safeTitle}" class="lp-mini-img"
@@ -1524,6 +1528,7 @@ const setupListingsPage = () => {
           <div class="lp-mini-title">${item.title || '(제목 없음)'}</div>
           <div class="lp-mini-price">${formatPropertyPrice(item)}</div>
           <div class="lp-mini-addr">📍 ${getDisplayAddress(item) || '-'}</div>
+          ${areaHTML ? `<div class="lp-mini-area">${areaHTML}</div>` : ''}
         </div>
       </article>`;
     };
