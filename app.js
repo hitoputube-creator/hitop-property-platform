@@ -2289,6 +2289,13 @@ const setupAdminRegister = () => {
           });
         }
 
+        // 수정 모드: hidden id 필드에 Firestore 문서 ID를 명시적으로 설정
+        // (hidden input 은 루프에서 propertyType 외에 값이 채워지지 않으므로 여기서 보완)
+        if (editId) {
+          const hiddenId = form.elements['id'];
+          if (hiddenId) hiddenId.value = editId;
+        }
+
         // Clear hidden id in prefill mode
         if (prefillId) {
           const hiddenId = form.elements['id'];
