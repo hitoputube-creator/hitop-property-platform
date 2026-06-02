@@ -3795,9 +3795,9 @@ body[data-page="listings"] .lp-sidebar {
 
   flex-direction: column !important;
 
-  gap: 8px !important; /* 오리지널 12px에서 8px로 다이어트 */
+  gap: 5px !important; /* 박스 사이 간격 추가 압축 */
 
-  padding: 8px 10px !important; /* 오리지널 12px 10px에서 세로 8px로 다이어트 */
+  padding: 6px 10px !important; /* 사이드바 상하 여백 압축 */
 
   overflow-y: auto !important; /* 오버플로우 방지용 안전 스크롤 */
 
@@ -3839,11 +3839,13 @@ body[data-page="listings"] .lp-cat-item {
 
 }
 
-/* 전화문의 영역 */
+/* 전화문의 영역 — 상하 패딩 압축으로 박스 높이 절감 */
 
 body[data-page="listings"] .lp-contact-inner {
 
-  padding: 12px 14px !important;
+  padding: 8px 14px !important; /* 12px → 8px */
+
+  gap: 5px !important;           /* flex gap 축소 */
 
 }
 
@@ -3867,7 +3869,7 @@ body[data-page="listings"] .side-call-header {
 
   justify-content: center !important;
 
-  margin-bottom: 6px !important;
+  margin-bottom: 4px !important; /* 6px → 4px */
 
 }
 
@@ -3875,7 +3877,7 @@ body[data-page="listings"] .side-call-header .call-title {
 
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 
-  font-size: 15px !important;
+  font-size: 14px !important; /* 15px → 14px */
 
   font-weight: 800 !important;
 
@@ -3903,15 +3905,15 @@ body[data-page="listings"] .lp-phone-big {
 
   text-align: center !important;
 
-  color: #071f5f !important; /* 이미지처럼 다크 네이비로 설정 */
+  color: #071f5f !important;
 
-  font-size: 26px !important; /* 텍스트 크기 확대 */
+  font-size: 22px !important; /* 26px → 22px */
 
   font-weight: 900 !important;
 
   text-decoration: none !important;
 
-  margin: 6px 0 !important;
+  margin: 3px 0 !important; /* 6px → 3px */
 
   letter-spacing: -0.5px !important;
 
@@ -3927,15 +3929,15 @@ body[data-page="listings"] .call-divider {
 
   background-color: #cbd5e1 !important;
 
-  margin: 8px auto !important;
+  margin: 4px auto !important; /* 8px → 4px */
 
 }
 
 body[data-page="listings"] .lp-hours-small {
 
-  margin: 0 0 10px 0 !important;
+  margin: 0 0 6px 0 !important; /* 10px → 6px */
 
-  font-size: 12px !important;
+  font-size: 11px !important;   /* 12px → 11px */
 
   color: #64748b !important;
 
@@ -3945,11 +3947,17 @@ body[data-page="listings"] .lp-hours-small {
 
 }
 
-/* 카카오톡 버튼 모서리 각지게 */
+/* 카카오 버튼 — 높이·상하 여백 압축 */
 
 body[data-page="listings"] .lp-kakao-btn {
 
   border-radius: 0px !important;
+
+  min-height: 34px !important; /* 40px → 34px */
+
+  padding: 0 10px !important;
+
+  font-size: 12px !important;  /* 13px → 12px */
 
 }
 
