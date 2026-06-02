@@ -980,24 +980,12 @@ const setupListingsPage = () => {
   let filtered = [];
   let _listings = [];
 
-  let defaultPanelHTML = '';
-
-  const saveDefaultPanelHTML = () => {
-    const lpPanel = document.getElementById('lpPanel');
-    if (lpPanel && !defaultPanelHTML) {
-      defaultPanelHTML = lpPanel.innerHTML;
-    }
-  };
-
+  // 돌아가기: 항상 Firestore 실제 추천매물로 재렌더링
   const restoreDefaultPanel = () => {
     const lpPanel = document.getElementById('lpPanel');
-    if (lpPanel && defaultPanelHTML) {
-      lpPanel.innerHTML = defaultPanelHTML;
-      lpPanel.classList.remove('cat-view-mode'); // 패딩 복원
-      document.querySelectorAll('.cat-card').forEach(card => {
-        card.classList.remove('active');
-      });
-    }
+    if (lpPanel) lpPanel.classList.remove('cat-view-mode');
+    document.querySelectorAll('.cat-card').forEach(card => card.classList.remove('active'));
+    renderSpecialPanels(); // 샘플 HTML 복원 대신 실제 데이터로 다시 렌더링
   };
 
   const getPremiumSampleData = (categoryKey) => {
@@ -1063,8 +1051,6 @@ const setupListingsPage = () => {
   const renderCategoryPanel = (categoryKey) => {
     const lpPanel = document.getElementById('lpPanel');
     if (!lpPanel) return;
-
-    saveDefaultPanelHTML();
 
     const catNames = {
       '공장창고':     '공장·창고',
@@ -1787,8 +1773,7 @@ const setupListingsPage = () => {
     });
   }
 
-  // 초기 렌더
-  saveDefaultPanelHTML();
+  // 초기 렌더 (Firestore 로드 후 renderSpecialPanels가 채움)
 
   (async () => {
     const cardsEl = document.getElementById('listingCards');
