@@ -4165,7 +4165,7 @@ body[data-page="listings"] .side-consult-btn {
 
   padding: 0 12px !important;
 
-  background: #071f5f !important;
+  background: #D97757 !important;   /* 코랄 핑크 */
 
   color: #ffffff !important;
 
@@ -4191,13 +4191,13 @@ body[data-page="listings"] .side-consult-btn {
 
 body[data-page="listings"] .side-consult-btn:hover {
 
-  background: #0f3a9e !important;
+  background: #C96549 !important;
 
   color: #ffffff !important;
 
 }
 
-/* 하단 안내문 */
+/* 접수 안내문 */
 
 body[data-page="listings"] .side-consult-note {
 
@@ -4210,6 +4210,24 @@ body[data-page="listings"] .side-consult-note {
   margin: 0 !important;
 
   line-height: 1.4 !important;
+
+}
+
+/* 하단 서브 안내문 */
+
+body[data-page="listings"] .side-consult-subnote {
+
+  font-size: 10.5px !important;
+
+  color: #b0bec5 !important;
+
+  text-align: center !important;
+
+  margin: 0 !important;
+
+  line-height: 1.5 !important;
+
+  letter-spacing: -0.1px !important;
 
 }
 
