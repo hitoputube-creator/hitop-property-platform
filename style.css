@@ -2536,20 +2536,14 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .lp-panel-scroll-body::-webkit-scrollbar-track { background: transparent; }
 .lp-panel-scroll-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
-/* 추천매물 스티커 (이미지 위 좌상단) */
+/* lp-mini-rec-badge — 구버전 호환 (mc-status-badges 로 대체됨) */
 .lp-mini-rec-badge {
   position: absolute;
   top: 6px; left: 6px;
-  background: #C9A84C;
-  color: #fff;
-  font-size: 11px; font-weight: 800;
-  padding: 3px 7px;
-  border-radius: 5px;
-  line-height: 1.3;
-  pointer-events: none;
-  z-index: 1;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
-  letter-spacing: 0.2px;
+  background: #C9A84C; color: #fff;
+  font-size: 10.5px; font-weight: 800;
+  padding: 2px 6px; border-radius: 4px;
+  line-height: 1.4; pointer-events: none; z-index: 2;
 }
 
 /* img-wrap에 relative 보장 */
@@ -2587,36 +2581,32 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 }
 
 /* ── 가로형 미니 카드 (이미지 왼쪽 + 설명 오른쪽) ── */
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   최근 등록 매물 미니 카드 (오른쪽 패널)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   최근 등록 매물 미니 카드 — 세로형 (이미지 상단)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .lp-mini-card {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
+  flex-direction: column;     /* ★ 세로형 */
   border-radius: 10px;
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-bottom: 2px solid #c7d5e8;
+  box-shadow: 0 2px 8px rgba(7,31,95,0.06);
   cursor: pointer;
-  transition: background 0.15s, box-shadow 0.15s, transform 0.12s;
+  transition: box-shadow 0.15s, transform 0.13s;
   overflow: hidden;
   box-sizing: border-box;
   width: 100%;
-  min-height: 136px;
-  max-height: 164px;
 }
 
 .lp-mini-card:hover {
-  background: #f8fafc;
-  box-shadow: 0 4px 16px rgba(7,31,95,0.10);
-  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(7,31,95,0.13);
+  transform: translateY(-3px);
 }
 
-/* 이미지 영역 — 왼쪽 42% */
+/* 이미지 영역 — 상단 고정 높이 */
 .lp-mini-img-wrap {
-  width: 42%;
-  min-width: 42%;
+  width: 100%;
+  height: 130px;
   flex-shrink: 0;
   overflow: hidden;
   background: #dce8f5;
@@ -2631,46 +2621,82 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   transition: transform 0.22s ease;
 }
 
-/* 샘플 이미지(로고형)는 잘리지 않게 contain */
 .lp-mini-img--sample {
   object-fit: contain;
   background: #e8edf4;
-  padding: 6px;
+  padding: 8px;
 }
 
-.lp-mini-card:hover .lp-mini-img { transform: scale(1.05); }
+.lp-mini-card:hover .lp-mini-img { transform: scale(1.04); }
 
-/* 텍스트 영역 — 오른쪽 58% */
+/* 이미지 위 상태 배지 그룹 (좌상단) */
+.mc-status-badges {
+  position: absolute;
+  top: 6px; left: 6px;
+  display: flex; gap: 3px; flex-wrap: wrap;
+  z-index: 2;
+}
+
+/* 상태 배지 공통 */
+.mcb {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10.5px; font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.1px;
+}
+.mcb-rec    { background: #C9A84C; color: #fff; }
+.mcb-urgent { background: #ef4444; color: #fff; }
+.mcb-excl   { background: #6d28d9; color: #fff; }
+.mcb-new    { background: #0ea5e9; color: #fff; }
+
+/* 거래유형 배지 — 이미지 우하단 */
+.mc-deal-badge-img {
+  position: absolute;
+  bottom: 6px; right: 6px;
+  z-index: 2;
+}
+
+/* 텍스트 영역 */
 .lp-mini-body {
   flex: 1;
   min-width: 0;
-  padding: 11px 12px 10px;
+  padding: 10px 11px 11px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  justify-content: center;
+  gap: 4px;
 }
 
-/* 배지 행 (거래유형 + 매물종류) */
-.lp-mini-meta {
+/* 종류 + 매물번호 행 */
+.mc-top-row {
   display: flex;
-  gap: 5px;
   align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 0;
+  justify-content: space-between;
+  gap: 4px;
 }
 
 /* 매물종류 태그 */
 .lp-mini-type-tag {
-  font-size: 11.5px;
+  font-size: 11px;
   color: #64748b;
-  font-weight: 600;
-  letter-spacing: -0.1px;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
-/* 제목 — 핵심 정보, 굵고 잘 보이게 */
+/* 매물번호 */
+.mc-propno {
+  font-size: 10.5px;
+  color: #b0bec5;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 제목 */
 .lp-mini-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   color: #0f172a;
   overflow: hidden;
@@ -2680,20 +2706,22 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   -webkit-box-orient: vertical;
   line-height: 1.4;
   letter-spacing: -0.2px;
+  margin-top: 1px;
 }
 
-/* 가격 — 가장 크고 눈에 띄게 */
+/* 가격 — 핵심, 가장 크게 */
 .lp-mini-price {
   font-size: 17px;
-  font-weight: 800;
-  color: #0a7c55;
-  letter-spacing: -0.4px;
+  font-weight: 900;
+  color: #0a4e8a;
+  letter-spacing: -0.5px;
   line-height: 1.2;
+  margin-top: 1px;
 }
 
 /* 주소 */
 .lp-mini-addr {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #94a3b8;
   white-space: nowrap;
   overflow: hidden;
@@ -2703,7 +2731,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 /* 면적 */
 .lp-mini-area {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #475569;
   white-space: nowrap;
   overflow: hidden;
@@ -5584,13 +5612,14 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     white-space: normal !important; /* 모바일 가독성 향상 줄바꿈 */
   }
 
-  /* 6b. 모바일: 최근등록매물 1열 전환, 이미지 폭 42% */
+  /* 6b. 모바일: 최근등록매물 1열 전환, 세로형 이미지 높이 유지 */
   .lp-panel-section-body {
     grid-template-columns: 1fr !important;
   }
   .lp-mini-img-wrap {
-    width: 42% !important;
-    min-width: 42% !important;
+    width: 100% !important;
+    min-width: unset !important;
+    height: 160px !important;
   }
 
   /* 7. 하단 카테고리 카드 뷰 그리드 반응형 정리 */

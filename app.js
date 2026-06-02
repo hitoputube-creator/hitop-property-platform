@@ -1565,21 +1565,36 @@ const setupListingsPage = () => {
       const areaHTML = getCardAreaHTML(item);
       const isSample = thumb.startsWith('images/') || thumb === fallback;
       const imgClass = `lp-mini-img${isSample ? ' lp-mini-img--sample' : ''}`;
-      // 추천 스티커 — isRecommended 또는 is_featured 가 true인 매물에만 표시
-      const recBadge = isRec(item)
-        ? `<span class="lp-mini-rec-badge">⭐ 추천매물</span>`
-        : '';
+
+      // ── 이미지 위 좌측 상태 배지 (최대 2개) ──
+      const statusBadges = [];
+      if (isRec(item))            statusBadges.push(`<span class="mcb mcb-rec">⭐ 추천</span>`);
+      if (item.isUrgent === true)  statusBadges.push(`<span class="mcb mcb-urgent">🔥 급매</span>`);
+      if (item.isExclusive === true || item.is_exclusive === true)
+                                   statusBadges.push(`<span class="mcb mcb-excl">전속</span>`);
+      // 7일 이내 등록이면 신규 배지
+      const createdMs = item.createdAt ? new Date(item.createdAt).getTime() : 0;
+      if (!statusBadges.length && createdMs && Date.now() - createdMs < 7 * 86400000)
+                                   statusBadges.push(`<span class="mcb mcb-new">NEW</span>`);
+
+      const badgeRow = statusBadges.length
+        ? `<div class="mc-status-badges">${statusBadges.join('')}</div>` : '';
+
+      // 매물번호
+      const propNo = item.property_number || item.listingNo || '';
+      const propNoHTML = propNo ? `<div class="mc-propno">No. ${propNo}</div>` : '';
 
       return `<article class="lp-mini-card" data-id="${item.id}">
         <div class="lp-mini-img-wrap">
           <img src="${thumb}" alt="${safeTitle}" class="${imgClass}"
                onerror="this.onerror=null;this.src='${fallback}';" />
-          ${recBadge}
+          ${badgeRow}
+          <div class="mc-deal-badge-img">${getDealBadgeHTML(item.dealType)}</div>
         </div>
         <div class="lp-mini-body">
-          <div class="lp-mini-meta">
-            ${getDealBadgeHTML(item.dealType)}
+          <div class="mc-top-row">
             <span class="lp-mini-type-tag">${label}</span>
+            ${propNoHTML}
           </div>
           <div class="lp-mini-title">${item.title || '(제목 없음)'}</div>
           <div class="lp-mini-price">${formatPropertyPrice(item)}</div>
