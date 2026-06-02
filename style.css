@@ -4101,23 +4101,47 @@ body[data-page="listings"] .lp-kakao-btn:hover {
 
 }
 
-/* ── 상담신청 버튼 박스 ── */
+/* ── 상담신청 박스 — 흰 배경 카드, 버튼형 ── */
 
 body[data-page="listings"] .side-consult-link-box {
 
   flex-shrink: 0 !important;
 
+  background: #ffffff !important;
+
+  border: 1px solid #e2e8f0 !important;
+
+  border-radius: 8px !important;
+
+  padding: 12px 12px 10px !important;
+
   display: flex !important;
 
   flex-direction: column !important;
 
-  gap: 6px !important;
+  gap: 8px !important;
 
-  padding: 0 !important;
+  box-shadow: 0 1px 4px rgba(7,31,95,0.06) !important;
 
 }
 
-/* 상담신청 버튼 — 네이비, 흰 글자 (카카오 버튼과 명확히 구분) */
+/* 안내 문구 */
+
+body[data-page="listings"] .side-consult-desc {
+
+  font-size: 12px !important;
+
+  color: #64748b !important;
+
+  text-align: center !important;
+
+  line-height: 1.5 !important;
+
+  margin: 0 !important;
+
+}
+
+/* 상담신청 버튼 — 네이비 + 흰 글자, 둥근 모서리 */
 
 body[data-page="listings"] .side-consult-btn {
 
@@ -4127,19 +4151,17 @@ body[data-page="listings"] .side-consult-btn {
 
   justify-content: center !important;
 
-  gap: 5px !important;
-
   width: 100% !important;
 
-  min-height: 44px !important;
+  min-height: 42px !important;
 
-  padding: 0 10px !important;
+  padding: 0 12px !important;
 
-  background: #06245c !important;  /* 하이탑 대표 네이비 */
+  background: #071f5f !important;
 
   color: #ffffff !important;
 
-  font-size: 16px !important;
+  font-size: 15px !important;
 
   font-weight: 800 !important;
 
@@ -4147,7 +4169,7 @@ body[data-page="listings"] .side-consult-btn {
 
   text-decoration: none !important;
 
-  border-radius: 0px !important;
+  border-radius: 7px !important;
 
   letter-spacing: 0.3px !important;
 
@@ -4161,11 +4183,13 @@ body[data-page="listings"] .side-consult-btn {
 
 body[data-page="listings"] .side-consult-btn:hover {
 
-  background: #0a3580 !important;
+  background: #0f3a9e !important;
 
   color: #ffffff !important;
 
 }
+
+/* 하단 안내문 */
 
 body[data-page="listings"] .side-consult-note {
 
