@@ -327,27 +327,49 @@ const getDefaultImageByCategory = (cat1) =>
   DEFAULT_IMAGES[cat1] || FALLBACK_IMAGE;
 
 // 이미지 URL 우선순위: imageUrls 배열 → imageUrl → thumbnail → 카테고리 기본 이미지
-// Google Drive /file/d/...view 링크는 자동 변환, 변환 불가면 건너뜀
+// Google Drive /file/d/...view 링크는 lh3.googleusercontent.com/d/파일ID 로 변환
 const getThumbnail = (item) => {
-  const candidates = [
-    ...(Array.isArray(item.imageUrls) ? item.imageUrls : []),
-    item.imageUrl,
-    item.thumbnail,
-  ].filter(Boolean);
+  // imageUrls 가 배열이 아닌 경우(문자열 등) 방어 처리
+  let urlArr = [];
+  if (Array.isArray(item.imageUrls)) {
+    urlArr = item.imageUrls;
+  } else if (item.imageUrls && typeof item.imageUrls === 'string') {
+    urlArr = [item.imageUrls];
+  }
 
+  const candidates = [...urlArr, item.imageUrl, item.thumbnail].filter(v => v && String(v).trim());
+
+  let finalUrl = '';
   for (const raw of candidates) {
     const str = String(raw).trim();
     if (!str) continue;
-    // Drive /file/d/.../view → 변환
-    if (str.includes('drive.google.com/file/d/')) {
+    // Google Drive /file/d/.../view → lh3.googleusercontent.com 변환
+    if (str.includes('drive.google.com')) {
       const fileId = _driveFileId(str);
-      if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
-      continue; // 변환 실패 시 건너뜀
+      if (fileId) {
+        finalUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+        break;
+      }
+      // fileId 추출 실패 시 다음 후보로
+      continue;
     }
-    // 그 외 Drive URL (thumbnail 형태 등)도 normalizeImageUrl 적용
-    return normalizeImageUrl(str);
+    // 그 외 URL은 그대로 사용 (Supabase, 일반 이미지 등)
+    finalUrl = str;
+    break;
   }
-  return getDefaultImageByCategory(getCategory1(item));
+
+  if (!finalUrl) finalUrl = getDefaultImageByCategory(getCategory1(item));
+
+  // 디버그용 로그 — 이미지가 제대로 연결되는지 확인 후 제거 예정
+  console.log('[getThumbnail]', {
+    title: item.title,
+    imageUrls: item.imageUrls,
+    imageUrl: item.imageUrl,
+    thumbnail: item.thumbnail,
+    finalUrl,
+  });
+
+  return finalUrl;
 };
 const getDisplayAddress = (item) => item.displayAddress || item.address;
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
