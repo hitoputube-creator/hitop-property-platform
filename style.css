@@ -2606,8 +2606,9 @@ body {
   overflow: hidden;
   box-sizing: border-box;
   width: 100%;
+  height: 136px;
   min-height: 136px;
-  max-height: 164px;
+  max-height: 136px;
 }
 
 .lp-mini-card:hover {
@@ -2716,7 +2717,7 @@ body {
 /* 제목 */
 .lp-mini-title {
   font-size: 15.5px;
-  font-weight: 900;
+  font-weight: 400;
   color: #0f172a;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4144,6 +4145,8 @@ body[data-page="listings"] .lp-kakao-btn:hover {
 body[data-page="listings"] .side-consult-link-box {
 
   flex-shrink: 0 !important;
+
+  flex-grow: 1 !important;   /* 사이드바 남은 공간 채우기 */
 
   background: #ffffff !important;
 
@@ -5941,16 +5944,17 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   white-space: nowrap;
   line-height: 1;
   font-size: 11.5px;
-  font-weight: 800;
+  font-weight: 400;   /* normal */
   flex-shrink: 0;
   letter-spacing: 0.1px;
 }
-.deal-badge-mae  { background: #fee2e2; color: #b91c1c; }
-.deal-badge-im   { background: #dbeafe; color: #1d4ed8; }
-.deal-badge-jeon { background: #ede9fe; color: #6d28d9; }
-.deal-badge-wol  { background: #ccfbf1; color: #0f766e; }
-.deal-badge-bun  { background: #ffedd5; color: #c2410c; }
-.deal-badge-etc  { background: #f3f4f6; color: #374151; }
+/* 거래유형별 색상 */
+.deal-badge-mae  { background: #E53935; color: #fff; }          /* 매매 — 빨강 */
+.deal-badge-im   { background: #1565C0; color: #fff; }          /* 임대 — 파랑 */
+.deal-badge-jeon { background: #1565C0; color: #fff; }          /* 전세 — 파랑 */
+.deal-badge-wol  { background: #2E7D32; color: #fff; }          /* 월세 — 초록 */
+.deal-badge-bun  { background: #c2410c; color: #fff; }          /* 분양 — 주황 */
+.deal-badge-etc  { background: #64748b; color: #fff; }
 
 /* ===== 푸터 내 가로형 빠른 바로가기 버튼 셋 ===== */
 .footer-quick-btns {
