@@ -1589,7 +1589,6 @@ const setupListingsPage = () => {
           <img src="${thumb}" alt="${safeTitle}" class="${imgClass}"
                onerror="this.onerror=null;this.src='${fallback}';" />
           ${badgeRow}
-          <div class="mc-deal-badge-img">${getDealBadgeHTML(item.dealType)}</div>
         </div>
         <div class="lp-mini-body">
           <div class="mc-top-row">
@@ -1597,7 +1596,10 @@ const setupListingsPage = () => {
             ${propNoHTML}
           </div>
           <div class="lp-mini-title">${item.title || '(제목 없음)'}</div>
-          <div class="lp-mini-price">${formatPropertyPrice(item)}</div>
+          <div class="lp-mini-price-row">
+            ${getDealBadgeHTML(item.dealType)}
+            <span class="lp-mini-price">${formatPropertyPrice(item)}</span>
+          </div>
           <div class="lp-mini-addr">📍 ${getDisplayAddress(item) || '-'}</div>
           ${areaHTML ? `<div class="lp-mini-area">${areaHTML}</div>` : ''}
         </div>

@@ -2656,17 +2656,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 .mcb-excl   { background: #6d28d9; color: #fff; }
 .mcb-new    { background: #0ea5e9; color: #fff; }
 
-/* 거래유형 배지 — 이미지 우하단 */
-.mc-deal-badge-img {
-  position: absolute;
-  bottom: 5px; right: 5px;
-  z-index: 2;
-}
-.mc-deal-badge-img .deal-badge {
-  font-size: 10px !important;
-  padding: 1px 5px !important;
-  height: 17px !important;
-}
+/* mc-deal-badge-img — 제거됨 (가격 앞으로 이동) */
 
 /* 텍스트 영역 — 오른쪽 58% */
 .lp-mini-body {
@@ -2722,6 +2712,21 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   letter-spacing: -0.3px;
 }
 
+/* 가격 행 — 거래유형 배지 + 가격 한 줄 */
+.lp-mini-price-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+}
+.lp-mini-price-row .deal-badge {
+  flex-shrink: 0;
+  font-size: 11px !important;
+  padding: 2px 7px !important;
+  height: 20px !important;
+  border-radius: 4px !important;
+}
+
 /* 가격 — 가장 크고 눈에 띄게 */
 .lp-mini-price {
   font-size: 17px;
@@ -2729,6 +2734,9 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   color: #0a4e8a;
   letter-spacing: -0.5px;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 주소 */
