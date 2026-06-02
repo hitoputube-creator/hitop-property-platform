@@ -3225,7 +3225,7 @@ body[data-page="listings"] .lp-hours-small {
 
 }
 
-/* 카카오톡 버튼 */
+/* 카카오 오픈채팅 버튼 — 카카오 노란/골드, 진한 글자 */
 
 body[data-page="listings"] .lp-kakao-btn,
 
@@ -3241,19 +3241,19 @@ body[data-page="listings"] .lp-kakao-btn,
 
   width: 100%;
 
-  min-height: 40px;
+  min-height: 42px;
 
   padding: 0 12px;
 
-  background: #C9A84C;
+  background: #FEE500;   /* 카카오 공식 노란색 */
 
-  color: #ffffff;
+  color: #191919;        /* 카카오 공식 진한 글자 */
 
   border-radius: 8px;
 
   text-align: center;
 
-  font-size: 13px;
+  font-size: 15px;
 
   font-weight: 800;
 
@@ -3263,7 +3263,7 @@ body[data-page="listings"] .lp-kakao-btn,
 
   box-sizing: border-box;
 
-  transition: background 0.12s;
+  transition: background 0.12s, color 0.12s;
 
 }
 
@@ -3271,9 +3271,9 @@ body[data-page="listings"] .lp-kakao-btn:hover,
 
 .lp-kakao-btn:hover {
 
-  background: #b89540;
+  background: #f0d800;
 
-  color: #ffffff;
+  color: #191919;
 
 }
 
@@ -4035,17 +4035,29 @@ body[data-page="listings"] .lp-hours-small {
 
 }
 
-/* 카카오 버튼 — 높이·상하 여백 압축 */
+/* 카카오 버튼 — listings 페이지 override */
 
 body[data-page="listings"] .lp-kakao-btn {
 
   border-radius: 0px !important;
 
-  min-height: 34px !important; /* 40px → 34px */
+  min-height: 42px !important;
 
   padding: 0 10px !important;
 
-  font-size: 12px !important;  /* 13px → 12px */
+  font-size: 15px !important;
+
+  background: #FEE500 !important;
+
+  color: #191919 !important;
+
+}
+
+body[data-page="listings"] .lp-kakao-btn:hover {
+
+  background: #f0d800 !important;
+
+  color: #191919 !important;
 
 }
 
@@ -4065,19 +4077,29 @@ body[data-page="listings"] .side-consult-link-box {
 
 }
 
+/* 상담신청 버튼 — 네이비, 흰 글자 (카카오 버튼과 명확히 구분) */
+
 body[data-page="listings"] .side-consult-btn {
 
-  display: block !important;
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  gap: 5px !important;
 
   width: 100% !important;
 
-  padding: 10px 0 !important;
+  min-height: 44px !important;
 
-  background: #C9A84C !important;
+  padding: 0 10px !important;
 
-  color: #fff !important;
+  background: #06245c !important;  /* 하이탑 대표 네이비 */
 
-  font-size: 13.5px !important;
+  color: #ffffff !important;
+
+  font-size: 16px !important;
 
   font-weight: 800 !important;
 
@@ -4087,19 +4109,21 @@ body[data-page="listings"] .side-consult-btn {
 
   border-radius: 0px !important;
 
-  letter-spacing: 0.2px !important;
+  letter-spacing: 0.3px !important;
 
   transition: background 0.15s !important;
 
   box-sizing: border-box !important;
 
+  line-height: 1 !important;
+
 }
 
 body[data-page="listings"] .side-consult-btn:hover {
 
-  background: #b89540 !important;
+  background: #0a3580 !important;
 
-  color: #fff !important;
+  color: #ffffff !important;
 
 }
 
