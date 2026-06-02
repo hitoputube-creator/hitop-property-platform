@@ -1779,45 +1779,6 @@ const setupListingsPage = () => {
     }
   });
 
-  // ── 하단 푸터 상담신청 폼 → Firestore 저장 ──
-  document.getElementById('footerInquiryForm')?.addEventListener('submit', async e => {
-    e.preventDefault();
-    const form  = e.target;
-    const name  = (document.getElementById('ftInqName')?.value  || '').trim();
-    const phone = (document.getElementById('ftInqPhone')?.value || '').trim();
-    const msg   = (document.getElementById('ftInqMsg')?.value   || '').trim();
-
-    if (!name)  { alert('이름을 입력해 주세요.');   return; }
-    if (!phone) { alert('연락처를 입력해 주세요.'); return; }
-    if (!msg)   { alert('문의내용을 입력해 주세요.'); return; }
-
-    const submitBtn = form.querySelector('[type="submit"]');
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '전송 중…'; }
-
-    try {
-      const [{ collection: col, addDoc, serverTimestamp },
-             { db, COLLECTION }] = await Promise.all([
-        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
-        import('./firebase-config.js'),
-      ]);
-      await addDoc(col(db, COLLECTION), {
-        type:      '하단 폼 문의',
-        subject:   msg.length > 40 ? msg.slice(0, 40) + '…' : msg,
-        name, phone, message: msg,
-        source:    '매물보기 하단 푸터',
-        status:    '신규',
-        createdAt: serverTimestamp(),
-      });
-      alert('상담 신청이 접수되었습니다. 빠르게 연락드리겠습니다.');
-      form.reset();
-    } catch (err) {
-      console.error('[하단 상담신청 저장 오류]', err);
-      alert('상담 신청 저장 중 오류가 발생했습니다. 전화 또는 카카오톡으로 문의해 주세요.');
-    } finally {
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '상담신청'; }
-    }
-  });
-
   // ── 전체 매물 보기 버튼 (패널 하단) ──
   document.getElementById('btnScrollToAll')?.addEventListener('click', () => {
     document.getElementById('lp-bottom')?.scrollIntoView({ behavior: 'smooth' });

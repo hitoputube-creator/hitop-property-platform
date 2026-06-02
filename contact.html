@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>하이탑부동산 | 상담신청</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260602h" />
+  <style>
+    .contact-wrap {
+      max-width: 560px;
+      margin: 48px auto 80px;
+      padding: 0 20px;
+    }
+    .contact-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(7,31,95,0.10);
+      overflow: hidden;
+    }
+    .contact-card-header {
+      background: #071f5f;
+      padding: 24px 28px 20px;
+    }
+    .contact-card-header h1 {
+      margin: 0 0 4px;
+      font-size: 22px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .contact-card-header p {
+      margin: 0;
+      font-size: 13px;
+      color: #93aad4;
+      line-height: 1.5;
+    }
+    .contact-card-body {
+      padding: 28px 28px 32px;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .contact-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .contact-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+    .contact-label .req { color: #ef4444; margin-left: 2px; }
+    .contact-inp,
+    .contact-textarea {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 7px;
+      font-size: 14px;
+      color: #111827;
+      background: #f8fafc;
+      box-sizing: border-box;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .contact-inp:focus,
+    .contact-textarea:focus {
+      border-color: #071f5f;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(7,31,95,0.08);
+    }
+    .contact-textarea { resize: vertical; min-height: 110px; }
+    .contact-privacy {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: #f1f5f9;
+      border-radius: 7px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .contact-privacy input[type="checkbox"] {
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: #071f5f;
+      width: 15px; height: 15px;
+    }
+    .contact-privacy-detail {
+      color: #071f5f;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    .contact-submit {
+      width: 100%;
+      padding: 13px 0;
+      border: none;
+      border-radius: 7px;
+      background: #071f5f;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.15s;
+    }
+    .contact-submit:hover  { background: #C9A84C; }
+    .contact-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .contact-info-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .contact-info-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #f1f5f9;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: #374151;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.12s;
+    }
+    .contact-info-chip:hover { background: #e2e8f0; }
+    .contact-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #6b7280;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .contact-back:hover { color: #071f5f; }
+    @media (max-width: 600px) {
+      .contact-wrap { margin-top: 24px; }
+      .contact-card-header { padding: 20px 18px 16px; }
+      .contact-card-body  { padding: 20px 18px 24px; }
+    }
+  </style>
+</head>
+<body data-page="contact">
+
+  <!-- 탑바 -->
+  <div class="top-bar">
+    <div class="container">
+      <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+      <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+    </div>
+  </div>
+
+  <!-- 헤더 -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html">
+        <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+      </a>
+      <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+      <nav class="nav-menu" aria-label="메인 메뉴">
+        <a href="about.html">하이탑소개</a>
+        <a href="listings.html">매물보기</a>
+        <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+        <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+        <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+        <a href="consult.html">상담문의 게시판</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 본문 -->
+  <div class="contact-wrap">
+
+    <a class="contact-back" href="listings.html">← 매물보기로 돌아가기</a>
+
+    <div class="contact-card">
+      <div class="contact-card-header">
+        <h1>📋 상담 신청</h1>
+        <p>이름·연락처·문의내용을 남겨 주시면 빠르게 연락드리겠습니다.<br>
+           평일 10:00 ~ 19:00 운영 / 📞 031-949-8969</p>
+      </div>
+      <div class="contact-card-body">
+
+        <!-- 연락처 바로가기 -->
+        <div class="contact-info-row" style="margin-bottom:18px;">
+          <a class="contact-info-chip" href="tel:031-949-8969">📞 031-949-8969</a>
+          <a class="contact-info-chip" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer">💬 카카오 오픈채팅</a>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="contact-field">
+            <label class="contact-label" for="ctName">이름<span class="req">*</span></label>
+            <input class="contact-inp" type="text" id="ctName" placeholder="성함을 입력해 주세요" autocomplete="name" />
+          </div>
+          <div class="contact-field">
+            <label class="contact-label" for="ctPhone">연락처<span class="req">*</span></label>
+            <input class="contact-inp" type="tel" id="ctPhone" placeholder="010-0000-0000" autocomplete="tel" />
+          </div>
+          <div class="contact-field">
+            <label class="contact-label" for="ctMsg">문의내용<span class="req">*</span></label>
+            <textarea class="contact-textarea" id="ctMsg" placeholder="관심 매물 종류, 예산, 희망 지역 등을 자유롭게 적어 주세요."></textarea>
+          </div>
+          <div class="contact-privacy">
+            <input type="checkbox" id="ctAgree" />
+            <span>
+              <strong>개인정보 수집·이용</strong>에 동의합니다.
+              (수집항목: 이름·연락처·문의내용 / 목적: 상담 답변 / 보유: 목적 달성 후 즉시 파기)
+              <button type="button" class="contact-privacy-detail"
+                onclick="alert('개인정보 수집 및 이용 안내\n\n1. 수집항목: 이름, 연락처, 문의내용\n2. 수집목적: 매물 상담 및 빠른 문의 답변\n3. 보유 및 이용기간: 목적 달성 후 지체 없이 파기')">
+                자세히 보기
+              </button>
+            </span>
+          </div>
+          <button type="submit" class="contact-submit" id="ctSubmitBtn">상담 신청하기</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="site-footer-v2">
+    <div class="footer-v2-inner">
+      <div class="footer-v2-company">
+        <p class="footer-v2-name">하이탑부동산공인중개사사무소</p>
+        <div class="footer-v2-info">
+          <span>대표: 주현희</span>
+          <span>주소: 경기도 파주시 책향기로 830, 1층</span>
+          <span>전화: 031-949-8969</span>
+        </div>
+        <p class="footer-v2-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js?v=20260602h"></script>
+  <script type="module">
+    import { db, COLLECTION } from './firebase-config.js';
+    import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    document.getElementById('contactForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name  = (document.getElementById('ctName')?.value  || '').trim();
+      const phone = (document.getElementById('ctPhone')?.value || '').trim();
+      const msg   = (document.getElementById('ctMsg')?.value   || '').trim();
+      const agree = document.getElementById('ctAgree');
+      const btn   = document.getElementById('ctSubmitBtn');
+
+      if (!name)  { alert('이름을 입력해 주세요.');    return; }
+      if (!phone) { alert('연락처를 입력해 주세요.');  return; }
+      if (!msg)   { alert('문의내용을 입력해 주세요.'); return; }
+      if (!agree?.checked) {
+        alert('개인정보 수집 및 이용에 동의해 주세요.');
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = '전송 중…';
+      try {
+        await addDoc(collection(db, COLLECTION), {
+          type:      '상담신청 페이지',
+          subject:   msg.length > 40 ? msg.slice(0, 40) + '…' : msg,
+          name, phone, message: msg,
+          source:    '상담신청 전용 페이지(contact.html)',
+          status:    '신규',
+          createdAt: serverTimestamp(),
+        });
+        alert('상담 신청이 접수되었습니다.\n빠르게 연락드리겠습니다. 감사합니다.');
+        e.target.reset();
+      } catch (err) {
+        console.error('[상담신청 오류]', err);
+        alert('저장 중 오류가 발생했습니다.\n전화(031-949-8969) 또는 카카오톡으로 문의해 주세요.');
+      } finally {
+        btn.disabled = false; btn.textContent = '상담 신청하기';
+      }
+    });
+  </script>
+</body>
+</html>
