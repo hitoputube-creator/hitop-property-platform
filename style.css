@@ -2691,26 +2691,33 @@ body {
 /* 매물종류 태그 */
 .lp-mini-type-tag {
   font-size: 11.5px;
-  color: #475569;   /* 더 진하게 */
+  color: #334155;
   font-weight: 700;
   letter-spacing: 0.1px;
   white-space: nowrap;
 }
 
-/* 매물번호 — 작고 연하게 */
+/* 매물번호 — pill 배지 */
 .mc-propno {
-  font-size: 10.5px;
-  color: #94a3b8;
-  font-weight: 500;
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0f172a;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  padding: 1px 7px;
   white-space: nowrap;
   flex-shrink: 0;
+  line-height: 1.5;
+  letter-spacing: -0.1px;
 }
 
-/* 제목 — 굵고 선명하게 */
+/* 제목 */
 .lp-mini-title {
-  font-size: 15.5px;   /* 15 → 15.5 */
-  font-weight: 800;
-  color: #111827;      /* 더 진하게 */
+  font-size: 15.5px;
+  font-weight: 900;
+  color: #0f172a;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -2720,7 +2727,7 @@ body {
   letter-spacing: -0.3px;
 }
 
-/* 가격 행 — 거래유형 배지 + 가격 한 줄 */
+/* 가격 행 */
 .lp-mini-price-row {
   display: flex;
   align-items: center;
@@ -2737,11 +2744,11 @@ body {
   font-weight: 800 !important;
 }
 
-/* 가격 — 가장 크고 눈에 띄게 */
+/* 가격 — 붉은 강조 */
 .lp-mini-price {
-  font-size: 17.5px;   /* 17 → 17.5 */
+  font-size: 18px;
   font-weight: 900;
-  color: #0a4e8a;
+  color: #d92d20;
   letter-spacing: -0.5px;
   line-height: 1.2;
   white-space: nowrap;
@@ -2749,20 +2756,21 @@ body {
   text-overflow: ellipsis;
 }
 
-/* 주소 — 너무 흐리지 않게 */
+/* 주소 */
 .lp-mini-addr {
   font-size: 12.5px;
-  color: #4b5563;   /* #94a3b8 → #4b5563 (훨씬 진하게) */
+  color: #374151;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.38;
 }
 
-/* 면적 */
+/* 면적 — 중요 정보, 진하게 */
 .lp-mini-area {
-  font-size: 12.5px;
-  color: #374151;   /* 더 진하게 */
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4148,99 +4156,55 @@ body[data-page="listings"] .side-consult-link-box {
 /* 안내 문구 */
 
 body[data-page="listings"] .side-consult-desc {
-
-  font-size: 12px !important;
-
-  color: #475569 !important;  /* 더 진하게 */
-
+  font-size: 12.5px !important;
+  color: #374151 !important;
   text-align: center !important;
-
-  line-height: 1.5 !important;
-
+  line-height: 1.55 !important;
   margin: 0 !important;
-
+  font-weight: 500 !important;
 }
 
-/* 상담신청 버튼 — 네이비 + 흰 글자, 둥근 모서리 */
-
 body[data-page="listings"] .side-consult-btn {
-
   display: flex !important;
-
   align-items: center !important;
-
   justify-content: center !important;
-
   width: 100% !important;
-
-  min-height: 42px !important;
-
+  min-height: 48px !important;
   padding: 0 12px !important;
-
-  background: #D97757 !important;   /* 코랄 핑크 */
-
+  background: #D97757 !important;
   color: #ffffff !important;
-
-  font-size: 15px !important;
-
-  font-weight: 800 !important;
-
+  font-size: 17px !important;
+  font-weight: 900 !important;
   text-align: center !important;
-
   text-decoration: none !important;
-
   border-radius: 7px !important;
-
-  letter-spacing: 0.3px !important;
-
+  letter-spacing: 0.2px !important;
   transition: background 0.15s !important;
-
   box-sizing: border-box !important;
-
   line-height: 1 !important;
-
 }
 
 body[data-page="listings"] .side-consult-btn:hover {
-
   background: #C96549 !important;
-
   color: #ffffff !important;
-
 }
-
-/* 접수 안내문 */
 
 body[data-page="listings"] .side-consult-note {
-
-  font-size: 11px !important;
-
-  color: #94a3b8 !important;
-
+  font-size: 11.5px !important;
+  color: #6b7280 !important;
   text-align: center !important;
-
   margin: 0 !important;
-
-  line-height: 1.4 !important;
-
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
 }
 
-/* 하단 서브 안내문 */
-
 body[data-page="listings"] .side-consult-subnote {
-
-  font-size: 10.5px !important;
-
-  color: #b0bec5 !important;
-
+  font-size: 11px !important;
+  color: #9ca3af !important;
   text-align: center !important;
-
   margin: 0 !important;
-
-  line-height: 1.5 !important;
-
+  line-height: 1.55 !important;
   letter-spacing: -0.1px !important;
-
 }
 
 /* ── 가운데 지도 영역 (그리드 2열 1행) ── */
