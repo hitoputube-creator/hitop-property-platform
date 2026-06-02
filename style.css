@@ -2746,10 +2746,9 @@ body {
   padding: 0 7px !important;
   margin-right: 2px !important;
   border-radius: 3px !important;
-  background: #0B2A6F !important;
-  color: #ffffff !important;
+  /* background: 각 deal-badge-* 클래스에서 지정 */
   font-size: 12.5px !important;
-  font-weight: 900 !important;
+  font-weight: 400 !important;
   line-height: 1 !important;
   letter-spacing: -0.3px !important;
 }
