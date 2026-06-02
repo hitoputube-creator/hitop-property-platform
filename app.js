@@ -1545,13 +1545,17 @@ const setupListingsPage = () => {
     return html;
   };
 
-  // ── 오른쪽 패널: 추천 매물 미니카드 (최신 매물 섹션 제거, 개수 제한 없음) ──
+  // ── 오른쪽 패널: 최근 등록 매물 (최신순, 내부 스크롤) ──
   const renderSpecialPanels = () => {
     const lpPanel = document.getElementById('lpPanel');
     if (!lpPanel) return;
 
-    const all      = _listings.filter(i => !isCompleted(i));
-    const recItems = all.filter(isRec); // slice 제한 없이 전체 표시
+    // 거래완료 제외 → createdAt 내림차순 정렬
+    const recentItems = [..._listings.filter(i => !isCompleted(i))].sort((a, b) => {
+      const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return tb - ta;
+    });
 
     const miniCardHTML = item => {
       const thumb    = getThumbnail(item);
@@ -1561,11 +1565,16 @@ const setupListingsPage = () => {
       const areaHTML = getCardAreaHTML(item);
       const isSample = thumb.startsWith('images/') || thumb === fallback;
       const imgClass = `lp-mini-img${isSample ? ' lp-mini-img--sample' : ''}`;
+      // 추천 스티커 — isRecommended 또는 is_featured 가 true인 매물에만 표시
+      const recBadge = isRec(item)
+        ? `<span class="lp-mini-rec-badge">⭐ 추천매물</span>`
+        : '';
 
       return `<article class="lp-mini-card" data-id="${item.id}">
         <div class="lp-mini-img-wrap">
           <img src="${thumb}" alt="${safeTitle}" class="${imgClass}"
                onerror="this.onerror=null;this.src='${fallback}';" />
+          ${recBadge}
         </div>
         <div class="lp-mini-body">
           <div class="lp-mini-meta">
@@ -1580,14 +1589,16 @@ const setupListingsPage = () => {
       </article>`;
     };
 
-    lpPanel.innerHTML = `<div class="lp-panel-inner">
-      <div class="lp-panel-section">
-        <div class="lp-panel-section-hd">⭐ 추천 매물</div>
-        <div class="lp-panel-section-body">
-          ${recItems.length ? recItems.map(miniCardHTML).join('') : '<div class="lp-panel-empty">추천 매물이 없습니다.</div>'}
-        </div>
+    lpPanel.innerHTML = `
+      <div class="lp-panel-hd-sticky">
+        <span class="lp-panel-hd-title">🆕 최근 등록 매물</span>
+        <span class="lp-panel-hd-count">${recentItems.length}건</span>
       </div>
-    </div>`;
+      <div class="lp-panel-scroll-body">
+        ${recentItems.length
+          ? `<div class="lp-panel-section-body">${recentItems.map(miniCardHTML).join('')}</div>`
+          : '<div class="lp-panel-empty" style="padding:20px 16px;">등록된 매물이 없습니다.</div>'}
+      </div>`;
 
     lpPanel.querySelectorAll('.lp-mini-card').forEach(card => {
       card.addEventListener('click', () => {
