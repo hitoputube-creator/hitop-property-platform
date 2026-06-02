@@ -1722,9 +1722,9 @@ const setupListingsPage = () => {
 
   // ── URL 파라미터 ──
   const urlCatRaw = new URLSearchParams(window.location.search).get('category');
-  if (urlCatRaw) {
-    // 레거시 propertyType 값이 URL에 오면 category1 으로 변환
-    const urlCat = PT_TO_CAT1[urlCatRaw] || urlCatRaw;
+  // urlCat 을 블록 밖에서도 참조할 수 있도록 함수 스코프에 선언
+  const urlCat = urlCatRaw ? (PT_TO_CAT1[urlCatRaw] || urlCatRaw) : '';
+  if (urlCat) {
     flt.cat = urlCat;
     const catSel = document.getElementById('formCatSelect');
     if (catSel) catSel.value = urlCat;
