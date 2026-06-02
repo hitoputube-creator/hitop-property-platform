@@ -2745,7 +2745,7 @@ body {
   padding: 0 7px !important;
   margin-right: 2px !important;
   border-radius: 3px !important;
-  background: #E36C1E !important;
+  background: #0B2A6F !important;
   color: #ffffff !important;
   font-size: 12.5px !important;
   font-weight: 900 !important;
@@ -2753,11 +2753,11 @@ body {
   letter-spacing: -0.3px !important;
 }
 
-/* 가격 — 네이비 강조 */
+/* 가격 — 골드브라운 강조 */
 .lp-mini-price {
   font-size: 18px;
   font-weight: 900;
-  color: #08245C;
+  color: #B45309;
   letter-spacing: -0.4px;
   line-height: 1.2;
   white-space: nowrap;
