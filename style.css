@@ -5336,19 +5336,38 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
    listings.html 모바일 반응형 최적화 패치 (max-width: 768px)
    ================================================================ */
 @media (max-width: 768px) {
-  
-  /* 1. 페이지 전체 높이 제한 및 스크롤 봉쇄 해제 (자연스러운 세로 스크롤 허용) */
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     모바일 핵심 수정: body/html overflow hidden 완전 해제
+     PC에서 100vh + overflow:hidden 으로 고정된 레이아웃을
+     모바일에서는 자연스러운 전체 페이지 세로 스크롤로 전환
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  /* 1. body — 100vh 고정 및 overflow:hidden 완전 해제 */
   body[data-page="listings"] {
     height: auto !important;
+    min-height: 100% !important;
     max-height: none !important;
-    overflow: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;   /* 페이지 전체 세로 스크롤 허용 */
+    display: block !important;     /* flex 해제 → 자연 블록 흐름 */
   }
 
-  /* 2. 3단 그리드 바디를 모바일 세로 1열 흐름으로 변경 */
+  /* 2. lp-body: 그리드 → 세로 flex 전환, 높이 제한 전면 해제 */
   body[data-page="listings"] .lp-body {
     display: flex !important;
     flex-direction: column !important;
     height: auto !important;
+    min-height: auto !important;
+    flex: none !important;         /* body flex:1 상속 차단 */
+  }
+
+  /* lp-body flex 자식들의 height 상속 차단 */
+  body[data-page="listings"] .lp-sidebar,
+  body[data-page="listings"] .lp-center,
+  body[data-page="listings"] .lp-panel,
+  body[data-page="listings"] .cat-cards-section {
+    flex: none !important;
   }
 
   /* 3. 헤더 레이아웃 모바일 2행 재배치 (로고/토글 1행, 검색창 2행) */
@@ -5476,21 +5495,44 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     display: none !important;
   }
 
-  /* 5. 지도 영역 (모바일 해상도에서 280px 고정 뷰포트 확보) */
+  /* 5. 지도 영역 — 모바일 360px 고정 (너무 크지 않게) */
   body[data-page="listings"] .lp-center {
-    height: 280px !important;
+    width: 100% !important;
+    height: 360px !important;
+    min-height: 360px !important;
+    max-height: 360px !important;
     flex-shrink: 0 !important;
+    grid-column: unset !important;
+    grid-row: unset !important;
   }
 
-  /* 6. 추천/최신 매물 패널 300px 고정높이 완전 해제 및 화면가림 방지 */
+  body[data-page="listings"] #map {
+    height: 100% !important;
+    width: 100% !important;
+  }
+
+  /* 6. 추천매물 패널 — 내부 스크롤 완전 해제, 페이지 전체 스크롤로 전환 */
   body[data-page="listings"] .lp-panel {
     width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
+    max-height: none !important;
     overflow: visible !important;
+    overflow-x: hidden !important;
     padding-right: 0 !important;
     border-left: none !important;
     border-top: 1px solid #E5E7EB !important;
+    grid-column: unset !important;
+    grid-row: unset !important;
+  }
+
+  /* lp-panel-inner: flex 내부 스크롤 해제, 높이 auto */
+  body[data-page="listings"] .lp-panel-inner {
+    flex: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
   }
 
   body[data-page="listings"] .lp-rec-2col-layout {
