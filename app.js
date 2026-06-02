@@ -2063,6 +2063,11 @@ const setupAdminRegister = () => {
   let isEditMode           = false;
   let importedLegacyDesc   = '';
 
+  // Drive 링크 여부 판별
+  const isDriveUrl = (url) => url && String(url).includes('drive.google.com');
+  // Supabase public URL 여부 판별
+  const isSupabaseUrl = (url) => url && String(url).includes('supabase.co/storage');
+
   const addImageRow = (value = '') => {
     if (!imageContainer) return;
     if (imageContainer.querySelectorAll('.image-url-row').length >= MAX_IMAGES) return;
@@ -2075,46 +2080,62 @@ const setupAdminRegister = () => {
     thumb.className = 'img-thumb hidden';
     thumb.alt = '미리보기';
 
-    // ② URL 입력창
+    // ② URL 입력창 (읽기전용 — 직접 편집 차단, 파일업로드로만 값 변경)
     const input = document.createElement('input');
     input.name = 'imageUrls'; input.type = 'url';
-    input.placeholder = `사진 URL ${count + 1}`;
+    input.placeholder = `📎 파일을 선택하면 자동으로 업로드됩니다 (${count + 1}번)`;
     input.value = value;
-    if (count === 0) input.required = true;
-    // 기존 URL 입력 시 썸네일 업데이트
-    input.addEventListener('blur', () => {
-      if (input.value.trim()) { thumb.src = input.value.trim(); thumb.classList.remove('hidden'); }
-      else thumb.classList.add('hidden');
-    });
-    if (value) { thumb.src = value; thumb.classList.remove('hidden'); }
+    input.readOnly = true;
+    input.style.cursor = 'default';
+    input.style.background = '#f8f8f8';
 
-    // ③ 파일 업로드 버튼 (Firebase Storage)
+    // ③ 파일 업로드 버튼 → Supabase Storage 업로드
     const fileLabel = document.createElement('label');
     fileLabel.className = 'btn btn-outline btn-sm img-file-label';
-    fileLabel.title = '로컬 파일을 Firebase Storage에 업로드';
-    fileLabel.innerHTML = '📎 파일';
+    fileLabel.title = 'Supabase Storage에 업로드';
+    fileLabel.innerHTML = '📎 파일 선택';
     const fileInput = document.createElement('input');
     fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
     fileLabel.appendChild(fileInput);
 
-    // ④ 업로드 상태 표시
+    // ④ 업로드 상태 / Drive 경고 표시
     const statusEl = document.createElement('span');
     statusEl.className = 'img-upload-status';
+
+    // Drive 링크가 기존값으로 들어온 경우 → 경고 표시, 미리보기는 변환 URL로
+    if (value && isDriveUrl(value)) {
+      const previewUrl = normalizeImageUrl(value);
+      thumb.src = previewUrl; thumb.classList.remove('hidden');
+      statusEl.textContent = '⚠️ Google Drive 링크 — 파일을 다시 업로드해 주세요';
+      statusEl.className = 'img-upload-status error';
+      // input 값은 비워서 저장 시 Drive 링크가 들어가지 않게 함
+      input.value = '';
+      // 원본 Drive URL을 data 속성에만 보관 (참고용)
+      input.dataset.driveUrl = value;
+    } else if (value) {
+      thumb.src = value; thumb.classList.remove('hidden');
+      statusEl.textContent = '✅ 저장된 이미지';
+      statusEl.className = 'img-upload-status done';
+    }
 
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files[0];
       if (!file) return;
       statusEl.textContent = '⏳ 업로드 중…';
       statusEl.className = 'img-upload-status uploading';
-      input.disabled = true; fileLabel.classList.add('disabled');
+      fileLabel.classList.add('disabled');
       try {
         const listingNo = form.elements['listingNo']?.value?.trim() || '';
         const url = await uploadListingImage(file, listingNo);
-        input.value = url; input.disabled = false; fileLabel.classList.remove('disabled');
-        statusEl.textContent = '✅ 완료'; statusEl.className = 'img-upload-status done';
+        // 업로드 성공 → Supabase URL로 input 값 교체, Drive 경고 제거
+        input.value = url;
+        delete input.dataset.driveUrl;
+        fileLabel.classList.remove('disabled');
+        statusEl.textContent = '✅ 업로드 완료'; statusEl.className = 'img-upload-status done';
         thumb.src = url; thumb.classList.remove('hidden');
+        console.log('[IMAGE UPLOAD]', url);
       } catch (err) {
-        input.disabled = false; fileLabel.classList.remove('disabled');
+        fileLabel.classList.remove('disabled');
         const msg = err.message || '';
         let friendly = '업로드 실패 — 다시 시도해주세요.';
         if (msg.includes('row-level security') || msg.includes('violates row') || msg.includes('security policy'))
@@ -2136,7 +2157,7 @@ const setupAdminRegister = () => {
     removeBtn.textContent = '삭제';
     removeBtn.addEventListener('click', () => {
       if (imageContainer.querySelectorAll('.image-url-row').length > 1) row.remove();
-      else { input.value = ''; statusEl.textContent = ''; thumb.classList.add('hidden'); }
+      else { input.value = ''; delete input.dataset.driveUrl; statusEl.textContent = ''; thumb.classList.add('hidden'); statusEl.className = 'img-upload-status'; }
     });
 
     row.appendChild(thumb);
@@ -2491,8 +2512,10 @@ const setupAdminRegister = () => {
     const fd = new FormData(form);
     const payload = {};
     for (const [key,value] of fd.entries()) { if(key!=='imageUrls') payload[key]=value; }
+    // imageUrls: Supabase public URL만 저장 (Drive 링크·샘플 이미지 제외)
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
-      .map(el => el.value.trim()).filter(v => v);
+      .map(el => el.value.trim())
+      .filter(v => v && !isDriveUrl(v) && !v.startsWith('images/'));
 
     // category1/category2 저장 + propertyType 하위호환 도출
     const _sCat1 = form.elements['category1']?.value || '';
@@ -2545,13 +2568,20 @@ const setupAdminRegister = () => {
 
     const address = payload.address ? payload.address.trim() : '';
 
+    // Drive 링크가 아직 남아 있는 행이 있으면 경고 (저장 차단은 아님)
+    const driveRows = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
+      .filter(el => isDriveUrl(el.dataset.driveUrl));
+    if (driveRows.length > 0) {
+      alert(`사진 ${driveRows.length}장이 아직 Google Drive 링크입니다.\n📎 파일 선택 버튼으로 이미지를 다시 업로드해 주세요.\n(Drive 링크는 저장되지 않으며 목록에서 이미지가 표시되지 않습니다.)`);
+      return;
+    }
+
     // 저장 직전 payload 진단 로그
     console.log('[SAVE LISTING PAYLOAD]', {
       title: payload.title,
       category1: payload.category1,
       propertyType: payload.propertyType,
       imageUrls: payload.imageUrls,
-      imageUrl: payload.imageUrl,
     });
 
     const performSave = async (lat = null, lng = null) => {
