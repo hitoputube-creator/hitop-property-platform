@@ -272,20 +272,43 @@ async function deleteListingFromFirestore(id) {
 }
 
 const formatPrice   = (n) => Number(n).toLocaleString('ko-KR');
+
+// Google Drive 파일 ID 추출
+const _driveFileId = (str) => {
+  // /file/d/파일ID/view 형태
+  const m1 = str.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m1) return m1[1];
+  // ?id=파일ID 또는 &id=파일ID 형태
+  const m2 = str.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m2) return m2[1];
+  return null;
+};
+
+// URL이 <img src>에서 직접 표시 가능한 이미지인지 판별
+const isDisplayableUrl = (url) => {
+  if (!url) return false;
+  const str = String(url).trim();
+  // Supabase Storage public URL
+  if (str.includes('supabase.co/storage')) return true;
+  // 일반 이미지 확장자 (쿼리스트링 포함 허용)
+  if (/\.(jpe?g|png|webp|gif|bmp|svg)(\?|$)/i.test(str)) return true;
+  // 일반 CDN (picsum, unsplash, googleusercontent 등)
+  if (str.includes('picsum.photos') || str.includes('unsplash.com') || str.includes('googleusercontent.com')) return true;
+  // Google Drive /file/d/.../view 는 직접 표시 불가 → 변환 필요
+  if (str.includes('drive.google.com/file/d/')) return false;
+  // drive.google.com 이지만 이미 thumbnail 형태인 경우
+  if (str.includes('drive.google.com/thumbnail')) return true;
+  return false;
+};
+
+// Google Drive 링크를 직접 표시 가능한 URL로 변환
+// lh3.googleusercontent.com/d/파일ID 형식이 가장 안정적
 const normalizeImageUrl = (url) => {
   if (!url) return '';
   const str = String(url).trim();
-
-  const driveMatch = str.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-  if (driveMatch && driveMatch[1]) {
-    return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
-  }
-
-  const idMatch = str.match(/[?&]id=([^&]+)/);
-  if (str.includes('drive.google.com') && idMatch && idMatch[1]) {
-    return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
-  }
-
+  if (!str.includes('drive.google.com')) return str;
+  const fileId = _driveFileId(str);
+  if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
   return str;
 };
 
@@ -303,10 +326,27 @@ const FALLBACK_IMAGE = 'images/hitoplogo.png';
 const getDefaultImageByCategory = (cat1) =>
   DEFAULT_IMAGES[cat1] || FALLBACK_IMAGE;
 
-// 1순위: Supabase 업로드 URL  2순위: 직접 입력 URL  3순위: 매물종류 기본 이미지
+// 이미지 URL 우선순위: imageUrls 배열 → imageUrl → thumbnail → 카테고리 기본 이미지
+// Google Drive /file/d/...view 링크는 자동 변환, 변환 불가면 건너뜀
 const getThumbnail = (item) => {
-  const raw = (item.imageUrls && item.imageUrls[0]) || item.imageUrl || '';
-  if (raw) return normalizeImageUrl(raw);
+  const candidates = [
+    ...(Array.isArray(item.imageUrls) ? item.imageUrls : []),
+    item.imageUrl,
+    item.thumbnail,
+  ].filter(Boolean);
+
+  for (const raw of candidates) {
+    const str = String(raw).trim();
+    if (!str) continue;
+    // Drive /file/d/.../view → 변환
+    if (str.includes('drive.google.com/file/d/')) {
+      const fileId = _driveFileId(str);
+      if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
+      continue; // 변환 실패 시 건너뜀
+    }
+    // 그 외 Drive URL (thumbnail 형태 등)도 normalizeImageUrl 적용
+    return normalizeImageUrl(str);
+  }
   return getDefaultImageByCategory(getCategory1(item));
 };
 const getDisplayAddress = (item) => item.displayAddress || item.address;
