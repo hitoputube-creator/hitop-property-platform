@@ -2426,6 +2426,14 @@ const setupAdminRegister = () => {
         syncFlagStyle(chkRec, lblRec);
         syncFlagStyle(chkUrg, lblUrg);
 
+        // 수정 모드 로드 시 이미지 URL 진단 로그
+        console.log('[LOAD LISTING FOR EDIT]', {
+          id: target.id,
+          title: target.title,
+          imageUrls: target.imageUrls,
+          imageUrl: target.imageUrl,
+        });
+
         imageContainer.innerHTML = '';
         const urls = (target.imageUrls && target.imageUrls.length)
           ? target.imageUrls : (target.imageUrl ? [target.imageUrl] : []);
@@ -2536,6 +2544,15 @@ const setupAdminRegister = () => {
     if (!payload.status) payload.status = '거래가능';
 
     const address = payload.address ? payload.address.trim() : '';
+
+    // 저장 직전 payload 진단 로그
+    console.log('[SAVE LISTING PAYLOAD]', {
+      title: payload.title,
+      category1: payload.category1,
+      propertyType: payload.propertyType,
+      imageUrls: payload.imageUrls,
+      imageUrl: payload.imageUrl,
+    });
 
     const performSave = async (lat = null, lng = null) => {
       // geocoder 결과 우선 적용 (null이면 FormData 기존값 유지)
