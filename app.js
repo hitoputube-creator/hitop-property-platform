@@ -1770,14 +1770,13 @@ const setupListingsPage = () => {
       ]);
 
       await addDoc(col(db, COLLECTION), {
-        type:      '홈화면 문의',
-        subject:   msg.length > 40 ? msg.slice(0, 40) + '…' : msg,
         name,
         phone,
-        message:   msg,
-        source:    '매물보기 홈화면',
-        status:    '신규',
-        createdAt: serverTimestamp(),
+        message:      msg,
+        agreePrivacy: true,
+        source:       'listings-sidebar',
+        status:       '미확인',
+        createdAt:    serverTimestamp(),
       });
 
       alert('상담 신청이 접수되었습니다. 빠르게 연락드리겠습니다.');

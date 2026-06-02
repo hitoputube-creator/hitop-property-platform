@@ -273,14 +273,15 @@
       btn.disabled = true; btn.textContent = '전송 중…';
       try {
         await addDoc(collection(db, COLLECTION), {
-          type:      '상담신청 페이지',
-          subject:   msg.length > 40 ? msg.slice(0, 40) + '…' : msg,
-          name, phone, message: msg,
-          source:    '상담신청 전용 페이지(contact.html)',
-          status:    '신규',
-          createdAt: serverTimestamp(),
+          name,
+          phone,
+          message:      msg,
+          agreePrivacy: true,
+          source:       'contact.html',
+          status:       '미확인',
+          createdAt:    serverTimestamp(),
         });
-        alert('상담 신청이 접수되었습니다.\n빠르게 연락드리겠습니다. 감사합니다.');
+        alert('상담 신청이 접수되었습니다. 빠르게 연락드리겠습니다.');
         e.target.reset();
       } catch (err) {
         console.error('[상담신청 오류]', err);

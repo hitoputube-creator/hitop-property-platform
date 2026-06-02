@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>하이탑부동산 | 상담신청 관리</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260602j" />
+  <style>
+    .ac-section { background:#f2f4f7; padding:40px 0 64px; min-height:calc(100vh - 180px); }
+    .ac-header  { display:flex; align-items:flex-end; justify-content:space-between;
+                  margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+    .ac-title   { font-size:22px; font-weight:800; color:#0A1F5C; margin:0; }
+    .ac-count   { font-size:13px; color:#666; margin:0; }
+
+    /* 카드 */
+    .ac-card { background:#fff; border-radius:12px; border:1px solid #e2e6ed;
+               box-shadow:0 2px 12px rgba(10,31,92,0.05); overflow:hidden; }
+    .ac-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .ac-table { width:100%; border-collapse:collapse; font-size:13px; min-width:780px; }
+    .ac-table thead tr { background:#f6f8fb; border-bottom:2px solid #e2e6ed; }
+    .ac-table th { padding:11px 12px; font-size:11px; font-weight:700; color:#888;
+                   text-align:center; white-space:nowrap; }
+    .ac-table th.col-msg { text-align:left; }
+    .ac-table td { padding:12px; text-align:center; color:#374151;
+                   border-bottom:1px solid #f0f2f6; vertical-align:top; }
+    .ac-table td.col-msg { text-align:left; max-width:280px; word-break:break-all;
+                            white-space:pre-wrap; line-height:1.5; }
+    .ac-table tbody tr:last-child td { border-bottom:none; }
+    .ac-table tbody tr:hover { background:#f9fafb; }
+
+    /* 상태 뱃지 */
+    .st-badge { display:inline-block; padding:2px 9px; border-radius:20px;
+                font-size:11px; font-weight:700; }
+    .st-미확인  { background:#fee2e2; color:#b91c1c; }
+    .st-상담중  { background:#fef9c3; color:#92400e; }
+    .st-상담완료{ background:#dcfce7; color:#166534; }
+    .st-보류    { background:#e5e7eb; color:#4b5563; }
+
+    /* 접수경로 */
+    .src-badge { display:inline-block; padding:2px 8px; border-radius:4px;
+                 font-size:11px; font-weight:600; background:#e0f2fe; color:#0369a1; }
+
+    /* 상태변경 셀렉트 */
+    .status-sel { font-size:12px; padding:3px 6px; border:1px solid #e2e6ed;
+                  border-radius:5px; cursor:pointer; background:#fff; }
+
+    /* 삭제 버튼 */
+    .del-btn { font-size:11px; padding:3px 9px; background:#fee2e2; color:#b91c1c;
+               border:1px solid #fca5a5; border-radius:5px; cursor:pointer;
+               font-weight:700; transition:background .12s; }
+    .del-btn:hover { background:#fca5a5; }
+
+    /* 필터 바 */
+    .ac-filter { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+    .ac-filter select, .ac-filter input {
+      padding:7px 10px; border:1.5px solid #e2e6ed; border-radius:7px;
+      font-size:13px; background:#fff; }
+    .ac-filter-btn { padding:7px 14px; border-radius:7px; font-size:13px;
+                     font-weight:700; cursor:pointer; border:none; }
+    .ac-filter-btn.primary { background:#0A1F5C; color:#fff; }
+    .ac-filter-btn.reset   { background:#e5e7eb; color:#374151; }
+
+    /* 빈 상태 */
+    .ac-empty { text-align:center; padding:40px; color:#9ca3af; font-size:14px; }
+
+    @media(max-width:640px){
+      .ac-table { min-width:600px; }
+      .ac-title { font-size:18px; }
+    }
+  </style>
+</head>
+<body data-page="admin-consults">
+
+  <!-- 헤더 -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html">
+        <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+      </a>
+      <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+      <nav class="nav-menu">
+        <a href="index.html">홈</a>
+        <a href="listings.html">매물보기</a>
+        <a href="admin.html">관리자</a>
+        <a href="admin-contact.html" aria-current="page">상담신청관리</a>
+        <a href="admin-consults.html">상담문의관리</a>
+        <a href="admin-register.html">매물등록</a>
+        <a href="https://hitoputube-creator.github.io/hitop-ai-workcenter/index.html" target="_blank" rel="noopener noreferrer">업무센터</a>
+        <button class="btn btn-outline" id="logoutBtn" type="button"
+                style="font-size:0.85rem;padding:6px 12px;display:none;">로그아웃</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 로그인 오버레이 -->
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-box">
+      <h2>관리자 로그인</h2>
+      <input type="password" id="loginPw" placeholder="비밀번호 입력" autocomplete="current-password" />
+      <p id="loginError" class="login-error hidden">비밀번호가 올바르지 않습니다.</p>
+      <button class="btn btn-primary" id="loginBtn" type="button">로그인</button>
+    </div>
+  </div>
+
+  <!-- 본문 -->
+  <main class="ac-section hidden" id="adminMain">
+    <div class="container">
+
+      <div class="ac-header">
+        <div>
+          <h1 class="ac-title">📋 상담신청 관리</h1>
+          <p class="ac-count" id="acCount">불러오는 중...</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="admin.html"      class="btn btn-outline btn-sm">← 대시보드</a>
+          <a href="admin-consults.html" class="btn btn-outline btn-sm">상담문의 게시판</a>
+        </div>
+      </div>
+
+      <!-- 필터 -->
+      <div class="ac-filter">
+        <select id="acFilterStatus">
+          <option value="">전체 상태</option>
+          <option value="미확인">미확인</option>
+          <option value="상담중">상담중</option>
+          <option value="상담완료">상담완료</option>
+          <option value="보류">보류</option>
+        </select>
+        <select id="acFilterSource">
+          <option value="">전체 경로</option>
+          <option value="contact.html">상담신청 페이지</option>
+          <option value="listings-sidebar">매물보기 사이드바</option>
+        </select>
+        <button class="ac-filter-btn primary" id="acFilterBtn">검색</button>
+        <button class="ac-filter-btn reset"   id="acResetBtn">초기화</button>
+      </div>
+
+      <div class="ac-card">
+        <div class="ac-table-wrap">
+          <table class="ac-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">No</th>
+                <th style="width:110px;">접수일시</th>
+                <th style="width:70px;">이름</th>
+                <th style="width:110px;">연락처</th>
+                <th class="col-msg">문의내용</th>
+                <th style="width:100px;">접수경로</th>
+                <th style="width:90px;">상태</th>
+                <th style="width:56px;">삭제</th>
+              </tr>
+            </thead>
+            <tbody id="acTbody">
+              <tr><td colspan="8" class="ac-empty">불러오는 중...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="app.js?v=20260602j"></script>
+  <script type="module">
+    import { db, COLLECTION } from './firebase-config.js';
+    import {
+      collection, getDocs, query, orderBy, doc,
+      updateDoc, deleteDoc, serverTimestamp, where
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    /* ── 유틸 ── */
+    const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    function fmtDate(ts) {
+      if (!ts) return '—';
+      try {
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        const pad = n => String(n).padStart(2,'0');
+        return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}<br>
+                <span style="font-size:11px;color:#9ca3af">${pad(d.getHours())}:${pad(d.getMinutes())}</span>`;
+      } catch { return '—'; }
+    }
+
+    function srcLabel(source) {
+      if (!source) return '—';
+      if (source === 'contact.html')    return '상담신청 페이지';
+      if (source === 'listings-sidebar') return '매물보기 사이드바';
+      return esc(source);
+    }
+
+    const statusClasses = { '미확인':'st-미확인','상담중':'st-상담중','상담완료':'st-상담완료','보류':'st-보류' };
+    const statusOptions = ['미확인','상담중','상담완료','보류'];
+
+    /* ── 상태 변경 ── */
+    async function changeStatus(docId, newStatus) {
+      try {
+        await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
+      } catch(e) { alert('상태 변경 실패: ' + e.message); }
+    }
+
+    /* ── 삭제 ── */
+    async function deleteDoc_(docId) {
+      if (!confirm('이 상담신청을 삭제하시겠습니까?')) return;
+      try {
+        await deleteDoc(doc(db, COLLECTION, docId));
+        document.getElementById('row-' + docId)?.remove();
+        updateCount();
+      } catch(e) { alert('삭제 실패: ' + e.message); }
+    }
+
+    function updateCount() {
+      const rows = document.querySelectorAll('#acTbody tr[data-id]').length;
+      document.getElementById('acCount').textContent = `총 ${rows}건`;
+    }
+
+    /* ── 렌더 ── */
+    let _allDocs = [];
+
+    function renderTable(docs) {
+      const tbody = document.getElementById('acTbody');
+      if (!docs.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="ac-empty">접수된 상담신청이 없습니다.</td></tr>';
+        document.getElementById('acCount').textContent = '총 0건';
+        return;
+      }
+      document.getElementById('acCount').textContent = `총 ${docs.length}건`;
+      tbody.innerHTML = docs.map((d, i) => {
+        const dt   = d.data;
+        const id   = d.id;
+        const st   = dt.status || '미확인';
+        const stCls = statusClasses[st] || 'st-미확인';
+        const opts = statusOptions.map(s =>
+          `<option value="${s}"${s===st?' selected':''}>${s}</option>`).join('');
+        return `<tr id="row-${id}" data-id="${id}">
+          <td style="color:#9ca3af;font-size:12px;">${docs.length - i}</td>
+          <td style="font-size:12px;">${fmtDate(dt.createdAt)}</td>
+          <td style="font-weight:700;">${esc(dt.name||'—')}</td>
+          <td><a href="tel:${esc(dt.phone||'')}" style="color:#0A1F5C;font-weight:700;text-decoration:none;">${esc(dt.phone||'—')}</a></td>
+          <td class="col-msg">${esc(dt.message||dt.subject||'—')}</td>
+          <td><span class="src-badge">${srcLabel(dt.source)}</span></td>
+          <td>
+            <select class="status-sel" data-id="${id}" onchange="window._acChangeStatus(this.dataset.id, this.value)">
+              ${opts}
+            </select>
+          </td>
+          <td><button class="del-btn" onclick="window._acDelete('${id}')">삭제</button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    /* ── 필터 적용 ── */
+    function applyFilter() {
+      const stVal  = document.getElementById('acFilterStatus').value;
+      const srcVal = document.getElementById('acFilterSource').value;
+      let docs = [..._allDocs];
+      if (stVal)  docs = docs.filter(d => (d.data.status || '미확인') === stVal);
+      if (srcVal) docs = docs.filter(d => (d.data.source || '') === srcVal);
+      renderTable(docs);
+    }
+
+    /* ── 전역 이벤트 핸들러 ── */
+    window._acChangeStatus = changeStatus;
+    window._acDelete       = deleteDoc_;
+
+    /* ── 데이터 로드 ── */
+    async function loadData() {
+      try {
+        const isAuthed = typeof window.waitForAdminAuth === 'function'
+          ? await window.waitForAdminAuth()
+          : sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
+        if (!isAuthed) return;
+
+        // contact.html + listings-sidebar source 만 조회
+        // (consultations 컬렉션에서 source 필드 기준 필터)
+        const q = query(
+          collection(db, COLLECTION),
+          orderBy('createdAt', 'desc')
+        );
+        const snap = await getDocs(q);
+
+        // source가 contact.html / listings-sidebar 인 문서만 표시
+        const contactSources = ['contact.html', 'listings-sidebar'];
+        _allDocs = snap.docs
+          .filter(d => contactSources.includes(d.data().source))
+          .map(d => ({ id: d.id, data: d.data() }));
+
+        renderTable(_allDocs);
+      } catch(e) {
+        console.error('[상담신청관리 로드 오류]', e);
+        document.getElementById('acTbody').innerHTML =
+          `<tr><td colspan="8" class="ac-empty">오류: ${esc(e.message)}</td></tr>`;
+      }
+    }
+
+    document.getElementById('acFilterBtn').addEventListener('click', applyFilter);
+    document.getElementById('acResetBtn').addEventListener('click', () => {
+      document.getElementById('acFilterStatus').value = '';
+      document.getElementById('acFilterSource').value = '';
+      renderTable(_allDocs);
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
