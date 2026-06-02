@@ -4049,9 +4049,9 @@ body[data-page="listings"] .lp-kakao-btn {
 
 }
 
-/* 실시간 빠른문의 (상담 신청) 박스 */
+/* ── 상담신청 버튼 박스 (입력폼 제거, 버튼만) ── */
 
-body[data-page="listings"] .lp-inquiry-section {
+body[data-page="listings"] .side-consult-link-box {
 
   background: #ffffff !important;
 
@@ -4063,9 +4063,11 @@ body[data-page="listings"] .lp-inquiry-section {
 
   overflow: hidden !important;
 
+  flex-shrink: 0 !important;
+
 }
 
-body[data-page="listings"] .lp-inquiry-section .lp-sidebar-header {
+body[data-page="listings"] .side-consult-link-box .lp-sidebar-header {
 
   background-color: #071f5f !important;
 
@@ -4083,157 +4085,83 @@ body[data-page="listings"] .lp-inquiry-section .lp-sidebar-header {
 
 }
 
-body[data-page="listings"] .lp-inquiry-form {
+/* 상담신청 버튼 박스 내부 */
 
-  padding: 10px 10px 10px !important;
+body[data-page="listings"] .side-consult-body {
+
+  padding: 12px 14px 14px !important;
 
   display: flex !important;
 
   flex-direction: column !important;
 
-  gap: 8px !important;
+  gap: 9px !important;
 
 }
 
-body[data-page="listings"] .lp-inquiry-form input,
+body[data-page="listings"] .side-consult-desc {
 
-body[data-page="listings"] .lp-inquiry-form textarea {
-
-  width: 100% !important;
-
-  margin-bottom: 0 !important; /* gap으로 간격 제어 */
-
-  padding: 8px 10px !important;
-
-  border: 1px solid #cbd5e1 !important;
-
-  border-radius: 0px !important; /* 반듯한 네모 */
-
-  font-size: 13px !important;
-
-  box-sizing: border-box !important;
-
-  outline: none !important;
-
-  background-color: #ffffff !important;
-
-  color: #334155 !important;
-
-}
-
-body[data-page="listings"] .lp-inquiry-form textarea {
-
-  resize: none !important;
-
-}
-
-/* 개인정보 수집 이용 동의 행 */
-
-body[data-page="listings"] .privacy-row {
-
-  display: flex !important;
-
-  align-items: center !important;
-
-  justify-content: space-between !important;
-
-  margin: 2px 0 !important;
-
-}
-
-body[data-page="listings"] .privacy-label {
-
-  display: flex !important;
-
-  align-items: center !important;
-
-  gap: 4px !important;
-
-  font-size: 11px !important;
-
-  color: #64748b !important;
-
-  cursor: pointer !important;
-
-  user-select: none !important;
-
-}
-
-body[data-page="listings"] .privacy-label input[type="checkbox"] {
-
-  width: 13px !important;
-
-  height: 13px !important;
-
-  margin: 0 !important;
-
-  cursor: pointer !important;
-
-}
-
-body[data-page="listings"] .btn-view-privacy {
-
-  font-size: 11px !important;
-
-  padding: 2px 6px !important;
-
-  border: 1px solid #cbd5e1 !important;
-
-  background-color: #ffffff !important;
+  font-size: 12.5px !important;
 
   color: #475569 !important;
 
-  border-radius: 0px !important;
+  line-height: 1.55 !important;
 
-  cursor: pointer !important;
-
-  outline: none !important;
-
-  transition: all 0.1s ease !important;
-
-}
-
-body[data-page="listings"] .btn-view-privacy:hover {
-
-  background-color: #f1f5f9 !important;
-
-  color: #0f172a !important;
-
-}
-
-/* 상담문의 남기기 제출 버튼 */
-
-body[data-page="listings"] .lp-inquiry-submit-btn {
-
-  width: 100% !important;
-
-  background-color: #071f5f !important;
-
-  color: #ffffff !important;
-
-  border: none !important;
-
-  border-radius: 0px !important;
-
-  padding: 10px 0 !important;
-
-  font-size: 14px !important;
-
-  font-weight: 800 !important;
-
-  cursor: pointer !important;
+  margin: 0 !important;
 
   text-align: center !important;
 
-  transition: background-color 0.15s ease !important;
+}
 
-  margin-top: 4px !important;
+body[data-page="listings"] .side-consult-btn {
+
+  display: block !important;
+
+  width: 100% !important;
+
+  padding: 10px 0 !important;
+
+  background: #C9A84C !important;
+
+  color: #fff !important;
+
+  font-size: 13.5px !important;
+
+  font-weight: 800 !important;
+
+  text-align: center !important;
+
+  text-decoration: none !important;
+
+  border-radius: 0px !important;
+
+  letter-spacing: 0.2px !important;
+
+  transition: background 0.15s !important;
+
+  box-sizing: border-box !important;
 
 }
 
-body[data-page="listings"] .lp-inquiry-submit-btn:hover {
+body[data-page="listings"] .side-consult-btn:hover {
 
-  background-color: #1e3a8a !important;
+  background: #b89540 !important;
+
+  color: #fff !important;
+
+}
+
+body[data-page="listings"] .side-consult-note {
+
+  font-size: 11px !important;
+
+  color: #94a3b8 !important;
+
+  text-align: center !important;
+
+  margin: 0 !important;
+
+  line-height: 1.4 !important;
 
 }
 

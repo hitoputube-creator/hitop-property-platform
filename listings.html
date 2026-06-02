@@ -6,7 +6,7 @@
     <title>하이탑부동산 | 매물보기</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20260602l" />
+    <link rel="stylesheet" href="style.css?v=20260602m" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services"></script>
   </head>
   <body data-page="listings">
@@ -121,24 +121,14 @@
           </div>
         </div>
 
-        <!-- 빠른 문의 폼 -->
-        <div class="lp-sidebar-section lp-inquiry-section">
+        <!-- 상담신청 바로가기 -->
+        <div class="lp-sidebar-section side-consult-link-box">
           <div class="lp-sidebar-header">상담 신청</div>
-          <form class="lp-inquiry-form" id="sideInquiryForm" novalidate>
-            <input type="text"  id="inquiryName"  placeholder="이름" required />
-            <input type="tel"   id="inquiryPhone" placeholder="연락처" required />
-            <textarea id="inquiryMsg" rows="3" placeholder="내용입력"></textarea>
-            
-            <div class="privacy-row">
-              <label class="privacy-label">
-                <input type="checkbox" id="agreePrivacySide" required />
-                <span>개인정보 수집·이용 동의</span>
-              </label>
-              <button type="button" class="btn-view-privacy" onclick="alert('개인정보 수집 및 이용 안내\n\n1. 수집항목: 이름, 연락처, 문의내용\n2. 수집목적: 매물 상담 및 빠른 문의 답변\n3. 보유 및 이용기간: 목적 달성 후 지체 없이 파기')">내용 보기</button>
-            </div>
-            
-            <button type="submit" class="lp-inquiry-submit-btn">상담문의 남기기</button>
-          </form>
+          <div class="side-consult-body">
+            <p class="side-consult-desc">매물 상담이 필요하시면<br>상담신청 페이지에서 남겨주세요.</p>
+            <a href="contact.html" class="side-consult-btn">📋 상담신청 바로가기</a>
+            <p class="side-consult-note">접수 후 빠르게 연락드리겠습니다.</p>
+          </div>
         </div>
 
       </aside>
@@ -327,6 +317,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260602j"></script>
+    <script src="app.js?v=20260602m"></script>
   </body>
 </html>
