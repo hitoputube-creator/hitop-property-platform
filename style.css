@@ -20,7 +20,15 @@
 
 * { box-sizing: border-box; }
 
-body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: #1e293b; background: var(--gray-100); }
+body {
+  margin: 0;
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: #1e293b;
+  background: var(--gray-100);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 
 .container { width: min(1120px, 92%); margin: 0 auto; }
 
@@ -2668,6 +2676,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   gap: 4px;
   justify-content: center;
   font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* 종류 + 매물번호 행 */
@@ -2681,34 +2690,33 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
 
 /* 매물종류 태그 */
 .lp-mini-type-tag {
-  font-size: 11px;
-  color: #64748b;
+  font-size: 11.5px;
+  color: #475569;   /* 더 진하게 */
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: 0.1px;
   white-space: nowrap;
 }
 
 /* 매물번호 — 작고 연하게 */
 .mc-propno {
-  font-size: 10px;
-  color: #b0bec5;
+  font-size: 10.5px;
+  color: #94a3b8;
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
-  letter-spacing: 0;
 }
 
 /* 제목 — 굵고 선명하게 */
 .lp-mini-title {
-  font-size: 15px;
+  font-size: 15.5px;   /* 15 → 15.5 */
   font-weight: 800;
-  color: #0f172a;
+  color: #111827;      /* 더 진하게 */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  line-height: 1.4;
+  line-height: 1.42;
   letter-spacing: -0.3px;
 }
 
@@ -2718,6 +2726,7 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   align-items: center;
   gap: 5px;
   flex-wrap: nowrap;
+  margin-top: 1px;
 }
 .lp-mini-price-row .deal-badge {
   flex-shrink: 0;
@@ -2725,11 +2734,12 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   padding: 2px 7px !important;
   height: 20px !important;
   border-radius: 4px !important;
+  font-weight: 800 !important;
 }
 
 /* 가격 — 가장 크고 눈에 띄게 */
 .lp-mini-price {
-  font-size: 17px;
+  font-size: 17.5px;   /* 17 → 17.5 */
   font-weight: 900;
   color: #0a4e8a;
   letter-spacing: -0.5px;
@@ -2739,24 +2749,24 @@ body { margin: 0; font-family: "Pretendard", "Noto Sans KR", sans-serif; color: 
   text-overflow: ellipsis;
 }
 
-/* 주소 */
+/* 주소 — 너무 흐리지 않게 */
 .lp-mini-addr {
   font-size: 12.5px;
-  color: #94a3b8;
+  color: #4b5563;   /* #94a3b8 → #4b5563 (훨씬 진하게) */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.35;
+  line-height: 1.38;
 }
 
 /* 면적 */
 .lp-mini-area {
   font-size: 12.5px;
-  color: #475569;
+  color: #374151;   /* 더 진하게 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.35;
+  line-height: 1.38;
 }
 
 /* 구형 클래스 호환 */
@@ -3149,13 +3159,15 @@ body[data-page="listings"] .lp-cat-item {
 
   justify-content: space-between;
 
-  color: #333333;
+  color: #1e293b;   /* 더 진하게 */
 
   text-decoration: none;
 
   font-size: 14px;
 
-  font-weight: 500;
+  font-weight: 600;  /* 500 → 600 */
+
+  letter-spacing: -0.1px;
 
   border-bottom: 1px solid #edf0f4;
 
@@ -4139,7 +4151,7 @@ body[data-page="listings"] .side-consult-desc {
 
   font-size: 12px !important;
 
-  color: #64748b !important;
+  color: #475569 !important;  /* 더 진하게 */
 
   text-align: center !important;
 
