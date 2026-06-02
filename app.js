@@ -1728,16 +1728,55 @@ const setupListingsPage = () => {
     setSortMode('date');
   });
 
-  // ── 빠른 문의 폼 ──
-  document.getElementById('sideInquiryForm')?.addEventListener('submit', e => {
+  // ── 빠른 문의 폼 → Firestore 저장 ──
+  document.getElementById('sideInquiryForm')?.addEventListener('submit', async e => {
     e.preventDefault();
+    const form  = e.target;
     const name  = (document.getElementById('inquiryName')?.value  || '').trim();
     const phone = (document.getElementById('inquiryPhone')?.value || '').trim();
-    if (!name || !phone) { alert('이름과 연락처를 입력해주세요.'); return; }
+    const msg   = (document.getElementById('inquiryMsg')?.value   || '').trim();
+
+    // 입력값 검증
+    if (!name)  { alert('이름을 입력해 주세요.');   return; }
+    if (!phone) { alert('연락처를 입력해 주세요.'); return; }
+    if (!msg)   { alert('문의내용을 입력해 주세요.'); return; }
+
     const agree = document.getElementById('agreePrivacySide');
-    if (agree && !agree.checked) { alert('개인정보 수집 및 이용에 동의해주셔야 상담신청이 가능합니다.'); return; }
-    alert(`상담 문의가 접수되었습니다.\n담당자가 빠른 시일 내에 연락드리겠습니다.\n\n이름: ${name}\n연락처: ${phone}`);
-    e.target.reset();
+    if (agree && !agree.checked) {
+      alert('개인정보 수집 및 이용에 동의해주셔야 상담신청이 가능합니다.');
+      return;
+    }
+
+    // 저장 버튼 비활성화 (중복 클릭 방지)
+    const submitBtn = form.querySelector('[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '전송 중…'; }
+
+    try {
+      const [{ collection: col, addDoc, serverTimestamp },
+             { db, COLLECTION }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
+        import('./firebase-config.js'),
+      ]);
+
+      await addDoc(col(db, COLLECTION), {
+        type:      '홈화면 문의',
+        subject:   msg.length > 40 ? msg.slice(0, 40) + '…' : msg,
+        name,
+        phone,
+        message:   msg,
+        source:    '매물보기 홈화면',
+        status:    '신규',
+        createdAt: serverTimestamp(),
+      });
+
+      alert('상담 신청이 접수되었습니다. 빠르게 연락드리겠습니다.');
+      form.reset();
+    } catch (err) {
+      console.error('[상담신청 저장 오류]', err);
+      alert('상담 신청 저장 중 오류가 발생했습니다. 전화 또는 카카오톡으로 문의해 주세요.');
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '상담문의 남기기'; }
+    }
   });
 
   // ── 전체 매물 보기 버튼 (패널 하단) ──
