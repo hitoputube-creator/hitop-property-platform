@@ -2717,7 +2717,7 @@ body {
 /* 제목 */
 .lp-mini-title {
   font-size: 15.5px;
-  font-weight: 400;
+  font-weight: 700;
   color: #0f172a;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4187,7 +4187,7 @@ body[data-page="listings"] .side-consult-btn {
   background: #D97757 !important;
   color: #ffffff !important;
   font-size: 17px !important;
-  font-weight: 900 !important;
+  font-weight: 400 !important;
   text-align: center !important;
   text-decoration: none !important;
   border-radius: 7px !important;
@@ -5950,7 +5950,7 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 }
 /* 거래유형별 색상 */
 .deal-badge-mae  { background: #E53935; color: #fff; }          /* 매매 — 빨강 */
-.deal-badge-im   { background: #1565C0; color: #fff; }          /* 임대 — 파랑 */
+.deal-badge-im   { background: #E65100; color: #fff; }          /* 임대 — 주황 */
 .deal-badge-jeon { background: #1565C0; color: #fff; }          /* 전세 — 파랑 */
 .deal-badge-wol  { background: #2E7D32; color: #fff; }          /* 월세 — 초록 */
 .deal-badge-bun  { background: #c2410c; color: #fff; }          /* 분양 — 주황 */
