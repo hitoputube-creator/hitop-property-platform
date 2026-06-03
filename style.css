@@ -355,21 +355,28 @@ body {
 .area-inline input[type="number"] { flex: 1; min-width: 0; max-width: 130px; }
 .area-unit { font-size: 0.80rem; color: #64748b; font-weight: 600; flex-shrink: 0; }
 
-/* 홍보스티커 그리드 — PC 5열 */
-.sticker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+/* 홍보스티커 pill 체크박스 */
+.sticker-grid { display: flex; flex-wrap: wrap; gap: 8px; }
 .sticker-chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 5px 8px; border-radius: 6px;
-  border: 1px solid #e5e7eb; background: #f9fafb;
-  font-size: 0.78rem; color: #374151;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 34px;
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid rgba(18, 51, 90, 0.22); background: #f8fafc;
+  font-size: 0.82rem; color: #24364f;
+  font-weight: 700;
   cursor: pointer; user-select: none;
-  transition: background 0.12s, border-color 0.12s;
+  transition: background 0.12s, border-color 0.12s, color 0.12s, box-shadow 0.12s;
 }
-.sticker-chip:hover { background: #f0f4ff; border-color: #93c5fd; }
-.sticker-chip:has(input:checked) { background: #eff6ff; border-color: var(--navy); color: var(--navy); font-weight: 700; }
+.sticker-chip:hover { background: #f6f0dd; border-color: #c9a84c; color: #12335a; }
+.sticker-chip:has(input:checked) {
+  background: #fff8e1;
+  border-color: #c9a84c;
+  color: #12335a;
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.32);
+}
 .sticker-chip input[type="checkbox"] {
-  width: 14px; height: 14px; cursor: pointer; flex-shrink: 0;
-  accent-color: var(--navy);
+  width: 15px; height: 15px; cursor: pointer; flex-shrink: 0;
+  accent-color: #c9a84c;
 }
 
 /* 하단 버튼 */
@@ -377,10 +384,6 @@ body {
 .form-actions .btn-primary { flex: 1; }
 .btn-sm { font-size: 0.82rem; padding: 6px 12px; }
 .btn-lg { padding: 11px 20px; font-size: 0.95rem; }
-
-/* flag-check-row 조정 (v2 내부) */
-.admin-form-v2 .flag-check-row { margin-bottom: 6px; }
-.admin-form-v2 .flag-check-label { padding: 7px 11px; font-size: 0.85rem; min-width: 110px; }
 
 /* ─ 반응형 (태블릿/모바일) ─ */
 @media (max-width: 700px) {
@@ -391,7 +394,8 @@ body {
   .form-row-meta,
   .form-row-meta4 { grid-template-columns: 1fr; gap: 5px; }
   .form-row-quads { grid-template-columns: 1fr 1fr; gap: 5px; }
-  .sticker-grid { grid-template-columns: repeat(3, 1fr); }
+  .sticker-grid { gap: 7px; }
+  .sticker-chip { flex: 1 1 calc(50% - 7px); justify-content: center; padding-inline: 9px; }
   .area-inline { flex-wrap: wrap; }
   .area-label-w { min-width: 100%; margin-bottom: 2px; }
   .area-inline input[type="number"] { max-width: none; }
@@ -651,6 +655,7 @@ body {
 
 .modal-prop-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; }
 .modal-badge .deal-badge { font-size: 12px; height: auto; padding: 2px 8px; }
+.modal-promo-sticker { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; border: 1px solid #c9a84c; background: #fff8e1; color: #7a5c0a; font-size: 12px; font-weight: 800; }
 .modal-prop-badge.prop-factory   { background: #ccfbf1; color: #0d9488; }
 .modal-prop-badge.prop-store     { background: #fee2e2; color: #dc2626; }
 .modal-prop-badge.prop-land      { background: #ffedd5; color: #c2410c; }
@@ -1163,88 +1168,6 @@ body {
 @media (max-width: 480px) {
 
   .dash-stats { grid-template-columns: 1fr; }
-
-}
-
-/* ===== 추천/급매 체크박스 (admin-register) ===== */
-
-.flag-check-row {
-
-  display: flex;
-
-  gap: 10px;
-
-  flex-wrap: wrap;
-
-}
-
-.flag-check-label {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  flex: 1;
-
-  min-width: 150px;
-
-  padding: 10px 16px;
-
-  border: 2px solid #E5E9F0;
-
-  border-radius: 8px;
-
-  cursor: pointer;
-
-  font-size: 15px;
-
-  font-weight: 600;
-
-  color: #374151;
-
-  transition: border-color 0.15s, background 0.15s, color 0.15s;
-
-  user-select: none;
-
-}
-
-.flag-check-label input[type="checkbox"] {
-
-  width: 17px;
-
-  height: 17px;
-
-  cursor: pointer;
-
-  flex-shrink: 0;
-
-  accent-color: #1E3A5F;
-
-}
-
-/* 추천매물 — 골드 */
-
-.flag-recommended.is-checked {
-
-  border-color: #C9A84C;
-
-  background: #FEFCE8;
-
-  color: #7A5C0A;
-
-}
-
-/* 급매물 — 빨강 */
-
-.flag-urgent.is-checked {
-
-  border-color: #EF4444;
-
-  background: #FEF2F2;
-
-  color: #991B1B;
 
 }
 
@@ -6505,5 +6428,3 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
     pointer-events: none !important;
   }
 }
-
-

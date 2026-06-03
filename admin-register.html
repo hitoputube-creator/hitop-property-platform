@@ -280,18 +280,7 @@
           <fieldset class="form-section">
             <legend class="form-section-title">🏷️ 홍보스티커</legend>
 
-            <div class="flag-check-row">
-              <label class="flag-check-label flag-recommended" id="labelRecommended">
-                <input type="checkbox" name="isRecommended" id="chkRecommended" />
-                ⭐ 추천매물
-              </label>
-              <label class="flag-check-label flag-urgent" id="labelUrgent">
-                <input type="checkbox" name="isUrgent" id="chkUrgent" />
-                🔥 급매물
-              </label>
-            </div>
-
-            <label class="form-label" style="margin-top:10px;">📌 홍보스티커 <span class="form-hint">(중복 선택 가능)</span></label>
+            <label class="form-label" style="margin-top:0;">📌 홍보스티커 <span class="form-hint">(중복 선택 가능)</span></label>
             <div class="sticker-grid">
               <label class="sticker-chip">
                 <input type="checkbox" name="stickers" value="추천매물" /> 추천매물
@@ -412,34 +401,27 @@
         min-height: 18px;
         font-size: 11.5px;
         font-weight: 600;
-        color: #16a34a;
-        padding: 3px 6px;
+        color: #d6b35a;
+        padding: 2px 2px 0;
         margin-top: 3px;
-        border-radius: 5px;
         background: transparent;
         transition: background .15s, color .15s;
         line-height: 1.5;
         letter-spacing: -.01em;
       }
       .price-preview.has-value {
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        color: #15803d;
+        color: #caa24a;
       }
       .price-preview.has-value.focused {
-        background: #dcfce7;
-        border-color: #4ade80;
-        color: #166534;
+        color: #f0c96a;
       }
       .price-preview.unparsed {
-        background: #fffbeb;
-        border: 1px solid #fde68a;
-        color: #92400e;
+        color: #9ca3af;
       }
       /* focus 시 입력칸 강조 */
       .price-input:focus {
         outline: none;
-        box-shadow: 0 0 0 2px rgba(34,197,94,.25);
+        box-shadow: 0 0 0 2px rgba(214,179,90,.25);
       }
     </style>
     <script>
@@ -457,6 +439,16 @@
          슬래시 구분자:     "5,000만/300만"   → 앞 값만 파싱
          인식 불가:         "없음" 등         → null (미표시)
       ──────────────────────────────────────────────────────────────── */
+      function onlyDigits(value) {
+        return String(value || '').replace(/[^\d]/g, '');
+      }
+
+      function formatNumber(value) {
+        var digits = onlyDigits(value);
+        if (!digits) return '';
+        return Number(digits).toLocaleString('ko-KR');
+      }
+
       function parseKoreanMoney(raw) {
         if (!raw || !String(raw).trim()) return null;
 
@@ -495,20 +487,28 @@
       function toPreviewStr(won) {
         if (!won || won <= 0) return null;
 
-        var comma = won.toLocaleString('ko-KR') + '원';
-
         var eok  = Math.floor(won / 100000000);
         var man  = Math.floor((won % 100000000) / 10000);
         var rest = won % 10000;
 
         var korean = '';
         if (eok)  korean += eok.toLocaleString('ko-KR') + '억 ';
-        if (man)  korean += man.toLocaleString('ko-KR') + '만 ';
-        if (rest) korean += rest.toLocaleString('ko-KR') + ' ';
-        korean = korean.trim() + '원';
+        if (man)  korean += man.toLocaleString('ko-KR') + '만원 ';
+        if (!eok && !man && rest) korean += rest.toLocaleString('ko-KR') + '원 ';
 
-        if (comma === korean) return comma;          // 중복 방지
-        return comma + ' (' + korean + ')';
+        return korean.trim();
+      }
+
+      function syncPriceInput(inp, span, isFocused) {
+        var raw = inp.value || '';
+        var won = parseKoreanMoney(raw);
+        var hasKoreanUnit = /[억만천원]/.test(raw);
+        var digits = won && hasKoreanUnit ? String(won) : onlyDigits(raw);
+        var formatted = formatNumber(digits);
+
+        if (isFocused && raw && !formatted) inp.value = '';
+        if (formatted && inp.value !== formatted) inp.value = formatted;
+        updatePreview(inp, span, isFocused);
       }
 
       /* ── 사진 없을 때 안내문 표시/숨김 ──────────────────────────── */
@@ -547,16 +547,22 @@
         var won = parseKoreanMoney(raw);
         if (won) {
           var txt = toPreviewStr(won);
-          span.textContent = '💰 ' + txt;
+          span.textContent = txt ? '약 ' + txt : '';
           span.className   = 'price-preview has-value' + (isFocused ? ' focused' : '');
         } else {
-          // 파싱 불가 → 입력값 그대로 저장됨 안내
-          span.textContent = '📝 입력값 그대로 저장됨';
-          span.className   = 'price-preview unparsed';
+          span.textContent = '';
+          span.className   = 'price-preview';
         }
       }
 
       /* ── 모든 .price-input 에 이벤트 바인딩 ────────────────────── */
+      function refreshPricePreviews() {
+        document.querySelectorAll('.price-input').forEach(function (inp) {
+          var span = document.getElementById('prev-' + inp.getAttribute('name'));
+          if (span) syncPriceInput(inp, span, false);
+        });
+      }
+
       function bindPricePreviews() {
         document.querySelectorAll('.price-input').forEach(function (inp) {
           var name = inp.getAttribute('name');
@@ -564,13 +570,13 @@
           if (!span) return;
 
           // 실시간 입력
-          inp.addEventListener('input',  function () { updatePreview(inp, span, true);  });
+          inp.addEventListener('input',  function () { syncPriceInput(inp, span, true);  });
           inp.addEventListener('focus',  function () { updatePreview(inp, span, true);  });
-          inp.addEventListener('blur',   function () { updatePreview(inp, span, false); });
+          inp.addEventListener('blur',   function () { syncPriceInput(inp, span, false); });
 
           // 수정 모드: 폼에 값이 채워진 후 미리보기 갱신
           // app.js 가 폼 값을 채우는 타이밍(DOMContentLoaded 이후)을 기다림
-          setTimeout(function () { updatePreview(inp, span, false); }, 400);
+          setTimeout(function () { syncPriceInput(inp, span, false); }, 400);
         });
       }
 
@@ -581,28 +587,21 @@
         bindPricePreviews();
       }
 
+      window.refreshPricePreviews = refreshPricePreviews;
+      window.addEventListener('hitop:price-values-updated', refreshPricePreviews);
+
       // app.js의 setupAdminRegister가 기존 매물 값을 채운 뒤에도 반영
       // MutationObserver로 input.value 변경 감지 (수정 모드 폴백)
       var _previewTimer = null;
       var observer = new MutationObserver(function () {
         clearTimeout(_previewTimer);
-        _previewTimer = setTimeout(function () {
-          document.querySelectorAll('.price-input').forEach(function (inp) {
-            var span = document.getElementById('prev-' + inp.getAttribute('name'));
-            if (span) updatePreview(inp, span, false);
-          });
-        }, 100);
+        _previewTimer = setTimeout(refreshPricePreviews, 100);
       });
       observer.observe(document.body, { subtree: true, childList: true, attributes: false });
 
       // app.js가 value 를 직접 set 하는 경우 폴백 (pollingfree — 1회성)
       window.addEventListener('load', function () {
-        setTimeout(function () {
-          document.querySelectorAll('.price-input').forEach(function (inp) {
-            var span = document.getElementById('prev-' + inp.getAttribute('name'));
-            if (span) updatePreview(inp, span, false);
-          });
-        }, 600);
+        setTimeout(refreshPricePreviews, 600);
       });
 
     })();
