@@ -2792,7 +2792,7 @@ const setupAdminListingsMgmt = () => {
         listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">관리자 인증이 완료되지 않았습니다.</p>';
         return;
       }
-      _allListings = await readListingsFromSupabase();
+      _allListings = await readListingsFromSupabase({ publicOnly: true });
     } catch (err) {
       console.error('Supabase 매물 조회 오류:', err);
       listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">매물 정보를 불러오지 못했습니다.</p>';
