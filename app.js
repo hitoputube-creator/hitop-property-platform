@@ -28,7 +28,7 @@ const CAT_LABELS = {
   "\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\uac74\ubb3c\u00b7\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
-  "\uae30\ud0c0": "\uae30\ud0c0"
+  "\uae30\ud0c0": "\uac74\ubb3c\u00b7\ube4c\ub529"
 };
 
 const CATEGORY_MAP = {
@@ -62,9 +62,6 @@ const CATEGORY_MAP = {
     "\ube4c\ub529",
     "\uc0c1\uac00\uc8fc\ud0dd",
     "\ub2e4\uac00\uad6c\uc8fc\ud0dd"
-  ],
-  "\uae30\ud0c0": [
-    "\uae30\ud0c0"
   ]
 };
 
@@ -98,7 +95,7 @@ const PT_TO_CAT1 = {
   "\uac74\ubb3c\u00b7\ube4c\ub529": "\uac74\ubb3c\ube4c\ub529",
   "\uc0c1\uac00\uc8fc\ud0dd": "\uac74\ubb3c\ube4c\ub529",
   "\ub2e4\uac00\uad6c\uc8fc\ud0dd": "\uac74\ubb3c\ube4c\ub529",
-  "\uae30\ud0c0": "\uae30\ud0c0"
+  "\uae30\ud0c0": "\uac74\ubb3c\ube4c\ub529"
 };
 
 const PT_TO_CAT2 = {
@@ -131,7 +128,7 @@ const PT_TO_CAT2 = {
   "\uac74\ubb3c\u00b7\ube4c\ub529": "\ube4c\ub529",
   "\uc0c1\uac00\uc8fc\ud0dd": "\uc0c1\uac00\uc8fc\ud0dd",
   "\ub2e4\uac00\uad6c\uc8fc\ud0dd": "\ub2e4\uac00\uad6c\uc8fc\ud0dd",
-  "\uae30\ud0c0": "\uae30\ud0c0"
+  "\uae30\ud0c0": "\uac74\ubb3c"
 };
 
 const derivePropertyType = (cat1, cat2) => {
@@ -141,12 +138,11 @@ const derivePropertyType = (cat1, cat2) => {
   if (cat1 === "\uc8fc\uac70\uc6a9") return cat2 === "\uc544\ud30c\ud2b8" ? "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815" : (cat2 || "\uc624\ud53c\uc2a4\ud154");
   if (cat1 === "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd") return cat2 || "\ub2e8\ub3c5\uc8fc\ud0dd";
   if (cat1 === "\uac74\ubb3c\ube4c\ub529") return cat2 || "\uac74\ubb3c\ube4c\ub529";
-  if (cat1 === "\uae30\ud0c0") return "\uae30\ud0c0";
   return cat1 || '';
 };
 
 const getCategory1 = (item) => {
-  if (item.category1) return item.category1;
+  if (item.category1) return item.category1 === "\uae30\ud0c0" ? "\uac74\ubb3c\ube4c\ub529" : item.category1;
   return PT_TO_CAT1[item.propertyType || item.type || ''] || item.propertyType || item.type || '';
 };
 
@@ -156,8 +152,7 @@ const CAT1_DISPLAY = {
   "\ud1a0\uc9c0": "\ud1a0\uc9c0",
   "\uc8fc\uac70\uc6a9": "\uc8fc\uac70\uc6a9",
   "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
-  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
-  "\uae30\ud0c0": "\uae30\ud0c0"
+  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529"
 };
 
 const PROPERTY_FIELDS = {
@@ -1109,7 +1104,6 @@ const setupListingsPage = () => {
     '주거용': '주거용',
     '단독전원주택': '단독·전원주택',
     '건물빌딩': '건물·빌딩',
-    '기타': '기타',
   };
   const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '' };
   let sortMode = 'date';
@@ -1441,7 +1435,7 @@ const setupListingsPage = () => {
     const all = _listings;
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = `(${v})`; };
     set('cnt-all', all.length);
-    ['공장창고','상가사무실','토지','주거용','단독전원주택','건물빌딩','기타'].forEach(cat => {
+    ['공장창고','상가사무실','토지','주거용','단독전원주택','건물빌딩'].forEach(cat => {
       set(`cnt-${cat}`, all.filter(i => getCategory1(i) === cat).length);
     });
   };
