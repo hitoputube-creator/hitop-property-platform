@@ -1,5 +1,6 @@
 console.log('app.js 로드됨!');
 const SUPABASE_LISTINGS_TABLE = 'listings';
+const SUPABASE_VISITORS_TABLE = 'visitors';
 
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
 
@@ -423,6 +424,92 @@ async function readListingsFromSupabase({ publicOnly = false } = {}) {
   if (error) throw error;
   return (data || []).map(normalizeSupabaseListing);
 }
+
+const getKoreaDateKey = () => {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+  } catch (_) {
+    const kst = new Date(Date.now() + (9 * 60 * 60 * 1000));
+    return kst.toISOString().slice(0, 10);
+  }
+};
+
+const normalizeVisitorStats = (data) => {
+  const row = Array.isArray(data) ? data[0] : data;
+  return {
+    today: Number(row?.today_count ?? row?.today ?? row?.count ?? 0) || 0,
+    total: Number(row?.total_count ?? row?.total ?? row?.count ?? 0) || 0
+  };
+};
+
+async function incrementVisitorCountInSupabase() {
+  const { supabase } = await _supabaseCfg();
+  const today = getKoreaDateKey();
+
+  try {
+    const { data, error } = await supabase.rpc('increment_visitor_count', { p_date: today });
+    if (error) throw error;
+    return normalizeVisitorStats(data);
+  } catch (rpcError) {
+    console.warn('Visitor RPC unavailable, falling back to client update:', rpcError);
+  }
+
+  const { data: existing, error: readError } = await supabase
+    .from(SUPABASE_VISITORS_TABLE)
+    .select('id,date,count')
+    .eq('date', today)
+    .maybeSingle();
+  if (readError) throw readError;
+
+  if (existing) {
+    const nextCount = (Number(existing.count) || 0) + 1;
+    const { error } = await supabase
+      .from(SUPABASE_VISITORS_TABLE)
+      .update({ count: nextCount })
+      .eq('id', existing.id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase
+      .from(SUPABASE_VISITORS_TABLE)
+      .insert({ date: today, count: 1 });
+    if (error) throw error;
+  }
+
+  const { data: rows, error: totalError } = await supabase
+    .from(SUPABASE_VISITORS_TABLE)
+    .select('date,count');
+  if (totalError) throw totalError;
+
+  const list = rows || [];
+  return {
+    today: Number(list.find(row => row.date === today)?.count || 0),
+    total: list.reduce((sum, row) => sum + (Number(row.count) || 0), 0)
+  };
+}
+
+const setupVisitorCounter = async () => {
+  const box = document.getElementById('visitorCounter');
+  if (!box) return;
+  const todayEl = document.getElementById('visitorTodayCount');
+  const totalEl = document.getElementById('visitorTotalCount');
+
+  try {
+    const stats = await incrementVisitorCountInSupabase();
+    if (todayEl) todayEl.textContent = Number(stats.today).toLocaleString('ko-KR');
+    if (totalEl) totalEl.textContent = Number(stats.total).toLocaleString('ko-KR');
+    box.classList.remove('is-loading');
+  } catch (err) {
+    console.error('Visitor counter error:', err);
+    box.classList.add('is-error');
+    if (todayEl) todayEl.textContent = '-';
+    if (totalEl) totalEl.textContent = '-';
+  }
+};
 
 async function getListingFromSupabase(id) {
   const { supabase } = await _supabaseCfg();
@@ -1096,6 +1183,7 @@ const priceInRange = (price, range) => {
 const setupListingsPage = () => {
   const filterForm = document.getElementById('filterForm');
   if (!filterForm) return;
+  setupVisitorCounter();
 
   const CAT_LABELS = {
     '공장창고': '공장·창고',
