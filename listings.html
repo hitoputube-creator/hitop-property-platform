@@ -40,13 +40,14 @@
     <form id="filterForm" class="lp-header-search" novalidate>
       <input type="text" name="keyword" id="kwInput" placeholder="매물명 / 위치 검색" autocomplete="off" />
       <select name="formCat" id="formCatSelect">
-        <option value="">매물종류</option>
-        <option value="공장창고">공장·창고</option>
-        <option value="상가사무실">상가·사무실</option>
-        <option value="토지">토지</option>
-        <option value="주거용">주거용(아파트·오피스텔)</option>
-        <option value="단독전원주택">단독·전원주택</option>
-        <option value="건물빌딩">건물·빌딩</option>
+        <option value="">&#47588;&#47932;&#51333;&#47448;</option>
+        <option value="&#44277;&#51109;&#52285;&#44256;">&#44277;&#51109;&#183;&#52285;&#44256;</option>
+        <option value="&#49345;&#44032;&#49324;&#47924;&#49892;">&#49345;&#44032;&#183;&#49324;&#47924;&#49892;</option>
+        <option value="&#53664;&#51648;">&#53664;&#51648;</option>
+        <option value="&#51452;&#44144;&#50857;">&#51452;&#44144;&#50857;</option>
+        <option value="&#45800;&#46021;&#51204;&#50896;&#51452;&#53469;">&#45800;&#46021;&#183;&#51204;&#50896;&#51452;&#53469;</option>
+        <option value="&#44148;&#47932;&#48716;&#46377;">&#44148;&#47932;&#183;&#48716;&#46377;</option>
+        <option value="&#44592;&#53440;">&#44592;&#53440;</option>
       </select>
       <select name="formDeal" id="formDealSelect">
         <option value="">거래유형</option>
@@ -72,32 +73,36 @@
           <div class="lp-sidebar-header">매물 종류</div>
 
           <a class="lp-cat-item active" href="#" data-cat="">
-            <span class="lp-cat-name">전체 매물</span>
+            <span class="lp-cat-name">&#51204;&#52404; &#47588;&#47932;</span>
             <span class="lp-cat-count" id="cnt-all">(0)</span>
           </a>
-          <a class="lp-cat-item" href="#" data-cat="공장창고">
-            <span class="lp-cat-name">공장·창고</span>
-            <span class="lp-cat-count" id="cnt-공장창고">(0)</span>
+          <a class="lp-cat-item" href="#" data-cat="&#44277;&#51109;&#52285;&#44256;">
+            <span class="lp-cat-name">&#44277;&#51109;&#183;&#52285;&#44256;</span>
+            <span class="lp-cat-count" id="cnt-&#44277;&#51109;&#52285;&#44256;">(0)</span>
           </a>
-          <a class="lp-cat-item" href="#" data-cat="상가사무실">
-            <span class="lp-cat-name">상가·사무실</span>
-            <span class="lp-cat-count" id="cnt-상가사무실">(0)</span>
+          <a class="lp-cat-item" href="#" data-cat="&#49345;&#44032;&#49324;&#47924;&#49892;">
+            <span class="lp-cat-name">&#49345;&#44032;&#183;&#49324;&#47924;&#49892;</span>
+            <span class="lp-cat-count" id="cnt-&#49345;&#44032;&#49324;&#47924;&#49892;">(0)</span>
           </a>
-          <a class="lp-cat-item" href="#" data-cat="토지">
-            <span class="lp-cat-name">토지</span>
-            <span class="lp-cat-count" id="cnt-토지">(0)</span>
+          <a class="lp-cat-item" href="#" data-cat="&#53664;&#51648;">
+            <span class="lp-cat-name">&#53664;&#51648;</span>
+            <span class="lp-cat-count" id="cnt-&#53664;&#51648;">(0)</span>
           </a>
-          <a class="lp-cat-item" href="#" data-cat="주거용">
-            <span class="lp-cat-name">주거용(아파트·오피스텔)</span>
-            <span class="lp-cat-count" id="cnt-주거용">(0)</span>
+          <a class="lp-cat-item" href="#" data-cat="&#51452;&#44144;&#50857;">
+            <span class="lp-cat-name">&#51452;&#44144;&#50857;</span>
+            <span class="lp-cat-count" id="cnt-&#51452;&#44144;&#50857;">(0)</span>
           </a>
-          <a class="lp-cat-item" href="#" data-cat="단독전원주택">
-            <span class="lp-cat-name">단독·전원주택</span>
-            <span class="lp-cat-count" id="cnt-단독전원주택">(0)</span>
+          <a class="lp-cat-item" href="#" data-cat="&#45800;&#46021;&#51204;&#50896;&#51452;&#53469;">
+            <span class="lp-cat-name">&#45800;&#46021;&#183;&#51204;&#50896;&#51452;&#53469;</span>
+            <span class="lp-cat-count" id="cnt-&#45800;&#46021;&#51204;&#50896;&#51452;&#53469;">(0)</span>
           </a>
-          <a class="lp-cat-item" href="#" data-cat="건물빌딩">
-            <span class="lp-cat-name">건물·빌딩</span>
-            <span class="lp-cat-count" id="cnt-건물빌딩">(0)</span>
+          <a class="lp-cat-item" href="#" data-cat="&#44148;&#47932;&#48716;&#46377;">
+            <span class="lp-cat-name">&#44148;&#47932;&#183;&#48716;&#46377;</span>
+            <span class="lp-cat-count" id="cnt-&#44148;&#47932;&#48716;&#46377;">(0)</span>
+          </a>
+          <a class="lp-cat-item" href="#" data-cat="&#44592;&#53440;">
+            <span class="lp-cat-name">&#44592;&#53440;</span>
+            <span class="lp-cat-count" id="cnt-&#44592;&#53440;">(0)</span>
           </a>
         </div>
 
@@ -315,6 +320,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260603s"></script>
+    <script src="app.js?v=20260603cat"></script>
   </body>
 </html>

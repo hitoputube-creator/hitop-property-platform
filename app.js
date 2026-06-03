@@ -2,85 +2,162 @@ console.log('app.js 로드됨!');
 const SUPABASE_LISTINGS_TABLE = 'listings';
 
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
+
 const CAT_LABELS = {
-  // ── 레거시 propertyType 라벨 ──
-  '공장창고':         '공장·창고',
-  '공장·창고':        '공장·창고',
-  '상가':             '상가·사무실',
-  '상가빌딩':         '상가·사무실',
-  '상가·빌딩':        '상가·사무실',
-  '토지':             '토지',
-  '오피스텔':         '오피스텔',
-  '힐스테이트더운정': '아파트',
-  '단독주택':         '단독·전원주택',
-  '단독전원주택':     '단독·전원주택',
-  '단독·전원주택':    '단독·전원주택',
-  // ── 신규 category1 라벨 ──
-  '상가사무실':     '상가·사무실',
-  '주거용':         '주거용',
-  '단독전원주택_c': '단독·전원주택',  // category1 키는 아래 CATEGORY_MAP 참조
-  '건물빌딩':       '건물·빌딩',
+  "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
+  "\uacf5\uc7a5\u00b7\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
+  "\uacf5\uc7a5/\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
+  "\uc0c1\uac00": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\ube4c\ub529": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\u00b7\ube4c\ub529": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\ud1a0\uc9c0": "\ud1a0\uc9c0",
+  "\ud1a0\uc9c0\u00b7\uac1c\ubc1c": "\ud1a0\uc9c0",
+  "\uc8fc\uac70\uc6a9": "\uc8fc\uac70\uc6a9",
+  "\uc624\ud53c\uc2a4\ud154": "\uc8fc\uac70\uc6a9",
+  "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815": "\uc8fc\uac70\uc6a9",
+  "\uc544\ud30c\ud2b8": "\uc8fc\uac70\uc6a9",
+  "\ub2e8\ub3c5\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\uac74\ubb3c": "\uac74\ubb3c\u00b7\ube4c\ub529",
+  "\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
+  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
+  "\uac74\ubb3c\u00b7\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
-// 1차 매물구분 → 2차 옵션 매핑
 const CATEGORY_MAP = {
-  '공장창고':     ['공장', '창고'],
-  '상가사무실':   ['상가', '사무실'],
-  '토지':         ['토지'],
-  '주거용':       ['아파트', '오피스텔'],
-  '단독전원주택': ['단독주택', '전원주택'],
-  '건물빌딩':     ['건물', '빌딩'],
+  "\uacf5\uc7a5\ucc3d\uace0": [
+    "\uacf5\uc7a5",
+    "\ucc3d\uace0",
+    "\uacf5\uc7a5\ucc3d\uace0"
+  ],
+  "\uc0c1\uac00\uc0ac\ubb34\uc2e4": [
+    "\uc0c1\uac00",
+    "\uc0ac\ubb34\uc2e4",
+    "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130"
+  ],
+  "\ud1a0\uc9c0": [
+    "\ud1a0\uc9c0",
+    "\uc784\uc57c",
+    "\ub18d\uc9c0",
+    "\ud0dd\uc9c0"
+  ],
+  "\uc8fc\uac70\uc6a9": [
+    "\uc544\ud30c\ud2b8",
+    "\uc624\ud53c\uc2a4\ud154",
+    "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815"
+  ],
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": [
+    "\ub2e8\ub3c5\uc8fc\ud0dd",
+    "\uc804\uc6d0\uc8fc\ud0dd"
+  ],
+  "\uac74\ubb3c\ube4c\ub529": [
+    "\uac74\ubb3c",
+    "\ube4c\ub529",
+    "\uc0c1\uac00\uc8fc\ud0dd",
+    "\ub2e4\uac00\uad6c\uc8fc\ud0dd"
+  ],
+  "\uae30\ud0c0": [
+    "\uae30\ud0c0"
+  ]
 };
 
-// 기존 propertyType → category1 매핑 (레거시 폴백)
 const PT_TO_CAT1 = {
-  '공장창고': '공장창고', '공장·창고': '공장창고',
-  '상가': '상가사무실', '상가빌딩': '상가사무실', '상가·빌딩': '상가사무실',
-  '상가·빌딩·사무실': '상가사무실', '사무실': '상가사무실', '오피스': '상가사무실',
-  '토지': '토지', '토지·개발': '토지',
-  '오피스텔': '주거용',
-  '힐스테이트더운정': '주거용',
-  '단독주택': '단독전원주택', '단독전원주택': '단독전원주택', '단독·전원주택': '단독전원주택',
-  '건물': '건물빌딩', '빌딩': '건물빌딩', '건물빌딩': '건물빌딩',
+  "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
+  "\uacf5\uc7a5\u00b7\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
+  "\uacf5\uc7a5/\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
+  "\uc0c1\uac00": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc624\ud53c\uc2a4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\ube4c\ub529": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\u00b7\ube4c\ub529": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\u00b7\ube4c\ub529\u00b7\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\ud1a0\uc9c0": "\ud1a0\uc9c0",
+  "\ud1a0\uc9c0\u00b7\uac1c\ubc1c": "\ud1a0\uc9c0",
+  "\uc784\uc57c": "\ud1a0\uc9c0",
+  "\ub18d\uc9c0": "\ud1a0\uc9c0",
+  "\ud0dd\uc9c0": "\ud1a0\uc9c0",
+  "\uc8fc\uac70\uc6a9": "\uc8fc\uac70\uc6a9",
+  "\uc544\ud30c\ud2b8": "\uc8fc\uac70\uc6a9",
+  "\uc624\ud53c\uc2a4\ud154": "\uc8fc\uac70\uc6a9",
+  "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815": "\uc8fc\uac70\uc6a9",
+  "\ub2e8\ub3c5\uc8fc\ud0dd": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "\uac74\ubb3c": "\uac74\ubb3c\ube4c\ub529",
+  "\ube4c\ub529": "\uac74\ubb3c\ube4c\ub529",
+  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\ube4c\ub529",
+  "\uac74\ubb3c\u00b7\ube4c\ub529": "\uac74\ubb3c\ube4c\ub529",
+  "\uc0c1\uac00\uc8fc\ud0dd": "\uac74\ubb3c\ube4c\ub529",
+  "\ub2e4\uac00\uad6c\uc8fc\ud0dd": "\uac74\ubb3c\ube4c\ub529",
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
-// 기존 propertyType → category2 매핑
 const PT_TO_CAT2 = {
-  '공장창고': '공장', '공장·창고': '공장',
-  '상가': '상가', '상가빌딩': '상가', '상가·빌딩': '상가', '상가·빌딩·사무실': '상가',
-  '사무실': '사무실', '오피스': '사무실',
-  '토지': '토지',
-  '오피스텔': '오피스텔',
-  '힐스테이트더운정': '아파트',
-  '단독주택': '단독주택', '단독전원주택': '단독주택', '단독·전원주택': '단독주택',
-  '건물': '건물', '빌딩': '빌딩', '건물빌딩': '빌딩',
+  "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
+  "\uacf5\uc7a5\u00b7\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
+  "\uacf5\uc7a5/\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
+  "\uacf5\uc7a5": "\uacf5\uc7a5",
+  "\ucc3d\uace0": "\ucc3d\uace0",
+  "\uc0c1\uac00": "\uc0c1\uac00",
+  "\uc0ac\ubb34\uc2e4": "\uc0ac\ubb34\uc2e4",
+  "\uc624\ud53c\uc2a4": "\uc0ac\ubb34\uc2e4",
+  "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130": "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130",
+  "\uc0c1\uac00\ube4c\ub529": "\uc0c1\uac00",
+  "\uc0c1\uac00\u00b7\ube4c\ub529": "\uc0c1\uac00",
+  "\uc0c1\uac00\u00b7\ube4c\ub529\u00b7\uc0ac\ubb34\uc2e4": "\uc0c1\uac00",
+  "\ud1a0\uc9c0": "\ud1a0\uc9c0",
+  "\uc784\uc57c": "\uc784\uc57c",
+  "\ub18d\uc9c0": "\ub18d\uc9c0",
+  "\ud0dd\uc9c0": "\ud0dd\uc9c0",
+  "\uc544\ud30c\ud2b8": "\uc544\ud30c\ud2b8",
+  "\uc624\ud53c\uc2a4\ud154": "\uc624\ud53c\uc2a4\ud154",
+  "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815": "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815",
+  "\ub2e8\ub3c5\uc8fc\ud0dd": "\ub2e8\ub3c5\uc8fc\ud0dd",
+  "\uc804\uc6d0\uc8fc\ud0dd": "\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\uc8fc\ud0dd",
+  "\uac74\ubb3c": "\uac74\ubb3c",
+  "\ube4c\ub529": "\ube4c\ub529",
+  "\uac74\ubb3c\ube4c\ub529": "\ube4c\ub529",
+  "\uac74\ubb3c\u00b7\ube4c\ub529": "\ube4c\ub529",
+  "\uc0c1\uac00\uc8fc\ud0dd": "\uc0c1\uac00\uc8fc\ud0dd",
+  "\ub2e4\uac00\uad6c\uc8fc\ud0dd": "\ub2e4\uac00\uad6c\uc8fc\ud0dd",
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
-// 신규 category1/category2 → 하위호환 propertyType 도출
 const derivePropertyType = (cat1, cat2) => {
-  if (cat1 === '공장창고')     return '공장창고';
-  if (cat1 === '상가사무실')   return '상가';
-  if (cat1 === '토지')         return '토지';
-  if (cat1 === '주거용')       return cat2 === '아파트' ? '힐스테이트더운정' : '오피스텔';
-  if (cat1 === '단독전원주택') return '단독주택';
-  if (cat1 === '건물빌딩')     return '건물빌딩';
+  if (cat1 === "\uacf5\uc7a5\ucc3d\uace0") return "\uacf5\uc7a5\ucc3d\uace0";
+  if (cat1 === "\uc0c1\uac00\uc0ac\ubb34\uc2e4") return cat2 === "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130" ? "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130" : (cat2 || "\uc0c1\uac00");
+  if (cat1 === "\ud1a0\uc9c0") return "\ud1a0\uc9c0";
+  if (cat1 === "\uc8fc\uac70\uc6a9") return cat2 === "\uc544\ud30c\ud2b8" ? "\ud790\uc2a4\ud14c\uc774\ud2b8\ub354\uc6b4\uc815" : (cat2 || "\uc624\ud53c\uc2a4\ud154");
+  if (cat1 === "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd") return cat2 || "\ub2e8\ub3c5\uc8fc\ud0dd";
+  if (cat1 === "\uac74\ubb3c\ube4c\ub529") return cat2 || "\uac74\ubb3c\ube4c\ub529";
+  if (cat1 === "\uae30\ud0c0") return "\uae30\ud0c0";
   return cat1 || '';
 };
 
-// item에서 category1 도출 (신규 필드 우선, 없으면 레거시 매핑)
 const getCategory1 = (item) => {
   if (item.category1) return item.category1;
-  return PT_TO_CAT1[item.propertyType || ''] || item.propertyType || '';
+  return PT_TO_CAT1[item.propertyType || item.type || ''] || item.propertyType || item.type || '';
 };
 
-// category1 표시 라벨 (사이드바·카드 등)
 const CAT1_DISPLAY = {
-  '공장창고':     '공장·창고',
-  '상가사무실':   '상가·사무실',
-  '토지':         '토지',
-  '주거용':       '주거용',
-  '단독전원주택': '단독·전원주택',
-  '건물빌딩':     '건물·빌딩',
+  "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
+  "\uc0c1\uac00\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "\ud1a0\uc9c0": "\ud1a0\uc9c0",
+  "\uc8fc\uac70\uc6a9": "\uc8fc\uac70\uc6a9",
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
 const PROPERTY_FIELDS = {
@@ -1026,14 +1103,14 @@ const setupListingsPage = () => {
   if (!filterForm) return;
 
   const CAT_LABELS = {
-    '공장창고':         '공장·창고',
-    '상가':             '상가·빌딩',
-    '토지':             '토지',
-    '오피스텔':         '오피스텔',
-    '힐스테이트더운정': '힐스테이트더운정',
-    '단독주택':         '단독·전원주택',
+    '공장창고': '공장·창고',
+    '상가사무실': '상가·사무실',
+    '토지': '토지',
+    '주거용': '주거용',
+    '단독전원주택': '단독·전원주택',
+    '건물빌딩': '건물·빌딩',
+    '기타': '기타',
   };
-
   const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '' };
   let sortMode = 'date';
   let allPage  = 1;
@@ -1364,7 +1441,7 @@ const setupListingsPage = () => {
     const all = _listings;
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = `(${v})`; };
     set('cnt-all', all.length);
-    ['공장창고','상가사무실','토지','주거용','단독전원주택','건물빌딩'].forEach(cat => {
+    ['공장창고','상가사무실','토지','주거용','단독전원주택','건물빌딩','기타'].forEach(cat => {
       set(`cnt-${cat}`, all.filter(i => getCategory1(i) === cat).length);
     });
   };
@@ -1981,7 +2058,7 @@ const setupAdminDashboard = () => {
   // ── 필터 적용 ──
   const applyFilters = () => {
     let listings = [..._allListings];
-    if (filterCat)  listings = listings.filter(i => i.propertyType === filterCat);
+    if (filterCat)  listings = listings.filter(i => getCategory1(i) === filterCat);
     if (filterDeal) listings = listings.filter(i => i.dealType === filterDeal);
     if (filterKw) {
       const kw = filterKw.toLowerCase();
