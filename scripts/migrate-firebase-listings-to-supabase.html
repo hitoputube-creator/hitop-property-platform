@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase listings to Supabase migration</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 24px; line-height: 1.5; }
+      button { padding: 10px 14px; font-weight: 700; cursor: pointer; }
+      pre { white-space: pre-wrap; background: #f5f5f5; padding: 16px; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Firebase listings to Supabase migration</h1>
+    <p>이 파일은 기존 Firebase listings 문서 최대 10개를 Supabase listings 테이블로 이전합니다.</p>
+    <button id="runBtn" type="button">Run migration</button>
+    <pre id="log">Ready.</pre>
+
+    <script type="module">
+      import { db, LISTINGS_COLLECTION } from '../firebase-config.js';
+      import { supabase } from '../supabase-config.js';
+      import {
+        collection,
+        getDocs,
+        limit,
+        orderBy,
+        query,
+      } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+      const logEl = document.getElementById('log');
+      const log = (message) => {
+        logEl.textContent += `\n${message}`;
+      };
+
+      const asArray = (value) => {
+        if (Array.isArray(value)) return value.filter(Boolean);
+        if (typeof value === 'string' && value.trim()) return [value.trim()];
+        return [];
+      };
+
+      const toNumberOrNull = (value) => {
+        if (value === null || value === undefined || value === '') return null;
+        const n = Number(value);
+        return Number.isFinite(n) ? n : null;
+      };
+
+      const toIso = (value) => {
+        if (!value) return new Date().toISOString();
+        if (typeof value.toDate === 'function') return value.toDate().toISOString();
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+      };
+
+      const toSupabaseRow = (firebaseId, item) => {
+        const category1 = item.category1 || '';
+        const category2 = item.category2 || '';
+        const imageUrls = asArray(item.imageUrls || item.image_urls || item.imageUrl);
+        const stickers = asArray(item.stickers);
+        return {
+          type: item.type || item.propertyType || category1 || null,
+          title: item.title || null,
+          address: item.address || null,
+          status: item.status || null,
+          description: item.description || item.detailDescription || null,
+          resource_id: firebaseId,
+          created_at: toIso(item.createdAt || item.created_at),
+          is_public: true,
+          display_address: item.displayAddress || item.display_address || null,
+          category1: category1 || null,
+          category2: category2 || null,
+          deal_type: item.dealType || item.deal_type || null,
+          sale_price: item.salePrice === undefined ? null : String(item.salePrice),
+          deposit: item.deposit === undefined ? null : String(item.deposit),
+          monthly_rent: item.monthlyRent === undefined ? null : String(item.monthlyRent),
+          area_m2: toNumberOrNull(item.areaM2 || item.area),
+          area_py: toNumberOrNull(item.areaPy),
+          floor_info: item.floorInfo || item.floor || null,
+          zoning: item.zoning || item.zoningArea || null,
+          detail_description: item.detailDescription || item.description || null,
+          stickers,
+          image_urls: imageUrls,
+          data: {
+            ...item,
+            firebase_id: firebaseId,
+            imageUrls,
+            stickers,
+          },
+        };
+      };
+
+      document.getElementById('runBtn').addEventListener('click', async () => {
+        logEl.textContent = 'Starting migration...';
+        try {
+          const q = query(
+            collection(db, LISTINGS_COLLECTION),
+            orderBy('createdAt', 'desc'),
+            limit(10)
+          );
+          const snap = await getDocs(q);
+          log(`Firebase documents: ${snap.size}`);
+
+          let inserted = 0;
+          let skipped = 0;
+          for (const docSnap of snap.docs) {
+            const firebaseId = docSnap.id;
+            const { data: existing, error: lookupError } = await supabase
+              .from('listings')
+              .select('id')
+              .eq('resource_id', firebaseId)
+              .maybeSingle();
+            if (lookupError) throw lookupError;
+            if (existing) {
+              skipped += 1;
+              log(`Skip existing: ${firebaseId}`);
+              continue;
+            }
+
+            const row = toSupabaseRow(firebaseId, docSnap.data());
+            const { error } = await supabase.from('listings').insert(row);
+            if (error) throw error;
+            inserted += 1;
+            log(`Inserted: ${firebaseId} / ${row.title || '(no title)'}`);
+          }
+
+          log(`Done. inserted=${inserted}, skipped=${skipped}`);
+        } catch (err) {
+          console.error(err);
+          log(`ERROR: ${err.message || err}`);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 console.log('app.js 로드됨!');
-const STORAGE_KEY = 'hitop_listings_v1';
+const SUPABASE_LISTINGS_TABLE = 'listings';
 
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
 const CAT_LABELS = {
@@ -212,63 +212,186 @@ const sampleListings = [
   }
 ];
 
-// ── 스토리지 / 포맷 헬퍼 ──
-const readListings  = () => {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) { localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleListings)); return [...sampleListings]; }
-  try { return JSON.parse(raw); } catch { return [...sampleListings]; }
-};
-const writeListings = (listings) => localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
-
-// ── Firestore 매물 CRUD 헬퍼 (2단계 — 호출부는 아직 미연결) ──
-const _fsListings = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-const _fsCfg      = () => import('./firebase-config.js');
-const _fsAuth     = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+// Supabase listings CRUD helpers
 const _supabaseCfg = () => import('./supabase-config.js');
 
-function normalizeFirestoreListing(docSnap) {
-  const d = docSnap.data();
+const asArray = (value) => {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === 'string' && value.trim()) return [value.trim()];
+  return [];
+};
+
+const asNumberOrNull = (value) => {
+  if (value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+};
+
+const cleanObject = (obj) => Object.fromEntries(
+  Object.entries(obj).filter(([, value]) => value !== undefined)
+);
+
+function normalizeSupabaseListing(row) {
+  const d = row.data && typeof row.data === 'object' ? row.data : {};
+  const category1 = row.category1 ?? d.category1 ?? '';
+  const category2 = row.category2 ?? d.category2 ?? '';
+  const propertyType = d.propertyType || d.property_type || row.type || derivePropertyType(category1, category2) || category1;
   return {
     ...d,
-    id: docSnap.id,
-    createdAt: d.createdAt ? d.createdAt.toDate().toISOString() : null,
-    updatedAt: d.updatedAt ? d.updatedAt.toDate().toISOString() : null,
+    id: row.id,
+    type: row.type ?? d.type ?? propertyType,
+    title: row.title ?? d.title ?? '',
+    address: row.address ?? d.address ?? '',
+    status: row.status ?? d.status ?? '',
+    description: row.detail_description ?? row.description ?? d.description ?? d.detailDescription ?? '',
+    resource_id: row.resource_id ?? d.resource_id ?? d.resourceId ?? null,
+    createdAt: row.created_at ?? d.createdAt ?? d.created_at ?? null,
+    updatedAt: row.updated_at ?? d.updatedAt ?? d.updated_at ?? null,
+    is_public: row.is_public ?? d.is_public ?? false,
+    displayAddress: row.display_address ?? d.displayAddress ?? d.display_address ?? '',
+    category1,
+    category2,
+    dealType: row.deal_type ?? d.dealType ?? d.deal_type ?? '',
+    salePrice: row.sale_price ?? d.salePrice ?? d.sale_price ?? '',
+    deposit: row.deposit ?? d.deposit ?? '',
+    monthlyRent: row.monthly_rent ?? d.monthlyRent ?? d.monthly_rent ?? '',
+    areaM2: row.area_m2 ?? d.areaM2 ?? d.area_m2 ?? d.area ?? null,
+    areaPy: row.area_py ?? d.areaPy ?? d.area_py ?? null,
+    area: row.area_m2 ?? d.area ?? d.areaM2 ?? d.area_m2 ?? null,
+    floorInfo: row.floor_info ?? d.floorInfo ?? d.floor_info ?? d.floor ?? '',
+    zoning: row.zoning ?? d.zoning ?? d.zoningArea ?? '',
+    detailDescription: row.detail_description ?? d.detailDescription ?? d.detail_description ?? '',
+    stickers: asArray(row.stickers ?? d.stickers),
+    imageUrls: asArray(row.image_urls ?? d.imageUrls ?? d.image_urls ?? d.imageUrl),
+    propertyType,
+    listingNo: d.listingNo ?? d.listing_no ?? row.resource_id ?? '',
+    property_number: d.property_number ?? d.listingNo ?? d.listing_no ?? row.resource_id ?? '',
+    isRecommended: d.isRecommended ?? d.is_recommended ?? false,
+    isUrgent: d.isUrgent ?? d.is_urgent ?? false,
+    is_completed: d.is_completed ?? false,
   };
 }
 
-async function readListingsFromFirestore() {
-  const [{ collection, getDocs, query, orderBy }, { db, LISTINGS_COLLECTION }] =
-    await Promise.all([_fsListings(), _fsCfg()]);
-  const q    = query(collection(db, LISTINGS_COLLECTION), orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  return snap.docs.map(normalizeFirestoreListing);
-}
+function toSupabaseListingRow(listing, { isInsert = false } = {}) {
+  const category1 = listing.category1 || PT_TO_CAT1[listing.propertyType || ''] || '';
+  const category2 = listing.category2 || PT_TO_CAT2[listing.propertyType || ''] || '';
+  const propertyType = listing.propertyType || derivePropertyType(category1, category2) || listing.type || '';
+  const imageUrls = asArray(listing.imageUrls);
+  const stickers = asArray(listing.stickers);
+  const data = { ...listing, category1, category2, propertyType, imageUrls, stickers };
+  delete data.id;
+  delete data.createdAt;
+  delete data.updatedAt;
 
-async function createListingInFirestore(listing) {
-  const [{ collection, addDoc, serverTimestamp }, { db, LISTINGS_COLLECTION }] =
-    await Promise.all([_fsListings(), _fsCfg()]);
-  const now = serverTimestamp();
-  const ref = await addDoc(collection(db, LISTINGS_COLLECTION), {
-    ...listing,
-    createdAt: now,
-    updatedAt: now,
+  const row = cleanObject({
+    type: listing.type || propertyType || category1 || null,
+    title: listing.title || null,
+    address: listing.address || null,
+    status: listing.status || null,
+    description: listing.description || listing.detailDescription || null,
+    resource_id: listing.resource_id || listing.resourceId || listing.property_number || listing.listingNo || null,
+    is_public: listing.is_public === undefined ? true : listing.is_public === true || listing.is_public === 'true',
+    display_address: listing.displayAddress || listing.display_address || null,
+    category1: category1 || null,
+    category2: category2 || null,
+    deal_type: listing.dealType || listing.deal_type || null,
+    sale_price: listing.salePrice === undefined ? null : String(listing.salePrice),
+    deposit: listing.deposit === undefined ? null : String(listing.deposit),
+    monthly_rent: listing.monthlyRent === undefined ? null : String(listing.monthlyRent),
+    area_m2: asNumberOrNull(listing.areaM2 ?? listing.area),
+    area_py: asNumberOrNull(listing.areaPy),
+    floor_info: listing.floorInfo || listing.floor || null,
+    zoning: listing.zoning || listing.zoningArea || null,
+    detail_description: listing.detailDescription || listing.description || null,
+    stickers,
+    image_urls: imageUrls,
+    data,
   });
-  return ref.id;
+
+  if (isInsert) row.created_at = new Date().toISOString();
+  return row;
 }
 
-async function updateListingInFirestore(id, data) {
-  const [{ doc, updateDoc, serverTimestamp }, { db, LISTINGS_COLLECTION }] =
-    await Promise.all([_fsListings(), _fsCfg()]);
-  await updateDoc(doc(db, LISTINGS_COLLECTION, id), {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+function toSupabasePartialListingRow(listing) {
+  const row = {};
+  if ('type' in listing || 'propertyType' in listing) row.type = listing.type || listing.propertyType || null;
+  if ('title' in listing) row.title = listing.title || null;
+  if ('address' in listing) row.address = listing.address || null;
+  if ('status' in listing) row.status = listing.status || null;
+  if ('description' in listing || 'detailDescription' in listing) row.description = listing.description || listing.detailDescription || null;
+  if ('resource_id' in listing || 'resourceId' in listing || 'property_number' in listing || 'listingNo' in listing) {
+    row.resource_id = listing.resource_id || listing.resourceId || listing.property_number || listing.listingNo || null;
+  }
+  if ('is_public' in listing) row.is_public = listing.is_public === true || listing.is_public === 'true';
+  if ('displayAddress' in listing || 'display_address' in listing) row.display_address = listing.displayAddress || listing.display_address || null;
+  if ('category1' in listing) row.category1 = listing.category1 || null;
+  if ('category2' in listing) row.category2 = listing.category2 || null;
+  if ('dealType' in listing || 'deal_type' in listing) row.deal_type = listing.dealType || listing.deal_type || null;
+  if ('salePrice' in listing) row.sale_price = listing.salePrice === undefined ? null : String(listing.salePrice);
+  if ('deposit' in listing) row.deposit = listing.deposit === undefined ? null : String(listing.deposit);
+  if ('monthlyRent' in listing) row.monthly_rent = listing.monthlyRent === undefined ? null : String(listing.monthlyRent);
+  if ('areaM2' in listing || 'area' in listing) row.area_m2 = asNumberOrNull(listing.areaM2 ?? listing.area);
+  if ('areaPy' in listing) row.area_py = asNumberOrNull(listing.areaPy);
+  if ('floorInfo' in listing || 'floor' in listing) row.floor_info = listing.floorInfo || listing.floor || null;
+  if ('zoning' in listing || 'zoningArea' in listing) row.zoning = listing.zoning || listing.zoningArea || null;
+  if ('detailDescription' in listing) row.detail_description = listing.detailDescription || null;
+  if ('stickers' in listing) row.stickers = asArray(listing.stickers);
+  if ('imageUrls' in listing) row.image_urls = asArray(listing.imageUrls);
+  return row;
 }
 
-async function deleteListingFromFirestore(id) {
-  const [{ doc, deleteDoc }, { db, LISTINGS_COLLECTION }] =
-    await Promise.all([_fsListings(), _fsCfg()]);
-  await deleteDoc(doc(db, LISTINGS_COLLECTION, id));
+async function readListingsFromSupabase({ publicOnly = false } = {}) {
+  const { supabase } = await _supabaseCfg();
+  let query = supabase
+    .from(SUPABASE_LISTINGS_TABLE)
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (publicOnly) query = query.eq('is_public', true);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data || []).map(normalizeSupabaseListing);
+}
+
+async function getListingFromSupabase(id) {
+  const { supabase } = await _supabaseCfg();
+  const { data, error } = await supabase
+    .from(SUPABASE_LISTINGS_TABLE)
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return normalizeSupabaseListing(data);
+}
+
+async function createListingInSupabase(listing) {
+  const { supabase } = await _supabaseCfg();
+  const { data, error } = await supabase
+    .from(SUPABASE_LISTINGS_TABLE)
+    .insert(toSupabaseListingRow(listing, { isInsert: true }))
+    .select('id')
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+async function updateListingInSupabase(id, data) {
+  const { supabase } = await _supabaseCfg();
+  const isFullListing = 'title' in data || 'address' in data || 'category1' in data || 'dealType' in data;
+  const row = isFullListing ? toSupabaseListingRow(data) : toSupabasePartialListingRow(data);
+  const { error } = await supabase
+    .from(SUPABASE_LISTINGS_TABLE)
+    .update(row)
+    .eq('id', id);
+  if (error) throw error;
+}
+
+async function deleteListingFromSupabase(id) {
+  const { supabase } = await _supabaseCfg();
+  const { error } = await supabase
+    .from(SUPABASE_LISTINGS_TABLE)
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
 }
 
 const formatPrice   = (n) => Number(n).toLocaleString('ko-KR');
@@ -523,13 +646,10 @@ const getNextPropertyNumber = () => {
   const yy = String(now.getFullYear()).slice(2);
   const mm = String(now.getMonth() + 1).padStart(2, '0');
   const dd = String(now.getDate()).padStart(2, '0');
-  const prefix = `${yy}${mm}${dd}`;
-  const listings = readListings();
-  const existing = listings
-    .filter(i => (i.property_number || i.listingNo || '').startsWith(prefix + '-'))
-    .map(i => parseInt(((i.property_number || i.listingNo || '').split('-')[1])) || 0);
-  const maxNo = existing.length > 0 ? Math.max(...existing) : 0;
-  return `${prefix}-${maxNo + 1}`;
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mi = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  return `${yy}${mm}${dd}-${hh}${mi}${ss}`;
 };
 
 // 구형 호환 (admin-register.html 에서 여전히 사용)
@@ -840,112 +960,53 @@ const setupMobileNav = () => {
 };
 
 // ── 백그라운드 관리자 인증 대기 ──
-let adminAuthPromise = null;
-const waitForAdminAuth = () => {
-  if (adminAuthPromise) return adminAuthPromise;
-  adminAuthPromise = new Promise(async (resolve) => {
-    try {
-      const [{ onAuthStateChanged }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
-      if (auth.currentUser) {
-        if (auth.currentUser.email === 'newpajucity@naver.com') {
-          resolve(true);
-          return;
-        }
-      }
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe();
-        if (user && user.email === 'newpajucity@naver.com') {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      });
-    } catch (err) {
-      console.error('Auth 모니터링 오류:', err);
-      resolve(false);
-    }
-  });
-  return adminAuthPromise;
-};
+const waitForAdminAuth = () => Promise.resolve(sessionStorage.getItem('hitopAdminLoggedIn') === 'true');
 window.waitForAdminAuth = waitForAdminAuth;
 
-// ── 관리자 로그인 게이트 ──
 const requireAdminLogin = () => {
   const overlay = document.getElementById('loginOverlay');
   const mainEl  = document.getElementById('adminMain');
   if (!overlay || !mainEl) return true;
   const ADMIN_PW = 'hitop2025';
-  
-  (async () => {
-    try {
-      const [{ onAuthStateChanged }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
-      onAuthStateChanged(auth, (user) => {
-        if (user && user.email === 'newpajucity@naver.com') {
-          const wasLoggedIn = sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
-          sessionStorage.setItem('hitopAdminLoggedIn', 'true');
-          overlay.classList.add('hidden');
-          mainEl.classList.remove('hidden');
-          
-          if (!wasLoggedIn) {
-            location.reload();
-          }
-        } else {
-          const wasLoggedIn = sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
-          sessionStorage.removeItem('hitopAdminLoggedIn');
-          overlay.classList.remove('hidden');
-          mainEl.classList.add('hidden');
-          
-          if (wasLoggedIn) {
-            location.reload();
-          }
-        }
-      });
-    } catch (err) {
-      console.error('Auth 모니터링 초기화 실패:', err);
-    }
-  })();
 
-  if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
-    const loginBtn   = document.getElementById('loginBtn');
-    const loginPw    = document.getElementById('loginPw');
-    const loginError = document.getElementById('loginError');
-    const doLogin = async () => {
-      const pw = loginPw.value;
-      try {
-        const [{ signInWithEmailAndPassword }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
-        await signInWithEmailAndPassword(auth, 'newpajucity@naver.com', pw);
-        sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+  const showAdmin = () => {
+    overlay.classList.add('hidden');
+    mainEl.classList.remove('hidden');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.style.display = 'inline-flex';
+      logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('hitopAdminLoggedIn');
         location.reload();
-      } catch (err) {
-        console.error('로그인 오류:', err);
-        loginError.classList.remove('hidden');
-        loginPw.value = '';
-        loginPw.focus();
-      }
-    };
-    loginBtn?.addEventListener('click', doLogin);
-    loginPw?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-    return false;
-  }
-  
-  overlay.classList.add('hidden');
-  mainEl.classList.remove('hidden');
+      }, { once: true });
+    }
+  };
 
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.style.display = 'inline-flex';
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        const [{ signOut }, { auth }] = await Promise.all([_fsAuth(), _fsCfg()]);
-        await signOut(auth);
-      } catch (err) {
-        console.error('로그아웃 중 오류:', err);
-      }
-      sessionStorage.removeItem('hitopAdminLoggedIn');
-      location.reload();
-    });
+  if (sessionStorage.getItem('hitopAdminLoggedIn') === 'true') {
+    showAdmin();
+    return true;
   }
-  return true;
+
+  overlay.classList.remove('hidden');
+  mainEl.classList.add('hidden');
+
+  const loginBtn   = document.getElementById('loginBtn');
+  const loginPw    = document.getElementById('loginPw');
+  const loginError = document.getElementById('loginError');
+  const doLogin = () => {
+    if (!loginPw) return;
+    if (loginPw.value === ADMIN_PW) {
+      sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+      location.reload();
+      return;
+    }
+    loginError?.classList.remove('hidden');
+    loginPw.value = '';
+    loginPw.focus();
+  };
+  loginBtn?.addEventListener('click', doLogin);
+  loginPw?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  return false;
 };
 
 const priceInRange = (price, range) => {
@@ -980,7 +1041,7 @@ const setupListingsPage = () => {
   let filtered = [];
   let _listings = [];
 
-  // 돌아가기: 항상 Firestore 실제 추천매물로 재렌더링
+  // 돌아가기: 항상 Supabase 실제 추천매물로 재렌더링
   const restoreDefaultPanel = () => {
     const lpPanel = document.getElementById('lpPanel');
     if (lpPanel) lpPanel.classList.remove('cat-view-mode');
@@ -1265,7 +1326,7 @@ const setupListingsPage = () => {
   // ── 카카오맵 ──
   let map = null, openIw = null;
   let _mapReady = false;   // 지도 초기화 완료 플래그
-  let _dataReady = false;  // Firestore 로드 완료 플래그
+  let _dataReady = false;  // Supabase 로드 완료 플래그
   const activeMarkers = [];
 
   // 매물종류별 숫자 원형 마커 색상
@@ -1810,27 +1871,25 @@ const setupListingsPage = () => {
     });
   }
 
-  // 초기 렌더 (Firestore 로드 후 renderSpecialPanels가 채움)
+  // 초기 렌더 (Supabase 로드 후 renderSpecialPanels가 채움)
 
   (async () => {
     const cardsEl = document.getElementById('listingCards');
     if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 목록을 불러오는 중...</div>';
     try {
-      _listings = await readListingsFromFirestore();
+      _listings = await readListingsFromSupabase({ publicOnly: true });
     } catch (err) {
-      console.error('[Firestore] 매물 조회 오류 — 원인:', err?.code || err?.message || err);
-      console.warn('[Firestore] Firestore 보안 규칙에서 비인증 읽기를 허용했는지 확인하세요.');
+      console.error('[Supabase] 매물 조회 오류 — 원인:', err?.code || err?.message || err);
+      console.warn('[Supabase] Supabase 보안 규칙에서 비인증 읽기를 허용했는지 확인하세요.');
       if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 정보를 불러오지 못했습니다. (F12 콘솔에서 오류 확인)</div>';
       return;
     }
-    // 공개 여부가 명시적으로 false인 매물은 공개 페이지에서 제외
-    _listings = _listings.filter(i => i.is_public !== false);
     _dataReady = true;
-    console.log('[Firestore] 로드 완료 | 공개 매물수:', _listings.length);
+    console.log('[Supabase] 로드 완료 | 공개 매물수:', _listings.length);
     if (_listings.length > 0) {
       const s = _listings[0];
-      console.log('[Firestore] 첫 매물 키 목록:', Object.keys(s).join(', '));
-      console.log('[Firestore] 첫 매물 샘플:', JSON.stringify(s));
+      console.log('[Supabase] 첫 매물 키 목록:', Object.keys(s).join(', '));
+      console.log('[Supabase] 첫 매물 샘플:', JSON.stringify(s));
     }
     applyFilters();
     _tryShowMarkers();
@@ -1993,7 +2052,7 @@ const setupAdminDashboard = () => {
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-          await updateListingInFirestore(id, { status: newStatus });
+          await updateListingInSupabase(id, { status: newStatus });
           _allListings = _allListings.map(i => i.id === id ? { ...i, status: newStatus } : i);
           applyFilters();
         } catch (err) {
@@ -2008,7 +2067,7 @@ const setupAdminDashboard = () => {
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-          await deleteListingFromFirestore(id);
+          await deleteListingFromSupabase(id);
           _allListings = _allListings.filter(i => i.id !== id);
           alert('삭제되었습니다.');
           applyFilters();
@@ -2028,10 +2087,10 @@ const setupAdminDashboard = () => {
         listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">관리자 인증이 완료되지 않았습니다.</p>';
         return;
       }
-      _allListings = await readListingsFromFirestore();
+      _allListings = await readListingsFromSupabase();
       applyFilters();
     } catch (err) {
-      console.error('Firestore 대시보드 매물 조회 오류:', err);
+      console.error('Supabase 대시보드 매물 조회 오류:', err);
       listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">대시보드 데이터를 불러오지 못했습니다.</p>';
     }
   })();
@@ -2336,54 +2395,6 @@ const setupAdminRegister = () => {
 
   const editId = new URLSearchParams(window.location.search).get('edit');
   const prefillId = new URLSearchParams(window.location.search).get('prefill');
-  const sourceParam = new URLSearchParams(window.location.search).get('source');
-
-  if (sourceParam === 'haitop') {
-    const raw = localStorage.getItem('hitopHomepagePrefill');
-    if (raw) {
-      try {
-        const data = JSON.parse(raw);
-        importedLegacyDesc = data.description || '';
-        // 레거시 propertyType → category1/2로 변환
-        if (data.propertyType) {
-          const c1 = PT_TO_CAT1[data.propertyType] || data.category1 || '';
-          const c2 = PT_TO_CAT2[data.propertyType] || data.category2 || '';
-          const c1El = document.getElementById('cat1Select');
-          if (c1El && c1) {
-            c1El.value = c1;
-            c1El.dispatchEvent(new Event('change'));
-          }
-          const c2El = document.getElementById('cat2Select');
-          if (c2El && c2) c2El.value = c2;
-          syncFormByCategory();
-        }
-        const titleEl = form.elements['title'];
-        if (titleEl && data.title) titleEl.value = data.title;
-        const descEl = form.elements['description'];
-        if (descEl && data.description) descEl.value = data.description;
-        const fmTitleEl = document.getElementById('formTitle');
-        if (fmTitleEl) fmTitleEl.textContent = '홈페이지 매물 등록 (기존매물)';
-
-        if (descEl) {
-          const clearBtn = document.createElement('button');
-          clearBtn.type = 'button';
-          clearBtn.textContent = '가져온 메모 삭제';
-          clearBtn.className = 'btn btn-outline';
-          clearBtn.style.cssText = 'font-size:0.85rem;margin-top:4px;';
-          clearBtn.addEventListener('click', () => {
-            if (confirm('가져온 메모를 삭제하고 현재 메모 입력칸도 비울까요?')) {
-              localStorage.removeItem('hitopHomepagePrefill');
-              importedLegacyDesc = '';
-              const d = form.elements['description'];
-              if (d) d.value = '';
-              clearBtn.remove();
-            }
-          });
-          descEl.insertAdjacentElement('afterend', clearBtn);
-        }
-      } catch(err) { console.error('prefill 파싱 오류:', err); }
-    }
-  }
 
   if (editId || prefillId) {
     (async () => {
@@ -2391,10 +2402,8 @@ const setupAdminRegister = () => {
         const isAuthed = await waitForAdminAuth();
         if (!isAuthed) return;
         const targetId = editId || prefillId;
-        const [{ doc, getDoc }, { db, LISTINGS_COLLECTION }] = await Promise.all([_fsListings(), _fsCfg()]);
-        const snap = await getDoc(doc(db, LISTINGS_COLLECTION, targetId));
-        if (!snap.exists()) { alert('매물을 찾을 수 없습니다.'); return; }
-        const target = normalizeFirestoreListing(snap);
+        const target = await getListingFromSupabase(targetId);
+        if (!target) { alert('매물을 찾을 수 없습니다.'); return; }
 
         if (editId) {
           isEditMode = true;
@@ -2428,7 +2437,7 @@ const setupAdminRegister = () => {
           });
         }
 
-        // 수정 모드: hidden id 필드에 Firestore 문서 ID를 명시적으로 설정
+        // 수정 모드: hidden id 필드에 Supabase 문서 ID를 명시적으로 설정
         // (hidden input 은 루프에서 propertyType 외에 값이 채워지지 않으므로 여기서 보완)
         if (editId) {
           const hiddenId = form.elements['id'];
@@ -2505,7 +2514,7 @@ const setupAdminRegister = () => {
       try {
         const isAuthed = await waitForAdminAuth();
         if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-        await deleteListingFromFirestore(editId);
+        await deleteListingFromSupabase(editId);
         alert('삭제되었습니다.');
         window.location.href = 'admin-listings.html';
       } catch (err) {
@@ -2540,12 +2549,9 @@ const setupAdminRegister = () => {
       payload.propertyType = derivePropertyType(_sCat1, _sCat2);
     }
 
-    payload.price = Number(payload.price);
-    // 가격 필드: 순수 숫자(콤마 포함)이면 Number로 변환, 텍스트("12억 5,000만")는 문자열 유지, 빈값 제거
-    ['salePrice', 'deposit', 'monthlyRent', 'presalePrice'].forEach(k => {
-      if (payload[k] === '' || payload[k] === undefined) { delete payload[k]; return; }
-      const n = Number(String(payload[k]).replace(/,/g, ''));
-      if (!isNaN(n)) payload[k] = n;
+    // Price fields are text columns in Supabase; keep the entered value as-is.
+    ['price', 'salePrice', 'deposit', 'monthlyRent', 'presalePrice'].forEach(k => {
+      if (payload[k] === '' || payload[k] === undefined) delete payload[k];
     });
     if (payload.premium === '' || payload.premium === undefined) delete payload.premium;
     // Convert numeric area fields
@@ -2612,7 +2618,7 @@ const setupAdminRegister = () => {
       });
 
       if (payload.id) {
-        // 수정 — Firestore updateDoc
+        // 수정 — Supabase updateDoc
         const docId = payload.id;
         delete payload.id;
         delete payload.createdAt;
@@ -2620,14 +2626,14 @@ const setupAdminRegister = () => {
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-          await updateListingInFirestore(docId, payload);
+          await updateListingInSupabase(docId, payload);
           window.location.href = 'admin-listings.html';
         } catch (err) {
           console.error('매물 수정 오류:', err);
           alert('매물 수정 중 오류가 발생했습니다.');
         }
       } else {
-        // 신규 등록 — Firestore 저장
+        // 신규 등록 — Supabase 저장
         if (!payload.listingNo) payload.listingNo = getNextPropertyNumber();
         if (!payload.property_number) payload.property_number = payload.listingNo;
         if (!payload.status) payload.status = '거래가능';
@@ -2637,7 +2643,7 @@ const setupAdminRegister = () => {
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-          await createListingInFirestore(payload);
+          await createListingInSupabase(payload);
           window.location.href = 'admin-listings.html';
         } catch (err) {
           console.error('매물 등록 오류:', err);
@@ -2745,7 +2751,7 @@ const setupAdminListingsMgmt = () => {
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-          await deleteListingFromFirestore(id);
+          await deleteListingFromSupabase(id);
           _allListings=_allListings.filter(i=>i.id!==id);
           alert('삭제되었습니다.');
           applyFilters();
@@ -2767,7 +2773,7 @@ const setupAdminListingsMgmt = () => {
         try {
           const isAuthed = await waitForAdminAuth();
           if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
-          await updateListingInFirestore(id,{status:newStatus});
+          await updateListingInSupabase(id,{status:newStatus});
           _allListings=_allListings.map(i=>i.id===id?{...i,status:newStatus}:i);
           applyFilters();
         } catch(err) {
@@ -2786,9 +2792,9 @@ const setupAdminListingsMgmt = () => {
         listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">관리자 인증이 완료되지 않았습니다.</p>';
         return;
       }
-      _allListings = await readListingsFromFirestore();
+      _allListings = await readListingsFromSupabase();
     } catch (err) {
-      console.error('Firestore 매물 조회 오류:', err);
+      console.error('Supabase 매물 조회 오류:', err);
       listEl.innerHTML = '<p style="padding:24px;color:#e53e3e;">매물 정보를 불러오지 못했습니다.</p>';
       return;
     }
