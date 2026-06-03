@@ -6420,6 +6420,38 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
   .fv2-btn { font-size: 11px; padding: 5px 8px; }
 }
 
+/* Mobile map touch guard: keep Kakao map gestures available on listings. */
+@media (max-width: 768px) {
+  body[data-page="listings"] .lp-center {
+    position: relative !important;
+    z-index: 1 !important;
+    pointer-events: auto !important;
+    touch-action: none !important;
+    overflow: hidden !important;
+  }
+
+  body[data-page="listings"] #map,
+  body[data-page="listings"] #map > div {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 360px !important;
+    pointer-events: auto !important;
+    touch-action: none !important;
+  }
+
+  body[data-page="listings"] .lp-panel,
+  body[data-page="listings"] .cat-cards-section,
+  body[data-page="listings"] .lp-sidebar,
+  body[data-page="listings"] .site-footer-v2 {
+    position: relative !important;
+    z-index: 0 !important;
+  }
+
+  body[data-page="listings"] .map-placeholder-text {
+    pointer-events: none !important;
+  }
+}
 
 
 

@@ -1458,6 +1458,19 @@ const setupListingsPage = () => {
   };
 
   // ── 지도 초기화 ──
+  const relayoutMainMap = () => {
+    if (!map || typeof kakao === 'undefined') return;
+    const center = map.getCenter();
+    map.relayout();
+    map.setCenter(center);
+  };
+
+  const scheduleMainMapRelayout = () => {
+    [0, 120, 360].forEach(delay => {
+      window.setTimeout(relayoutMainMap, delay);
+    });
+  };
+
   window.addEventListener('load', () => {
     const mapEl = document.getElementById('map');
     if (!mapEl || typeof kakao === 'undefined') {
@@ -1470,12 +1483,18 @@ const setupListingsPage = () => {
         center: new kakao.maps.LatLng(37.7512, 126.7820),
         level: 7
       });
+      if (typeof map.setDraggable === 'function') map.setDraggable(true);
+      if (typeof map.setZoomable === 'function') map.setZoomable(true);
+      scheduleMainMapRelayout();
       _mapReady = true;
       console.log('[Map] 카카오맵 초기화 완료');
       applyFilters();
       _tryShowMarkers();
     });
   });
+
+  window.addEventListener('resize', scheduleMainMapRelayout);
+  window.addEventListener('orientationchange', scheduleMainMapRelayout);
 
   // ── 모달 열기 (미니맵 + 거래상태 배지 표시) ──
   const openModalFull = (item) => {
