@@ -757,7 +757,7 @@ body {
 
 .area-hl-label { font-size: 11px; color: #6b7280; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
 
-.area-hl-value { font-size: 18px; font-weight: 700; color: #1e293b; letter-spacing: -0.2px; }
+.area-hl-value { font-size: 18px; font-weight: 700; color: #1e293b; letter-spacing: -0.2px; line-height: 1.35; overflow-wrap: anywhere; }
 
 /* ===== 라이트박스 ===== */
 
@@ -5711,6 +5711,8 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 
   /* modal-body가 단일 스크롤 컨테이너 역할 — 자식 컬럼은 overflow 제한 없음 */
   .modal-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
     overflow-y: auto !important;
     padding-bottom: 0 !important;
   }
@@ -5719,6 +5721,16 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   .modal-col-photo { order: 1 !important; overflow: visible !important; }
   .modal-col-side  { order: 2 !important; position: static !important; overflow-y: visible !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
   .modal-col-info  { order: 3 !important; overflow-y: visible !important; height: auto !important; }
+
+  .modal-col-side > *,
+  .modal-area-highlight,
+  .modal-price-area,
+  .modal-agent {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
 
   /* 문의 버튼: fixed 해제 → 일반 흐름 */
   .modal-contact {
@@ -5730,8 +5742,8 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     flex-direction: row !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
-    width: calc(100vw - 64px) !important;
-    max-width: calc(100vw - 64px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
@@ -5753,8 +5765,8 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 
   .modal-minimap-wrap,
   #modalBodyMap {
-    width: calc(100vw - 64px) !important;
-    max-width: calc(100vw - 64px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 }

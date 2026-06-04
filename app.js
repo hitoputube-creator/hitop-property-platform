@@ -235,6 +235,30 @@ const getPropertyTypeLabel = (value) => {
 
 const normalizeCategoryParam = (value) => getCategory1(String(value || '').trim());
 
+const M2_PER_PY = 3.305785;
+
+const toPyeong = (m2) => {
+  const n = Number(m2);
+  if (!Number.isFinite(n) || n <= 0) return '';
+  return (n / M2_PER_PY).toFixed(2);
+};
+
+const formatAreaWithPy = (label, m2) => {
+  const n = Number(m2);
+  if (!Number.isFinite(n) || n <= 0) return '';
+  return `${label ? `${label} ` : ''}${n.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}㎡(${toPyeong(n)}평)`;
+};
+
+const formatAreaSummaryWithPy = (listing = {}) => {
+  const exclusive = listing.exclusiveArea ?? listing.privateArea ?? listing.areaExclusive ?? listing.exclusiveAreaM2 ?? listing.area_m2 ?? listing.area;
+  const supply = listing.supplyArea ?? listing.grossArea ?? listing.areaSupply ?? listing.supplyAreaM2 ?? listing.supply_m2 ?? listing.contractArea;
+  const parts = [
+    formatAreaWithPy('전용', exclusive),
+    formatAreaWithPy('공급', supply),
+  ].filter(Boolean);
+  return parts.length ? parts.join(' / ') : '-';
+};
+
 const PROPERTY_FIELDS = {
   '공장창고': {
     dealTypes: ['매매','임대'],
@@ -1063,7 +1087,7 @@ const openModal = (item) => {
     const hasM2 = !isNaN(m2) && m2 > 0;
     const hasPy = !isNaN(py) && py > 0;
     if (!hasM2 && !hasPy) return null;
-    return { m2: hasM2 ? m2 : py * 3.3058, py: hasPy ? py : m2 / 3.3058 };
+    return { m2: hasM2 ? m2 : py * M2_PER_PY, py: hasPy ? py : m2 / M2_PER_PY };
   };
   const _fmtM2 = v => Number(v).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const _fmtPy = v => Math.round(Number(v)).toLocaleString('ko-KR');
@@ -1097,7 +1121,10 @@ const openModal = (item) => {
     if (!parts.length) return null;
     const m2str = parts.map(p => p.label ? `${p.label} ${_fmtM2(p.m2)}㎡` : `${_fmtM2(p.m2)}㎡`).join(' / ');
     const pystr = parts.map(p => p.label ? `${p.label} ${_fmtPy(p.py)}평` : `${_fmtPy(p.py)}평`).join(' / ');
-    return { m2str, pystr };
+    const summaryStr = parts.map(p => {
+      return formatAreaWithPy(p.label, p.m2);
+    }).join(' / ');
+    return { m2str, pystr, summaryStr };
   };
   const areaInfo = buildAreaInfo();
 
@@ -1105,10 +1132,12 @@ const openModal = (item) => {
   const areaHlEl = document.getElementById('modalAreaHighlight');
   if (areaHlEl) {
     if (areaInfo) {
-      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">${areaInfo.m2str}</span></div>`;
+      const sideAreaSummary = isExclusiveType ? formatAreaSummaryWithPy(item) : (areaInfo.summaryStr || '-');
+      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">${sideAreaSummary}</span></div>`;
       areaHlEl.style.display = '';
     } else {
-      areaHlEl.style.display = 'none';
+      areaHlEl.innerHTML = '<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">-</span></div>';
+      areaHlEl.style.display = '';
     }
   }
 
