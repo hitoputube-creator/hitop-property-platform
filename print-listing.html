@@ -521,6 +521,105 @@
 
     const SUPABASE_LISTINGS_TABLE = 'listings';
 
+    const PROPERTY_TYPE_LABELS = {
+      'shop': '상가·사무실',
+      'office': '상가·사무실',
+      'store': '상가·사무실',
+      'retail': '상가·사무실',
+      'commercial': '상가·사무실',
+      '상가': '상가·사무실',
+      '사무실': '상가·사무실',
+      '상가사무실': '상가·사무실',
+      '상가·사무실': '상가·사무실',
+      'factory': '공장·창고',
+      'warehouse': '공장·창고',
+      '공장': '공장·창고',
+      '창고': '공장·창고',
+      '공장창고': '공장·창고',
+      '공장·창고': '공장·창고',
+      'land': '토지',
+      '토지': '토지',
+      'residential': '주거용',
+      'apartment': '주거용',
+      'officetel': '주거용',
+      '아파트': '주거용',
+      '오피스텔': '주거용',
+      '주거용': '주거용',
+      'house': '단독·전원주택',
+      'detached': '단독·전원주택',
+      'singlehouse': '단독·전원주택',
+      '단독': '단독·전원주택',
+      '단독주택': '단독·전원주택',
+      '전원주택': '단독·전원주택',
+      '단독전원주택': '단독·전원주택',
+      '단독·전원주택': '단독·전원주택',
+      'building': '건물·빌딩',
+      '빌딩': '건물·빌딩',
+      '건물': '건물·빌딩',
+      '건물빌딩': '건물·빌딩',
+      '건물·빌딩': '건물·빌딩'
+    };
+
+    const PROPERTY_TYPE_TO_CAT1 = {
+      'shop': '상가사무실',
+      'office': '상가사무실',
+      'store': '상가사무실',
+      'retail': '상가사무실',
+      'commercial': '상가사무실',
+      '상가': '상가사무실',
+      '사무실': '상가사무실',
+      '상가사무실': '상가사무실',
+      '상가·사무실': '상가사무실',
+      'factory': '공장창고',
+      'warehouse': '공장창고',
+      '공장': '공장창고',
+      '창고': '공장창고',
+      '공장창고': '공장창고',
+      '공장·창고': '공장창고',
+      'land': '토지',
+      '토지': '토지',
+      'residential': '주거용',
+      'apartment': '주거용',
+      'officetel': '주거용',
+      '아파트': '주거용',
+      '오피스텔': '주거용',
+      '주거용': '주거용',
+      'house': '단독전원주택',
+      'detached': '단독전원주택',
+      'singlehouse': '단독전원주택',
+      '단독': '단독전원주택',
+      '단독주택': '단독전원주택',
+      '전원주택': '단독전원주택',
+      '단독전원주택': '단독전원주택',
+      '단독·전원주택': '단독전원주택',
+      'building': '건물빌딩',
+      '빌딩': '건물빌딩',
+      '건물': '건물빌딩',
+      '건물빌딩': '건물빌딩',
+      '건물·빌딩': '건물빌딩'
+    };
+
+    const getPropertyTypeLabel = (value) => {
+      if (value && typeof value === 'object') {
+        const cat1 = getCategory1(value);
+        return getPropertyTypeLabel(cat1);
+      }
+      const v = String(value || '').trim();
+      if (!v) return '-';
+      return PROPERTY_TYPE_LABELS[v] || PROPERTY_TYPE_LABELS[v.toLowerCase()] || v;
+    };
+
+    const getCategory1 = (item = {}) => {
+      if (typeof item === 'string') {
+        const raw = item.trim();
+        return PROPERTY_TYPE_TO_CAT1[raw] || PROPERTY_TYPE_TO_CAT1[raw.toLowerCase()] || raw;
+      }
+      const rawCat1 = String(item.category1 || '').trim();
+      if (rawCat1) return PROPERTY_TYPE_TO_CAT1[rawCat1] || PROPERTY_TYPE_TO_CAT1[rawCat1.toLowerCase()] || rawCat1;
+      const rawType = String(item.propertyType || item.category || item.type || '').trim();
+      return PROPERTY_TYPE_TO_CAT1[rawType] || PROPERTY_TYPE_TO_CAT1[rawType.toLowerCase()] || rawType;
+    };
+
     const asArray = (value) => {
       if (Array.isArray(value)) return value.filter(Boolean);
       if (typeof value === 'string' && value.trim()) return [value.trim()];
@@ -659,7 +758,7 @@
       '건물빌딩':     'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
     };
     const getDefaultImage = (item) =>
-      _defaultImageMap[item.category1 || ''] || 'images/hitoplogo.png';
+      _defaultImageMap[getCategory1(item)] || 'images/hitoplogo.png';
 
     const normalizeImageUrl = (url) => {
       if (!url) return '';
@@ -677,7 +776,7 @@
 
     // ── 면적정보 통합 계산기 (㎡ 및 평 환산) ──
     const formatAreaInfo = (item) => {
-      const cat1 = item.category1 || '';
+      const cat1 = getCategory1(item);
       const isBuilding = cat1 === '공장창고' || cat1 === '단독전원주택' || cat1 === '건물빌딩';
       const isExclusive = cat1 === '상가사무실' || cat1 === '주거용';
       const isLand = cat1 === '토지';
@@ -784,7 +883,7 @@
 
       // 3. 우측 핵심 정보 바인딩
       const priceText = formatPriceText(item);
-      document.getElementById('cat1Display').textContent = item.category1 || item.propertyType || '-';
+      document.getElementById('cat1Display').textContent = getPropertyTypeLabel(item);
       document.getElementById('dealTypeDisplay').textContent = item.dealType || '-';
       document.getElementById('priceDisplay').textContent = priceText;
       
@@ -794,7 +893,7 @@
       document.getElementById('approvalDateDisplay').textContent = item.approvalDate || '-';
 
       // 4. 하단 테이블 바인딩
-      document.getElementById('tableCat').textContent = `${item.category1 || item.propertyType || '-'} (${item.category2 || '-'})`;
+      document.getElementById('tableCat').textContent = `${getPropertyTypeLabel(item)} (${item.category2 || '-'})`;
       document.getElementById('tableDealType').textContent = item.dealType || '-';
       document.getElementById('tablePrice').textContent = priceText;
       

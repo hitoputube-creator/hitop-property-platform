@@ -15,6 +15,21 @@ const openListingPrintPage = (id) => {
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
 
 const CAT_LABELS = {
+  "shop": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "office": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "store": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "retail": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "commercial": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
+  "factory": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
+  "warehouse": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
+  "land": "\ud1a0\uc9c0",
+  "residential": "\uc8fc\uac70\uc6a9",
+  "apartment": "\uc8fc\uac70\uc6a9",
+  "officetel": "\uc8fc\uac70\uc6a9",
+  "house": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "detached": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "singlehouse": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "building": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
   "\uacf5\uc7a5\u00b7\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
   "\uacf5\uc7a5/\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
@@ -39,7 +54,7 @@ const CAT_LABELS = {
   "\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\uac74\ubb3c\u00b7\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
-  "\uae30\ud0c0": "\uac74\ubb3c\u00b7\ube4c\ub529"
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
 const CATEGORY_MAP = {
@@ -77,6 +92,21 @@ const CATEGORY_MAP = {
 };
 
 const PT_TO_CAT1 = {
+  "shop": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "office": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "store": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "retail": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "commercial": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "factory": "\uacf5\uc7a5\ucc3d\uace0",
+  "warehouse": "\uacf5\uc7a5\ucc3d\uace0",
+  "land": "\ud1a0\uc9c0",
+  "residential": "\uc8fc\uac70\uc6a9",
+  "apartment": "\uc8fc\uac70\uc6a9",
+  "officetel": "\uc8fc\uac70\uc6a9",
+  "house": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "detached": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "singlehouse": "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd",
+  "building": "\uac74\ubb3c\ube4c\ub529",
   "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
   "\uacf5\uc7a5\u00b7\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
   "\uacf5\uc7a5/\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
@@ -84,6 +114,7 @@ const PT_TO_CAT1 = {
   "\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
   "\uc624\ud53c\uc2a4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
   "\uc9c0\uc2dd\uc0b0\uc5c5\uc13c\ud130": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
+  "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
   "\uc0c1\uac00\ube4c\ub529": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
   "\uc0c1\uac00\u00b7\ube4c\ub529": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
   "\uc0c1\uac00\u00b7\ube4c\ub529\u00b7\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\uc0ac\ubb34\uc2e4",
@@ -106,10 +137,25 @@ const PT_TO_CAT1 = {
   "\uac74\ubb3c\u00b7\ube4c\ub529": "\uac74\ubb3c\ube4c\ub529",
   "\uc0c1\uac00\uc8fc\ud0dd": "\uac74\ubb3c\ube4c\ub529",
   "\ub2e4\uac00\uad6c\uc8fc\ud0dd": "\uac74\ubb3c\ube4c\ub529",
-  "\uae30\ud0c0": "\uac74\ubb3c\ube4c\ub529"
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
 const PT_TO_CAT2 = {
+  "shop": "\uc0c1\uac00",
+  "office": "\uc0ac\ubb34\uc2e4",
+  "store": "\uc0c1\uac00",
+  "retail": "\uc0c1\uac00",
+  "commercial": "\uc0c1\uac00",
+  "factory": "\uacf5\uc7a5",
+  "warehouse": "\ucc3d\uace0",
+  "land": "\ud1a0\uc9c0",
+  "residential": "\uc624\ud53c\uc2a4\ud154",
+  "apartment": "\uc544\ud30c\ud2b8",
+  "officetel": "\uc624\ud53c\uc2a4\ud154",
+  "house": "\ub2e8\ub3c5\uc8fc\ud0dd",
+  "detached": "\ub2e8\ub3c5\uc8fc\ud0dd",
+  "singlehouse": "\ub2e8\ub3c5\uc8fc\ud0dd",
+  "building": "\ube4c\ub529",
   "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
   "\uacf5\uc7a5\u00b7\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
   "\uacf5\uc7a5/\ucc3d\uace0": "\uacf5\uc7a5\ucc3d\uace0",
@@ -139,7 +185,7 @@ const PT_TO_CAT2 = {
   "\uac74\ubb3c\u00b7\ube4c\ub529": "\ube4c\ub529",
   "\uc0c1\uac00\uc8fc\ud0dd": "\uc0c1\uac00\uc8fc\ud0dd",
   "\ub2e4\uac00\uad6c\uc8fc\ud0dd": "\ub2e4\uac00\uad6c\uc8fc\ud0dd",
-  "\uae30\ud0c0": "\uac74\ubb3c"
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
 
 const derivePropertyType = (cat1, cat2) => {
@@ -152,9 +198,17 @@ const derivePropertyType = (cat1, cat2) => {
   return cat1 || '';
 };
 
-const getCategory1 = (item) => {
-  if (item.category1) return item.category1 === "\uae30\ud0c0" ? "\uac74\ubb3c\ube4c\ub529" : item.category1;
-  return PT_TO_CAT1[item.propertyType || item.type || ''] || item.propertyType || item.type || '';
+const getCategory1 = (item = {}) => {
+  if (typeof item === 'string') {
+    const raw = item.trim();
+    return PT_TO_CAT1[raw] || PT_TO_CAT1[raw.toLowerCase()] || raw;
+  }
+  const rawCat1 = String(item.category1 || '').trim();
+  if (rawCat1) {
+    return PT_TO_CAT1[rawCat1] || PT_TO_CAT1[rawCat1.toLowerCase()] || rawCat1;
+  }
+  const rawType = String(item.propertyType || item.category || item.type || '').trim();
+  return PT_TO_CAT1[rawType] || PT_TO_CAT1[rawType.toLowerCase()] || rawType;
 };
 
 const CAT1_DISPLAY = {
@@ -163,8 +217,23 @@ const CAT1_DISPLAY = {
   "\ud1a0\uc9c0": "\ud1a0\uc9c0",
   "\uc8fc\uac70\uc6a9": "\uc8fc\uac70\uc6a9",
   "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
-  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529"
+  "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
+  "\uae30\ud0c0": "\uae30\ud0c0"
 };
+
+const getPropertyTypeLabel = (value) => {
+  if (value && typeof value === 'object') {
+    const cat1 = getCategory1(value);
+    return CAT1_DISPLAY[cat1] || CAT_LABELS[cat1] || cat1 || '-';
+  }
+  const v = String(value || '').trim();
+  if (!v) return '-';
+  const lower = v.toLowerCase();
+  const cat1 = PT_TO_CAT1[v] || PT_TO_CAT1[lower] || v;
+  return CAT1_DISPLAY[cat1] || CAT_LABELS[v] || CAT_LABELS[lower] || v || '-';
+};
+
+const normalizeCategoryParam = (value) => getCategory1(String(value || '').trim());
 
 const PROPERTY_FIELDS = {
   '공장창고': {
@@ -924,8 +993,8 @@ const openModal = (item) => {
   if (!modal) return;
   const pt     = item.propertyType || '';
   const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
-  const _mCat1      = item.category1 || PT_TO_CAT1[pt] || '';
-  const _mCat2      = item.category2 || PT_TO_CAT2[pt] || '';
+  const _mCat1      = getCategory1(item);
+  const _mCat2      = item.category2 || PT_TO_CAT2[pt] || PT_TO_CAT2[String(pt).toLowerCase()] || '';
   const isFactory   = _mCat1 === '공장창고';
   const isStoreType = _mCat1 === '상가사무실';
   const isBuildingType  = _mCat1 === '공장창고' || _mCat1 === '단독전원주택' || _mCat1 === '건물빌딩';
@@ -952,7 +1021,7 @@ const openModal = (item) => {
     };
     const _badgeCat1 = _mCat1 || pt;
     const propCls = propClassMap[_badgeCat1] || propClassMap[pt] || 'prop-etc';
-    const _badgeLabel = CAT1_DISPLAY[_mCat1] || CAT_LABELS[pt] || pt;
+    const _badgeLabel = getPropertyTypeLabel(item);
     const promoHTML = getPromotionStickerHTML(item, 'modal-promo-sticker');
     modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${_badgeLabel}</span>${getDealBadgeHTML(item.dealType)}${promoHTML}`;
   }
@@ -1063,9 +1132,10 @@ const openModal = (item) => {
     const v = (value !== null && value !== undefined && value !== '') ? String(value) : null;
     if (v) tableRows.push({ label, value: v, cls: cls || '' });
   };
+  const propertyTypeLabel = getPropertyTypeLabel(item);
 
   addRow('주소',    getDisplayAddress(item));
-  addRow('매물종류', pt);
+  addRow('매물종류', propertyTypeLabel);
   addRow('거래유형', item.dealType);
 
   // 가격 항목 (강조 스타일)
@@ -1114,6 +1184,13 @@ const openModal = (item) => {
   const infoTableEl = document.getElementById('modalInfoTable');
   if (infoTableEl) {
     infoTableEl.innerHTML = tableHTML;
+    infoTableEl.querySelectorAll('tr').forEach(row => {
+      const labelEl = row.querySelector('.info-label');
+      const valueEl = row.querySelector('.info-value');
+      if (labelEl?.textContent?.trim() === '매물종류' && valueEl) {
+        valueEl.textContent = propertyTypeLabel;
+      }
+    });
     infoTableEl.querySelectorAll('.area-unit-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const span = btn.previousElementSibling;
@@ -1568,14 +1645,18 @@ const setupListingsPage = () => {
 
   // 매물종류별 숫자 원형 마커 색상
   const MARKER_COLORS = {
-    '공장창고':         '#0d9488',  // 청록색
-    '상가':             '#e53e3e',  // 빨간색
-    '토지':             '#f97316',  // 주황색
-    '오피스텔':         '#2563eb',  // 파란색
-    '힐스테이트더운정': '#7c3aed',  // 보라색
-    '단독주택':         '#16a34a',  // 초록색
+    '공장·창고':     '#0d9488',
+    '상가·사무실':   '#e53e3e',
+    '토지':         '#f97316',
+    '주거용':       '#2563eb',
+    '단독·전원주택': '#16a34a',
+    '건물·빌딩':     '#7c3aed',
   };
   const MARKER_COLOR_MIXED = '#64748b';
+  const getMarkerColorByCategory = (category1) => {
+    const label = CAT1_DISPLAY[normalizeCategoryParam(category1)] || getPropertyTypeLabel(category1);
+    return MARKER_COLORS[label] || MARKER_COLOR_MIXED;
+  };
   let _mhId = 0;
   window._mhHandlers = {};
 
@@ -1649,10 +1730,11 @@ const setupListingsPage = () => {
     activeMarkers.length = 0;
     if (openIw) { openIw.close(); openIw = null; }
 
-    // 그룹 컬러: 단일 종류 → 해당 색, 혼합 → 슬레이트
+    // 그룹 컬러: getCategory1으로 정규화된 정상 카테고리 색상 사용, 진짜 기타만 슬레이트
     const getGroupColor = (gi) => {
-      const types = [...new Set(gi.map(i => i.propertyType))];
-      return types.length === 1 ? (MARKER_COLORS[types[0]] || MARKER_COLOR_MIXED) : MARKER_COLOR_MIXED;
+      const categories = [...new Set(gi.map(i => getCategory1(i)).filter(Boolean))];
+      const coloredCategory = categories.find(cat => getMarkerColorByCategory(cat) !== MARKER_COLOR_MIXED);
+      return coloredCategory ? getMarkerColorByCategory(coloredCategory) : MARKER_COLOR_MIXED;
     };
 
     // 숫자 원형 CustomOverlay HTML
@@ -1965,7 +2047,7 @@ const setupListingsPage = () => {
     const miniCardHTML = item => {
       const thumb    = getThumbnail(item);
       const fallback = getDefaultImageByCategory(getCategory1(item));
-      const label    = CAT1_DISPLAY[getCategory1(item)] || item.propertyType || '';
+      const label    = getPropertyTypeLabel(item);
       const safeTitle = (item.title || '(제목 없음)').replace(/"/g, '&quot;');
       const areaHTML = getCardAreaHTML(item);
       const isSample = thumb.startsWith('images/') || thumb === fallback;
@@ -2034,7 +2116,7 @@ const setupListingsPage = () => {
   const fullCardHTML = item => {
     const done    = isCompleted(item);
     const cat1    = getCategory1(item);
-    const catLabel = CAT1_DISPLAY[cat1] || CAT_LABELS[item.propertyType] || item.propertyType || '';
+    const catLabel = getPropertyTypeLabel(item);
     const imgSrc  = getThumbnail(item);
     const areaHTML = getCardAreaHTML(item);
     return `
@@ -2103,7 +2185,7 @@ const setupListingsPage = () => {
              (i.address      || '').toLowerCase().includes(kw) ||
              (i.displayAddress || '').toLowerCase().includes(kw) ||
              (i.detailDescription || '').toLowerCase().includes(kw) ||
-             (CAT1_DISPLAY[getCategory1(i)] || i.propertyType || '').toLowerCase().includes(kw);
+             getPropertyTypeLabel(i).toLowerCase().includes(kw);
     });
     if (sortMode === 'price') items.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
     else items.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
@@ -2176,7 +2258,7 @@ const setupListingsPage = () => {
       const m = href.match(/[?&]category=([^&]+)/);
       if (m) {
         // URL 값(공장창고, 상가사무실, 토지, 주거용, 단독전원주택, 건물빌딩)을 category1 키로 정규화
-        const cat = PT_TO_CAT1[decodeURIComponent(m[1])] || decodeURIComponent(m[1]);
+        const cat = normalizeCategoryParam(decodeURIComponent(m[1]));
         renderCategoryPanel(cat);
       }
     });
@@ -2187,7 +2269,7 @@ const setupListingsPage = () => {
   const urlCatRaw = urlParams.get('category');
   const urlListingId = urlParams.get('id');
   // urlCat 을 블록 밖에서도 참조할 수 있도록 함수 스코프에 선언
-  const urlCat = urlCatRaw ? (PT_TO_CAT1[urlCatRaw] || urlCatRaw) : '';
+  const urlCat = urlCatRaw ? normalizeCategoryParam(urlCatRaw) : '';
   if (urlCat) {
     flt.cat = urlCat;
     const catSel = document.getElementById('formCatSelect');
@@ -2291,7 +2373,7 @@ const setupAdminDashboard = () => {
               <div class="adm-item-body">
                 <div class="adm-item-row1">
                   <span class="adm-item-no">${propNo}</span>
-                  <span class="adm-item-type">${item.propertyType || '-'}</span>
+                  <span class="adm-item-type">${getPropertyTypeLabel(item)}</span>
                   <span class="adm-item-deal">${item.dealType || '-'}</span>
                   <span class="adm-item-date">${date}</span>
                 </div>
@@ -3052,8 +3134,8 @@ const setupAdminListingsMgmt = () => {
               <strong class="admin-item-title">${item.title}${isDone?' <span class="badge-done">거래완료</span>':''}</strong>
               <span class="admin-item-date">등록 ${(item.createdAt||'').slice(0,10)||'-'}</span>
             </div>
-            <p style="margin:4px 0;font-size:13px;">${item.propertyType} / ${item.dealType} · ${getDisplayAddress(item)}</p>
-            <p style="margin:4px 0;font-size:13px;">${formatPropertyPrice(item)} · ${item.propertyType === '상가' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
+            <p style="margin:4px 0;font-size:13px;">${getPropertyTypeLabel(item)} / ${item.dealType} · ${getDisplayAddress(item)}</p>
+            <p style="margin:4px 0;font-size:13px;">${formatPropertyPrice(item)} · ${getCategory1(item) === '상가사무실' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
             <div class="admin-item-actions">
               <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
               <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
