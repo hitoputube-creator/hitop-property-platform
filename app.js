@@ -1579,6 +1579,38 @@ const setupListingsPage = () => {
     return (v !== null && !isNaN(Number(v))) ? Number(v) : null;
   };
   const _hasCoord = i => _getLat(i) !== null && _getLng(i) !== null;
+  const getListingAddress = (item = {}) => {
+    const fields = ['address', 'displayAddress', 'publicAddress', 'roadAddress', 'jibunAddress', 'location'];
+    for (const field of fields) {
+      const value = item[field];
+      if (typeof value === 'string' && value.trim()) return value.trim();
+    }
+    return '';
+  };
+  const getListingAddressCandidates = (item = {}) => {
+    const values = ['address', 'displayAddress', 'publicAddress', 'roadAddress', 'jibunAddress', 'location']
+      .map(field => (typeof item[field] === 'string' ? item[field].trim() : ''))
+      .filter(Boolean);
+    const list = [];
+    const add = value => {
+      const clean = String(value || '').replace(/\s+/g, ' ').trim();
+      if (clean && !list.includes(clean)) list.push(clean);
+    };
+    const address = typeof item.address === 'string' ? item.address.trim() : '';
+    const display = typeof item.displayAddress === 'string' ? item.displayAddress.trim() : '';
+
+    values.forEach(add);
+    if (display && address && address !== display) {
+      add(`${display} ${address}`);
+      if (!/^경기|^서울|^인천|^부산|^대구|^광주|^대전|^울산|^세종|^강원|^충청|^전라|^경상|^제주/.test(display)) {
+        add(`경기도 ${display} ${address}`);
+      }
+    }
+    values.forEach(value => {
+      if (/^파주/.test(value)) add(`경기도 ${value}`);
+    });
+    return list;
+  };
 
   // ── 필드 헬퍼 ──
   const isCompleted = i => i.is_completed === true || i.status === 'done' || i.status === '거래완료';
@@ -1639,7 +1671,7 @@ const setupListingsPage = () => {
     // 거래완료 제외 후 두 그룹으로 분리
     const active        = items.filter(i => !isCompleted(i));
     const withCoords    = active.filter(i => _hasCoord(i));
-    const withoutCoords = active.filter(i => !_hasCoord(i) && (i.address || i.displayAddress));
+    const withoutCoords = active.filter(i => !_hasCoord(i) && getListingAddress(i));
 
     // 진단 로그: 실제 데이터 필드 확인
     console.log('[placeMarkers] 좌표O:', withCoords.length, '| 좌표X(주소검색):', withoutCoords.length);
@@ -1649,7 +1681,7 @@ const setupListingsPage = () => {
         propertyType: s.propertyType, category: s.category, type: s.type,
         lat: s.lat, lng: s.lng, latitude: s.latitude, longitude: s.longitude,
         coordX: s.coordX, coordY: s.coordY,
-        address: s.address, displayAddress: s.displayAddress
+        address: s.address, displayAddress: s.displayAddress, mapAddress: getListingAddress(s)
       });
     }
 
@@ -1714,7 +1746,7 @@ const setupListingsPage = () => {
       };
 
       withoutCoords.slice(0, 30).forEach(item => {
-        const addrList = buildAddrList(item);
+        const addrList = getListingAddressCandidates(item);
         if (!addrList.length) return;
 
         const tryNext = (idx) => {
@@ -1727,7 +1759,12 @@ const setupListingsPage = () => {
               return;
             }
             console.log(`[지오코딩 성공 ${idx + 1}순위] ${addr}`);
-            addOverlay(new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x)), [item]);
+            const coords = new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x));
+            addOverlay(coords, [item]);
+            if (withCoords.length === 0 && activeMarkers.length === 1) {
+              map.setCenter(coords);
+              map.setLevel(5);
+            }
           });
         };
 
@@ -1844,10 +1881,11 @@ const setupListingsPage = () => {
     const minimapWrap = document.getElementById('modalBodyMapWrap') || document.getElementById('modalMinimapWrap');
     const minimapEl   = document.getElementById('modalBodyMap') || document.getElementById('modalMiniMap');
     if (!minimapWrap || !minimapEl) return;
-    minimapWrap.style.display = 'none';
+    const modalAddressList = getListingAddressCandidates(item);
+    minimapWrap.style.display = _hasCoord(item) || modalAddressList.length ? 'block' : 'none';
     const showModalMapLoadError = () => {
       minimapWrap.style.display = 'block';
-      minimapEl.innerHTML = '<div class="map-loading">지도를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>';
+      minimapEl.innerHTML = '<div class="map-loading">지도를 불러올 수 없습니다</div>';
     };
 
     loadKakaoMaps(() => {
@@ -1856,17 +1894,34 @@ const setupListingsPage = () => {
         minimapEl.innerHTML = '';
         const mm = new kakao.maps.Map(minimapEl, { center: coords, level: 4 });
         new kakao.maps.Marker({ map: mm, position: coords });
+        window.setTimeout(() => {
+          mm.relayout();
+          mm.setCenter(coords);
+        }, 120);
       };
 
-      if (item.lat && item.lng && !isNaN(Number(item.lat)) && !isNaN(Number(item.lng))) {
-        const coords = new kakao.maps.LatLng(Number(item.lat), Number(item.lng));
+      if (_hasCoord(item)) {
+        const coords = new kakao.maps.LatLng(_getLat(item), _getLng(item));
         renderMinimap(coords);
-      } else if (item.address && kakao.maps.services) {
-        new kakao.maps.services.Geocoder().addressSearch(item.address, (result, status) => {
-          if (status !== kakao.maps.services.Status.OK) return;
-          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          renderMinimap(coords);
-        });
+      } else if (modalAddressList.length && kakao.maps.services) {
+        const geocoder = new kakao.maps.services.Geocoder();
+        const tryNextAddress = (idx) => {
+          if (idx >= modalAddressList.length) {
+            showModalMapLoadError();
+            return;
+          }
+          geocoder.addressSearch(modalAddressList[idx], (result, status) => {
+            if (status !== kakao.maps.services.Status.OK || !result || !result[0]) {
+              tryNextAddress(idx + 1);
+              return;
+            }
+            const coords = new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x));
+            renderMinimap(coords);
+          });
+        };
+        tryNextAddress(0);
+      } else if (modalAddressList.length) {
+        showModalMapLoadError();
       }
     }, showModalMapLoadError);
   };
