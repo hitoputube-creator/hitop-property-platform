@@ -1706,7 +1706,6 @@ const setupListingsPage = () => {
             <div class="lp-rec-row lp-rec-row-area">
               ${areaHighlightHTML}
             </div>
-            ${getParkingMetaHTML(item, 'lp-rec-row lp-rec-row-parking')}
             <div class="lp-rec-row lp-rec-row-bot">
               ${getDisplayAddress(item)}
             </div>
