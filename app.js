@@ -2,6 +2,16 @@ console.log('app.js 로드됨!');
 const SUPABASE_LISTINGS_TABLE = 'listings';
 const SUPABASE_VISITORS_TABLE = 'visitors';
 
+const getListingPrintId = (item = {}) => (
+  item.id || item.property_number || item.listingNo || item.listing_id || ''
+);
+
+const openListingPrintPage = (id) => {
+  const printId = String(id || '').trim();
+  if (!printId) return;
+  window.open(`print-listing.html?id=${encodeURIComponent(printId)}`, '_blank');
+};
+
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
 
 const CAT_LABELS = {
@@ -1167,7 +1177,7 @@ const openModal = (item) => {
 
   const printBtn = document.getElementById('modalPrintBtn');
   if (printBtn) {
-    printBtn.dataset.id = item.id;
+    printBtn.dataset.id = getListingPrintId(item);
   }
 
   modal.classList.remove('hidden');
@@ -3146,11 +3156,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
   document.getElementById('listingModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
-  document.getElementById('modalPrintBtn')?.addEventListener('click', () => {
-    const id = document.getElementById('modalPrintBtn').dataset.id;
-    if (id) {
-      window.open(`print-listing.html?id=${id}`, '_blank');
-    }
+  document.getElementById('modalPrintBtn')?.addEventListener('click', e => {
+    e.preventDefault();
+    openListingPrintPage(e.currentTarget.dataset.id);
   });
   document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
   document.getElementById('lightboxPrev')?.addEventListener('click', () => lightboxNav(-1));
