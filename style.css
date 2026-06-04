@@ -237,6 +237,11 @@ body {
   line-height: 1.35;
 }
 
+/* 매물 카드에서 주차 행 숨김 */
+.lp-rec-card .lp-rec-row-parking {
+  display: none !important;
+}
+
 .card-title { font-size: 14px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 3px 0; }
 
 .card-desc { font-size: 12px; color: var(--gray-700); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
@@ -4702,7 +4707,7 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   min-height: 108px !important;
 
-  max-height: none !important;
+  max-height: 122px !important;
 
   min-width: 0 !important;
 
@@ -4926,17 +4931,13 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   color: #1e293b !important;
 
-  white-space: normal !important;
+  white-space: nowrap !important;
 
   overflow: hidden !important;
 
-  display: -webkit-box !important;
+  text-overflow: ellipsis !important;
 
-  -webkit-line-clamp: 2 !important;
-
-  -webkit-box-orient: vertical !important;
-
-  line-height: 1.3 !important;
+  line-height: 1.2 !important;
 
 }
 
@@ -4956,15 +4957,13 @@ body[data-page="listings"] .lp-panel-scroll-content {
 
   min-width: 0 !important;
 
-  overflow: visible !important;
+  overflow: hidden !important;
 
   font-size: 12px !important;
 
-  line-height: 1.3 !important;
+  line-height: 1.2 !important;
 
-  white-space: normal !important;
-
-  flex-wrap: wrap !important;
+  white-space: nowrap !important;
 
   color: #334155 !important;
 
