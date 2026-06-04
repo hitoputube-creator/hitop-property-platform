@@ -5729,6 +5729,9 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     flex-direction: row !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
+    width: calc(100vw - 64px) !important;
+    max-width: calc(100vw - 64px) !important;
+    box-sizing: border-box !important;
   }
 
   .modal-contact > * {
@@ -5747,8 +5750,8 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 
   .modal-minimap-wrap,
   #modalBodyMap {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: calc(100vw - 64px) !important;
+    max-width: calc(100vw - 64px) !important;
     box-sizing: border-box !important;
   }
 }
