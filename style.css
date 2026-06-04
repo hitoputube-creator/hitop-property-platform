@@ -710,18 +710,19 @@ body {
 
 .modal-contact > * { flex: 1 1 0; min-width: 0; }
 
-.modal-tel { background: #12335a; color: #fff; justify-content: center; padding: 9px 6px; font-size: 12px; line-height: 1.25; text-align: center; white-space: normal; }
+.modal-tel { background: #12335a; color: #fff; justify-content: center; min-height: 46px; padding: 0 8px; font-size: 14px; line-height: 1; text-align: center; white-space: nowrap; }
 
-.modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; padding: 9px 6px; font-size: 12px; line-height: 1.25; text-align: center; text-decoration: none; display: flex; align-items: center; border-radius: 8px; font-weight: 700; white-space: normal; }
+.modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; min-height: 46px; padding: 0 8px; font-size: 14px; line-height: 1; text-align: center; text-decoration: none; display: flex; align-items: center; border-radius: 8px; font-weight: 700; white-space: nowrap; }
 
 .modal-print-btn {
   background: var(--white);
   border: 1px solid var(--gray-200);
   color: var(--gray-700);
   justify-content: center;
-  padding: 9px 6px;
-  font-size: 12px;
-  line-height: 1.25;
+  min-height: 46px;
+  padding: 0 8px;
+  font-size: 14px;
+  line-height: 1;
   text-align: center;
   text-decoration: none;
   display: flex;
@@ -5742,10 +5743,12 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   .modal-contact a,
   .modal-contact button {
     margin: 0 !important;
-    padding: 10px 6px !important;
-    font-size: 12px !important;
-    line-height: 1.25 !important;
+    min-height: 46px !important;
+    padding: 0 8px !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
     justify-content: center !important;
+    white-space: nowrap !important;
   }
 
   .modal-minimap-wrap,
