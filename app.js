@@ -489,13 +489,18 @@ function normalizeSupabaseListing(row) {
     type: row.type ?? d.type ?? propertyType,
     title: row.title ?? d.title ?? '',
     address: row.address ?? d.address ?? '',
+    publicAddress: d.publicAddress ?? d.public_address ?? row.display_address ?? d.displayAddress ?? d.display_address ?? '',
+    mapAddress: d.mapAddress ?? d.map_address ?? row.address ?? d.address ?? d.privateAddress ?? d.private_address ?? d.locationAddress ?? d.location_address ?? d.roadAddress ?? d.road_address ?? d.jibunAddress ?? d.jibun_address ?? '',
+    privateDetailAddress: d.privateDetailAddress ?? d.private_detail_address ?? d.detailAddress ?? d.detail_address ?? '',
+    roadAddress: d.roadAddress ?? d.road_address ?? '',
+    jibunAddress: d.jibunAddress ?? d.jibun_address ?? '',
     status: row.status ?? d.status ?? '',
     description: row.detail_description ?? row.description ?? d.description ?? d.detailDescription ?? '',
     resource_id: row.resource_id ?? d.resource_id ?? d.resourceId ?? null,
     createdAt: row.created_at ?? d.createdAt ?? d.created_at ?? null,
     updatedAt: row.updated_at ?? d.updatedAt ?? d.updated_at ?? null,
     is_public: row.is_public ?? d.is_public ?? false,
-    displayAddress: row.display_address ?? d.displayAddress ?? d.display_address ?? '',
+    displayAddress: row.display_address ?? d.displayAddress ?? d.display_address ?? d.publicAddress ?? d.public_address ?? '',
     category1,
     category2,
     dealType: row.deal_type ?? d.dealType ?? d.deal_type ?? '',
@@ -523,7 +528,10 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
   const propertyType = listing.propertyType || derivePropertyType(category1, category2) || listing.type || '';
   const imageUrls = asArray(listing.imageUrls);
   const stickers = normalizePromotionStickers(listing);
-  const data = { ...listing, category1, category2, propertyType, imageUrls, stickers };
+  const publicAddress = getPublicAddress(listing);
+  const mapAddress = getMapSearchAddress(listing);
+  const privateDetailAddress = getPrivateDetailAddress(listing);
+  const data = { ...listing, publicAddress, mapAddress, privateDetailAddress, category1, category2, propertyType, imageUrls, stickers };
   delete data.id;
   delete data.createdAt;
   delete data.updatedAt;
@@ -540,12 +548,12 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
   const row = cleanObject({
     type: listing.type || propertyType || category1 || null,
     title: listing.title || null,
-    address: listing.address || null,
+    address: mapAddress || null,
     status: listing.status || null,
     description: listing.description || listing.detailDescription || null,
     resource_id: listing.resource_id || listing.resourceId || listing.property_number || listing.listingNo || null,
     is_public: listing.is_public === undefined ? true : listing.is_public === true || listing.is_public === 'true',
-    display_address: listing.displayAddress || listing.display_address || null,
+    display_address: publicAddress || null,
     category1: category1 || null,
     category2: category2 || null,
     deal_type: listing.dealType || listing.deal_type || null,
@@ -570,14 +578,18 @@ function toSupabasePartialListingRow(listing) {
   const row = {};
   if ('type' in listing || 'propertyType' in listing) row.type = listing.type || listing.propertyType || null;
   if ('title' in listing) row.title = listing.title || null;
-  if ('address' in listing) row.address = listing.address || null;
+  if ('address' in listing || 'mapAddress' in listing || 'map_address' in listing || 'roadAddress' in listing || 'jibunAddress' in listing || 'publicAddress' in listing) {
+    row.address = getMapSearchAddress(listing) || null;
+  }
   if ('status' in listing) row.status = listing.status || null;
   if ('description' in listing || 'detailDescription' in listing) row.description = listing.description || listing.detailDescription || null;
   if ('resource_id' in listing || 'resourceId' in listing || 'property_number' in listing || 'listingNo' in listing) {
     row.resource_id = listing.resource_id || listing.resourceId || listing.property_number || listing.listingNo || null;
   }
   if ('is_public' in listing) row.is_public = listing.is_public === true || listing.is_public === 'true';
-  if ('displayAddress' in listing || 'display_address' in listing) row.display_address = listing.displayAddress || listing.display_address || null;
+  if ('displayAddress' in listing || 'display_address' in listing || 'publicAddress' in listing || 'public_address' in listing) {
+    row.display_address = getPublicAddress(listing) || null;
+  }
   if ('category1' in listing) row.category1 = listing.category1 || null;
   if ('category2' in listing) row.category2 = listing.category2 || null;
   if ('dealType' in listing || 'deal_type' in listing) row.deal_type = listing.dealType || listing.deal_type || null;
@@ -834,7 +846,50 @@ const getThumbnail = (item) => {
 
   return finalUrl;
 };
-const getDisplayAddress = (item) => item.displayAddress || item.address;
+const pickFirstText = (item = {}, fields = []) => {
+  for (const field of fields) {
+    const value = item[field];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+};
+
+const getPublicAddress = (item = {}) => pickFirstText(item, [
+  'publicAddress',
+  'public_address',
+  'displayAddress',
+  'display_address',
+  'address',
+]);
+
+const getMapSearchAddress = (item = {}) => pickFirstText(item, [
+  'mapAddress',
+  'map_address',
+  'roadAddress',
+  'road_address',
+  'jibunAddress',
+  'jibun_address',
+  'address',
+  'publicAddress',
+  'public_address',
+]);
+
+const getPrivateDetailAddress = (item = {}) => pickFirstText(item, [
+  'privateDetailAddress',
+  'private_detail_address',
+  'detailAddress',
+  'detail_address',
+]);
+
+const getDisplayAddress = (item = {}) => getPublicAddress(item);
+const getAdminAddressSummary = (item = {}) => {
+  const parts = [
+    ['공개', getPublicAddress(item)],
+    ['지도', getMapSearchAddress(item)],
+    ['상세', getPrivateDetailAddress(item)],
+  ].filter(([, value]) => value);
+  return parts.length ? parts.map(([label, value]) => `${label}: ${value}`).join(' · ') : '-';
+};
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
 const getDealBadgeHTML = (dealType) => {
@@ -1632,7 +1687,7 @@ const setupListingsPage = () => {
               ${areaHighlightHTML}
             </div>
             <div class="lp-rec-row lp-rec-row-bot">
-              ${item.displayAddress || item.address}
+              ${getDisplayAddress(item)}
             </div>
           </div>
         </div>
@@ -1726,15 +1781,10 @@ const setupListingsPage = () => {
   };
   const _hasCoord = i => _getLat(i) !== null && _getLng(i) !== null;
   const getListingAddress = (item = {}) => {
-    const fields = ['address', 'displayAddress', 'publicAddress', 'roadAddress', 'jibunAddress', 'location'];
-    for (const field of fields) {
-      const value = item[field];
-      if (typeof value === 'string' && value.trim()) return value.trim();
-    }
-    return '';
+    return getMapSearchAddress(item);
   };
   const getListingAddressCandidates = (item = {}) => {
-    const values = ['address', 'displayAddress', 'publicAddress', 'roadAddress', 'jibunAddress', 'location']
+    const values = ['mapAddress', 'map_address', 'roadAddress', 'road_address', 'jibunAddress', 'jibun_address', 'address', 'publicAddress', 'public_address']
       .map(field => (typeof item[field] === 'string' ? item[field].trim() : ''))
       .filter(Boolean);
     const list = [];
@@ -1742,8 +1792,8 @@ const setupListingsPage = () => {
       const clean = String(value || '').replace(/\s+/g, ' ').trim();
       if (clean && !list.includes(clean)) list.push(clean);
     };
-    const address = typeof item.address === 'string' ? item.address.trim() : '';
-    const display = typeof item.displayAddress === 'string' ? item.displayAddress.trim() : '';
+    const address = getMapSearchAddress(item);
+    const display = getPublicAddress(item);
 
     values.forEach(add);
     if (display && address && address !== display) {
@@ -2237,8 +2287,7 @@ const setupListingsPage = () => {
     if (flt.kw)        items = items.filter(i => {
       const kw = flt.kw;
       return (i.title        || '').toLowerCase().includes(kw) ||
-             (i.address      || '').toLowerCase().includes(kw) ||
-             (i.displayAddress || '').toLowerCase().includes(kw) ||
+             getPublicAddress(i).toLowerCase().includes(kw) ||
              (i.detailDescription || '').toLowerCase().includes(kw) ||
              getPropertyTypeLabel(i).toLowerCase().includes(kw);
     });
@@ -2433,7 +2482,7 @@ const setupAdminDashboard = () => {
                   <span class="adm-item-date">${date}</span>
                 </div>
                 <div class="adm-item-title">${item.title}</div>
-                <div class="adm-item-info">${getDisplayAddress(item)} · ${formatPropertyPrice(item)} · ${item.area || 0}㎡</div>
+                <div class="adm-item-info">${getAdminAddressSummary(item)} · ${formatPropertyPrice(item)} · ${item.area || 0}㎡</div>
                 <div class="adm-item-actions">
                   <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
                   <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
@@ -2455,8 +2504,9 @@ const setupAdminDashboard = () => {
       const kw = filterKw.toLowerCase();
       listings = listings.filter(i =>
         (i.title || '').toLowerCase().includes(kw) ||
-        (i.address || '').toLowerCase().includes(kw) ||
-        (i.displayAddress || '').toLowerCase().includes(kw)
+        getPublicAddress(i).toLowerCase().includes(kw) ||
+        getMapSearchAddress(i).toLowerCase().includes(kw) ||
+        getPrivateDetailAddress(i).toLowerCase().includes(kw)
       );
     }
     if (sortMode === 'price') listings.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
@@ -2597,6 +2647,61 @@ const setupAdminRegister = () => {
   if (!requireAdminLogin()) return;
   const form = document.getElementById('adminForm');
   if (!form) return;
+  const setupAddressSplitFields = () => {
+    let publicInput = form.elements['publicAddress'];
+    let mapInput = form.elements['mapAddress'];
+    let privateInput = form.elements['privateDetailAddress'];
+    let legacyAddress = form.elements['address'];
+    let legacyDisplay = form.elements['displayAddress'];
+
+    if (!publicInput && legacyDisplay) {
+      legacyDisplay.name = 'publicAddress';
+      legacyDisplay.placeholder = '예: 파주시 동패동';
+      legacyDisplay.required = true;
+      publicInput = legacyDisplay;
+      const label = publicInput.closest('.form-group')?.querySelector('.form-label');
+      if (label) label.innerHTML = '공개주소 <span class="form-hint">(고객 표시)</span>';
+    }
+
+    if (!mapInput && legacyAddress) {
+      legacyAddress.name = 'mapAddress';
+      legacyAddress.placeholder = '예: 파주시 동패동 2075';
+      legacyAddress.required = true;
+      mapInput = legacyAddress;
+      const label = mapInput.closest('.form-group')?.querySelector('.form-label');
+      if (label) label.innerHTML = '지도검색주소 <span class="form-hint">/ 비공개</span>';
+    }
+
+    if (publicInput && mapInput) {
+      const row = mapInput.closest('.form-row-half') || mapInput.closest('.form-row-thirds');
+      if (row) row.classList.replace('form-row-half', 'form-row-thirds');
+      if (row && publicInput.closest('.form-group') && mapInput.closest('.form-group')) {
+        row.insertBefore(publicInput.closest('.form-group'), mapInput.closest('.form-group'));
+      }
+      if (!privateInput) {
+        const group = document.createElement('div');
+        group.className = 'form-group';
+        group.style.marginBottom = '0';
+        group.innerHTML = '<label class="form-label">상세주소·동호수 <span class="form-hint">/ 비공개</span></label><input name="privateDetailAddress" placeholder="예: 115동 1층, 상가 101호" />';
+        row?.appendChild(group);
+        privateInput = form.elements['privateDetailAddress'];
+      }
+    }
+
+    if (!form.elements['address']) {
+      const hidden = document.createElement('input');
+      hidden.type = 'hidden';
+      hidden.name = 'address';
+      form.appendChild(hidden);
+    }
+    if (!form.elements['displayAddress']) {
+      const hidden = document.createElement('input');
+      hidden.type = 'hidden';
+      hidden.name = 'displayAddress';
+      form.appendChild(hidden);
+    }
+  };
+  setupAddressSplitFields();
   const imageContainer = document.getElementById('imageUrlContainer');
   const addImageBtn    = document.getElementById('addImageBtn');
   const MAX_IMAGES     = 5;
@@ -2892,6 +2997,10 @@ const setupAdminRegister = () => {
         });
 
         // stickers 체크박스 상태 초기화 및 설정
+        if (form.elements['publicAddress']) form.elements['publicAddress'].value = getPublicAddress(target);
+        if (form.elements['mapAddress']) form.elements['mapAddress'].value = getMapSearchAddress(target);
+        if (form.elements['privateDetailAddress']) form.elements['privateDetailAddress'].value = getPrivateDetailAddress(target);
+
         form.querySelectorAll('input[name="stickers"]').forEach(el => el.checked = false);
         normalizePromotionStickers(target).forEach(sticker => {
           const chk = form.querySelector(`input[name="stickers"][value="${sticker}"]`);
@@ -2996,6 +3105,13 @@ const setupAdminRegister = () => {
     const payload = {};
     for (const [key,value] of fd.entries()) { if(key!=='imageUrls') payload[key]=value; }
     // imageUrls: Supabase public URL만 저장 (Drive 링크·샘플 이미지 제외)
+    payload.publicAddress = (payload.publicAddress || payload.displayAddress || '').trim();
+    payload.mapAddress = (payload.mapAddress || payload.address || payload.privateAddress || payload.locationAddress || payload.roadAddress || payload.jibunAddress || payload.publicAddress || '').trim();
+    payload.privateDetailAddress = (payload.privateDetailAddress || payload.detailAddress || '').trim();
+    payload.displayAddress = payload.publicAddress;
+    payload.address = payload.mapAddress;
+    if (!payload.privateDetailAddress) delete payload.privateDetailAddress;
+
     payload.imageUrls = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
       .map(el => el.value.trim())
       .filter(v => v && !isDriveUrl(v) && !v.startsWith('images/'));
@@ -3060,7 +3176,7 @@ const setupAdminRegister = () => {
     delete payload.labels;
     if (!payload.status) payload.status = '거래가능';
 
-    const address = payload.address ? payload.address.trim() : '';
+    const address = getMapSearchAddress(payload);
 
     // Drive 링크가 아직 남아 있는 행이 있으면 경고 (저장 차단은 아님)
     const driveRows = Array.from(form.querySelectorAll('input[name="imageUrls"]'))
@@ -3165,7 +3281,12 @@ const setupAdminListingsMgmt = () => {
     const dealType = document.getElementById('filterDealType')?.value||'';
     const status   = document.getElementById('filterStatus')?.value||'';
     let listings = [..._allListings];
-    if (search)   listings=listings.filter(i=>i.title.toLowerCase().includes(search)||i.address.toLowerCase().includes(search)||(i.displayAddress||'').toLowerCase().includes(search));
+    if (search)   listings=listings.filter(i=>
+      (i.title || '').toLowerCase().includes(search) ||
+      getPublicAddress(i).toLowerCase().includes(search) ||
+      getMapSearchAddress(i).toLowerCase().includes(search) ||
+      getPrivateDetailAddress(i).toLowerCase().includes(search)
+    );
     if (category) listings=listings.filter(i=>getCategory1(i)===category);
     if (dealType) listings=listings.filter(i=>i.dealType===dealType);
     if (status==='done')   listings=listings.filter(i=>i.status==='done');
@@ -3189,7 +3310,7 @@ const setupAdminListingsMgmt = () => {
               <strong class="admin-item-title">${item.title}${isDone?' <span class="badge-done">거래완료</span>':''}</strong>
               <span class="admin-item-date">등록 ${(item.createdAt||'').slice(0,10)||'-'}</span>
             </div>
-            <p style="margin:4px 0;font-size:13px;">${getPropertyTypeLabel(item)} / ${item.dealType} · ${getDisplayAddress(item)}</p>
+            <p style="margin:4px 0;font-size:13px;">${getPropertyTypeLabel(item)} / ${item.dealType} · ${getAdminAddressSummary(item)}</p>
             <p style="margin:4px 0;font-size:13px;">${formatPropertyPrice(item)} · ${getCategory1(item) === '상가사무실' ? `${item.exclusiveAreaM2 || ''}㎡ (${item.exclusiveAreaPy || ''}평) / ${item.supplyAreaM2 || ''}㎡ (${item.supplyAreaPy || ''}평)` : `${item.areaM2 || item.area || ''}㎡ (${item.areaPy || ''}평)`}</p>
             <div class="admin-item-actions">
               <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
