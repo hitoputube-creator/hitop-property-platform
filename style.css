@@ -4353,6 +4353,86 @@ body[data-page="listings"] .cat-card-body {
 
 }
 
+/* ── listings.html 지도 하단 카테고리 카드: index.html property-card 동일 디자인 ── */
+
+body[data-page="listings"] .lp-property-card-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card {
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  height: 110px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card-bg svg {
+  width: 52px;
+  height: 52px;
+  opacity: 0.22;
+  fill: #fff;
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 2px;
+}
+
+body[data-page="listings"] .lp-property-card-grid .property-card-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.78);
+  margin: 0;
+}
+
+body[data-page="listings"] .lp-property-card-grid .card-factory   { background: linear-gradient(135deg, #4a6fa5 0%, #2d4a6e 100%); }
+body[data-page="listings"] .lp-property-card-grid .card-store     { background: linear-gradient(135deg, #5a7a5a 0%, #2e4e2e 100%); }
+body[data-page="listings"] .lp-property-card-grid .card-land      { background: linear-gradient(135deg, #8a7040 0%, #5a4820 100%); }
+body[data-page="listings"] .lp-property-card-grid .card-officetel { background: linear-gradient(135deg, #5a4a7a 0%, #2e2050 100%); }
+body[data-page="listings"] .lp-property-card-grid .card-apt       { background: linear-gradient(135deg, #4a6a7a 0%, #1e3a4e 100%); }
+body[data-page="listings"] .lp-property-card-grid .card-building  { background: linear-gradient(135deg, #6a4a3a 0%, #3e2010 100%); }
+
+/* 활성 카드 강조 */
+body[data-page="listings"] .lp-property-card-grid .property-card.active {
+  box-shadow: 0 0 0 3px #C9A84C;
+  transform: translateY(-2px);
+}
+
 /* 불필요한 하단 전체 매물 스크롤 리스트 은닉 (100vh 조건 완수) */
 
 body[data-page="listings"] #allListingsSection {
@@ -5695,6 +5775,23 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     font-size: 10px !important;
   }
 
+  body[data-page="listings"] .lp-property-card-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid .property-card {
+    height: 90px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid .property-card-title {
+    font-size: 13px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid .property-card-sub {
+    font-size: 10px !important;
+  }
+
   /* 8. 플로팅 전화/카톡 버튼 세이프존 마진 보정 */
   body[data-page="listings"] .floating-btns {
     right: 16px !important;
@@ -5806,6 +5903,23 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 
   body[data-page="listings"] .cat-card-sub {
     font-size: 9px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid .property-card {
+    height: 80px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid .property-card-title {
+    font-size: 12px !important;
+  }
+
+  body[data-page="listings"] .lp-property-card-grid .property-card-sub {
+    display: none !important;
   }
 }
 
