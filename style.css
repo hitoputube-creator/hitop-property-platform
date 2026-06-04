@@ -675,8 +675,8 @@ body {
 .info-price-row .info-label { color: #92400e; font-weight: 700; }
 .info-price-value { color: #b45309; font-weight: 800; font-size: 15px; }
 
-.area-unit-btn { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; cursor: pointer; flex-shrink: 0; transition: background 0.15s; }
-.area-unit-btn:hover { background: #a7f3d0; }
+.area-unit-btn, .area-toggle-btn { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; cursor: pointer; flex-shrink: 0; transition: background 0.15s; }
+.area-unit-btn:hover, .area-toggle-btn:hover { background: #a7f3d0; }
 
 .area-field-label { font-size: 12px; font-weight: 700; color: #475569; white-space: nowrap; min-width: 52px; }
 .admin-form .detail-fields-section { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -756,6 +756,8 @@ body {
 .area-hl-row + .area-hl-row { margin-top: 8px; padding-top: 8px; border-top: 1px solid #dcfce7; }
 
 .area-hl-label { font-size: 11px; color: #6b7280; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+.area-hl-control { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }
 
 .area-hl-value { font-size: 18px; font-weight: 700; color: #1e293b; letter-spacing: -0.2px; line-height: 1.35; overflow-wrap: anywhere; }
 

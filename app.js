@@ -243,20 +243,31 @@ const toPyeong = (m2) => {
   return (n / M2_PER_PY).toFixed(2);
 };
 
-const formatAreaWithPy = (label, m2) => {
-  const n = Number(m2);
-  if (!Number.isFinite(n) || n <= 0) return '';
-  return `${label ? `${label} ` : ''}${n.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}㎡(${toPyeong(n)}평)`;
-};
-
-const formatAreaSummaryWithPy = (listing = {}) => {
+const getAreaSummaryParts = (listing = {}) => {
   const exclusive = listing.exclusiveArea ?? listing.privateArea ?? listing.areaExclusive ?? listing.exclusiveAreaM2 ?? listing.area_m2 ?? listing.area;
   const supply = listing.supplyArea ?? listing.grossArea ?? listing.areaSupply ?? listing.supplyAreaM2 ?? listing.supply_m2 ?? listing.contractArea;
-  const parts = [
-    formatAreaWithPy('전용', exclusive),
-    formatAreaWithPy('공급', supply),
-  ].filter(Boolean);
-  return parts.length ? parts.join(' / ') : '-';
+  return [
+    { label: '전용', value: exclusive },
+    { label: '공급', value: supply },
+  ]
+    .map(part => ({ label: part.label, m2: Number(part.value) }))
+    .filter(part => Number.isFinite(part.m2) && part.m2 > 0);
+};
+
+const formatAreaSummaryM2 = (listing = {}) => {
+  const parts = getAreaSummaryParts(listing);
+  if (!parts.length) return '-';
+  return parts
+    .map(part => `${part.label} ${part.m2.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}㎡`)
+    .join(' / ');
+};
+
+const formatAreaSummaryPy = (listing = {}) => {
+  const parts = getAreaSummaryParts(listing);
+  if (!parts.length) return '-';
+  return parts
+    .map(part => `${part.label} ${toPyeong(part.m2)}평`)
+    .join(' / ');
 };
 
 const PROPERTY_FIELDS = {
@@ -1121,10 +1132,8 @@ const openModal = (item) => {
     if (!parts.length) return null;
     const m2str = parts.map(p => p.label ? `${p.label} ${_fmtM2(p.m2)}㎡` : `${_fmtM2(p.m2)}㎡`).join(' / ');
     const pystr = parts.map(p => p.label ? `${p.label} ${_fmtPy(p.py)}평` : `${_fmtPy(p.py)}평`).join(' / ');
-    const summaryStr = parts.map(p => {
-      return formatAreaWithPy(p.label, p.m2);
-    }).join(' / ');
-    return { m2str, pystr, summaryStr };
+    const py2str = parts.map(p => p.label ? `${p.label} ${toPyeong(p.m2)}평` : `${toPyeong(p.m2)}평`).join(' / ');
+    return { m2str, pystr, py2str };
   };
   const areaInfo = buildAreaInfo();
 
@@ -1132,12 +1141,29 @@ const openModal = (item) => {
   const areaHlEl = document.getElementById('modalAreaHighlight');
   if (areaHlEl) {
     if (areaInfo) {
-      const sideAreaSummary = isExclusiveType ? formatAreaSummaryWithPy(item) : (areaInfo.summaryStr || '-');
-      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">${sideAreaSummary}</span></div>`;
+      const sideAreaM2 = isExclusiveType ? formatAreaSummaryM2(item) : (areaInfo.m2str || '-');
+      const sideAreaPy = isExclusiveType ? formatAreaSummaryPy(item) : (areaInfo.py2str || areaInfo.pystr || '-');
+      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><div class="area-hl-control"><span class="area-hl-value" data-m2="${sideAreaM2}" data-py="${sideAreaPy}">${sideAreaM2}</span>${sideAreaM2 !== '-' ? '<button type="button" class="area-toggle-btn" id="modalAreaSummaryToggle" data-unit="m2">평</button>' : ''}</div></div>`;
       areaHlEl.style.display = '';
     } else {
       areaHlEl.innerHTML = '<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">-</span></div>';
       areaHlEl.style.display = '';
+    }
+    const areaSummaryToggle = areaHlEl.querySelector('#modalAreaSummaryToggle');
+    if (areaSummaryToggle) {
+      areaSummaryToggle.addEventListener('click', () => {
+        const span = areaHlEl.querySelector('.area-hl-value');
+        if (!span) return;
+        if (areaSummaryToggle.dataset.unit === 'm2') {
+          span.textContent = span.dataset.py;
+          areaSummaryToggle.textContent = '㎡';
+          areaSummaryToggle.dataset.unit = 'py';
+        } else {
+          span.textContent = span.dataset.m2;
+          areaSummaryToggle.textContent = '평';
+          areaSummaryToggle.dataset.unit = 'm2';
+        }
+      });
     }
   }
 
