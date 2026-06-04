@@ -5716,7 +5716,7 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
 
   /* 모바일 1열 적층 순서: ①사진 → ②요약/가격/면적/지도/문의 → ③정보표/설명 */
   .modal-col-photo { order: 1 !important; overflow: visible !important; }
-  .modal-col-side  { order: 2 !important; position: static !important; overflow-y: visible !important; }
+  .modal-col-side  { order: 2 !important; position: static !important; overflow-y: visible !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
   .modal-col-info  { order: 3 !important; overflow-y: visible !important; height: auto !important; }
 
   /* 문의 버튼: fixed 해제 → 일반 흐름 */
@@ -5732,7 +5732,7 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
   }
 
   .modal-contact > * {
-    flex: 1 1 120px !important;
+    flex: 1 1 calc(50% - 8px) !important;
     min-width: 0 !important;
   }
 
@@ -5743,6 +5743,13 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     font-size: 12px !important;
     line-height: 1.25 !important;
     justify-content: center !important;
+  }
+
+  .modal-minimap-wrap,
+  #modalBodyMap {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 
