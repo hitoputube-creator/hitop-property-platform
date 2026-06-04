@@ -2173,7 +2173,9 @@ const setupListingsPage = () => {
   });
 
   // ── URL 파라미터 ──
-  const urlCatRaw = new URLSearchParams(window.location.search).get('category');
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCatRaw = urlParams.get('category');
+  const urlListingId = urlParams.get('id');
   // urlCat 을 블록 밖에서도 참조할 수 있도록 함수 스코프에 선언
   const urlCat = urlCatRaw ? (PT_TO_CAT1[urlCatRaw] || urlCatRaw) : '';
   if (urlCat) {
@@ -2209,6 +2211,10 @@ const setupListingsPage = () => {
     applyFilters();
     _tryShowMarkers();
     if (urlCat) renderCategoryPanel(urlCat);
+    if (urlListingId) {
+      const target = _listings.find(item => String(item.id) === String(urlListingId));
+      if (target) window.setTimeout(() => openModalFull(target), 250);
+    }
   })();
 };
 
