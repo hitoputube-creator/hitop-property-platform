@@ -24,25 +24,43 @@
       .cat-tab:hover { color: #0A1F5C; }
       .cat-tab.active { font-weight: 700; color: #0A1F5C; border-bottom: 3px solid #C9A84C; }
 
-      /* 매물 카드 */
-      .property-card-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+      /* 매물 카드 — listings.html 이미지 카드와 동일 구조 */
+      .property-card-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
       .property-card {
-        border-radius: 12px; overflow: hidden; position: relative;
+        border-radius: 10px; overflow: hidden; position: relative;
         height: 140px; cursor: pointer; text-decoration: none;
         display: block; transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
       .property-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
-      .property-card-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-      .property-card-bg svg { width: 60px; height: 60px; opacity: 0.22; fill: #fff; }
-      .property-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%); }
-      .property-card-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px; }
-      .property-card-title { font-size: 17px; font-weight: 700; color: #fff; margin: 0 0 4px; }
-      .property-card-sub { font-size: 12px; color: rgba(255,255,255,0.78); margin: 0; }
-      .card-factory   { background: linear-gradient(135deg, #4a6fa5 0%, #2d4a6e 100%); }
-      .card-store     { background: linear-gradient(135deg, #5a7a5a 0%, #2e4e2e 100%); }
-      .card-land      { background: linear-gradient(135deg, #8a7040 0%, #5a4820 100%); }
-      .card-officetel { background: linear-gradient(135deg, #5a4a7a 0%, #2e2050 100%); }
-      .card-apt       { background: linear-gradient(135deg, #4a6a7a 0%, #1e3a4e 100%); }
+      .property-card .cat-card-img {
+        position: absolute; inset: 0;
+        background-size: cover; background-position: center;
+        transition: transform 0.35s ease;
+      }
+      .property-card:hover .cat-card-img { transform: scale(1.08); }
+      .property-card .cat-card-overlay {
+        position: absolute; inset: 0;
+        background: rgba(0,0,0,0.45);
+      }
+      .property-card .cat-card-body {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; justify-content: flex-end;
+        padding: 14px 16px;
+      }
+      .property-card .cat-card-name {
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 17px; font-weight: 800; color: #fff; line-height: 1.3;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      }
+      .property-card .cat-card-sub {
+        display: block; font-size: 11px; font-weight: 600;
+        opacity: 0.9; margin-top: 1px;
+      }
+      .property-card .cat-card-more {
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 12px; color: #C9A84C; font-weight: 600; margin-top: 5px;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      }
 
       /* 소개+고객센터 */
       .info-contact-section { background: #f2f4f7; padding: 8px 0; }
@@ -82,7 +100,9 @@
       }
 
       @media (max-width: 768px) {
-        .property-card-grid { grid-template-columns: repeat(2, 1fr); }
+        .property-card-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .property-card { height: 120px; }
+        .property-card .cat-card-name { font-size: 15px; }
         .top-bar-hours { display: none; }
         .info-contact-wrap { grid-template-columns: 1fr; gap: 32px 0; }
         .divider-line { height: 1px; width: 100%; }
@@ -133,30 +153,53 @@
         <div class="container">
           <h2>주요 취급 매물</h2>
           <div class="property-card-grid">
-            <a class="property-card card-factory" href="listings.html?category=공장창고">
-              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M2 20V8l6-4v4l6-4v4l6-4v16H2zm2-2h16V7.6l-6 4V8.2l-6 4V6.6L4 9.6V18zm2-2h2v-4H8v4zm4 0h2v-4h-2v4zm4 0h2v-4h-2v4z"/></svg></div>
-              <div class="property-card-overlay"></div>
-              <div class="property-card-text"><p class="property-card-title">공장·창고</p><p class="property-card-sub">산업용 부동산 전문</p></div>
+            <a class="property-card" href="listings.html?category=공장창고">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">공장·창고</span>
+                <span class="cat-card-more">전체보기 →</span>
+              </div>
             </a>
-            <a class="property-card card-store" href="listings.html?category=상가">
-              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M5.3 7l1.5-4H17l1.7 4H5.3zM2 8h20v2h-1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V10H2V8zm3 2v8h14v-8H5zm3 2h2v4H8v-4zm3 0h2v4h-2v-4z"/></svg></div>
-              <div class="property-card-overlay"></div>
-              <div class="property-card-text"><p class="property-card-title">상가·빌딩</p><p class="property-card-sub">수익형 상업 매물</p></div>
+            <a class="property-card" href="listings.html?category=상가사무실">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">상가·사무실</span>
+                <span class="cat-card-more">전체보기 →</span>
+              </div>
             </a>
-            <a class="property-card card-land" href="listings.html?category=토지">
-              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-              <div class="property-card-overlay"></div>
-              <div class="property-card-text"><p class="property-card-title">토지</p><p class="property-card-sub">개발가능 토지 매물</p></div>
+            <a class="property-card" href="listings.html?category=토지">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">토지</span>
+                <span class="cat-card-more">전체보기 →</span>
+              </div>
             </a>
-            <a class="property-card card-officetel" href="listings.html?category=오피스텔">
-              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M5 3h14a1 1 0 011 1v16a1 1 0 01-1 1h-5v-3h-4v3H5a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h3v-3h6v3h3V5H6zm2 2h2v2H8V7zm4 0h2v2h-2V7zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z"/></svg></div>
-              <div class="property-card-overlay"></div>
-              <div class="property-card-text"><p class="property-card-title">오피스텔</p><p class="property-card-sub">업무·주거 복합 매물</p></div>
+            <a class="property-card" href="listings.html?category=주거용">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">주거용<br><span class="cat-card-sub">아파트·오피스텔</span></span>
+                <span class="cat-card-more">전체보기 →</span>
+              </div>
             </a>
-            <a class="property-card card-apt" href="listings.html">
-              <div class="property-card-bg"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
-              <div class="property-card-overlay"></div>
-              <div class="property-card-text"><p class="property-card-title">아파트·주택</p><p class="property-card-sub">주거용 부동산 매물</p></div>
+            <a class="property-card" href="listings.html?category=단독전원주택">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">단독·전원주택</span>
+                <span class="cat-card-more">전체보기 →</span>
+              </div>
+            </a>
+            <a class="property-card" href="listings.html?category=건물빌딩">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">건물·빌딩</span>
+                <span class="cat-card-more">전체보기 →</span>
+              </div>
             </a>
           </div>
         </div>
