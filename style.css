@@ -238,7 +238,8 @@ body {
 }
 
 /* 매물 카드에서 주차 행 숨김 */
-.lp-rec-card .lp-rec-row-parking {
+.lp-rec-card .lp-rec-row-parking,
+.lp-rec-row-parking {
   display: none !important;
 }
 
