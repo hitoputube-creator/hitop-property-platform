@@ -723,6 +723,14 @@
       'public_address',
     ]);
 
+    function formatParkingCount(value) {
+      const raw = String(value || '').trim();
+      if (!raw || raw === '0') return '-';
+      if (raw.includes('대')) return raw;
+      if (/^\d+(\.\d+)?$/.test(raw)) return `${raw}대`;
+      return raw;
+    }
+
     const toKoreanPrice = (wanwon) => {
       const n = Number(wanwon);
       if (!n || isNaN(n) || n <= 0) return '';
@@ -939,7 +947,7 @@
       document.getElementById('tableArea').textContent = areaFmt || '-';
       document.getElementById('tableFloor').textContent = item.floorInfo || item.floor || '-';
       document.getElementById('tableZoning').textContent = item.zoning || item.zoningArea || '-';
-      document.getElementById('tableParking').textContent = item.parkingCount || item.parking || '-';
+      document.getElementById('tableParking').textContent = formatParkingCount(item.parkingCount || item.parkingSpaces || item.parking);
       document.getElementById('tableApprovalDate').textContent = item.approvalDate || '-';
 
       // 5. 공개 매물 설명

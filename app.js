@@ -270,6 +270,20 @@ const formatAreaSummaryPy = (listing = {}) => {
     .join(' / ');
 };
 
+function formatParkingCount(value) {
+  const raw = String(value || '').trim();
+  if (!raw || raw === '0') return '-';
+  if (raw.includes('대')) return raw;
+  if (/^\d+(\.\d+)?$/.test(raw)) return `${raw}대`;
+  return raw;
+}
+
+const getParkingText = (item = {}) => formatParkingCount(item.parkingCount ?? item.parkingSpaces ?? item.parking);
+const getParkingMetaHTML = (item = {}, className = 'parking-meta') => {
+  const parking = getParkingText(item);
+  return parking === '-' ? '' : `<div class="${className}">주차 ${parking}</div>`;
+};
+
 const PROPERTY_FIELDS = {
   '공장창고': {
     dealTypes: ['매매','임대'],
@@ -512,6 +526,8 @@ function normalizeSupabaseListing(row) {
     area: row.area_m2 ?? d.area ?? d.areaM2 ?? d.area_m2 ?? null,
     floorInfo: row.floor_info ?? d.floorInfo ?? d.floor_info ?? d.floor ?? '',
     zoning: row.zoning ?? d.zoning ?? d.zoningArea ?? '',
+    parkingCount: row.parking_count ?? d.parkingCount ?? d.parking_count ?? d.parkingSpaces ?? d.parking_spaces ?? d.parking ?? '',
+    parking: row.parking_count ?? d.parking ?? d.parkingCount ?? d.parking_count ?? '',
     detailDescription: row.detail_description ?? d.detailDescription ?? d.detail_description ?? '',
     stickers,
     imageUrls: asArray(row.image_urls ?? d.imageUrls ?? d.image_urls ?? d.imageUrl),
@@ -564,6 +580,7 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
     area_py: asNumberOrNull(listing.areaPy),
     floor_info: listing.floorInfo || listing.floor || null,
     zoning: listing.zoning || listing.zoningArea || null,
+    parking_count: listing.parkingCount || listing.parking_count || listing.parking || null,
     detail_description: listing.detailDescription || listing.description || null,
     stickers,
     image_urls: imageUrls,
@@ -600,6 +617,9 @@ function toSupabasePartialListingRow(listing) {
   if ('areaPy' in listing) row.area_py = asNumberOrNull(listing.areaPy);
   if ('floorInfo' in listing || 'floor' in listing) row.floor_info = listing.floorInfo || listing.floor || null;
   if ('zoning' in listing || 'zoningArea' in listing) row.zoning = listing.zoning || listing.zoningArea || null;
+  if ('parkingCount' in listing || 'parking_count' in listing || 'parking' in listing) {
+    row.parking_count = listing.parkingCount || listing.parking_count || listing.parking || null;
+  }
   if ('detailDescription' in listing) row.detail_description = listing.detailDescription || null;
   if ('stickers' in listing) row.stickers = normalizePromotionStickers(listing);
   if ('imageUrls' in listing) row.image_urls = asArray(listing.imageUrls);
@@ -1275,7 +1295,7 @@ const openModal = (item) => {
 
   addRow('층정보',   item.floorInfo   ?? item.floor);
   addRow('용도지역', item.zoning      ?? item.zoningArea);
-  addRow('주차대수', item.parkingCount ?? item.parking);
+  addRow('주차대수', formatParkingCount(item.parkingCount ?? item.parkingSpaces ?? item.parking));
   addRow('사용승인일', item.approvalDate);
 
   let tableHTML = tableRows.map(r => {
@@ -1686,6 +1706,7 @@ const setupListingsPage = () => {
             <div class="lp-rec-row lp-rec-row-area">
               ${areaHighlightHTML}
             </div>
+            ${getParkingMetaHTML(item, 'lp-rec-row lp-rec-row-parking')}
             <div class="lp-rec-row lp-rec-row-bot">
               ${getDisplayAddress(item)}
             </div>
@@ -2194,6 +2215,7 @@ const setupListingsPage = () => {
           </div>
           <div class="lp-mini-addr">📍 ${getDisplayAddress(item) || '-'}</div>
           ${areaHTML ? `<div class="lp-mini-area">${areaHTML}</div>` : ''}
+          ${getParkingMetaHTML(item, 'lp-mini-parking')}
         </div>
       </article>`;
     };
@@ -2241,6 +2263,7 @@ const setupListingsPage = () => {
           <div class="lp-all-price">${formatCardPrice(item)}</div>
           <div class="lp-all-title">${item.title || ''}</div>
           ${areaHTML ? `<div class="lp-all-area-wrap">${areaHTML}</div>` : ''}
+          ${getParkingMetaHTML(item, 'lp-all-parking')}
           <div class="lp-all-addr">${getDisplayAddress(item)}</div>
         </div>
       </article>`;
@@ -2482,7 +2505,7 @@ const setupAdminDashboard = () => {
                   <span class="adm-item-date">${date}</span>
                 </div>
                 <div class="adm-item-title">${item.title}</div>
-                <div class="adm-item-info">${getAdminAddressSummary(item)} · ${formatPropertyPrice(item)} · ${item.area || 0}㎡</div>
+                <div class="adm-item-info">${[getAdminAddressSummary(item), formatPropertyPrice(item), `${item.area || 0}㎡`, getParkingText(item) !== '-' ? `주차 ${getParkingText(item)}` : ''].filter(Boolean).join(' · ')}</div>
                 <div class="adm-item-actions">
                   <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
                   <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
