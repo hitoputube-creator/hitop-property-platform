@@ -2215,7 +2215,6 @@ const setupListingsPage = () => {
           </div>
           <div class="lp-mini-addr">📍 ${getDisplayAddress(item) || '-'}</div>
           ${areaHTML ? `<div class="lp-mini-area">${areaHTML}</div>` : ''}
-          ${getParkingMetaHTML(item, 'lp-mini-parking')}
         </div>
       </article>`;
     };
