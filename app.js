@@ -2530,17 +2530,19 @@ const setupAdminDashboard = () => {
                 </div>
                 <div class="adm-item-title">${item.title}</div>
                 <div class="adm-item-info">${[getAdminAddressSummary(item), formatPropertyPrice(item), `${item.area || 0}㎡`, getParkingText(item) !== '-' ? `주차 ${getParkingText(item)}` : ''].filter(Boolean).join(' · ')}</div>
-                <div class="adm-item-actions">
-                  <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
-                  <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
-                  <button class="adm-btn adm-btn-done${done?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${done?'↩ 완료취소':'✅ 거래완료'}</button>
-                  <button class="adm-btn adm-btn-del" data-action="delete" data-id="${item.id}" type="button">🗑 삭제</button>
-                </div>
-                <div class="adm-item-actions" style="margin-top:4px;border-top:1px solid #f0f0f0;padding-top:6px;">
-                  <button class="adm-btn adm-btn-rec${rec?' rec-active':''}" data-action="recommend" data-id="${item.id}" type="button">⭐ ${rec?'추천중':'추천'}</button>
-                  <button class="adm-btn adm-btn-pin1${pin===1?' pin-active':''}" data-action="pin1" data-id="${item.id}" type="button">📌 상단1${pin===1?' ✓':''}</button>
-                  <button class="adm-btn adm-btn-pin2${pin===2?' pin-active':''}" data-action="pin2" data-id="${item.id}" type="button">📌 상단2${pin===2?' ✓':''}</button>
-                  <button class="adm-btn adm-btn-unpin" data-action="unpin" data-id="${item.id}" type="button">해제</button>
+                <div class="adm-card-actions">
+                  <div class="adm-card-actions-left">
+                    <a href="admin-register.html?edit=${item.id}" class="adm-btn adm-btn-edit" style="text-decoration:none;">✏️ 수정</a>
+                    <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
+                    <button class="adm-btn adm-btn-done${done?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${done?'↩ 완료취소':'✅ 거래완료'}</button>
+                    <button class="adm-btn adm-btn-del" data-action="delete" data-id="${item.id}" type="button">🗑 삭제</button>
+                  </div>
+                  <div class="adm-card-actions-right">
+                    <button class="adm-btn adm-btn-sm adm-btn-rec${rec?' rec-active':''}" data-action="recommend" data-id="${item.id}" type="button">⭐ 추천</button>
+                    <button class="adm-btn adm-btn-sm adm-btn-pin1${pin===1?' pin-active':''}" data-action="pin1" data-id="${item.id}" type="button">📌 상단1</button>
+                    <button class="adm-btn adm-btn-sm adm-btn-pin2${pin===2?' pin-active':''}" data-action="pin2" data-id="${item.id}" type="button">📌 상단2</button>
+                    <button class="adm-btn adm-btn-sm adm-btn-unpin" data-action="unpin" data-id="${item.id}" type="button">해제</button>
+                  </div>
                 </div>
               </div>
             </article>`;

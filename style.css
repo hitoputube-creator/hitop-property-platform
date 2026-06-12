@@ -2206,6 +2206,29 @@ body {
 
 .adm-item-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
 
+/* 관리자 카드 버튼 좌우 분리 레이아웃 */
+.adm-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.adm-card-actions-left {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.adm-card-actions-right {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-left: auto;
+}
+
 .adm-btn {
 
   font: inherit; font-size: 12px; font-weight: 600;
@@ -2244,15 +2267,18 @@ body {
 
 .adm-btn-del:hover  { background: #FEF2F2; }
 
+/* 핀/추천 버튼 — compact size */
+.adm-btn-sm { font-size: 11px; padding: 4px 8px; }
+
 .adm-btn-rec          { border-color: #d97706; color: #92400e; }
 .adm-btn-rec:hover    { background: #fef3c7; }
-.adm-btn-rec.rec-active { background: #fef3c7; border-color: #f59e0b; color: #78350f; font-weight: 700; }
+.adm-btn-rec.rec-active { background: linear-gradient(135deg,#FFD700,#FFA500); border-color: #d97706; color: #1a2340; font-weight: 700; }
 .adm-btn-pin1         { border-color: #ea580c; color: #9a3412; }
 .adm-btn-pin1:hover   { background: #fff7ed; }
-.adm-btn-pin1.pin-active { background: #fff7ed; border-color: #ea580c; color: #7c2d12; font-weight: 700; }
+.adm-btn-pin1.pin-active { background: linear-gradient(135deg,#FF6B35,#D63800); border-color: #ea580c; color: #fff; font-weight: 700; }
 .adm-btn-pin2         { border-color: #b45309; color: #7c3909; }
 .adm-btn-pin2:hover   { background: #fffbeb; }
-.adm-btn-pin2.pin-active { background: #fffbeb; border-color: #b45309; color: #5a2a00; font-weight: 700; }
+.adm-btn-pin2.pin-active { background: linear-gradient(135deg,#FF6B35,#D63800); border-color: #b45309; color: #fff; font-weight: 700; }
 .adm-btn-unpin        { border-color: #9ca3af; color: #6b7280; }
 .adm-btn-unpin:hover  { background: #f9fafb; }
 .badge-pin { display:inline-block; background:#ea580c; color:#fff; font-size:11px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; }
