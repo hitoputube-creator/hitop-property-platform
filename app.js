@@ -2507,6 +2507,7 @@ const setupAdminDashboard = () => {
           const done  = isCompleted(item);
           const rec   = isRec(item);
           const isnew = isNew(item);
+          const pin   = item.pinSlot || 0;
           const thumb = getThumbnail(item);
           const price = getMainPrice(item);
           const propNo = getPropNo(item);
@@ -2517,7 +2518,7 @@ const setupAdminDashboard = () => {
               <div class="adm-item-img${done ? ' adm-img-done' : ''}">
                 <img src="${thumb}" alt="${item.title}" onerror="this.style.display='none'" />
                 ${done ? '<div class="adm-done-badge">거래완료</div>' : ''}
-                ${rec   ? '<span class="adm-rec-ribbon">⭐ 추천</span>' : ''}
+                ${pin > 0 ? `<span class="adm-rec-ribbon">📌 상단${pin}</span>` : rec ? '<span class="adm-rec-ribbon">⭐ 추천</span>' : ''}
                 ${isnew ? '<span class="adm-new-ribbon">🔥 최신</span>' : ''}
               </div>` : ''}
               <div class="adm-item-body">
@@ -2534,6 +2535,12 @@ const setupAdminDashboard = () => {
                   <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
                   <button class="adm-btn adm-btn-done${done?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${done?'↩ 완료취소':'✅ 거래완료'}</button>
                   <button class="adm-btn adm-btn-del" data-action="delete" data-id="${item.id}" type="button">🗑 삭제</button>
+                </div>
+                <div class="adm-item-actions" style="margin-top:4px;border-top:1px solid #f0f0f0;padding-top:6px;">
+                  <button class="adm-btn adm-btn-rec${rec?' rec-active':''}" data-action="recommend" data-id="${item.id}" type="button">⭐ ${rec?'추천중':'추천'}</button>
+                  <button class="adm-btn adm-btn-pin1${pin===1?' pin-active':''}" data-action="pin1" data-id="${item.id}" type="button">📌 상단1${pin===1?' ✓':''}</button>
+                  <button class="adm-btn adm-btn-pin2${pin===2?' pin-active':''}" data-action="pin2" data-id="${item.id}" type="button">📌 상단2${pin===2?' ✓':''}</button>
+                  <button class="adm-btn adm-btn-unpin" data-action="unpin" data-id="${item.id}" type="button">해제</button>
                 </div>
               </div>
             </article>`;
@@ -2599,7 +2606,34 @@ const setupAdminDashboard = () => {
     applyFilters();
   });
 
-  // ── 대시보드 버튼 핸들러 (홈페이지·거래완료·삭제) ──
+  // ── 핀/추천 업데이트 (partial update) ──
+  const updatePinRecommend = async (id, pinSlot, makeRec) => {
+    try {
+      const isAuthed = await waitForAdminAuth();
+      if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
+      const item = _allListings.find(i => i.id === id);
+      if (!item) return;
+      let newStickers = [...(item.stickers || [])];
+      if (makeRec && !newStickers.includes('추천매물')) newStickers.push('추천매물');
+      else if (!makeRec) newStickers = newStickers.filter(s => s !== '추천매물');
+      if (pinSlot > 0) {
+        const toUnpin = _allListings.find(i => i.id !== id && (i.pinSlot || 0) === pinSlot);
+        if (toUnpin) {
+          await updateListingInSupabase(toUnpin.id, { pinSlot: 0 });
+          _allListings = _allListings.map(i => i.id === toUnpin.id ? { ...i, pinSlot: 0 } : i);
+        }
+      }
+      await updateListingInSupabase(id, { stickers: newStickers, pinSlot });
+      _allListings = _allListings.map(i => i.id === id ? { ...i, pinSlot, stickers: newStickers } : i);
+      applyFilters();
+    } catch(err) {
+      const msg = err?.message || err?.details || err?.hint || err?.code || String(err);
+      console.error('핀/추천 처리 오류:', msg, err);
+      alert('처리 중 오류: ' + msg);
+    }
+  };
+
+  // ── 대시보드 버튼 핸들러 (홈페이지·거래완료·삭제·핀·추천) ──
   listEl.addEventListener('click', e => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
@@ -2608,6 +2642,16 @@ const setupAdminDashboard = () => {
       window.location.href = `admin-register.html?prefill=${id}`;
       return;
     }
+    if (action === 'recommend') {
+      const item = _allListings.find(i => i.id === id);
+      if (!item) return;
+      const isCurrentlyRec = hasPromotionSticker(item, '추천매물');
+      (async () => { await updatePinRecommend(id, item.pinSlot || 0, !isCurrentlyRec); })();
+      return;
+    }
+    if (action === 'pin1') { (async () => { await updatePinRecommend(id, 1, true); })(); return; }
+    if (action === 'pin2') { (async () => { await updatePinRecommend(id, 2, true); })(); return; }
+    if (action === 'unpin') { (async () => { await updatePinRecommend(id, 0, false); })(); return; }
     if (action === 'done') {
       const newStatus = (_allListings.find(i => i.id === id)?.status === 'done') ? '' : 'done';
       const doneMsg = newStatus === 'done' ? '이 매물을 거래완료로 변경하시겠습니까?' : '거래완료를 취소하시겠습니까?';
