@@ -13,7 +13,8 @@ alter table public.listings
   add column if not exists zoning text,
   add column if not exists detail_description text,
   add column if not exists stickers text[] default '{}',
-  add column if not exists image_urls text[] default '{}';
+  add column if not exists image_urls text[] default '{}',
+  add column if not exists pin_slot integer default 0;
 
 create index if not exists listings_is_public_created_at_idx
   on public.listings (is_public, created_at desc);

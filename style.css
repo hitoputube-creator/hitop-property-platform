@@ -2244,6 +2244,20 @@ body {
 
 .adm-btn-del:hover  { background: #FEF2F2; }
 
+.adm-btn-rec          { border-color: #d97706; color: #92400e; }
+.adm-btn-rec:hover    { background: #fef3c7; }
+.adm-btn-rec.rec-active { background: #fef3c7; border-color: #f59e0b; color: #78350f; font-weight: 700; }
+.adm-btn-pin1         { border-color: #ea580c; color: #9a3412; }
+.adm-btn-pin1:hover   { background: #fff7ed; }
+.adm-btn-pin1.pin-active { background: #fff7ed; border-color: #ea580c; color: #7c2d12; font-weight: 700; }
+.adm-btn-pin2         { border-color: #b45309; color: #7c3909; }
+.adm-btn-pin2:hover   { background: #fffbeb; }
+.adm-btn-pin2.pin-active { background: #fffbeb; border-color: #b45309; color: #5a2a00; font-weight: 700; }
+.adm-btn-unpin        { border-color: #9ca3af; color: #6b7280; }
+.adm-btn-unpin:hover  { background: #f9fafb; }
+.badge-pin { display:inline-block; background:#ea580c; color:#fff; font-size:11px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; }
+.badge-rec { display:inline-block; background:#d97706; color:#fff; font-size:11px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; }
+
 @media (max-width: 640px) {
   .admin-item-actions .adm-btn,
   .adm-item-actions .adm-btn { font-size: 13px; padding: 7px 10px; }
@@ -2608,7 +2622,8 @@ body {
   letter-spacing: 0.1px;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
 }
-.mcb-rec    { background: #C9A84C; color: #fff; }
+.mcb-rec    { background: linear-gradient(135deg,#FFD700,#FFA500); color: #1a2340; font-weight: 800; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.mcb-pin    { background: linear-gradient(135deg,#FF6B35,#FF4500); color: #fff;    font-weight: 800; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
 .mcb-urgent { background: #ef4444; color: #fff; }
 .mcb-excl   { background: #6d28d9; color: #fff; }
 .mcb-new    { background: #0ea5e9; color: #fff; }
@@ -2819,6 +2834,28 @@ body {
 
   padding: 2px 7px; border-radius: 3px;
 
+}
+
+/* ── 추천/고정 프로모션 스티커 (fullCard 이미지 위) ── */
+.promo-rec-sticker {
+  position: absolute; top: 8px; right: 8px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #1a2340;
+  font-size: 11px; font-weight: 800;
+  padding: 4px 10px; border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  transform: rotate(-2deg);
+  line-height: 1.4; z-index: 2;
+}
+.promo-pin-sticker {
+  position: absolute; top: 8px; right: 8px;
+  background: linear-gradient(135deg, #FF6B35, #D63800);
+  color: #fff;
+  font-size: 11px; font-weight: 800;
+  padding: 4px 10px; border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  transform: rotate(-2deg);
+  line-height: 1.4; z-index: 2;
 }
 
 .lp-all-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; }

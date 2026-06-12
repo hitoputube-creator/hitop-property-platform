@@ -489,13 +489,12 @@ function normalizeSupabaseListing(row) {
   const category1 = row.category1 ?? d.category1 ?? '';
   const category2 = row.category2 ?? d.category2 ?? '';
   const propertyType = d.propertyType || d.property_type || row.type || derivePropertyType(category1, category2) || category1;
+  // row.stickers(실제 컬럼)가 정의되어 있으면 우선 사용, 없으면 JSONB data.stickers 폴백
+  const stickerSource = Array.isArray(row.stickers) ? row.stickers : stickerValuesFrom(d.stickers);
   const stickers = normalizePromotionStickers({
     ...d,
     ...row,
-    stickers: [
-      ...stickerValuesFrom(d.stickers),
-      ...stickerValuesFrom(row.stickers),
-    ],
+    stickers: stickerValuesFrom(stickerSource),
   });
   return {
     ...d,
@@ -535,6 +534,7 @@ function normalizeSupabaseListing(row) {
     listingNo: d.listingNo ?? d.listing_no ?? row.resource_id ?? '',
     property_number: d.property_number ?? d.listingNo ?? d.listing_no ?? row.resource_id ?? '',
     is_completed: d.is_completed ?? false,
+    pinSlot: Number(row.pin_slot ?? d.pinSlot ?? d.pin_slot ?? 0),
   };
 }
 
@@ -584,6 +584,7 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
     detail_description: listing.detailDescription || listing.description || null,
     stickers,
     image_urls: imageUrls,
+    pin_slot: Number(listing.pinSlot ?? listing.pin_slot ?? 0),
     data,
   });
 
@@ -623,6 +624,7 @@ function toSupabasePartialListingRow(listing) {
   if ('detailDescription' in listing) row.detail_description = listing.detailDescription || null;
   if ('stickers' in listing) row.stickers = normalizePromotionStickers(listing);
   if ('imageUrls' in listing) row.image_urls = asArray(listing.imageUrls);
+  if ('pinSlot' in listing || 'pin_slot' in listing) row.pin_slot = Number(listing.pinSlot ?? listing.pin_slot ?? 0);
   return row;
 }
 
@@ -2162,12 +2164,18 @@ const setupListingsPage = () => {
     const lpPanel = document.getElementById('lpPanel');
     if (!lpPanel) return;
 
-    // 거래완료 제외 → createdAt 내림차순 정렬
-    const recentItems = [..._listings.filter(i => !isCompleted(i))].sort((a, b) => {
+    // 거래완료 제외, 현재 필터 기준 적용 → pinSlot 우선, 이후 createdAt 내림차순 정렬
+    const recentItems = [...filtered.filter(i => !isCompleted(i))].sort((a, b) => {
+      const pa = a.pinSlot || 0, pb = b.pinSlot || 0;
+      if (pa !== pb) {
+        if (pa > 0 && pb > 0) return pa - pb; // 1번이 2번보다 위
+        return pb > 0 ? 1 : -1;
+      }
       const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return tb - ta;
     });
+    const hasPinned = recentItems.some(i => (i.pinSlot || 0) > 0);
 
     const miniCardHTML = item => {
       const thumb    = getThumbnail(item);
@@ -2180,7 +2188,12 @@ const setupListingsPage = () => {
 
       // ── 이미지 위 좌측 상태 배지 (최대 2개) ──
       const statusBadges = [];
-      if (hasPromotionSticker(item, '추천매물')) statusBadges.push(`<span class="mcb mcb-rec">추천매물</span>`);
+      const _pinSlot = item.pinSlot || 0;
+      if (_pinSlot === 1 || _pinSlot === 2) {
+        statusBadges.push(`<span class="mcb mcb-pin">📌 대표추천</span>`);
+      } else if (hasPromotionSticker(item, '추천매물')) {
+        statusBadges.push(`<span class="mcb mcb-rec">⭐ 추천매물</span>`);
+      }
       if (hasPromotionSticker(item, '급매물'))   statusBadges.push(`<span class="mcb mcb-urgent">급매물</span>`);
       if (item.isExclusive === true || item.is_exclusive === true)
                                    statusBadges.push(`<span class="mcb mcb-excl">전속</span>`);
@@ -2220,7 +2233,7 @@ const setupListingsPage = () => {
 
     lpPanel.innerHTML = `
       <div class="lp-panel-hd-sticky">
-        <span class="lp-panel-hd-title">🆕 최근 등록 매물</span>
+        <span class="lp-panel-hd-title">${hasPinned ? '⭐ 추천 매물' : '🆕 최근 등록 매물'}</span>
         <span class="lp-panel-hd-count">${recentItems.length}건</span>
       </div>
       <div class="lp-panel-scroll-body">
@@ -2250,7 +2263,11 @@ const setupListingsPage = () => {
           ${imgSrc ? `<img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'" />` : ''}
           ${done ? '<div class="lp-all-sold">거래완료</div>' : ''}
           <span class="lp-all-cat-tag">${catLabel}</span>
-          ${isRec(item) ? '<span style="position:absolute;top:6px;right:6px;background:#C9A84C;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">추천매물</span>' : ''}
+          ${(item.pinSlot === 1 || item.pinSlot === 2)
+            ? '<span class="promo-pin-sticker">📌 대표추천</span>'
+            : isRec(item)
+            ? '<span class="promo-rec-sticker">⭐ 추천매물</span>'
+            : ''}
           ${hasPromotionSticker(item, '급매물') ? '<span style="position:absolute;bottom:6px;right:6px;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;line-height:1.4;">급매물</span>' : ''}
         </div>
         <div class="lp-all-body">
@@ -2312,8 +2329,16 @@ const setupListingsPage = () => {
              (i.detailDescription || '').toLowerCase().includes(kw) ||
              getPropertyTypeLabel(i).toLowerCase().includes(kw);
     });
-    if (sortMode === 'price') items.sort((a, b) => Number(getMainPrice(b)) - Number(getMainPrice(a)));
-    else items.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
+    const pinSort = (a, b) => {
+      const pa = a.pinSlot || 0, pb = b.pinSlot || 0;
+      if (pa !== pb) {
+        if (pa > 0 && pb > 0) return pa - pb;
+        return pb > 0 ? 1 : -1;
+      }
+      return 0;
+    };
+    if (sortMode === 'price') items.sort((a, b) => pinSort(a, b) || Number(getMainPrice(b)) - Number(getMainPrice(a)));
+    else items.sort((a, b) => pinSort(a, b) || (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
     filtered = items;
     allPage  = 1;
     renderAllGrid();
@@ -3186,6 +3211,10 @@ const setupAdminRegister = () => {
     payload.stickers = normalizePromotionStickers({
       stickers: Array.from(form.querySelectorAll('input[name="stickers"]:checked')).map(el => el.value)
     });
+    payload.pinSlot = Number(form.elements['pinSlot']?.value || 0);
+    if (payload.pinSlot > 0 && !payload.stickers.includes('추천매물')) {
+      payload.stickers = [...payload.stickers, '추천매물'];
+    }
     delete payload.isRecommended;
     delete payload.is_recommended;
     delete payload.isUrgent;
@@ -3325,10 +3354,12 @@ const setupAdminListingsMgmt = () => {
     listEl.innerHTML = pageItems.length
       ? pageItems.map(item => {
           const isDone=item.status==='done';
+          const isRecItem=hasPromotionSticker(item,'추천매물');
+          const pin=item.pinSlot||0;
           return `<article class="admin-item${isDone?' admin-item-done':''}">
             <div class="admin-item-header">
               ${item.listingNo?`<span class="admin-item-no">${item.listingNo}</span>`:''}
-              <strong class="admin-item-title">${item.title}${isDone?' <span class="badge-done">거래완료</span>':''}</strong>
+              <strong class="admin-item-title">${item.title}${isDone?' <span class="badge-done">거래완료</span>':''}${pin>0?` <span class="badge-pin">📌 상단${pin}</span>`:''}${isRecItem&&pin===0?' <span class="badge-rec">⭐ 추천</span>':''}</strong>
               <span class="admin-item-date">등록 ${(item.createdAt||'').slice(0,10)||'-'}</span>
             </div>
             <p style="margin:4px 0;font-size:13px;">${getPropertyTypeLabel(item)} / ${item.dealType} · ${getAdminAddressSummary(item)}</p>
@@ -3338,6 +3369,12 @@ const setupAdminListingsMgmt = () => {
               <button class="adm-btn adm-btn-hp" data-action="prefill" data-id="${item.id}" type="button">🏠 홈페이지</button>
               <button class="adm-btn adm-btn-done${isDone?' done-active':''}" data-action="done" data-id="${item.id}" type="button">${isDone?'↩ 완료취소':'✅ 거래완료'}</button>
               <button class="adm-btn adm-btn-del" data-action="delete" data-id="${item.id}" type="button">🗑 삭제</button>
+            </div>
+            <div class="admin-item-actions" style="margin-top:4px;border-top:1px solid #f0f0f0;padding-top:6px;">
+              <button class="adm-btn adm-btn-rec${isRecItem?' rec-active':''}" data-action="recommend" data-id="${item.id}" type="button">⭐ ${isRecItem?'추천중':'추천'}</button>
+              <button class="adm-btn adm-btn-pin1${pin===1?' pin-active':''}" data-action="pin1" data-id="${item.id}" type="button">📌 상단1${pin===1?' ✓':''}</button>
+              <button class="adm-btn adm-btn-pin2${pin===2?' pin-active':''}" data-action="pin2" data-id="${item.id}" type="button">📌 상단2${pin===2?' ✓':''}</button>
+              <button class="adm-btn adm-btn-unpin" data-action="unpin" data-id="${item.id}" type="button">해제</button>
             </div>
           </article>`;
         }).join('')
@@ -3359,9 +3396,47 @@ const setupAdminListingsMgmt = () => {
     const btn=e.target.closest('button[data-page]'); if(!btn)return;
     currentPage=Number(btn.dataset.page); renderPage(); window.scrollTo({top:0,behavior:'smooth'});
   });
+  const updatePinRecommend = async (id, pinSlot, makeRec) => {
+    try {
+      const isAuthed = await waitForAdminAuth();
+      if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
+      const item = _allListings.find(i => i.id === id);
+      if (!item) return;
+      let newStickers = [...(item.stickers || [])];
+      if (makeRec && !newStickers.includes('추천매물')) newStickers.push('추천매물');
+      else if (!makeRec) newStickers = newStickers.filter(s => s !== '추천매물');
+      // 같은 슬롯을 가진 다른 매물 먼저 해제 (partial update)
+      if (pinSlot > 0) {
+        const toUnpin = _allListings.find(i => i.id !== id && (i.pinSlot || 0) === pinSlot);
+        if (toUnpin) {
+          await updateListingInSupabase(toUnpin.id, { pinSlot: 0 });
+          _allListings = _allListings.map(i => i.id === toUnpin.id ? { ...i, pinSlot: 0 } : i);
+        }
+      }
+      // partial update: stickers + pin_slot만 변경
+      await updateListingInSupabase(id, { stickers: newStickers, pinSlot });
+      _allListings = _allListings.map(i => i.id === id ? { ...i, pinSlot, stickers: newStickers } : i);
+      applyFilters();
+    } catch(err) {
+      const msg = err?.message || err?.details || err?.hint || err?.code || String(err);
+      console.error('핀/추천 처리 오류:', msg, err);
+      alert('처리 중 오류: ' + msg);
+    }
+  };
+
   listEl.addEventListener('click',e=>{
     const btn=e.target.closest('button[data-action]'); if(!btn)return;
     const {action,id}=btn.dataset;
+    if (action==='recommend') {
+      const item = _allListings.find(i => i.id === id);
+      if (!item) return;
+      const isCurrentlyRec = hasPromotionSticker(item, '추천매물');
+      (async () => { await updatePinRecommend(id, item.pinSlot || 0, !isCurrentlyRec); })();
+      return;
+    }
+    if (action==='pin1') { (async () => { await updatePinRecommend(id, 1, true); })(); return; }
+    if (action==='pin2') { (async () => { await updatePinRecommend(id, 2, true); })(); return; }
+    if (action==='unpin') { (async () => { await updatePinRecommend(id, 0, false); })(); return; }
     if (action==='delete') {
       if(!confirm('정말 이 매물을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.'))return;
       (async()=>{
