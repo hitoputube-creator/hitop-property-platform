@@ -235,6 +235,25 @@ const getPropertyTypeLabel = (value) => {
 
 const normalizeCategoryParam = (value) => getCategory1(String(value || '').trim());
 
+// 고객 화면용 단축 매물번호: 영문1자 + 숫자4자리 (내부 id 불변)
+const getShortListingNo = (item) => {
+  const id = String(item.id || '');
+  const last4 = id.replace(/\D/g, '').slice(-4);
+  if (!last4) return item.property_number || item.listingNo || id;
+  const cat1 = getCategory1(item);
+  const cat2 = String(item.category2 || '').trim();
+  let prefix = 'P';
+  if      (cat1 === '상가사무실')   prefix = 'S';
+  else if (cat1 === '토지')         prefix = 'L';
+  else if (cat1 === '공장창고')     prefix = 'F';
+  else if (cat1 === '건물빌딩')     prefix = 'B';
+  else if (cat1 === '단독전원주택') prefix = 'V';
+  else if (cat1 === '주거용') {
+    prefix = (cat2.includes('오피스텔') || cat2 === 'officetel') ? 'O' : 'H';
+  }
+  return prefix + last4;
+};
+
 const M2_PER_PY = 3.305785;
 
 const toPyeong = (m2) => {
@@ -1114,7 +1133,7 @@ const openModal = (item) => {
   const isLandType      = _mCat1 === '토지';
 
   // ── 헤더 ──
-  document.getElementById('modalId').textContent = item.property_number || item.listingNo || item.id;
+  document.getElementById('modalId').textContent = getShortListingNo(item);
   document.getElementById('modalTitle').textContent = item.title;
 
   // ── 뱃지 ──
@@ -2205,8 +2224,8 @@ const setupListingsPage = () => {
       const badgeRow = statusBadges.length
         ? `<div class="mc-status-badges">${statusBadges.join('')}</div>` : '';
 
-      // 매물번호
-      const propNo = item.property_number || item.listingNo || '';
+      // 매물번호 (고객용 단축번호)
+      const propNo = getShortListingNo(item);
       const propNoHTML = propNo ? `<div class="mc-propno">No. ${propNo}</div>` : '';
 
       return `<article class="lp-mini-card" data-id="${item.id}">

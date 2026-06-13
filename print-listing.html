@@ -521,6 +521,26 @@
 
     const SUPABASE_LISTINGS_TABLE = 'listings';
 
+    // 고객 화면용 단축 매물번호: 영문1자 + 숫자4자리 (내부 id 불변)
+    const getShortListingNo = (item) => {
+      const id = String(item.id || '');
+      const last4 = id.replace(/\D/g, '').slice(-4);
+      if (!last4) return item.property_number || item.listingNo || id;
+      const cat1 = String(item.category1 || item.propertyType || '').trim();
+      const cat2 = String(item.category2 || '').trim();
+      let prefix = 'P';
+      if      (cat1 === '상가사무실' || cat1 === '상가' || cat1 === '사무실') prefix = 'S';
+      else if (cat1 === '토지' || cat1 === '임야' || cat1 === '농지')         prefix = 'L';
+      else if (cat1 === '공장창고' || cat1 === '공장' || cat1 === '창고')     prefix = 'F';
+      else if (cat1 === '건물빌딩' || cat1 === '건물' || cat1 === '빌딩')     prefix = 'B';
+      else if (cat1 === '단독전원주택' || cat1 === '단독주택' || cat1 === '전원주택') prefix = 'V';
+      else if (cat1 === '오피스텔')  prefix = 'O';
+      else if (cat1 === '주거용' || cat1 === '아파트') {
+        prefix = (cat2.includes('오피스텔') || cat2 === 'officetel') ? 'O' : 'H';
+      }
+      return prefix + last4;
+    };
+
     const PROPERTY_TYPE_LABELS = {
       'shop': '상가·사무실',
       'office': '상가·사무실',
@@ -898,7 +918,7 @@
 
     const bindListingData = (item) => {
       // 1. 헤더 및 타이틀
-      document.getElementById('listingNoDisplay').textContent = `매물번호: ${item.property_number || item.listingNo || item.id}`;
+      document.getElementById('listingNoDisplay').textContent = `매물번호: ${getShortListingNo(item)}`;
       if (item.createdAt) {
         try {
           const date = item.createdAt.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
