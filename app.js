@@ -580,13 +580,17 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
   delete data.tags;
   delete data.labels;
 
+  // resource_id는 UUID 타입이므로 UUID 형식인 경우만 사용
+  const _isUuid = v => v && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+  const _resourceId = listing.resource_id || listing.resourceId || null;
+
   const row = cleanObject({
     type: listing.type || propertyType || category1 || null,
     title: listing.title || null,
     address: mapAddress || null,
     status: listing.status || null,
     description: listing.description || listing.detailDescription || null,
-    resource_id: listing.resource_id || listing.resourceId || listing.property_number || listing.listingNo || null,
+    resource_id: _isUuid(_resourceId) ? _resourceId : null,
     is_public: listing.is_public === undefined ? true : listing.is_public === true || listing.is_public === 'true',
     display_address: publicAddress || null,
     category1: category1 || null,
@@ -599,7 +603,6 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
     area_py: asNumberOrNull(listing.areaPy),
     floor_info: listing.floorInfo || listing.floor || null,
     zoning: listing.zoning || listing.zoningArea || null,
-    parking_count: listing.parkingCount || listing.parking_count || listing.parking || null,
     detail_description: listing.detailDescription || listing.description || null,
     stickers,
     image_urls: imageUrls,
@@ -607,7 +610,10 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
     data,
   });
 
-  if (isInsert) row.created_at = new Date().toISOString();
+  if (isInsert) {
+    row.id = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    row.created_at = new Date().toISOString();
+  }
   return row;
 }
 
@@ -3353,7 +3359,8 @@ const setupAdminRegister = () => {
           window.location.href = 'admin-listings.html';
         } catch (err) {
           console.error('매물 등록 오류:', err);
-          alert('매물 등록 중 오류가 발생했습니다.');
+          console.error('저장 시도 데이터:', payload);
+          alert(`매물 등록 중 오류가 발생했습니다.\n${err?.message || ''}`)
         }
       }
     };
