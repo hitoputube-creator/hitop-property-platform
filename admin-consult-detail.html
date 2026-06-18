@@ -195,25 +195,19 @@
 
     <script src="app.js?v=20260602j"></script>
     <script type="module">
-      import { db, COLLECTION, PUBLIC_CONSULTATIONS_COLLECTION } from "./firebase-config.js";
-      import { doc, getDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { supabase } from "./supabase-config.js";
 
       function escHtml(s) {
         return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
       }
       function statusClass(s) {
-        if (s === '접수완료') return 'status-받침';
-        if (s === '상담중')   return 'status-상담';
+        if (s === '접수')   return 'status-받침';
+        if (s === '확인중') return 'status-상담';
         return 'status-답변';
       }
-      function formatDate(ts) {
-        if (!ts) return '—';
-        try {
-          const d = ts.toDate();
-          return d.getFullYear() + '.' +
-            String(d.getMonth() + 1).padStart(2,'0') + '.' +
-            String(d.getDate()).padStart(2,'0');
-        } catch { return '—'; }
+      function formatDate(d) {
+        if (!d) return '—';
+        return d.slice(0, 10).replace(/-/g, '.');
       }
 
       (async () => {
@@ -224,80 +218,79 @@
         const statusSavedMsg = document.getElementById('statusSavedMsg');
 
         if (typeof window.waitForAdminAuth === 'function') {
-          const isAuthed = await window.waitForAdminAuth();
-          if (!isAuthed) {
-            location.href = 'admin.html';
-            return;
-          }
+          const ok = await window.waitForAdminAuth();
+          if (!ok) { location.href = 'admin.html'; return; }
         } else if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
-          location.href = 'admin.html';
-          return;
+          location.href = 'admin.html'; return;
         }
 
         if (!id) {
           area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
-        } else {
-          try {
-            const snap = await getDoc(doc(db, COLLECTION, id));
-            if (!snap.exists()) {
-              area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
-              return;
-            }
-            const post = snap.data();
+          return;
+        }
 
-            area.innerHTML =
-              '<div class="detail-card">' +
-                '<table class="detail-table">' +
-                  '<tr><th>문의 유형</th><td><span class="type-badge">' + escHtml(post.type) + '</span></td></tr>' +
-                  '<tr><th>제목</th><td>' + escHtml(post.subject) + '</td></tr>' +
-                  '<tr><th>작성자</th><td>' + escHtml(post.name) + '</td></tr>' +
-                  '<tr><th>연락처</th><td>' + escHtml(post.phone) + '</td></tr>' +
-                  '<tr><th>관심 매물</th><td>' + (post.listing ? escHtml(post.listing) : '—') + '</td></tr>' +
-                  '<tr><th>등록일</th><td>' + formatDate(post.createdAt) + '</td></tr>' +
-                  '<tr><th>상태</th><td><span class="status-badge ' + statusClass(post.status) + '" id="statusBadge">' + escHtml(post.status) + '</span></td></tr>' +
-                  '<tr><th>문의 내용</th><td><div class="content-box" id="contentBox"></div></td></tr>' +
-                '</table>' +
-              '</div>';
-            document.getElementById('contentBox').textContent = post.content;
-
-            /* 상태 변경 UI 표시 */
-            statusSelect.value = post.status;
-            statusBox.style.display = 'flex';
-
-            let currentStatus = post.status;
-            statusSelect.addEventListener('change', async () => {
-              const prev      = currentStatus;
-              const newStatus = statusSelect.value;
-              try {
-                if (typeof window.waitForAdminAuth === 'function') {
-                  const isAuthed = await window.waitForAdminAuth();
-                  if (!isAuthed) { alert('관리자 권한이 없습니다.'); statusSelect.value = prev; return; }
-                }
-                await updateDoc(doc(db, COLLECTION, id), { status: newStatus });
-
-                const qPublic = query(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), where("privateDocId", "==", id));
-                const snapPublic = await getDocs(qPublic);
-                const syncPromises = snapPublic.docs.map(publicDoc => 
-                  updateDoc(doc(db, PUBLIC_CONSULTATIONS_COLLECTION, publicDoc.id), { status: newStatus })
-                );
-                await Promise.all(syncPromises);
-
-                currentStatus = newStatus;
-                const badge = document.getElementById('statusBadge');
-                if (badge) { badge.className = 'status-badge ' + statusClass(newStatus); badge.textContent = newStatus; }
-                statusSavedMsg.style.display = 'inline';
-                setTimeout(() => { statusSavedMsg.style.display = 'none'; }, 2000);
-              } catch (err) {
-                console.error('상태 변경 오류:', err);
-                alert('상태 변경 중 오류가 발생했습니다.');
-                statusSelect.value = prev;
-              }
-            });
-
-          } catch (err) {
-            console.error('Firestore 상세 조회 오류:', err);
-            area.innerHTML = '<div class="detail-card not-found"><p>상담글을 불러오지 못했습니다.</p></div>';
+        try {
+          const { data: row, error } = await supabase
+            .from('consultations')
+            .select('*')
+            .eq('id', id)
+            .single();
+          if (error) throw error;
+          if (!row) {
+            area.innerHTML = '<div class="detail-card not-found"><p>상담글을 찾을 수 없습니다.</p></div>';
+            return;
           }
+
+          area.innerHTML =
+            '<div class="detail-card">' +
+              '<table class="detail-table">' +
+                '<tr><th>문의 유형</th><td><span class="type-badge">' + escHtml(row.inquiry_type) + '</span></td></tr>' +
+                '<tr><th>제목</th><td>' + escHtml(row.title) + '</td></tr>' +
+                '<tr><th>작성자</th><td>' + escHtml(row.name) + '</td></tr>' +
+                '<tr><th>연락처</th><td>' + escHtml(row.phone) + '</td></tr>' +
+                '<tr><th>관심 매물</th><td>' + (row.listing_title ? escHtml(row.listing_title) : '—') + '</td></tr>' +
+                '<tr><th>등록일</th><td>' + formatDate(row.created_at) + '</td></tr>' +
+                '<tr><th>상태</th><td><span class="status-badge ' + statusClass(row.status) + '" id="statusBadge">' + escHtml(row.status) + '</span></td></tr>' +
+                '<tr><th>문의 내용</th><td><div class="content-box" id="contentBox"></div></td></tr>' +
+              '</table>' +
+            '</div>';
+          document.getElementById('contentBox').textContent = row.message || '';
+
+          /* 상태 변경 select 옵션 업데이트 */
+          statusSelect.innerHTML = ['접수','확인중','완료'].map(v =>
+            `<option value="${v}"${v === row.status ? ' selected' : ''}>${v}</option>`
+          ).join('');
+          statusBox.style.display = 'flex';
+
+          let currentStatus = row.status;
+          statusSelect.addEventListener('change', async () => {
+            const prev      = currentStatus;
+            const newStatus = statusSelect.value;
+            try {
+              if (typeof window.waitForAdminAuth === 'function') {
+                const ok = await window.waitForAdminAuth();
+                if (!ok) { alert('관리자 권한이 없습니다.'); statusSelect.value = prev; return; }
+              }
+              const { error } = await supabase
+                .from('consultations')
+                .update({ status: newStatus, updated_at: new Date().toISOString() })
+                .eq('id', id);
+              if (error) throw error;
+              currentStatus = newStatus;
+              const badge = document.getElementById('statusBadge');
+              if (badge) { badge.className = 'status-badge ' + statusClass(newStatus); badge.textContent = newStatus; }
+              statusSavedMsg.style.display = 'inline';
+              setTimeout(() => { statusSavedMsg.style.display = 'none'; }, 2000);
+            } catch (err) {
+              console.error('상태 변경 오류:', err);
+              alert('상태 변경 중 오류가 발생했습니다.');
+              statusSelect.value = prev;
+            }
+          });
+
+        } catch (err) {
+          console.error('상담문의 상세 조회 오류:', err);
+          area.innerHTML = '<div class="detail-card not-found"><p>상담글을 불러오지 못했습니다. (' + (err?.message || err) + ')</p></div>';
         }
       })();
     </script>

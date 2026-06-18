@@ -259,22 +259,22 @@
 
     <script src="app.js?v=20260602j"></script>
     <script type="module">
-      import { db, PUBLIC_CONSULTATIONS_COLLECTION } from "./firebase-config.js";
-      import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { supabase } from "./supabase-config.js";
 
+      function maskName(n) {
+        if (!n) return '—';
+        if (n.length === 1) return n;
+        if (n.length === 2) return n[0] + '*';
+        return n[0] + '*' + n[n.length - 1];
+      }
       function statusClass(s) {
-        if (s === '접수완료') return 'status-받침';
-        if (s === '상담중')   return 'status-상담';
+        if (s === '접수')   return 'status-받침';
+        if (s === '확인중') return 'status-상담';
         return 'status-답변';
       }
-      function formatDate(ts) {
-        if (!ts) return '—';
-        try {
-          const d = ts.toDate();
-          return d.getFullYear() + '.' +
-            String(d.getMonth() + 1).padStart(2, '0') + '.' +
-            String(d.getDate()).padStart(2, '0');
-        } catch { return '—'; }
+      function formatDate(d) {
+        if (!d) return '—';
+        return d.slice(0, 10).replace(/-/g, '.');
       }
 
       const tbody = document.getElementById('boardTbody');
@@ -282,30 +282,31 @@
       (async () => {
         try {
           tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#888;">목록을 불러오는 중...</td></tr>';
-          const q = query(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), orderBy('createdAt', 'desc'));
-          const snap = await getDocs(q);
-          const docs = snap.docs;
-          
-          if (!docs.length) {
+          const { data, error } = await supabase
+            .from('consultations')
+            .select('id, inquiry_type, title, name, status, created_at')
+            .order('created_at', { ascending: false });
+          if (error) throw error;
+
+          if (!data.length) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#aaa;">등록된 상담문의가 없습니다.</td></tr>';
             return;
           }
 
           tbody.innerHTML = '';
-          docs.forEach((doc, i) => {
-            const post = doc.data();
+          data.forEach((row, i) => {
             const tr = document.createElement('tr');
             tr.innerHTML =
-              '<td>' + (docs.length - i) + '</td>' +
-              '<td><span class="type-badge">' + (post.type || '—') + '</span></td>' +
-              '<td class="col-title"><span style="color:#475569; display:inline-flex; align-items:center; gap:5px;">🔒 ' + (post.subject || '—') + '</span></td>' +
-              '<td>' + (post.maskedName || '—') + '</td>' +
-              '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="status-badge ' + statusClass(post.status) + '">' + (post.status || '접수완료') + '</span></td>';
+              '<td>' + (data.length - i) + '</td>' +
+              '<td><span class="type-badge">' + (row.inquiry_type || '—') + '</span></td>' +
+              '<td class="col-title"><span style="color:#475569;display:inline-flex;align-items:center;gap:5px;">🔒 ' + (row.title || '—') + '</span></td>' +
+              '<td>' + maskName(row.name) + '</td>' +
+              '<td>' + formatDate(row.created_at) + '</td>' +
+              '<td><span class="status-badge ' + statusClass(row.status) + '">' + (row.status || '접수') + '</span></td>';
             tbody.appendChild(tr);
           });
         } catch (err) {
-          console.error('Firestore 목록 불러오기 오류:', err);
+          console.error('상담문의 목록 불러오기 오류:', err);
           tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#e53e3e;">상담문의 목록을 불러오지 못했습니다.</td></tr>';
         }
       })();

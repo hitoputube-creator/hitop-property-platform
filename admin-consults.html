@@ -227,25 +227,19 @@
 
     <script src="app.js?v=20260602j"></script>
     <script type="module">
-      import { db, COLLECTION, PUBLIC_CONSULTATIONS_COLLECTION } from "./firebase-config.js";
-      import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { supabase } from "./supabase-config.js";
 
       function escHtml(s) {
         return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
       }
       function statusClass(s) {
-        if (s === '접수완료') return 'status-받침';
-        if (s === '상담중')   return 'status-상담';
+        if (s === '접수')   return 'status-받침';
+        if (s === '확인중') return 'status-상담';
         return 'status-답변';
       }
-      function formatDate(ts) {
-        if (!ts) return '—';
-        try {
-          const d = ts.toDate();
-          return d.getFullYear() + '.' +
-            String(d.getMonth() + 1).padStart(2,'0') + '.' +
-            String(d.getDate()).padStart(2,'0');
-        } catch { return '—'; }
+      function formatDate(d) {
+        if (!d) return '—';
+        return d.slice(0, 10).replace(/-/g, '.');
       }
 
       const tbody       = document.getElementById('consultAdminTbody');
@@ -254,28 +248,22 @@
       const bulkCountEl = document.getElementById('bulkCount');
       const btnDel      = document.getElementById('btnDeleteSelected');
 
-      /* 선택된 docId 추적 */
       const selectedIds = new Set();
 
-      /* 선택 건수 UI 업데이트 */
       function updateBulkUI() {
         const n = selectedIds.size;
         bulkCountEl.textContent = '선택된 상담문의 ' + n + '건';
         btnDel.disabled = (n === 0);
-
-        /* 전체선택 체크박스 indeterminate 처리 */
         const allChks = tbody.querySelectorAll('input.row-chk');
         const total   = allChks.length;
         if (total === 0) { chkAll.checked = false; chkAll.indeterminate = false; return; }
-        if (n === 0)     { chkAll.checked = false; chkAll.indeterminate = false; }
+        if (n === 0)          { chkAll.checked = false; chkAll.indeterminate = false; }
         else if (n === total) { chkAll.checked = true;  chkAll.indeterminate = false; }
         else                  { chkAll.checked = false; chkAll.indeterminate = true;  }
       }
 
-      /* 전체선택 핸들러 */
       chkAll.addEventListener('change', () => {
-        const allChks = tbody.querySelectorAll('input.row-chk');
-        allChks.forEach(chk => {
+        tbody.querySelectorAll('input.row-chk').forEach(chk => {
           chk.checked = chkAll.checked;
           if (chkAll.checked) selectedIds.add(chk.dataset.id);
           else                selectedIds.delete(chk.dataset.id);
@@ -283,55 +271,39 @@
         updateBulkUI();
       });
 
-      /* 선택 삭제 핸들러 */
       btnDel.addEventListener('click', async () => {
         const n = selectedIds.size;
         if (!n) return;
         if (!confirm('선택한 상담문의 ' + n + '건을 삭제할까요?\n삭제 후에는 복구할 수 없습니다.')) return;
 
-        /* 권한 확인 */
         if (typeof window.waitForAdminAuth === 'function') {
-          const isAuthed = await window.waitForAdminAuth();
-          if (!isAuthed) { alert('관리자 권한이 없습니다.'); return; }
+          const ok = await window.waitForAdminAuth();
+          if (!ok) { alert('관리자 권한이 없습니다.'); return; }
         } else if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
           alert('관리자 권한이 없습니다.'); return;
         }
 
         btnDel.disabled = true;
-        const toDelete = [...selectedIds];
-
         try {
-          for (const docId of toDelete) {
-            /* private 상담문의 삭제 */
-            await deleteDoc(doc(db, COLLECTION, docId));
+          const ids = [...selectedIds];
+          const { error } = await supabase.from('consultations').delete().in('id', ids);
+          if (error) throw error;
 
-            /* PUBLIC 컬렉션에서 privateDocId 일치 문서도 삭제 */
-            const qPub = query(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), where('privateDocId', '==', docId));
-            const snapPub = await getDocs(qPub);
-            await Promise.all(snapPub.docs.map(pd => deleteDoc(doc(db, PUBLIC_CONSULTATIONS_COLLECTION, pd.id))));
+          ids.forEach(id => {
+            tbody.querySelector('tr[data-row-id="' + id + '"]')?.remove();
+            selectedIds.delete(id);
+          });
 
-            /* 화면에서 행 제거 */
-            const tr = tbody.querySelector('tr[data-doc-id="' + docId + '"]');
-            if (tr) tr.remove();
-            selectedIds.delete(docId);
-          }
-
-          /* 총 건수 재계산 */
-          const remaining = tbody.querySelectorAll('tr[data-doc-id]').length;
+          const remaining = tbody.querySelectorAll('tr[data-row-id]').length;
           if (countEl) countEl.textContent = '총 ' + remaining + '건';
-
-          /* 전부 삭제됐으면 빈 상태 표시 */
           if (!remaining) {
             tbody.innerHTML = '<tr><td colspan="10" class="board-empty">등록된 상담문의가 없습니다.</td></tr>';
           }
-
-          chkAll.checked = false;
-          chkAll.indeterminate = false;
+          chkAll.checked = false; chkAll.indeterminate = false;
           updateBulkUI();
-
         } catch (err) {
           console.error('삭제 오류:', err);
-          alert('삭제 중 오류가 발생했습니다.\n일부 항목은 삭제됐을 수 있습니다. 새로고침 후 확인해주세요.');
+          alert('삭제 중 오류가 발생했습니다.\n새로고침 후 확인해주세요.');
           updateBulkUI();
         }
       });
@@ -339,40 +311,38 @@
       (async () => {
         try {
           if (typeof window.waitForAdminAuth === 'function') {
-            const isAuthed = await window.waitForAdminAuth();
-            if (!isAuthed) return;
+            const ok = await window.waitForAdminAuth();
+            if (!ok) return;
           } else if (sessionStorage.getItem('hitopAdminLoggedIn') !== 'true') {
             return;
           }
 
-          const q    = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
-          const snap = await getDocs(q);
-          const docs = snap.docs;
+          const { data, error } = await supabase
+            .from('consultations')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (error) throw error;
 
-          if (countEl) countEl.textContent = '총 ' + docs.length + '건';
+          if (countEl) countEl.textContent = '총 ' + data.length + '건';
 
-          if (!docs.length) {
+          if (!data.length) {
             tbody.innerHTML = '<tr><td colspan="10" class="board-empty">등록된 상담문의가 없습니다.</td></tr>';
             return;
           }
 
           tbody.innerHTML = '';
-          docs.forEach((docSnap, i) => {
-            const post  = docSnap.data();
-            const docId = docSnap.id;
-            const tr    = document.createElement('tr');
-            tr.dataset.docId = docId;
+          data.forEach((row, i) => {
+            const tr = document.createElement('tr');
+            tr.dataset.rowId = row.id;
 
-            /* 체크박스 열 */
+            /* 체크박스 */
             const tdChk = document.createElement('td');
             tdChk.className = 'col-chk';
             const chk = document.createElement('input');
-            chk.type = 'checkbox';
-            chk.className = 'row-chk';
-            chk.dataset.id = docId;
+            chk.type = 'checkbox'; chk.className = 'row-chk'; chk.dataset.id = row.id;
             chk.addEventListener('change', () => {
-              if (chk.checked) selectedIds.add(docId);
-              else             selectedIds.delete(docId);
+              if (chk.checked) selectedIds.add(row.id);
+              else             selectedIds.delete(row.id);
               updateBulkUI();
             });
             tdChk.appendChild(chk);
@@ -380,70 +350,65 @@
 
             /* 나머지 열 */
             tr.insertAdjacentHTML('beforeend',
-              '<td>' + (docs.length - i) + '</td>' +
-              '<td><span class="type-badge">' + escHtml(post.type) + '</span></td>' +
-              '<td class="col-title"><a href="admin-consult-detail.html?id=' + escHtml(docId) + '">' + escHtml(post.subject) + '</a></td>' +
-              '<td>' + escHtml(post.name) + '</td>' +
-              '<td>' + escHtml(post.phone) + '</td>' +
-              '<td>' + (post.listing ? escHtml(post.listing) : '—') + '</td>' +
-              '<td>' + formatDate(post.createdAt) + '</td>' +
-              '<td><span class="status-badge ' + statusClass(post.status) + '">' + escHtml(post.status) + '</span></td>'
+              '<td>' + (data.length - i) + '</td>' +
+              '<td><span class="type-badge">' + escHtml(row.inquiry_type) + '</span></td>' +
+              '<td class="col-title"><a href="admin-consult-detail.html?id=' + escHtml(row.id) + '">' + escHtml(row.title) + '</a></td>' +
+              '<td>' + escHtml(row.name) + '</td>' +
+              '<td>' + escHtml(row.phone) + '</td>' +
+              '<td>' + (row.listing_title ? escHtml(row.listing_title) : '—') + '</td>' +
+              '<td>' + formatDate(row.created_at) + '</td>' +
+              '<td><span class="status-badge ' + statusClass(row.status) + '" id="badge-' + row.id + '">' + escHtml(row.status) + '</span></td>'
             );
 
-            /* 관리 열 — 상태 변경 select (기존 로직 유지) */
+            /* 상태 변경 select */
             const tdMgmt = document.createElement('td');
-            const select = document.createElement('select');
-            select.style.cssText = 'font-family:inherit;font-size:12px;padding:3px 6px;border:1px solid #dde2ea;border-radius:4px;cursor:pointer;';
-            ['접수완료', '상담중', '답변완료'].forEach(opt => {
+            const sel = document.createElement('select');
+            sel.style.cssText = 'font-family:inherit;font-size:12px;padding:3px 6px;border:1px solid #dde2ea;border-radius:4px;cursor:pointer;';
+            ['접수', '확인중', '완료'].forEach(opt => {
               const o = document.createElement('option');
               o.value = opt; o.textContent = opt;
-              if (opt === post.status) o.selected = true;
-              select.appendChild(o);
+              if (opt === row.status) o.selected = true;
+              sel.appendChild(o);
             });
+            const savedMsg = document.createElement('span');
+            savedMsg.style.cssText = 'margin-left:6px;font-size:11px;color:#1a7a42;display:none;';
+            savedMsg.textContent = '저장됨';
 
-            const msg = document.createElement('span');
-            msg.style.cssText = 'margin-left:6px;font-size:11px;color:#1a7a42;display:none;';
-            msg.textContent = '저장됨';
-
-            select.addEventListener('change', async () => {
-              const prev      = post.status;
-              const newStatus = select.value;
+            sel.addEventListener('change', async () => {
+              const prev = sel.dataset.prev || row.status;
+              const newStatus = sel.value;
               try {
                 if (typeof window.waitForAdminAuth === 'function') {
-                  const isAuthed = await window.waitForAdminAuth();
-                  if (!isAuthed) { alert('관리자 권한이 없습니다.'); select.value = prev; return; }
+                  const ok = await window.waitForAdminAuth();
+                  if (!ok) { alert('관리자 권한이 없습니다.'); sel.value = prev; return; }
                 }
-                await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
-
-                const qPublic = query(collection(db, PUBLIC_CONSULTATIONS_COLLECTION), where('privateDocId', '==', docId));
-                const snapPublic = await getDocs(qPublic);
-                const syncPromises = snapPublic.docs.map(publicDoc =>
-                  updateDoc(doc(db, PUBLIC_CONSULTATIONS_COLLECTION, publicDoc.id), { status: newStatus })
-                );
-                await Promise.all(syncPromises);
-
-                post.status = newStatus;
-                /* 상태 뱃지 동기화 */
-                const badge = tr.querySelector('.status-badge');
+                const { error } = await supabase
+                  .from('consultations')
+                  .update({ status: newStatus, updated_at: new Date().toISOString() })
+                  .eq('id', row.id);
+                if (error) throw error;
+                sel.dataset.prev = newStatus;
+                const badge = document.getElementById('badge-' + row.id);
                 if (badge) { badge.className = 'status-badge ' + statusClass(newStatus); badge.textContent = newStatus; }
-                msg.style.display = 'inline';
-                setTimeout(() => { msg.style.display = 'none'; }, 2000);
+                savedMsg.style.display = 'inline';
+                setTimeout(() => { savedMsg.style.display = 'none'; }, 2000);
               } catch (err) {
                 console.error('상태 변경 오류:', err);
                 alert('상태 변경 중 오류가 발생했습니다.');
-                select.value = prev;
+                sel.value = prev;
               }
             });
 
-            tdMgmt.appendChild(select);
-            tdMgmt.appendChild(msg);
+            tdMgmt.appendChild(sel);
+            tdMgmt.appendChild(savedMsg);
             tr.appendChild(tdMgmt);
             tbody.appendChild(tr);
           });
 
         } catch (err) {
-          console.error('Firestore 상담문의 조회 오류:', err);
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:24px;color:#e53e3e;">상담문의 목록을 불러오지 못했습니다.</td></tr>';
+          console.error('상담문의 조회 오류:', err);
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:24px;color:#e53e3e;">상담문의 목록을 불러오지 못했습니다. (' + (err?.message || err) + ')</td></tr>';
+          if (countEl) countEl.textContent = '조회 실패';
         }
       })();
     </script>
