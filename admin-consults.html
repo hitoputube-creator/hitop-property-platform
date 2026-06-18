@@ -320,6 +320,7 @@
           const { data, error } = await supabase
             .from('consultations')
             .select('*')
+            .eq('source', 'write-consult')
             .order('created_at', { ascending: false });
           if (error) throw error;
 
