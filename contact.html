@@ -251,8 +251,7 @@
 
   <script src="app.js?v=20260602h"></script>
   <script type="module">
-    import { db, COLLECTION } from './firebase-config.js';
-    import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { supabase } from './supabase-config.js';
 
     document.getElementById('contactForm').addEventListener('submit', async e => {
       e.preventDefault();
@@ -272,15 +271,15 @@
 
       btn.disabled = true; btn.textContent = '전송 중…';
       try {
-        await addDoc(collection(db, COLLECTION), {
+        const { error } = await supabase.from('consultations').insert({
           name,
           phone,
-          message:      msg,
-          agreePrivacy: true,
-          source:       'contact.html',
-          status:       '미확인',
-          createdAt:    serverTimestamp(),
+          message:       msg,
+          agree_privacy: true,
+          source:        'contact.html',
+          status:        '미확인',
         });
+        if (error) throw error;
         alert('상담 신청이 접수되었습니다. 빠르게 연락드리겠습니다.');
         e.target.reset();
       } catch (err) {

@@ -163,48 +163,46 @@
 
   <script src="app.js?v=20260602j"></script>
   <script type="module">
-    import { db, COLLECTION } from './firebase-config.js';
-    import {
-      collection, getDocs, query, orderBy, doc,
-      updateDoc, deleteDoc, serverTimestamp, where
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { supabase } from './supabase-config.js';
 
-    /* ── 유틸 ── */
     const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
-    function fmtDate(ts) {
-      if (!ts) return '—';
+    function fmtDate(d) {
+      if (!d) return '—';
       try {
-        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        const dt  = new Date(d);
         const pad = n => String(n).padStart(2,'0');
-        return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}<br>
-                <span style="font-size:11px;color:#9ca3af">${pad(d.getHours())}:${pad(d.getMinutes())}</span>`;
+        return `${dt.getFullYear()}.${pad(dt.getMonth()+1)}.${pad(dt.getDate())}<br>` +
+               `<span style="font-size:11px;color:#9ca3af">${pad(dt.getHours())}:${pad(dt.getMinutes())}</span>`;
       } catch { return '—'; }
     }
 
     function srcLabel(source) {
       if (!source) return '—';
-      if (source === 'contact.html')    return '상담신청 페이지';
+      if (source === 'contact.html')     return '상담신청 페이지';
       if (source === 'listings-sidebar') return '매물보기 사이드바';
       return esc(source);
     }
 
     const statusClasses = { '미확인':'st-미확인','상담중':'st-상담중','상담완료':'st-상담완료','보류':'st-보류' };
-    const statusOptions = ['미확인','상담중','상담완료','보류'];
+    const statusOptions  = ['미확인','상담중','상담완료','보류'];
 
-    /* ── 상태 변경 ── */
-    async function changeStatus(docId, newStatus) {
+    async function changeStatus(rowId, newStatus) {
       try {
-        await updateDoc(doc(db, COLLECTION, docId), { status: newStatus });
+        const { error } = await supabase
+          .from('consultations')
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq('id', rowId);
+        if (error) throw error;
       } catch(e) { alert('상태 변경 실패: ' + e.message); }
     }
 
-    /* ── 삭제 ── */
-    async function deleteDoc_(docId) {
+    async function deleteRow(rowId) {
       if (!confirm('이 상담신청을 삭제하시겠습니까?')) return;
       try {
-        await deleteDoc(doc(db, COLLECTION, docId));
-        document.getElementById('row-' + docId)?.remove();
+        const { error } = await supabase.from('consultations').delete().eq('id', rowId);
+        if (error) throw error;
+        document.getElementById('row-' + rowId)?.remove();
         updateCount();
       } catch(e) { alert('삭제 실패: ' + e.message); }
     }
@@ -214,56 +212,50 @@
       document.getElementById('acCount').textContent = `총 ${rows}건`;
     }
 
-    /* ── 렌더 ── */
-    let _allDocs = [];
+    let _allRows = [];
 
-    function renderTable(docs) {
+    function renderTable(rows) {
       const tbody = document.getElementById('acTbody');
-      if (!docs.length) {
+      if (!rows.length) {
         tbody.innerHTML = '<tr><td colspan="8" class="ac-empty">접수된 상담신청이 없습니다.</td></tr>';
         document.getElementById('acCount').textContent = '총 0건';
         return;
       }
-      document.getElementById('acCount').textContent = `총 ${docs.length}건`;
-      tbody.innerHTML = docs.map((d, i) => {
-        const dt   = d.data;
-        const id   = d.id;
-        const st   = dt.status || '미확인';
+      document.getElementById('acCount').textContent = `총 ${rows.length}건`;
+      tbody.innerHTML = rows.map((row, i) => {
+        const st    = row.status || '미확인';
         const stCls = statusClasses[st] || 'st-미확인';
-        const opts = statusOptions.map(s =>
+        const opts  = statusOptions.map(s =>
           `<option value="${s}"${s===st?' selected':''}>${s}</option>`).join('');
-        return `<tr id="row-${id}" data-id="${id}">
-          <td style="color:#9ca3af;font-size:12px;">${docs.length - i}</td>
-          <td style="font-size:12px;">${fmtDate(dt.createdAt)}</td>
-          <td style="font-weight:700;">${esc(dt.name||'—')}</td>
-          <td><a href="tel:${esc(dt.phone||'')}" style="color:#0A1F5C;font-weight:700;text-decoration:none;">${esc(dt.phone||'—')}</a></td>
-          <td class="col-msg">${esc(dt.message||dt.subject||'—')}</td>
-          <td><span class="src-badge">${srcLabel(dt.source)}</span></td>
+        return `<tr id="row-${row.id}" data-id="${row.id}">
+          <td style="color:#9ca3af;font-size:12px;">${rows.length - i}</td>
+          <td style="font-size:12px;">${fmtDate(row.created_at)}</td>
+          <td style="font-weight:700;">${esc(row.name||'—')}</td>
+          <td><a href="tel:${esc(row.phone||'')}" style="color:#0A1F5C;font-weight:700;text-decoration:none;">${esc(row.phone||'—')}</a></td>
+          <td class="col-msg">${esc(row.message||'—')}</td>
+          <td><span class="src-badge">${srcLabel(row.source)}</span></td>
           <td>
-            <select class="status-sel" data-id="${id}" onchange="window._acChangeStatus(this.dataset.id, this.value)">
+            <select class="status-sel" data-id="${row.id}" onchange="window._acChangeStatus(this.dataset.id,this.value)">
               ${opts}
             </select>
           </td>
-          <td><button class="del-btn" onclick="window._acDelete('${id}')">삭제</button></td>
+          <td><button class="del-btn" onclick="window._acDelete('${row.id}')">삭제</button></td>
         </tr>`;
       }).join('');
     }
 
-    /* ── 필터 적용 ── */
     function applyFilter() {
       const stVal  = document.getElementById('acFilterStatus').value;
       const srcVal = document.getElementById('acFilterSource').value;
-      let docs = [..._allDocs];
-      if (stVal)  docs = docs.filter(d => (d.data.status || '미확인') === stVal);
-      if (srcVal) docs = docs.filter(d => (d.data.source || '') === srcVal);
-      renderTable(docs);
+      let rows = [..._allRows];
+      if (stVal)  rows = rows.filter(r => (r.status || '미확인') === stVal);
+      if (srcVal) rows = rows.filter(r => (r.source || '') === srcVal);
+      renderTable(rows);
     }
 
-    /* ── 전역 이벤트 핸들러 ── */
     window._acChangeStatus = changeStatus;
-    window._acDelete       = deleteDoc_;
+    window._acDelete       = deleteRow;
 
-    /* ── 데이터 로드 ── */
     async function loadData() {
       try {
         const isAuthed = typeof window.waitForAdminAuth === 'function'
@@ -271,21 +263,15 @@
           : sessionStorage.getItem('hitopAdminLoggedIn') === 'true';
         if (!isAuthed) return;
 
-        // contact.html + listings-sidebar source 만 조회
-        // (consultations 컬렉션에서 source 필드 기준 필터)
-        const q = query(
-          collection(db, COLLECTION),
-          orderBy('createdAt', 'desc')
-        );
-        const snap = await getDocs(q);
+        const { data, error } = await supabase
+          .from('consultations')
+          .select('id, name, phone, message, source, status, created_at')
+          .in('source', ['contact.html', 'listings-sidebar'])
+          .order('created_at', { ascending: false });
+        if (error) throw error;
 
-        // source가 contact.html / listings-sidebar 인 문서만 표시
-        const contactSources = ['contact.html', 'listings-sidebar'];
-        _allDocs = snap.docs
-          .filter(d => contactSources.includes(d.data().source))
-          .map(d => ({ id: d.id, data: d.data() }));
-
-        renderTable(_allDocs);
+        _allRows = data || [];
+        renderTable(_allRows);
       } catch(e) {
         console.error('[상담신청관리 로드 오류]', e);
         document.getElementById('acTbody').innerHTML =
@@ -297,7 +283,7 @@
     document.getElementById('acResetBtn').addEventListener('click', () => {
       document.getElementById('acFilterStatus').value = '';
       document.getElementById('acFilterSource').value = '';
-      renderTable(_allDocs);
+      renderTable(_allRows);
     });
 
     loadData();
