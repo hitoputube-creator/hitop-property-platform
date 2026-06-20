@@ -3579,6 +3579,7 @@ document.addEventListener('DOMContentLoaded', () => {
   else if (page === 'admin-listings')        setupAdminListingsMgmt();
   else if (page === 'admin-consults')        requireAdminLogin();
   else if (page === 'admin-consult-detail')  requireAdminLogin();
+  else if (page === 'admin-info')            requireAdminLogin();
 
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
   document.getElementById('listingModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
