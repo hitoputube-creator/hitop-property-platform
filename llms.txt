@@ -12,6 +12,7 @@
 - [하이탑소개](https://hitoputube-creator.github.io/hitop-property-platform/about.html): 하이탑부동산공인중개사사무소 소개
 - [상담신청](https://hitoputube-creator.github.io/hitop-property-platform/contact.html): 매물·상담 문의 접수
 - [상담문의 게시판](https://hitoputube-creator.github.io/hitop-property-platform/consult.html): 상담 문의 게시판
+- [공장·창고 전문관](https://hitoputube-creator.github.io/hitop-property-platform/factory-warehouse.html): 파주·운정·탄현·월롱·광탄·조리 지역 공장·창고 임대·매매 매물 전문 페이지
 
 ## 연락처
 
