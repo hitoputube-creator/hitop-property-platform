@@ -99,6 +99,20 @@
         flex: 1;
       }
 
+      /* 전문관 바로가기 스트립 */
+      .specialty-links { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+      .specialty-link {
+        flex: 1 1 260px; display: flex; align-items: center; gap: 8px;
+        background: #fff; border: 1px solid #e5e8ed; border-radius: 8px;
+        padding: 10px 14px; text-decoration: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      .specialty-link:hover { border-color: #C9A84C; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+      .specialty-link-icon { font-size: 18px; line-height: 1; }
+      .specialty-link-text { display: flex; flex-direction: column; }
+      .specialty-link-title { font-size: 13px; font-weight: 700; color: #0A1F5C; }
+      .specialty-link-desc { font-size: 11.5px; color: #777; }
+
       @media (max-width: 768px) {
         .property-card-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .property-card { height: 120px; }
@@ -201,6 +215,23 @@
                 <span class="cat-card-name">건물·빌딩</span>
                 <span class="cat-card-more">전체보기 →</span>
               </div>
+            </a>
+          </div>
+
+          <div class="specialty-links">
+            <a class="specialty-link" href="factory-warehouse.html">
+              <span class="specialty-link-icon">🏭</span>
+              <span class="specialty-link-text">
+                <span class="specialty-link-title">공장·창고 전문관</span>
+                <span class="specialty-link-desc">파주 공장·창고 매매·임대 전문 페이지</span>
+              </span>
+            </a>
+            <a class="specialty-link" href="commercial-office.html">
+              <span class="specialty-link-icon">🏢</span>
+              <span class="specialty-link-text">
+                <span class="specialty-link-title">상가·사무실 전문관</span>
+                <span class="specialty-link-desc">운정신도시 상권 상가·사무실 전문 페이지</span>
+              </span>
             </a>
           </div>
         </div>
