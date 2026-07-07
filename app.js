@@ -2305,6 +2305,7 @@ const setupListingsPage = () => {
           ${areaHTML ? `<div class="lp-all-area-wrap">${areaHTML}</div>` : ''}
           ${getParkingMetaHTML(item, 'lp-all-parking')}
           <div class="lp-all-addr">${getDisplayAddress(item)}</div>
+          <a class="lp-all-detail-link" href="listing-detail.html?id=${encodeURIComponent(item.id)}">상세페이지 보기</a>
         </div>
       </article>`;
   };
@@ -2322,7 +2323,8 @@ const setupListingsPage = () => {
       ? items.map(fullCardHTML).join('')
       : '<div class="lp-empty" style="grid-column:1/-1;">조건에 맞는 매물이 없습니다.</div>';
     cardsEl.querySelectorAll('.lp-all-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.lp-all-detail-link')) return;
         const found = filtered.find(x => x.id === card.dataset.id);
         if (found) openModalFull(found);
       });

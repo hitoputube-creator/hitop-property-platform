@@ -2900,6 +2900,15 @@ body {
 
 .lp-all-addr  { font-size: 11px; color: #6B7280; }
 
+/* 카드 하단 상세페이지 링크 */
+.lp-all-detail-link {
+  display: block; margin-top: 6px; padding: 6px 0;
+  text-align: center; font-size: 12px; font-weight: 700;
+  color: #12335a; background: #f1f5f9; border: 1px solid #e2e8f0;
+  border-radius: 6px; text-decoration: none; transition: background .15s, color .15s;
+}
+.lp-all-detail-link:hover { background: #12335a; color: #fff; }
+
 /* 카드 상단 종류+거래유형 뱃지 행 */
 .lp-all-row-top { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-bottom: 2px; }
 

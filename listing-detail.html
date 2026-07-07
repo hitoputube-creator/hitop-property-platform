@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>매물 상세보기 | 하이탑부동산</title>
+    <meta name="description" content="하이탑부동산 매물 상세 정보입니다. 파주 공장·창고, 상가·사무실, 토지, 주거용 매물 상담문의: 031-949-8969" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .top-bar { background:#0A1F5C; padding:6px 0; }
+      .top-bar .container { display:flex; justify-content:flex-end; align-items:center; gap:20px; }
+      .top-bar-hours { font-size:12px; color:#aab8d8; }
+      .top-bar-phone { font-size:12px; font-weight:600; color:#C9A84C; text-decoration:none; }
+      .top-bar-phone:hover { color:#e0c070; }
+      @media (max-width:768px) { .top-bar-hours { display:none; } }
+
+      .detail-state { text-align:center; padding:80px 20px; color:#9ca3af; font-size:15px; }
+      .detail-state.error { color:#dc2626; }
+
+      .detail-wrap { max-width: 1040px; margin: 28px auto 60px; padding: 0 20px; }
+      .detail-back { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569; text-decoration:none; margin-bottom:16px; }
+      .detail-back:hover { color:var(--navy); }
+
+      .detail-panel { background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+
+      .detail-gallery { position:relative; background:#0f172a; }
+      .detail-main-img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; cursor:zoom-in; background:#0f172a; }
+      .detail-no-img { width:100%; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:14px; }
+      .detail-thumbs { display:flex; gap:6px; padding:8px; background:#0f172a; overflow-x:auto; }
+      .detail-thumb { width:72px; height:54px; object-fit:cover; border-radius:6px; cursor:pointer; opacity:.55; border:2px solid transparent; flex-shrink:0; }
+      .detail-thumb.active { opacity:1; border-color:var(--green); }
+
+      .detail-body { padding:24px 28px 32px; }
+      .detail-badges { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+      .detail-badge { font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; background:var(--navy); color:#fff; }
+      .detail-badge.deal { background:var(--green); }
+      .detail-badge.sticker { background:#fee2e2; color:#dc2626; }
+      .detail-badge.done { background:#fee2e2; color:#dc2626; }
+
+      .detail-title { font-size:1.5rem; font-weight:800; color:#0f172a; margin:0 0 6px; }
+      .detail-address { font-size:14px; color:#64748b; margin:0 0 18px; }
+
+      .detail-price-box { background:#f0fdf7; border:1px solid #cde7d9; border-left:4px solid var(--green); border-radius:10px; padding:14px 18px; margin-bottom:18px; }
+      .detail-price-row { display:flex; justify-content:space-between; font-size:15px; padding:2px 0; }
+      .detail-price-row .lbl { color:#475569; }
+      .detail-price-row .val { font-weight:800; color:var(--green); }
+
+      .detail-info-table { width:100%; border-collapse:collapse; font-size:14.5px; margin-bottom:22px; }
+      .detail-info-table tr { border-bottom:1px solid #f1f5f9; }
+      .detail-info-table tr:last-child { border-bottom:none; }
+      .detail-info-table td { padding:9px 4px; }
+      .detail-info-table td:first-child { color:#64748b; width:110px; white-space:nowrap; }
+      .detail-info-table td:last-child { color:#0f172a; font-weight:600; }
+
+      .detail-section-title { font-size:15px; font-weight:700; color:var(--navy); margin:0 0 10px; }
+      .detail-desc { font-size:14.5px; color:#374151; line-height:1.9; background:#f8fafc; padding:14px 16px; border-radius:8px; border:1px solid #e2e8f0; white-space:pre-line; margin-bottom:24px; }
+
+      .detail-contact { display:flex; flex-wrap:wrap; gap:8px; }
+      .detail-contact a, .detail-contact button {
+        flex:1 1 140px; text-align:center; padding:12px 16px; border-radius:8px;
+        font-size:14px; font-weight:700; text-decoration:none; border:none; cursor:pointer;
+      }
+      .detail-btn-tel { background:var(--navy); color:#fff; }
+      .detail-btn-kakao { background:#FEE500; color:#3C1E1E; }
+      .detail-btn-consult { background:#f1f5f9; color:var(--navy); border:1px solid #e2e8f0 !important; }
+
+      /* 라이트박스 */
+      .detail-lightbox { position:fixed; inset:0; background:rgba(0,0,0,.9); display:flex; align-items:center; justify-content:center; z-index:1000; }
+      .detail-lightbox.hidden { display:none; }
+      .detail-lightbox img { max-width:92vw; max-height:88vh; object-fit:contain; }
+      .detail-lightbox-close { position:absolute; top:18px; right:24px; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; }
+    </style>
+  </head>
+  <body>
+
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html" aria-current="page">매물보기</a>
+          <a href="info.html">부동산정보</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="consult.html">상담문의 게시판</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="detail-wrap">
+      <a class="detail-back" href="listings.html">← 매물 목록으로</a>
+
+      <div id="detailState" class="detail-state">매물 정보를 불러오는 중입니다…</div>
+
+      <div id="detailPanel" class="detail-panel" style="display:none;">
+        <div class="detail-gallery">
+          <img id="detailMainImg" class="detail-main-img" src="" alt="" style="display:none;" />
+          <div id="detailNoImg" class="detail-no-img" style="display:none;">등록된 이미지가 없습니다</div>
+          <div id="detailThumbs" class="detail-thumbs"></div>
+        </div>
+        <div class="detail-body">
+          <div id="detailBadges" class="detail-badges"></div>
+          <h1 id="detailTitle" class="detail-title"></h1>
+          <p id="detailAddress" class="detail-address"></p>
+
+          <div id="detailPriceBox" class="detail-price-box"></div>
+
+          <table id="detailInfoTable" class="detail-info-table"></table>
+
+          <h2 class="detail-section-title">📝 매물 설명</h2>
+          <div id="detailDesc" class="detail-desc"></div>
+
+          <div class="detail-contact">
+            <a href="tel:031-949-8969" class="detail-btn-tel">📞 전화문의</a>
+            <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="detail-btn-kakao">💬 카톡상담</a>
+            <a href="contact.html" class="detail-btn-consult">✉️ 상담신청</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="detailLightbox" class="detail-lightbox hidden">
+      <button class="detail-lightbox-close" id="detailLightboxClose" aria-label="닫기">✕</button>
+      <img id="detailLightboxImg" src="" alt="사진 크게보기" />
+    </div>
+
+    <footer class="site-footer-v2">
+      <div class="footer-v2-inner">
+        <div class="footer-v2-company">
+          <p class="footer-v2-name">하이탑부동산공인중개사사무소</p>
+          <div class="footer-v2-info">
+            <span>대표: 주현희</span>
+            <span>주소: 경기도 파주시 책향기로 830, 1층</span>
+            <span>전화: 031-949-8969</span>
+            <span>팩스: 031-944-1108</span>
+          </div>
+          <div class="footer-v2-info">
+            <span>사업자등록번호: 305-48-62183</span>
+            <span>중개사무소 등록번호: 41480-2016-00026</span>
+            <span>이메일: newpajucity@naver.com</span>
+          </div>
+          <p class="footer-v2-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
+        </div>
+        <div class="footer-v2-divider"></div>
+        <div class="footer-v2-right">
+          <div class="footer-v2-btns">
+            <a class="fv2-btn fv2-tel" href="tel:031-949-8969"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>전화상담</a>
+            <a class="fv2-btn fv2-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>블로그</a>
+            <a class="fv2-btn fv2-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/></svg>카카오 상담</a>
+            <a class="fv2-btn fv2-inquiry" href="consult.html"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>매물문의</a>
+            <a class="fv2-btn fv2-youtube" href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>유튜브</a>
+            <a class="fv2-btn fv2-contact" href="contact.html"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>상담신청</a>
+          </div>
+          <a class="fv2-admin-btn" href="admin.html">관리자</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 햄버거 메뉴 -->
+    <script>
+      const _navToggle = document.querySelector('.nav-toggle');
+      const _navMenu   = document.querySelector('.nav-menu');
+      if (_navToggle && _navMenu) {
+        _navToggle.addEventListener('click', () => _navMenu.classList.toggle('open'));
+      }
+    </script>
+
+    <script type="module">
+      import { supabase } from './supabase-config.js';
+
+      const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+      const CAT1_LABEL = {
+        '공장창고': '공장·창고',
+        '상가사무실': '상가·사무실',
+        '토지': '토지',
+        '주거용': '주거용',
+        '단독전원주택': '단독·전원주택',
+        '건물빌딩': '건물·빌딩',
+      };
+
+      /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 */
+      function flattenListingRow(row) {
+        const d = row.data && typeof row.data === 'object' ? row.data : {};
+        return {
+          ...d,
+          ...row,
+          title: row.title || d.title || '',
+          address: row.display_address || d.publicAddress || d.displayAddress || row.address || d.address || '',
+          category1: row.category1 || d.category1 || '',
+          category2: row.category2 || d.category2 || '',
+          dealType: row.deal_type || d.dealType || '',
+          salePrice: row.sale_price || d.salePrice || '',
+          deposit: row.deposit || d.deposit || '',
+          monthlyRent: row.monthly_rent || d.monthlyRent || '',
+          areaM2: row.area_m2 ?? d.areaM2 ?? null,
+          areaPy: row.area_py ?? d.areaPy ?? null,
+          floorInfo: row.floor_info || d.floorInfo || d.floor || '',
+          zoning: row.zoning || d.zoning || d.zoningArea || '',
+          detailDescription: row.detail_description || d.detailDescription || '',
+          imageUrls: Array.isArray(row.image_urls) && row.image_urls.length ? row.image_urls : (Array.isArray(d.imageUrls) ? d.imageUrls : []),
+          stickers: Array.isArray(row.stickers) && row.stickers.length ? row.stickers : (Array.isArray(d.stickers) ? d.stickers : []),
+        };
+      }
+
+      const wonToManwon = (v) => {
+        const n = Number(String(v ?? '').replace(/[,\s]/g, ''));
+        if (!n || isNaN(n)) return null;
+        return Math.round(n / 10000);
+      };
+
+      /* salePrice·deposit(매매/전세)는 원 단위와 만원 단위가 혼재되어 저장되어 있어,
+         1억 이상이면 원 단위로 간주해 만원으로 환산한다 (app.js formatPropertyPrice와 동일 규칙) */
+      const normalizeManwon = (v) => {
+        const n = Number(String(v ?? '').replace(/[,\s]/g, ''));
+        if (!n || isNaN(n)) return null;
+        return n >= 100000000 ? Math.round(n / 10000) : n;
+      };
+
+      const toKoreanPrice = (manwon) => {
+        const n = Number(manwon);
+        if (!n || isNaN(n)) return '';
+        const eok = Math.floor(n / 10000);
+        const remain = n % 10000;
+        if (eok && remain) return `${eok}억 ${remain.toLocaleString('ko-KR')}만원`;
+        if (eok) return `${eok}억원`;
+        return `${remain.toLocaleString('ko-KR')}만원`;
+      };
+
+      /* 매매/전세는 만원 단위 원본, 월세/임대 보증금·월세는 원 단위 원본 → 만원 변환해서 표시 */
+      function buildPriceRows(item) {
+        const rows = [];
+        const isRent = item.dealType === '월세' || item.dealType === '임대';
+        if (item.dealType === '매매' && item.salePrice) {
+          rows.push(['매매가', toKoreanPrice(normalizeManwon(item.salePrice))]);
+        } else if (item.dealType === '전세' && item.deposit) {
+          rows.push(['전세보증금', toKoreanPrice(normalizeManwon(item.deposit))]);
+        } else if (isRent) {
+          const dep  = wonToManwon(item.deposit);
+          const rent = wonToManwon(item.monthlyRent);
+          if (dep)  rows.push(['보증금', toKoreanPrice(dep)]);
+          if (rent) rows.push(['월세', toKoreanPrice(rent)]);
+        } else if (item.salePrice) {
+          rows.push(['가격', toKoreanPrice(normalizeManwon(item.salePrice))]);
+        } else if (item.deposit) {
+          rows.push(['보증금', toKoreanPrice(normalizeManwon(item.deposit))]);
+        }
+        if (!rows.length) rows.push([item.dealType || '가격', '가격문의']);
+        return rows;
+      }
+
+      /* 면적: 카테고리별 세부 필드 우선, 없으면 area_m2/area_py 폴백 */
+      function buildAreaText(item) {
+        const fmt = (m2, py) => {
+          const m = m2 != null && m2 !== '' ? Number(m2) : null;
+          const p = py != null && py !== '' ? Number(py) : (m ? m / 3.305785 : null);
+          if (!m && !p) return null;
+          const mv = m != null ? m.toFixed(2) : (p * 3.305785).toFixed(2);
+          const pv = p != null ? p.toFixed(2) : (m / 3.305785).toFixed(2);
+          return `${mv}㎡ (${pv}평)`;
+        };
+        const cat1 = item.category1;
+        const parts = [];
+        if (cat1 === '공장창고' || cat1 === '단독전원주택' || cat1 === '건물빌딩') {
+          const land = fmt(item.landAreaM2 ?? item.landArea, item.landAreaPy);
+          const bldg = fmt(item.buildingAreaM2 ?? item.buildingArea, item.buildingAreaPy);
+          if (land) parts.push(`대지 ${land}`);
+          if (bldg) parts.push(`건축 ${bldg}`);
+        } else if (cat1 === '상가사무실' || cat1 === '주거용') {
+          const excl = fmt(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
+          const sup  = fmt(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
+          if (excl) parts.push(`전용 ${excl}`);
+          if (sup)  parts.push(`공급 ${sup}`);
+        } else if (cat1 === '토지') {
+          const land = fmt(item.areaM2 ?? item.landArea, item.areaPy);
+          if (land) parts.push(`토지 ${land}`);
+        }
+        if (!parts.length) {
+          const fallback = fmt(item.areaM2, item.areaPy);
+          if (fallback) parts.push(fallback);
+        }
+        return parts.join(' / ') || null;
+      }
+
+      function normalizeImageUrl(url) {
+        if (!url) return '';
+        return String(url);
+      }
+
+      let _images = [];
+      let _mainIdx = 0;
+
+      function setMainImage(idx) {
+        _mainIdx = idx;
+        const mainImg = document.getElementById('detailMainImg');
+        mainImg.src = normalizeImageUrl(_images[idx]);
+        document.querySelectorAll('.detail-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+      }
+
+      function openLightbox(idx) {
+        const lb = document.getElementById('detailLightbox');
+        document.getElementById('detailLightboxImg').src = normalizeImageUrl(_images[idx]);
+        lb.classList.remove('hidden');
+      }
+      document.getElementById('detailLightboxClose').addEventListener('click', () => {
+        document.getElementById('detailLightbox').classList.add('hidden');
+      });
+      document.getElementById('detailLightbox').addEventListener('click', (e) => {
+        if (e.target.id === 'detailLightbox') e.currentTarget.classList.add('hidden');
+      });
+
+      function renderGallery(item) {
+        _images = Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [];
+        const mainImg = document.getElementById('detailMainImg');
+        const noImg   = document.getElementById('detailNoImg');
+        const thumbs  = document.getElementById('detailThumbs');
+
+        if (_images.length) {
+          mainImg.style.display = '';
+          noImg.style.display = 'none';
+          setMainImage(0);
+          mainImg.onclick = () => openLightbox(_mainIdx);
+          thumbs.innerHTML = _images.map((url, i) =>
+            `<img src="${esc(normalizeImageUrl(url))}" class="detail-thumb${i === 0 ? ' active' : ''}" data-idx="${i}" />`
+          ).join('');
+          thumbs.querySelectorAll('.detail-thumb').forEach(t => {
+            t.addEventListener('click', () => setMainImage(Number(t.dataset.idx)));
+          });
+        } else {
+          mainImg.style.display = 'none';
+          noImg.style.display = 'flex';
+          thumbs.innerHTML = '';
+        }
+      }
+
+      function renderBadges(item) {
+        const badges = [];
+        const catLabel = CAT1_LABEL[item.category1] || item.category1 || '기타';
+        badges.push(`<span class="detail-badge">${esc(catLabel)}</span>`);
+        if (item.dealType) badges.push(`<span class="detail-badge deal">${esc(item.dealType)}</span>`);
+        if (item.status === '거래완료' || item.is_completed === true) {
+          badges.push(`<span class="detail-badge done">거래완료</span>`);
+        }
+        (item.stickers || []).forEach(s => {
+          if (s) badges.push(`<span class="detail-badge sticker">${esc(s)}</span>`);
+        });
+        document.getElementById('detailBadges').innerHTML = badges.join('');
+      }
+
+      function renderPrice(item) {
+        const rows = buildPriceRows(item);
+        document.getElementById('detailPriceBox').innerHTML = rows.map(([label, val]) =>
+          `<div class="detail-price-row"><span class="lbl">${esc(label)}</span><span class="val">${esc(val)}</span></div>`
+        ).join('');
+      }
+
+      function renderInfoTable(item) {
+        const rows = [];
+        const addRow = (label, value) => { if (value !== null && value !== undefined && value !== '') rows.push([label, value]); };
+        addRow('주소', item.address);
+        addRow('매물종류', CAT1_LABEL[item.category1] || item.category1);
+        addRow('거래유형', item.dealType);
+        const areaText = buildAreaText(item);
+        addRow('면적정보', areaText);
+        addRow('층정보', item.floorInfo);
+        addRow('용도지역', item.zoning);
+        document.getElementById('detailInfoTable').innerHTML = rows.map(([label, val]) =>
+          `<tr><td>${esc(label)}</td><td>${esc(val)}</td></tr>`
+        ).join('');
+      }
+
+      /* 주소에서 "OO시 OO읍/면/동/리" 정도의 지역명만 추출 (없으면 앞 두 단어로 대체) */
+      function extractRegion(address) {
+        if (!address) return '';
+        const m = String(address).match(/([가-힣]+시)\s*([가-힣]+(?:구|읍|면|동|리))?/);
+        if (m) return [m[1], m[2]].filter(Boolean).join(' ');
+        return String(address).split(' ').slice(0, 2).join(' ');
+      }
+
+      function buildPriceSummaryText(item) {
+        return buildPriceRows(item).map(([label, val]) => `${label} ${val}`).join(' / ');
+      }
+
+      /* 매물명 · 지역 · 거래유형 기준 동적 페이지 타이틀 */
+      function buildPageTitle(item) {
+        const region = extractRegion(item.address);
+        const catLabel = CAT1_LABEL[item.category1] || item.category1 || '';
+        const meta = [region, catLabel, item.dealType].filter(Boolean).join(' ');
+        const head = item.title || '매물 상세';
+        return meta ? `${head} | ${meta} - 하이탑부동산` : `${head} - 하이탑부동산`;
+      }
+
+      /* 매물명 · 주소 · 가격 · 면적 · 문의전화 기준 동적 메타 설명 */
+      function buildMetaDescription(item) {
+        const parts = [];
+        parts.push(`${item.title || '매물'}${item.address ? ' - ' + item.address : ''}`);
+        const priceText = buildPriceSummaryText(item);
+        if (priceText) parts.push(priceText);
+        const areaText = buildAreaText(item);
+        if (areaText) parts.push(areaText);
+        parts.push('전화문의 031-949-8969 · 하이탑부동산');
+        return parts.filter(Boolean).join('. ') + '.';
+      }
+
+      function updateMetaDescription(text) {
+        let meta = document.querySelector('meta[name="description"]');
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = 'description';
+          document.head.appendChild(meta);
+        }
+        meta.content = text;
+      }
+
+      /* 매물명, 카테고리, 이미지, 주소, 가격, 설명, 하이탑부동산 연락처를 담은 JSON-LD */
+      function injectJsonLd(item) {
+        document.getElementById('detailJsonLd')?.remove();
+
+        const jsonLd = {
+          '@context': 'https://schema.org',
+          '@type': 'RealEstateListing',
+          name: item.title || '매물',
+          category: CAT1_LABEL[item.category1] || item.category1 || '',
+          description: item.detailDescription || buildMetaDescription(item),
+          image: Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [],
+          url: location.href,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: item.address || '',
+            addressCountry: 'KR',
+          },
+          offers: {
+            '@type': 'Offer',
+            price: buildPriceSummaryText(item) || '가격문의',
+            priceCurrency: 'KRW',
+          },
+          provider: {
+            '@type': 'RealEstateAgent',
+            name: '하이탑부동산공인중개사사무소',
+            telephone: '031-949-8969',
+            address: '경기도 파주시 책향기로 830, 1층',
+          },
+        };
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.id = 'detailJsonLd';
+        script.textContent = JSON.stringify(jsonLd);
+        document.head.appendChild(script);
+      }
+
+      function renderListing(item) {
+        document.title = buildPageTitle(item);
+        updateMetaDescription(buildMetaDescription(item));
+        injectJsonLd(item);
+        renderGallery(item);
+        renderBadges(item);
+        document.getElementById('detailTitle').textContent = item.title || '제목 없음';
+        document.getElementById('detailAddress').textContent = item.address || '';
+        renderPrice(item);
+        renderInfoTable(item);
+        document.getElementById('detailDesc').textContent = item.detailDescription || '상세 설명 준비중입니다.';
+
+        document.getElementById('detailState').style.display = 'none';
+        document.getElementById('detailPanel').style.display = '';
+      }
+
+      async function init() {
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id');
+        const stateEl = document.getElementById('detailState');
+
+        if (!id) {
+          stateEl.textContent = '매물 번호가 없습니다. 매물 목록에서 다시 시도해주세요.';
+          stateEl.classList.add('error');
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('listings')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error || !data) {
+          stateEl.textContent = '매물 정보를 찾을 수 없습니다. 삭제되었거나 잘못된 링크입니다.';
+          stateEl.classList.add('error');
+          return;
+        }
+
+        renderListing(flattenListingRow(data));
+      }
+
+      init();
+    </script>
+  </body>
+</html>
