@@ -22,6 +22,19 @@
       .specialty-link-text { display: flex; flex-direction: column; }
       .specialty-link-title { font-size: 13px; font-weight: 700; color: #0A1F5C; }
       .specialty-link-desc { font-size: 11.5px; color: #777; }
+
+      /* 태블릿 구간(769px~1099px) 전용 — style.css의 고정폭 3단 그리드(260px+820px=1080px)가
+         이 구간에서 minmax(0,1fr) 중앙열을 0(또는 거의 0)으로 붕괴시키는 문제를 이 페이지 안에서만 덮어씀.
+         1080px 정확히는 260+820=1080이라 원본 규칙에서도 중앙열이 0이 되어 769~1079뿐 아니라
+         1080px 자체도 포함해야 하고, 1080~1099px도 남는 폭이 20px 이하로 지나치게 좁아
+         함께 커버 범위를 1099px까지 넓힌다.
+         1열 폭은 style.css:3122의 .lp-sidebar 고정 width:280px와 반드시 일치시켜야
+         사이드바가 그리드 트랙을 넘쳐 지도 영역과 겹치지 않는다. */
+      @media (min-width: 769px) and (max-width: 1099px) {
+        body[data-page="listings"] .lp-body {
+          grid-template-columns: 280px minmax(0, 1fr) 300px !important;
+        }
+      }
     </style>
   </head>
   <body data-page="listings">
