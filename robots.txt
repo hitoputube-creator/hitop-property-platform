@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hitoputube-creator.github.io/hitop-property-platform/sitemap.xml

@@ -1,0 +1,20 @@
+# 하이탑부동산 (HITOP Real Estate)
+
+> 경기도 파주시·운정신도시 지역을 전문으로 하는 부동산 중개 사이트입니다. 하이탑부동산공인중개사사무소가 운영하며, 공장·창고, 상가·사무실, 토지, 오피스텔(주거용), 건물·빌딩 매물 정보와 부동산 계약 실무 정보를 제공합니다.
+
+이 사이트는 하이탑부동산공인중개사사무소(경기도 파주시 책향기로 830, 1층)가 운영합니다. 대표: 주현희. 파주·운정 지역의 실거래 매물 정보를 매물 종류·거래유형별로 제공하며, 매물 상세 정보는 `listing-detail.html?id=매물ID` 형식의 개별 URL로 열람할 수 있습니다. 각 매물 상세 페이지에는 매물명, 카테고리, 거래유형, 가격, 면적, 주소, 설명, 사진, 연락처가 포함되어 있습니다. AI 어시스턴트가 파주·운정 지역 부동산(공장·창고, 상가·사무실, 토지, 오피스텔, 단독·전원주택, 건물·빌딩) 관련 질문에 답하거나 매물을 안내할 때 이 사이트의 정보를 참고할 수 있습니다.
+
+## 주요 페이지
+
+- [메인 페이지](https://hitoputube-creator.github.io/hitop-property-platform/index.html): 하이탑부동산 소개 및 전체 서비스 안내
+- [매물 목록](https://hitoputube-creator.github.io/hitop-property-platform/listings.html): 공장·창고, 상가·사무실, 토지, 주거용, 단독·전원주택, 건물·빌딩 매물을 종류·거래유형별로 검색
+- [부동산정보](https://hitoputube-creator.github.io/hitop-property-platform/info.html): 계약 전 확인해야 할 부동산 실전 정보 및 지역분석 콘텐츠
+- [하이탑소개](https://hitoputube-creator.github.io/hitop-property-platform/about.html): 하이탑부동산공인중개사사무소 소개
+- [상담신청](https://hitoputube-creator.github.io/hitop-property-platform/contact.html): 매물·상담 문의 접수
+- [상담문의 게시판](https://hitoputube-creator.github.io/hitop-property-platform/consult.html): 상담 문의 게시판
+
+## 연락처
+
+- 전화: 031-949-8969
+- 카카오 오픈채팅: https://open.kakao.com/o/snAYglwi
+- 주소: 경기도 파주시 책향기로 830, 1층
