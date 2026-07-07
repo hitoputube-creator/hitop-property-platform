@@ -9,19 +9,18 @@
     <link rel="stylesheet" href="style.css?v=20260604-parking-unit" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
     <style>
-      /* 전문관 바로가기 스트립 (이 페이지 전용, style.css 미수정) */
-      .specialty-links { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-      .specialty-link {
-        flex: 1 1 260px; display: flex; align-items: center; gap: 8px;
+      /* 왼쪽 사이드바 전문관 바로가기 (이 페이지 전용, style.css 미수정) */
+      .lp-specialty-section { padding: 10px 12px 12px; }
+      .lp-specialty-link {
+        display: flex; align-items: center; gap: 8px;
+        padding: 8px 10px; margin-top: 6px;
         background: #fff; border: 1px solid #e5e8ed; border-radius: 8px;
-        padding: 10px 14px; text-decoration: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
+        text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s;
       }
-      .specialty-link:hover { border-color: #C9A84C; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-      .specialty-link-icon { font-size: 18px; line-height: 1; }
-      .specialty-link-text { display: flex; flex-direction: column; }
-      .specialty-link-title { font-size: 13px; font-weight: 700; color: #0A1F5C; }
-      .specialty-link-desc { font-size: 11.5px; color: #777; }
+      .lp-specialty-link:first-of-type { margin-top: 0; }
+      .lp-specialty-link:hover { border-color: #C9A84C; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+      .lp-specialty-icon { font-size: 16px; line-height: 1; flex-shrink: 0; }
+      .lp-specialty-title { font-size: 12.5px; font-weight: 700; color: #0A1F5C; }
 
       /* 태블릿 구간(769px~1099px) 전용 — style.css의 고정폭 3단 그리드(260px+820px=1080px)가
          이 구간에서 minmax(0,1fr) 중앙열을 0(또는 거의 0)으로 붕괴시키는 문제를 이 페이지 안에서만 덮어씀.
@@ -130,6 +129,19 @@
           </a>
         </div>
 
+        <!-- 전문관 바로가기 -->
+        <div class="lp-sidebar-section lp-specialty-section">
+          <div class="lp-sidebar-header">전문관 바로가기</div>
+          <a class="lp-specialty-link" href="factory-warehouse.html">
+            <span class="lp-specialty-icon">🏭</span>
+            <span class="lp-specialty-title">공장·창고 전문관</span>
+          </a>
+          <a class="lp-specialty-link" href="commercial-office.html">
+            <span class="lp-specialty-icon">🏢</span>
+            <span class="lp-specialty-title">상가·사무실 전문관</span>
+          </a>
+        </div>
+
         <!-- 전화 문의 -->
         <div class="lp-sidebar-section phone-inquiry-box">
           <div class="lp-contact-inner">
@@ -152,10 +164,6 @@
 
         <!-- 상담신청 박스 -->
         <div class="side-consult-link-box">
-          <p class="side-consult-desc">상담이 필요하시면 신청서를 남겨주세요.</p>
-          <a href="contact.html" class="side-consult-btn">상담신청</a>
-          <p class="side-consult-note">접수 후 빠르게 연락드리겠습니다.</p>
-          <p class="side-consult-subnote">상가 · 공장 · 창고 · 토지 · 오피스텔 상담 가능</p>
           <div id="visitorCounter" class="side-visitor-counter is-loading" aria-live="polite">
             <div class="visitor-row">
               <span class="visitor-label">오늘 방문자</span>
@@ -243,23 +251,6 @@
             </div>
           </a>
 
-        </div>
-
-        <div class="specialty-links">
-          <a class="specialty-link" href="factory-warehouse.html">
-            <span class="specialty-link-icon">🏭</span>
-            <span class="specialty-link-text">
-              <span class="specialty-link-title">공장·창고 전문관</span>
-              <span class="specialty-link-desc">파주 공장·창고 매매·임대 전문 페이지</span>
-            </span>
-          </a>
-          <a class="specialty-link" href="commercial-office.html">
-            <span class="specialty-link-icon">🏢</span>
-            <span class="specialty-link-text">
-              <span class="specialty-link-title">상가·사무실 전문관</span>
-              <span class="specialty-link-desc">운정신도시 상권 상가·사무실 전문 페이지</span>
-            </span>
-          </a>
         </div>
       </section>
 
