@@ -71,28 +71,30 @@
         .detail-desc { padding:12px 14px; line-height:1.75; margin-bottom:18px; }
       }
 
-      /* 이미지 아래 빈 공간에 배치하는 매물별 상담 포인트 (PC 전용, 모바일 숨김) */
-      .detail-consult-point { margin:12px; padding:14px 16px; background:#16213a; border:1px solid #24314f; border-radius:10px; }
-      .detail-consult-point-title { font-size:13px; font-weight:800; color:#f4d47a; margin:0 0 8px; }
-      .detail-consult-point-text { font-size:12.5px; color:#dbe4f0; line-height:1.65; margin:0 0 10px; word-break:keep-all; }
-      .detail-consult-point-phone { font-size:12px; color:#aab8d8; margin:0 0 10px; }
+      /* 이미지 아래 빈 공간에 배치하는 상담 CTA 박스 */
+      .detail-consult-point { margin:12px; padding:16px; background:#16213a; border:1px solid #24314f; border-radius:10px; }
+      .detail-consult-point-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+      .detail-consult-point-logo { display:inline-flex; align-items:center; gap:6px; color:#fff; font-size:13px; font-weight:900; letter-spacing:.01em; }
+      .detail-consult-point-logo::before { content:''; width:8px; height:8px; border-radius:999px; background:#C9A84C; box-shadow:0 0 0 4px rgba(201,168,76,.16); }
+      .detail-consult-point-phone { font-size:12px; color:#aab8d8; margin:0; white-space:nowrap; }
       .detail-consult-point-phone strong { color:#fff; font-weight:800; }
-      .detail-consult-point-actions { display:flex; gap:8px; }
-      .detail-consult-point-actions a { flex:1; text-align:center; text-decoration:none; border-radius:7px; padding:8px 10px; font-size:12.5px; font-weight:800; }
+      .detail-consult-point-title { font-size:16px; font-weight:900; color:#f4d47a; margin:0 0 8px; }
+      .detail-consult-point-text { font-size:12.5px; color:#dbe4f0; line-height:1.65; margin:0 0 12px; word-break:keep-all; }
+      .detail-consult-point-actions { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+      .detail-consult-point-actions a { text-align:center; text-decoration:none; border-radius:7px; padding:9px 8px; font-size:12.5px; font-weight:800; white-space:nowrap; }
       .detail-consult-point-tel { background:#fff; color:#0A1F5C; }
       .detail-consult-point-kakao { background:#FEE500; color:#3C1E1E; }
+      .detail-consult-point-consult { background:#e8eef7; color:#0A1F5C; }
+      @media (min-width: 769px) {
+        .detail-consult-point { min-height:260px; display:flex; flex-direction:column; }
+        .detail-consult-point-actions { margin-top:auto; }
+      }
       @media (max-width: 768px) {
-        .detail-consult-point { display:none !important; }
+        .detail-consult-point { margin:10px 0 0; border-radius:0; border-left:none; border-right:none; }
+        .detail-consult-point-head { align-items:flex-start; flex-direction:column; gap:4px; }
+        .detail-consult-point-actions { grid-template-columns:1fr; }
+        .detail-consult-point-actions a { padding:11px 10px; font-size:13px; }
       }
-
-      .detail-contact { display:flex; flex-wrap:wrap; gap:8px; }
-      .detail-contact a, .detail-contact button {
-        flex:1 1 140px; text-align:center; padding:12px 16px; border-radius:8px;
-        font-size:14px; font-weight:700; text-decoration:none; border:none; cursor:pointer;
-      }
-      .detail-btn-tel { background:var(--navy); color:#fff; }
-      .detail-btn-kakao { background:#FEE500; color:#3C1E1E; }
-      .detail-btn-consult { background:#f1f5f9; color:var(--navy); border:1px solid #e2e8f0 !important; }
 
       /* 라이트박스 */
       .detail-lightbox { position:fixed; inset:0; background:rgba(0,0,0,.9); display:flex; align-items:center; justify-content:center; z-index:1000; }
@@ -139,12 +141,16 @@
           <div id="detailNoImg" class="detail-no-img" style="display:none;">등록된 이미지가 없습니다</div>
           <div id="detailThumbs" class="detail-thumbs"></div>
           <div id="detailConsultPoint" class="detail-consult-point" style="display:none;">
+            <div class="detail-consult-point-head">
+              <span class="detail-consult-point-logo">하이탑부동산</span>
+              <p class="detail-consult-point-phone">대표번호 <strong>031-949-8969</strong></p>
+            </div>
             <h3 id="detailConsultPointTitle" class="detail-consult-point-title"></h3>
             <p id="detailConsultPointText" class="detail-consult-point-text"></p>
-            <p class="detail-consult-point-phone">대표번호 <strong>031-949-8969</strong></p>
             <div class="detail-consult-point-actions">
               <a href="tel:031-949-8969" class="detail-consult-point-tel">전화문의</a>
               <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="detail-consult-point-kakao">카톡상담</a>
+              <a href="contact.html" class="detail-consult-point-consult">상담신청</a>
             </div>
           </div>
         </div>
@@ -164,11 +170,6 @@
             <span class="detail-related-label">관련 검색어</span><span id="detailRelatedKeywords"></span>
           </p>
 
-          <div class="detail-contact">
-            <a href="tel:031-949-8969" class="detail-btn-tel">📞 전화문의</a>
-            <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="detail-btn-kakao">💬 카톡상담</a>
-            <a href="contact.html" class="detail-btn-consult">✉️ 상담신청</a>
-          </div>
         </div>
       </div>
     </div>
@@ -240,33 +241,29 @@
         '토지': ['공장부지', '창고부지', '개발부지', '계획관리지역'],
       };
 
-      const CONSULT_POINT_DEFAULT = {
-        title: '매물 상담 포인트',
-        text: '사진과 기본정보만으로 판단하기 어려운 조건은 전화 상담으로 확인해 드립니다.',
-      };
+      const CONSULT_TRUST_TEXT = '신뢰를 바탕으로 고객에게 맞는 부동산을 함께 찾아드립니다.';
 
-      const CAT_CONSULT_POINTS = {
-        '토지': {
-          title: '토지 상담 포인트',
-          text: '이 토지는 용도지역, 도로접면, 개발행위 가능성, 인허가 조건 확인이 중요합니다.\n정확한 검토를 원하시면 전화 상담으로 문의해 주세요.',
-        },
-        '공장창고': {
-          title: '공장·창고 상담 포인트',
-          text: '대형차 진입, 층고, 전력, 야적장, 제조업 가능 여부는 현장 확인이 중요합니다.\n용도에 맞는지 상담을 통해 확인해 드립니다.',
-        },
-        '상가사무실': {
-          title: '상가 상담 포인트',
-          text: '유동인구, 전면 노출, 주차, 업종 제한, 배후수요 확인이 중요합니다.\n창업 또는 투자 목적에 맞춰 상담해 드립니다.',
-        },
-        '주거용': {
-          title: '주거 상담 포인트',
-          text: '입지, 교통, 관리비, 실입주 가능 시기, 주변 생활환경을 함께 확인해 드립니다.',
-        },
-        '단독전원주택': {
-          title: '주거 상담 포인트',
-          text: '입지, 교통, 관리비, 실입주 가능 시기, 주변 생활환경을 함께 확인해 드립니다.',
-        },
-      };
+      function getConsultTitle(item) {
+        const fields = [
+          item.category1,
+          item.category2,
+          item.category,
+          item.type,
+          item.propertyType,
+          item.property_type,
+          item.listingType,
+          item.listing_type,
+        ].map(v => String(v || '').trim()).filter(Boolean);
+        const text = fields.join(' ');
+
+        if (/공장|창고|공장[·\/\s-]*창고/.test(text)) return '공장·창고 전문 상담';
+        if (/상가|사무실|상가[·\/\s-]*사무실/.test(text)) return '상가·사무실 전문 상담';
+        if (/토지|대지|임야|(?:^|\s)전(?:\s|$)|(?:^|\s)답(?:\s|$)/.test(text)) return '토지 전문 상담';
+        if (/단독|전원주택|단독[·\/\s-]*전원주택/.test(text)) return '단독·전원주택 상담';
+        if (/건물|빌딩|건물[·\/\s-]*빌딩/.test(text)) return '건물·빌딩 전문 상담';
+        if (/주거|아파트|오피스텔|빌라|주택/.test(text)) return '주거용 매물 상담';
+        return '부동산 전문 상담';
+      }
 
       /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 */
       function flattenListingRow(row) {
@@ -467,9 +464,8 @@
         const title = document.getElementById('detailConsultPointTitle');
         const text = document.getElementById('detailConsultPointText');
         if (!wrap || !title || !text) return;
-        const point = CAT_CONSULT_POINTS[item.category1] || CONSULT_POINT_DEFAULT;
-        title.textContent = point.title;
-        text.textContent = point.text;
+        title.textContent = getConsultTitle(item);
+        text.textContent = CONSULT_TRUST_TEXT;
         wrap.style.display = '';
       }
 
