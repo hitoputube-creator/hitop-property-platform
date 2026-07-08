@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>매물 상세보기 | 하이탑부동산</title>
     <meta name="description" content="하이탑부동산 매물 상세 정보입니다. 파주 공장·창고, 상가·사무실, 토지, 주거용 매물 상담문의: 031-949-8969" />
+    <meta name="keywords" content="파주 공장 매매, 파주 상가 임대, 파주 토지 매매, 하이탑부동산" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
@@ -56,6 +57,19 @@
 
       .detail-section-title { font-size:15px; font-weight:700; color:var(--navy); margin:0 0 10px; }
       .detail-desc { font-size:14.5px; color:#374151; line-height:1.9; background:#f8fafc; padding:14px 16px; border-radius:8px; border:1px solid #e2e8f0; white-space:pre-line; margin-bottom:24px; }
+
+      .detail-related { margin:20px 0 18px; padding-top:14px; border-top:1px solid #f1f5f9; font-size:12.5px; color:#94a3b8; line-height:1.7; }
+      .detail-related-label { font-weight:700; color:#64748b; margin-right:4px; }
+
+      /* PC/태블릿(769px 이상): 좌측 이미지 갤러리 + 우측 매물 정보 2단 레이아웃.
+         모바일(768px 이하)은 위 기본 규칙(세로 스택) 그대로 유지 — 별도 수정 없음. */
+      @media (min-width: 769px) {
+        .detail-panel { display:grid; grid-template-columns: 420px 1fr; align-items:start; }
+        .detail-gallery { border-right:1px solid #1e293b; }
+        .detail-body { padding:20px 26px 26px; }
+        .detail-price-box { padding:12px 16px; }
+        .detail-desc { padding:12px 14px; line-height:1.75; margin-bottom:18px; }
+      }
 
       .detail-contact { display:flex; flex-wrap:wrap; gap:8px; }
       .detail-contact a, .detail-contact button {
@@ -122,6 +136,10 @@
 
           <h2 class="detail-section-title">📝 매물 설명</h2>
           <div id="detailDesc" class="detail-desc"></div>
+
+          <p id="detailRelated" class="detail-related" style="display:none;">
+            <span class="detail-related-label">관련 검색어</span><span id="detailRelatedKeywords"></span>
+          </p>
 
           <div class="detail-contact">
             <a href="tel:031-949-8969" class="detail-btn-tel">📞 전화문의</a>
@@ -190,6 +208,13 @@
         '주거용': '주거용',
         '단독전원주택': '단독·전원주택',
         '건물빌딩': '건물·빌딩',
+      };
+
+      /* 카테고리별 업종 특화 키워드 풀 — 지역명이 아닌 일반 업종 용어만 포함 (허위 지역명 삽입 금지) */
+      const CAT_GENERIC_KEYWORDS = {
+        '공장창고': ['공장창고', '야적장', '물류창고', '산업단지', '공업지역', '공장용지'],
+        '상가사무실': ['상가사무실', '상가 투자', '오피스텔 상가', '중심상업지구'],
+        '토지': ['공장부지', '창고부지', '개발부지', '계획관리지역'],
       };
 
       /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 */
@@ -302,11 +327,13 @@
 
       let _images = [];
       let _mainIdx = 0;
+      let _altBase = '';
 
       function setMainImage(idx) {
         _mainIdx = idx;
         const mainImg = document.getElementById('detailMainImg');
         mainImg.src = normalizeImageUrl(_images[idx]);
+        mainImg.alt = _altBase ? `${_altBase} 대표 이미지` : '';
         document.querySelectorAll('.detail-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
       }
 
@@ -322,8 +349,10 @@
         if (e.target.id === 'detailLightbox') e.currentTarget.classList.add('hidden');
       });
 
-      function renderGallery(item) {
+      function renderGallery(item, keywords) {
         _images = Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [];
+        const altKeyword = (keywords || []).find(k => k !== item.title);
+        _altBase = [item.title, altKeyword].filter(Boolean).join(' ');
         const mainImg = document.getElementById('detailMainImg');
         const noImg   = document.getElementById('detailNoImg');
         const thumbs  = document.getElementById('detailThumbs');
@@ -334,7 +363,7 @@
           setMainImage(0);
           mainImg.onclick = () => openLightbox(_mainIdx);
           thumbs.innerHTML = _images.map((url, i) =>
-            `<img src="${esc(normalizeImageUrl(url))}" class="detail-thumb${i === 0 ? ' active' : ''}" data-idx="${i}" />`
+            `<img src="${esc(normalizeImageUrl(url))}" alt="${esc(_altBase ? _altBase + ' 사진 ' + (i + 1) : '')}" class="detail-thumb${i === 0 ? ' active' : ''}" data-idx="${i}" />`
           ).join('');
           thumbs.querySelectorAll('.detail-thumb').forEach(t => {
             t.addEventListener('click', () => setMainImage(Number(t.dataset.idx)));
@@ -390,6 +419,53 @@
         return String(address).split(' ').slice(0, 2).join(' ');
       }
 
+      /* 매물 데이터(카테고리·주소·거래유형·용도지역·태그·설명) 기반 검색 키워드 자동 생성.
+         매물 데이터에 없는 지역명·허위 키워드는 넣지 않고, 카테고리별 업종 용어만 조합한다.
+         중복 제거 후 10~20개로 제한. */
+      function buildSearchKeywords(item) {
+        const keywords = [];
+        const push = (k) => {
+          const t = String(k || '').trim();
+          if (t && !keywords.includes(t)) keywords.push(t);
+        };
+
+        const cat1 = item.category1 || '';
+        const catLabel = CAT1_LABEL[cat1] || cat1;
+        const address = item.address || '';
+        const cityMatch = address.match(/([가-힣]+)시/);
+        const city = cityMatch ? cityMatch[1] : '';
+        const region = extractRegion(address);
+        const dealType = item.dealType || '';
+
+        if (item.title) push(item.title);
+        if (catLabel) push(catLabel);
+        if (region) push(region);
+
+        // 도시 + 실제 2차분류(category2) + 거래유형 조합 (예: "파주 공장 매매")
+        if (city && item.category2) {
+          push(`${city} ${item.category2} ${dealType}`.trim());
+          push(`${city} ${item.category2}`);
+        }
+        if (city && catLabel && dealType) push(`${city} ${catLabel} ${dealType}`);
+        if (item.category2) push(item.category2);
+        if (catLabel && dealType) push(`${catLabel} ${dealType}`);
+
+        // 카테고리별 업종 특화 용어 (일반명사, 지역 특정 아님)
+        (CAT_GENERIC_KEYWORDS[cat1] || []).forEach(push);
+
+        // 신도시·역세권 등은 주소에 실제로 포함된 경우에만 추가
+        if (/운정/.test(address) && cat1 === '상가사무실') {
+          push('운정역 상가');
+          push('운정신도시 상가 매매');
+        }
+
+        if (item.zoning) push(item.zoning);
+        (item.stickers || []).forEach(push);
+        push('하이탑부동산');
+
+        return keywords.filter(Boolean).slice(0, 20);
+      }
+
       function buildPriceSummaryText(item) {
         return buildPriceRows(item).map(([label, val]) => `${label} ${val}`).join(' / ');
       }
@@ -403,7 +479,7 @@
         return meta ? `${head} | ${meta} - 하이탑부동산` : `${head} - 하이탑부동산`;
       }
 
-      /* 매물명 · 주소 · 가격 · 면적 · 문의전화 기준 동적 메타 설명 */
+      /* 매물명 · 주소 · 가격 · 면적 · 업종 특화 키워드 · 문의전화 기준 동적 메타 설명 */
       function buildMetaDescription(item) {
         const parts = [];
         parts.push(`${item.title || '매물'}${item.address ? ' - ' + item.address : ''}`);
@@ -411,6 +487,8 @@
         if (priceText) parts.push(priceText);
         const areaText = buildAreaText(item);
         if (areaText) parts.push(areaText);
+        const generic = (CAT_GENERIC_KEYWORDS[item.category1] || []).slice(0, 2);
+        if (generic.length) parts.push(`인근 ${generic.join(', ')} 매물 문의 환영`);
         parts.push('전화문의 031-949-8969 · 하이탑부동산');
         return parts.filter(Boolean).join('. ') + '.';
       }
@@ -425,8 +503,29 @@
         meta.content = text;
       }
 
-      /* 매물명, 카테고리, 이미지, 주소, 가격, 설명, 하이탑부동산 연락처를 담은 JSON-LD */
-      function injectJsonLd(item) {
+      function updateMetaKeywords(keywords) {
+        let meta = document.querySelector('meta[name="keywords"]');
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = 'keywords';
+          document.head.appendChild(meta);
+        }
+        meta.content = keywords.join(', ');
+      }
+
+      /* 자동 생성된 키워드 중 일부를 "관련 검색어" 영역에 자연스러운 텍스트로 노출 (숨김 처리 금지) */
+      function renderRelatedKeywords(keywords) {
+        const wrap = document.getElementById('detailRelated');
+        const el = document.getElementById('detailRelatedKeywords');
+        if (!wrap || !el) return;
+        const shown = keywords.slice(0, 10);
+        if (!shown.length) { wrap.style.display = 'none'; return; }
+        el.textContent = shown.join(', ');
+        wrap.style.display = '';
+      }
+
+      /* 매물명, 카테고리, 이미지, 주소, 가격, 설명, 검색 키워드, 하이탑부동산 연락처를 담은 JSON-LD */
+      function injectJsonLd(item, keywords) {
         document.getElementById('detailJsonLd')?.remove();
 
         const jsonLd = {
@@ -435,6 +534,7 @@
           name: item.title || '매물',
           category: CAT1_LABEL[item.category1] || item.category1 || '',
           description: item.detailDescription || buildMetaDescription(item),
+          keywords: (keywords || []).join(', '),
           image: Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [],
           url: location.href,
           address: {
@@ -463,16 +563,20 @@
       }
 
       function renderListing(item) {
+        const keywords = buildSearchKeywords(item);
+
         document.title = buildPageTitle(item);
         updateMetaDescription(buildMetaDescription(item));
-        injectJsonLd(item);
-        renderGallery(item);
+        updateMetaKeywords(keywords);
+        injectJsonLd(item, keywords);
+        renderGallery(item, keywords);
         renderBadges(item);
         document.getElementById('detailTitle').textContent = item.title || '제목 없음';
         document.getElementById('detailAddress').textContent = item.address || '';
         renderPrice(item);
         renderInfoTable(item);
         document.getElementById('detailDesc').textContent = item.detailDescription || '상세 설명 준비중입니다.';
+        renderRelatedKeywords(keywords);
 
         document.getElementById('detailState').style.display = 'none';
         document.getElementById('detailPanel').style.display = '';
