@@ -14,6 +14,8 @@
 - [상담문의 게시판](https://hitoputube-creator.github.io/hitop-property-platform/consult.html): 상담 문의 게시판
 - [공장·창고 전문관](https://hitoputube-creator.github.io/hitop-property-platform/factory-warehouse.html): 파주·운정·탄현·월롱·광탄·조리 지역 공장·창고 임대·매매 매물 전문 페이지
 - [상가·사무실 전문관](https://hitoputube-creator.github.io/hitop-property-platform/commercial-office.html): 파주 운정신도시(와동동) 상권 중심 상가·사무실 임대·매매 매물 전문 페이지
+- [토지 매물](https://hitoputube-creator.github.io/hitop-property-platform/land.html): 파주·운정 지역 토지 매매 매물(개발부지, 공장부지, 창고부지, 상가부지, 단독택지) 페이지
+- [주거용 매물](https://hitoputube-creator.github.io/hitop-property-platform/residential.html): 파주·운정 지역 아파트, 오피스텔, 단독주택, 전원주택, 단독택지 등 주거용 매물 페이지
 
 ## 연락처
 

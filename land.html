@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>파주 토지 매물 | 하이탑부동산</title>
+    <meta name="description" content="파주 토지 매물, 파주 토지 매매, 운정 토지 매물 정보를 한곳에 모았습니다. 파주 개발부지, 파주 공장부지, 파주 창고부지, 파주 상가부지, 파주 단독택지까지 하이탑부동산이 직접 확인한 토지 매물을 소개합니다." />
+    <meta property="og:title" content="파주 토지 매물 | 하이탑부동산" />
+    <meta property="og:description" content="파주 토지 매물, 파주 토지 매매, 운정 토지 매물. 개발부지·공장부지·창고부지·상가부지·단독택지까지 확인하세요." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="하이탑부동산" />
+    <meta property="og:url" content="https://hitoputube-creator.github.io/hitop-property-platform/land.html" />
+    <meta property="og:image" content="https://hitoputube-creator.github.io/hitop-property-platform/images/hitoplogo.png" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "파주 토지 매물",
+        "description": "파주 토지 매물, 파주 토지 매매, 운정 토지 매물. 개발부지·공장부지·창고부지·상가부지·단독택지까지 하이탑부동산이 소개하는 토지 매물 페이지",
+        "url": "https://hitoputube-creator.github.io/hitop-property-platform/land.html",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "하이탑부동산",
+          "url": "https://hitoputube-creator.github.io/hitop-property-platform/index.html"
+        },
+        "provider": {
+          "@type": "RealEstateAgent",
+          "name": "하이탑부동산공인중개사사무소",
+          "telephone": "031-949-8969",
+          "address": "경기도 파주시 책향기로 830, 1층"
+        }
+      }
+    </script>
+    <style>
+      .top-bar { background:#0A1F5C; padding:6px 0; }
+      .top-bar .container { display:flex; justify-content:flex-end; align-items:center; gap:20px; }
+      .top-bar-hours { font-size:12px; color:#aab8d8; }
+      .top-bar-phone { font-size:12px; font-weight:600; color:#C9A84C; text-decoration:none; }
+      .top-bar-phone:hover { color:#e0c070; }
+      @media (max-width:768px) { .top-bar-hours { display:none; } }
+
+      .land-hero { background:linear-gradient(125deg, var(--navy-dark), var(--navy)); color:#fff; padding:56px 0 44px; }
+      .land-hero h1 { font-size:1.9rem; font-weight:800; margin:0 0 10px; }
+      .land-hero p { font-size:14.5px; color:#cbd5e1; max-width:720px; line-height:1.7; margin:0 0 20px; }
+      .land-hero-actions { display:flex; gap:10px; flex-wrap:wrap; }
+      .land-hero-btn { padding:10px 20px; border-radius:8px; font-size:14px; font-weight:700; text-decoration:none; }
+      .land-hero-btn.primary { background:var(--green); color:#fff; }
+      .land-hero-btn.outline { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.5); }
+
+      .land-section { padding:40px 0 60px; }
+      .land-section-title { font-size:1.2rem; font-weight:800; color:#0f172a; margin:0 0 18px; }
+
+      .land-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px; }
+      .land-card { display:block; background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:transform .15s, box-shadow .15s; }
+      .land-card:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.1); }
+      .land-card-img { width:100%; aspect-ratio:4/3; object-fit:cover; background:#e2e8f0; display:block; }
+      .land-card-noimg { width:100%; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; background:#f1f5f9; }
+      .land-card-body { padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
+      .land-card-badges { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:2px; }
+      .land-card-badge { font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:999px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+      .land-card-badge.deal { background:var(--green-soft); color:var(--green); border-color:#cde7d9; }
+      .land-card-title { font-size:14px; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .land-card-price { font-size:15px; font-weight:800; color:var(--green); }
+      .land-card-area  { font-size:12px; color:#64748b; }
+      .land-card-addr  { font-size:12px; color:#94a3b8; }
+
+      .land-empty, .land-loading { grid-column:1/-1; text-align:center; padding:60px 20px; color:#9ca3af; font-size:14px; }
+      .land-error { color:#dc2626; }
+
+      .land-cta { background:var(--green-soft); border:1px solid #cde7d9; border-radius:14px; padding:26px 28px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; margin-top:36px; }
+      .land-cta p { margin:0; font-size:14.5px; color:#0f172a; font-weight:600; }
+      .land-cta-actions { display:flex; gap:8px; flex-wrap:wrap; }
+      .land-cta-actions a { padding:10px 18px; border-radius:8px; font-size:13.5px; font-weight:700; text-decoration:none; }
+      .land-cta-tel { background:var(--navy); color:#fff; }
+      .land-cta-kakao { background:#FEE500; color:#3C1E1E; }
+      .land-cta-consult { background:#fff; color:var(--navy); border:1px solid #cde7d9; }
+    </style>
+  </head>
+  <body>
+
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html" aria-current="page">매물보기</a>
+          <a href="info.html">부동산정보</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="consult.html">상담문의 게시판</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="land-hero">
+      <div class="container">
+        <h1>파주 토지 매물</h1>
+        <p>파주·운정 지역의 토지 매매 정보를 한곳에 모았습니다. 개발부지, 공장부지, 창고부지, 상가부지, 단독택지 등 다양한 용도의 토지 매물을 하이탑부동산이 직접 확인하고 소개합니다. 지목, 용도지역, 진입로 여부까지 꼼꼼히 안내해드립니다.</p>
+        <div class="land-hero-actions">
+          <a href="listings.html?category=토지" class="land-hero-btn primary">전체 토지 매물 보기</a>
+          <a href="tel:031-949-8969" class="land-hero-btn outline">📞 전화 상담</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="land-section">
+      <div class="container">
+        <h2 class="land-section-title">토지 매물</h2>
+        <div id="landGrid" class="land-grid">
+          <p class="land-loading">매물을 불러오는 중입니다…</p>
+        </div>
+
+        <div class="land-cta">
+          <p>원하는 지목·용도지역·면적의 토지를 찾지 못하셨나요? 하이탑부동산에 직접 문의해주세요.</p>
+          <div class="land-cta-actions">
+            <a href="tel:031-949-8969" class="land-cta-tel">📞 전화문의</a>
+            <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="land-cta-kakao">💬 카톡상담</a>
+            <a href="contact.html" class="land-cta-consult">✉️ 상담신청</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer-v2">
+      <div class="footer-v2-inner">
+        <div class="footer-v2-company">
+          <p class="footer-v2-name">하이탑부동산공인중개사사무소</p>
+          <div class="footer-v2-info">
+            <span>대표: 주현희</span>
+            <span>주소: 경기도 파주시 책향기로 830, 1층</span>
+            <span>전화: 031-949-8969</span>
+            <span>팩스: 031-944-1108</span>
+          </div>
+          <div class="footer-v2-info">
+            <span>사업자등록번호: 305-48-62183</span>
+            <span>중개사무소 등록번호: 41480-2016-00026</span>
+            <span>이메일: newpajucity@naver.com</span>
+          </div>
+          <p class="footer-v2-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
+        </div>
+        <div class="footer-v2-divider"></div>
+        <div class="footer-v2-right">
+          <div class="footer-v2-btns">
+            <a class="fv2-btn fv2-tel" href="tel:031-949-8969"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>전화상담</a>
+            <a class="fv2-btn fv2-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>블로그</a>
+            <a class="fv2-btn fv2-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/></svg>카카오 상담</a>
+            <a class="fv2-btn fv2-inquiry" href="consult.html"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>매물문의</a>
+            <a class="fv2-btn fv2-youtube" href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>유튜브</a>
+            <a class="fv2-btn fv2-contact" href="contact.html"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>상담신청</a>
+          </div>
+          <a class="fv2-admin-btn" href="admin.html">관리자</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 햄버거 메뉴 -->
+    <script>
+      const _navToggle = document.querySelector('.nav-toggle');
+      const _navMenu   = document.querySelector('.nav-menu');
+      if (_navToggle && _navMenu) {
+        _navToggle.addEventListener('click', () => _navMenu.classList.toggle('open'));
+      }
+    </script>
+
+    <script type="module">
+      import { supabase } from './supabase-config.js';
+
+      const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+      /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 (listing-detail.html과 동일 규칙) */
+      function flattenListingRow(row) {
+        const d = row.data && typeof row.data === 'object' ? row.data : {};
+        return {
+          ...d,
+          ...row,
+          title: row.title || d.title || '',
+          address: row.display_address || d.publicAddress || d.displayAddress || row.address || d.address || '',
+          dealType: row.deal_type || d.dealType || '',
+          salePrice: row.sale_price || d.salePrice || '',
+          deposit: row.deposit || d.deposit || '',
+          monthlyRent: row.monthly_rent || d.monthlyRent || '',
+          areaM2: row.area_m2 ?? d.areaM2 ?? null,
+          areaPy: row.area_py ?? d.areaPy ?? null,
+          imageUrls: Array.isArray(row.image_urls) && row.image_urls.length ? row.image_urls : (Array.isArray(d.imageUrls) ? d.imageUrls : []),
+          stickers: Array.isArray(row.stickers) && row.stickers.length ? row.stickers : (Array.isArray(d.stickers) ? d.stickers : []),
+        };
+      }
+
+      const wonToManwon = (v) => {
+        const n = Number(String(v ?? '').replace(/[,\s]/g, ''));
+        if (!n || isNaN(n)) return null;
+        return Math.round(n / 10000);
+      };
+
+      const toKoreanPrice = (manwon) => {
+        const n = Number(manwon);
+        if (!n || isNaN(n)) return '';
+        const eok = Math.floor(n / 10000);
+        const remain = n % 10000;
+        if (eok && remain) return `${eok}억 ${remain.toLocaleString('ko-KR')}만원`;
+        if (eok) return `${eok}억원`;
+        return `${remain.toLocaleString('ko-KR')}만원`;
+      };
+
+      /* salePrice·deposit(매매/전세)는 원 단위·만원 단위가 혼재되어 저장되어 있어,
+         1억 이상이면 원 단위로 간주해 만원으로 환산한다 (listing-detail.html과 동일 규칙) */
+      const normalizeManwon = (v) => {
+        const n = Number(String(v ?? '').replace(/[,\s]/g, ''));
+        if (!n || isNaN(n)) return null;
+        return n >= 100000000 ? Math.round(n / 10000) : n;
+      };
+
+      function buildPriceText(item) {
+        const isRent = item.dealType === '월세' || item.dealType === '임대';
+        if (item.dealType === '매매' && item.salePrice) {
+          return toKoreanPrice(normalizeManwon(item.salePrice));
+        }
+        if (item.dealType === '전세' && item.deposit) {
+          return toKoreanPrice(normalizeManwon(item.deposit));
+        }
+        if (isRent) {
+          const dep  = wonToManwon(item.deposit);
+          const rent = wonToManwon(item.monthlyRent);
+          if (dep && rent) return `${toKoreanPrice(dep)} / ${toKoreanPrice(rent)}`;
+          if (dep)  return toKoreanPrice(dep);
+          if (rent) return toKoreanPrice(rent);
+        }
+        if (item.salePrice) return toKoreanPrice(normalizeManwon(item.salePrice));
+        if (item.deposit)   return toKoreanPrice(normalizeManwon(item.deposit));
+        return '가격문의';
+      }
+
+      /* 토지 전용: 토지 면적만 표기 */
+      function buildAreaText(item) {
+        const fmt = (m2, py) => {
+          const m = m2 != null && m2 !== '' ? Number(m2) : null;
+          const p = py != null && py !== '' ? Number(py) : (m ? m / 3.305785 : null);
+          if (!m && !p) return null;
+          const pv = p != null ? p.toFixed(1) : (m / 3.305785).toFixed(1);
+          return `${pv}평`;
+        };
+        const land = fmt(item.areaM2 ?? item.landArea, item.areaPy);
+        return land ? `토지 ${land}` : null;
+      }
+
+      function cardHTML(item) {
+        const img = Array.isArray(item.imageUrls) && item.imageUrls.length ? item.imageUrls[0] : null;
+        const areaText = buildAreaText(item);
+        const badges = [`<span class="land-card-badge deal">${esc(item.dealType || '거래유형 미정')}</span>`]
+          .concat((item.stickers || []).filter(Boolean).map(s => `<span class="land-card-badge">${esc(s)}</span>`))
+          .join('');
+        return `
+          <a class="land-card" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
+            ${img
+              ? `<img class="land-card-img" src="${esc(img)}" alt="${esc(item.title)}" loading="lazy" onerror="this.style.display='none'" />`
+              : `<div class="land-card-noimg">등록된 이미지 없음</div>`}
+            <div class="land-card-body">
+              <div class="land-card-badges">${badges}</div>
+              <div class="land-card-title">${esc(item.title || '제목 없음')}</div>
+              <div class="land-card-price">${esc(buildPriceText(item))}</div>
+              ${areaText ? `<div class="land-card-area">${esc(areaText)}</div>` : ''}
+              <div class="land-card-addr">${esc(item.address || '')}</div>
+            </div>
+          </a>`;
+      }
+
+      async function init() {
+        const gridEl = document.getElementById('landGrid');
+        const { data, error } = await supabase
+          .from('listings')
+          .select('*')
+          .eq('category1', '토지')
+          .eq('is_public', true)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          gridEl.innerHTML = '<p class="land-empty land-error">매물 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</p>';
+          return;
+        }
+
+        const items = (data || []).map(flattenListingRow);
+        if (!items.length) {
+          gridEl.innerHTML = '<p class="land-empty">현재 등록된 토지 매물이 없습니다. 전화 또는 카카오 상담으로 문의해주세요.</p>';
+          return;
+        }
+
+        gridEl.innerHTML = items.map(cardHTML).join('');
+      }
+
+      init();
+    </script>
+  </body>
+</html>
