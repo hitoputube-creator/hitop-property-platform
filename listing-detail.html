@@ -20,7 +20,7 @@
       .detail-state { text-align:center; padding:80px 20px; color:#9ca3af; font-size:15px; }
       .detail-state.error { color:#dc2626; }
 
-      .detail-wrap { max-width: 1040px; margin: 28px auto 60px; padding: 0 20px; }
+      .detail-wrap { max-width: 1200px; margin: 28px auto 60px; padding: 0 20px; }
       .detail-back { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569; text-decoration:none; margin-bottom:16px; }
       .detail-back:hover { color:var(--navy); }
 
@@ -64,11 +64,25 @@
       /* PC/태블릿(769px 이상): 좌측 이미지 갤러리 + 우측 매물 정보 2단 레이아웃.
          모바일(768px 이하)은 위 기본 규칙(세로 스택) 그대로 유지 — 별도 수정 없음. */
       @media (min-width: 769px) {
-        .detail-panel { display:grid; grid-template-columns: 420px 1fr; align-items:start; }
+        .detail-panel { display:grid; grid-template-columns: 520px 1fr; align-items:start; }
         .detail-gallery { border-right:1px solid #1e293b; }
-        .detail-body { padding:20px 26px 26px; }
+        .detail-body { padding:24px 32px 32px; }
         .detail-price-box { padding:12px 16px; }
         .detail-desc { padding:12px 14px; line-height:1.75; margin-bottom:18px; }
+      }
+
+      /* 이미지 아래 빈 공간에 배치하는 매물별 상담 포인트 (PC 전용, 모바일 숨김) */
+      .detail-consult-point { margin:12px; padding:14px 16px; background:#16213a; border:1px solid #24314f; border-radius:10px; }
+      .detail-consult-point-title { font-size:13px; font-weight:800; color:#f4d47a; margin:0 0 8px; }
+      .detail-consult-point-text { font-size:12.5px; color:#dbe4f0; line-height:1.65; margin:0 0 10px; word-break:keep-all; }
+      .detail-consult-point-phone { font-size:12px; color:#aab8d8; margin:0 0 10px; }
+      .detail-consult-point-phone strong { color:#fff; font-weight:800; }
+      .detail-consult-point-actions { display:flex; gap:8px; }
+      .detail-consult-point-actions a { flex:1; text-align:center; text-decoration:none; border-radius:7px; padding:8px 10px; font-size:12.5px; font-weight:800; }
+      .detail-consult-point-tel { background:#fff; color:#0A1F5C; }
+      .detail-consult-point-kakao { background:#FEE500; color:#3C1E1E; }
+      @media (max-width: 768px) {
+        .detail-consult-point { display:none !important; }
       }
 
       .detail-contact { display:flex; flex-wrap:wrap; gap:8px; }
@@ -124,6 +138,15 @@
           <img id="detailMainImg" class="detail-main-img" src="" alt="" style="display:none;" />
           <div id="detailNoImg" class="detail-no-img" style="display:none;">등록된 이미지가 없습니다</div>
           <div id="detailThumbs" class="detail-thumbs"></div>
+          <div id="detailConsultPoint" class="detail-consult-point" style="display:none;">
+            <h3 id="detailConsultPointTitle" class="detail-consult-point-title"></h3>
+            <p id="detailConsultPointText" class="detail-consult-point-text"></p>
+            <p class="detail-consult-point-phone">대표번호 <strong>031-949-8969</strong></p>
+            <div class="detail-consult-point-actions">
+              <a href="tel:031-949-8969" class="detail-consult-point-tel">전화문의</a>
+              <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="detail-consult-point-kakao">카톡상담</a>
+            </div>
+          </div>
         </div>
         <div class="detail-body">
           <div id="detailBadges" class="detail-badges"></div>
@@ -215,6 +238,34 @@
         '공장창고': ['공장창고', '야적장', '물류창고', '산업단지', '공업지역', '공장용지'],
         '상가사무실': ['상가사무실', '상가 투자', '오피스텔 상가', '중심상업지구'],
         '토지': ['공장부지', '창고부지', '개발부지', '계획관리지역'],
+      };
+
+      const CONSULT_POINT_DEFAULT = {
+        title: '매물 상담 포인트',
+        text: '사진과 기본정보만으로 판단하기 어려운 조건은 전화 상담으로 확인해 드립니다.',
+      };
+
+      const CAT_CONSULT_POINTS = {
+        '토지': {
+          title: '토지 상담 포인트',
+          text: '이 토지는 용도지역, 도로접면, 개발행위 가능성, 인허가 조건 확인이 중요합니다.\n정확한 검토를 원하시면 전화 상담으로 문의해 주세요.',
+        },
+        '공장창고': {
+          title: '공장·창고 상담 포인트',
+          text: '대형차 진입, 층고, 전력, 야적장, 제조업 가능 여부는 현장 확인이 중요합니다.\n용도에 맞는지 상담을 통해 확인해 드립니다.',
+        },
+        '상가사무실': {
+          title: '상가 상담 포인트',
+          text: '유동인구, 전면 노출, 주차, 업종 제한, 배후수요 확인이 중요합니다.\n창업 또는 투자 목적에 맞춰 상담해 드립니다.',
+        },
+        '주거용': {
+          title: '주거 상담 포인트',
+          text: '입지, 교통, 관리비, 실입주 가능 시기, 주변 생활환경을 함께 확인해 드립니다.',
+        },
+        '단독전원주택': {
+          title: '주거 상담 포인트',
+          text: '입지, 교통, 관리비, 실입주 가능 시기, 주변 생활환경을 함께 확인해 드립니다.',
+        },
       };
 
       /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 */
@@ -411,6 +462,17 @@
         ).join('');
       }
 
+      function renderConsultPoint(item) {
+        const wrap = document.getElementById('detailConsultPoint');
+        const title = document.getElementById('detailConsultPointTitle');
+        const text = document.getElementById('detailConsultPointText');
+        if (!wrap || !title || !text) return;
+        const point = CAT_CONSULT_POINTS[item.category1] || CONSULT_POINT_DEFAULT;
+        title.textContent = point.title;
+        text.textContent = point.text;
+        wrap.style.display = '';
+      }
+
       /* 주소에서 "OO시 OO읍/면/동/리" 정도의 지역명만 추출 (없으면 앞 두 단어로 대체) */
       function extractRegion(address) {
         if (!address) return '';
@@ -577,6 +639,7 @@
         renderInfoTable(item);
         document.getElementById('detailDesc').textContent = item.detailDescription || '상세 설명 준비중입니다.';
         renderRelatedKeywords(keywords);
+        renderConsultPoint(item);
 
         document.getElementById('detailState').style.display = 'none';
         document.getElementById('detailPanel').style.display = '';
