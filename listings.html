@@ -9,18 +9,138 @@
     <link rel="stylesheet" href="style.css?v=20260604-parking-unit" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
     <style>
-      /* 왼쪽 사이드바 전문관 바로가기 (이 페이지 전용, style.css 미수정) */
-      .lp-specialty-section { padding: 10px 12px 12px; }
-      .lp-specialty-link {
-        display: flex; align-items: center; gap: 8px;
-        padding: 8px 10px; margin-top: 6px;
-        background: #fff; border: 1px solid #e5e8ed; border-radius: 8px;
-        text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s;
+      /* ══════════════════════════════════════════════════════════════
+         왼쪽 사이드바 프리미엄 카드 리디자인 (listings.html 전용, style.css 미수정)
+         - PC/태블릿(769px 이상): 카드형 프리미엄 디자인
+         - 모바일(768px 이하): 기존 검증된 가로 스크롤 알약형 그대로 유지, 새 요소(설명/화살표)만 숨김
+         - .lp-cat-item / .lp-cat-count / data-cat / #cnt-* / #visitorCounter 등
+           app.js가 참조하는 클래스·id·속성은 절대 변경하지 않음
+         ══════════════════════════════════════════════════════════════ */
+
+      @media (min-width: 769px) {
+        /* 사이드바 전체 여백 */
+        body[data-page="listings"] .lp-sidebar {
+          padding: 14px 12px !important;
+          gap: 14px !important;
+          background: #F5F7FA !important;
+        }
+
+        /* 카드형 섹션 래퍼 (매물 종류 / 전문관 바로가기 공통) */
+        body[data-page="listings"] .lp-sidebar .lp-sidebar-section {
+          border: 1px solid #E5EAF2 !important;
+          border-radius: 14px !important;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+          overflow: hidden !important;
+          margin-bottom: 0 !important; /* gap으로 간격 통일 */
+        }
+
+        /* 세련된 섹션 헤더 */
+        body[data-page="listings"] .lp-sidebar .lp-sidebar-header {
+          height: 46px !important;
+          line-height: 46px !important;
+          padding: 0 16px !important;
+          background: #0A1F5C !important;
+          color: #ffffff !important;
+          font-size: 14px !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.2px !important;
+          text-align: left !important;
+          border-left: 4px solid #C9A84C !important;
+          box-sizing: border-box !important;
+        }
+
+        /* 카테고리 카드형 항목 */
+        body[data-page="listings"] .lp-sidebar .lp-cat-item {
+          height: 46px !important;
+          padding: 0 14px !important;
+          margin: 4px 8px !important;
+          border-radius: 10px !important;
+          border-bottom: none !important;
+          background: #ffffff !important;
+          border: 1px solid transparent !important;
+          gap: 10px !important;
+          transition: background 0.15s, border-color 0.15s;
+        }
+        body[data-page="listings"] .lp-sidebar .lp-cat-item:last-child { margin-bottom: 8px !important; }
+        body[data-page="listings"] .lp-sidebar .lp-cat-item:hover {
+          background: #F5F7FA !important;
+          border-color: #E5EAF2 !important;
+        }
+        body[data-page="listings"] .lp-sidebar .lp-cat-item.active {
+          background: linear-gradient(135deg, #0A1F5C, #123072) !important;
+          color: #ffffff !important;
+          border-color: #C9A84C !important;
+          box-shadow: inset 3px 0 0 #C9A84C !important;
+        }
+        body[data-page="listings"] .lp-sidebar .lp-cat-item.active .lp-cat-count::after {
+          color: #C9A84C !important;
+        }
+        .lp-cat-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+
+        /* 전문관 바로가기 — 미니 배너 카드 */
+        body[data-page="listings"] .lp-sidebar .lp-specialty-section { padding: 10px !important; }
+        .lp-specialty-link {
+          display: flex; align-items: center; gap: 10px;
+          padding: 12px; margin-top: 8px;
+          background: linear-gradient(135deg, #FBF9F3, #ffffff);
+          border: 1px solid #E5EAF2; border-radius: 12px;
+          text-decoration: none;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+          transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+        }
+        .lp-specialty-link:first-of-type { margin-top: 0; }
+        .lp-specialty-link:hover {
+          border-color: #C9A84C;
+          box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+          transform: translateY(-1px);
+        }
+        .lp-specialty-icon {
+          font-size: 20px; width: 36px; height: 36px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          background: #0A1F5C; border-radius: 10px; color: #fff;
+        }
+        .lp-specialty-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+        .lp-specialty-title { font-size: 13px; font-weight: 800; color: #0A1F5C; }
+        .lp-specialty-desc {
+          font-size: 11px; color: #6b7280;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .lp-specialty-arrow { margin-left: auto; font-size: 20px; color: #C9A84C; font-weight: 300; flex-shrink: 0; }
+
+        /* 전화문의 / 방문자 카드 — 라운드·그림자 통일 */
+        body[data-page="listings"] .lp-sidebar .phone-inquiry-box,
+        body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+          border-radius: 14px !important;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+        }
+        body[data-page="listings"] .lp-sidebar .lp-kakao-btn { border-radius: 10px !important; }
+        body[data-page="listings"] .lp-sidebar .side-visitor-counter { border-radius: 12px !important; }
+        body[data-page="listings"] .lp-sidebar .lp-phone-big { letter-spacing: -0.3px !important; }
       }
-      .lp-specialty-link:first-of-type { margin-top: 0; }
-      .lp-specialty-link:hover { border-color: #C9A84C; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-      .lp-specialty-icon { font-size: 16px; line-height: 1; flex-shrink: 0; }
-      .lp-specialty-title { font-size: 12.5px; font-weight: 700; color: #0A1F5C; }
+
+      /* 모바일: 기존 검증된 가로 스크롤 알약형 유지, 새로 추가한 설명/화살표만 숨김 */
+      @media (max-width: 768px) {
+        .lp-specialty-link {
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 6px !important;
+          padding: 6px 12px !important;
+          border: 1.5px solid #cbd5e1 !important;
+          border-radius: 999px !important;
+          font-size: 13px !important;
+          font-weight: 700 !important;
+          white-space: nowrap !important;
+          color: #475569 !important;
+          background: #ffffff !important;
+          text-decoration: none !important;
+        }
+        .lp-specialty-icon {
+          font-size: 14px !important; width: auto !important; height: auto !important;
+          background: transparent !important; color: inherit !important; border-radius: 0 !important;
+        }
+        .lp-specialty-title { font-size: 13px; font-weight: 700; color: inherit; }
+        .lp-specialty-desc, .lp-specialty-arrow { display: none !important; }
+      }
 
       /* 태블릿 구간(769px~1099px) 전용 — style.css의 고정폭 3단 그리드(260px+820px=1080px)가
          이 구간에서 minmax(0,1fr) 중앙열을 0(또는 거의 0)으로 붕괴시키는 문제를 이 페이지 안에서만 덮어씀.
@@ -100,30 +220,37 @@
           <div class="lp-sidebar-header">매물 종류</div>
 
           <a class="lp-cat-item active" href="#" data-cat="">
+            <span class="lp-cat-icon">🏘️</span>
             <span class="lp-cat-name">&#51204;&#52404; &#47588;&#47932;</span>
             <span class="lp-cat-count" id="cnt-all">(0)</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="&#44277;&#51109;&#52285;&#44256;">
+            <span class="lp-cat-icon">🏭</span>
             <span class="lp-cat-name">&#44277;&#51109;&#183;&#52285;&#44256;</span>
             <span class="lp-cat-count" id="cnt-&#44277;&#51109;&#52285;&#44256;">(0)</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="&#49345;&#44032;&#49324;&#47924;&#49892;">
+            <span class="lp-cat-icon">🏢</span>
             <span class="lp-cat-name">&#49345;&#44032;&#183;&#49324;&#47924;&#49892;</span>
             <span class="lp-cat-count" id="cnt-&#49345;&#44032;&#49324;&#47924;&#49892;">(0)</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="&#53664;&#51648;">
+            <span class="lp-cat-icon">🌳</span>
             <span class="lp-cat-name">&#53664;&#51648;</span>
             <span class="lp-cat-count" id="cnt-&#53664;&#51648;">(0)</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="&#51452;&#44144;&#50857;">
+            <span class="lp-cat-icon">🏠</span>
             <span class="lp-cat-name">&#51452;&#44144;&#50857;</span>
             <span class="lp-cat-count" id="cnt-&#51452;&#44144;&#50857;">(0)</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="&#45800;&#46021;&#51204;&#50896;&#51452;&#53469;">
+            <span class="lp-cat-icon">🏡</span>
             <span class="lp-cat-name">&#45800;&#46021;&#183;&#51204;&#50896;&#51452;&#53469;</span>
             <span class="lp-cat-count" id="cnt-&#45800;&#46021;&#51204;&#50896;&#51452;&#53469;">(0)</span>
           </a>
           <a class="lp-cat-item" href="#" data-cat="&#44148;&#47932;&#48716;&#46377;">
+            <span class="lp-cat-icon">🏙️</span>
             <span class="lp-cat-name">&#44148;&#47932;&#183;&#48716;&#46377;</span>
             <span class="lp-cat-count" id="cnt-&#44148;&#47932;&#48716;&#46377;">(0)</span>
           </a>
@@ -134,11 +261,19 @@
           <div class="lp-sidebar-header">전문관 바로가기</div>
           <a class="lp-specialty-link" href="factory-warehouse.html">
             <span class="lp-specialty-icon">🏭</span>
-            <span class="lp-specialty-title">공장·창고 전문관</span>
+            <span class="lp-specialty-text">
+              <span class="lp-specialty-title">공장·창고 전문관</span>
+              <span class="lp-specialty-desc">파주·운정 공장창고 매물 모아보기</span>
+            </span>
+            <span class="lp-specialty-arrow">›</span>
           </a>
           <a class="lp-specialty-link" href="commercial-office.html">
             <span class="lp-specialty-icon">🏢</span>
-            <span class="lp-specialty-title">상가·사무실 전문관</span>
+            <span class="lp-specialty-text">
+              <span class="lp-specialty-title">상가·사무실 전문관</span>
+              <span class="lp-specialty-desc">운정역 상권·사무실 매물 모아보기</span>
+            </span>
+            <span class="lp-specialty-arrow">›</span>
           </a>
         </div>
 
