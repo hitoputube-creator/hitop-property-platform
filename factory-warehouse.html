@@ -52,6 +52,7 @@
       .factory-hero-btn.outline { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.5); }
 
       .factory-section { padding:40px 0 60px; }
+      .fw-container { width: 100%; max-width: 1520px; margin: 0 auto; padding: 0 20px; }
       .factory-section-title { font-size:1.2rem; font-weight:800; color:#0f172a; margin:0 0 18px; }
 
       /* 전체/공장/창고 필터 */
@@ -68,7 +69,7 @@
          .lp-panel / .lp-panel-hd-sticky / .lp-panel-scroll-body 는 style.css의 listings.html 공용
          컴포넌트 클래스를 재사용(스타일 추가 정의 없음)하되, 카드 자체는 "추천매물 미니카드"가 아니라
          전문관 전용 2열 카드(.fw-card)를 이 페이지에서 새로 정의해 사용한다. */
-      .fw-viewer { display:grid; grid-template-columns: minmax(0,1fr) 440px; gap:16px; margin-bottom:24px; }
+      .fw-viewer { display:grid; grid-template-columns: minmax(0,1fr) 460px; gap:16px; margin-bottom:24px; }
       .fw-viewer .factory-map { height:560px; }
       /* style.css의 전역 .lp-panel{grid-column:3}(listings.html 3단 그리드 전용)이 여기 2단 그리드에
          그대로 상속되어 3번째 트랙이 암시적으로 생기는 것을 방지 — 실제 위치(2번째 자식)로 명시 고정 */
@@ -184,7 +185,7 @@
     </section>
 
     <section class="factory-section">
-      <div class="container">
+      <div class="fw-container">
         <h2 class="factory-section-title">공장·창고 매물</h2>
 
         <div class="factory-filter-bar" id="factoryFilterBar">
