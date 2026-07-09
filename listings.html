@@ -53,16 +53,16 @@
         /* 매물 구분 — 작고 깔끔한 버튼 리스트 (실제 링크, JS 필터 아님) */
         body[data-page="listings"] .lp-sidebar .lp-catlist-item {
           display: block !important;
-          height: 42px !important;
-          line-height: 42px !important;
+          height: 48px !important;
+          line-height: 48px !important;
           padding: 0 16px !important;
           margin: 6px 10px !important;
           border-radius: 8px !important;
           background: #ffffff !important;
           border: 1px solid #E5EAF2 !important;
           color: #0A1F5C !important;
-          font-size: 13.5px !important;
-          font-weight: 700 !important;
+          font-size: 15px !important;
+          font-weight: 800 !important;
           text-decoration: none !important;
           transition: background 0.15s, border-color 0.15s;
         }
@@ -90,11 +90,11 @@
           display: inline-flex !important;
           align-items: center !important;
           height: auto !important;
-          padding: 6px 12px !important;
+          padding: 8px 14px !important;
           border: 1.5px solid #cbd5e1 !important;
           border-radius: 999px !important;
-          font-size: 13px !important;
-          font-weight: 700 !important;
+          font-size: 14px !important;
+          font-weight: 800 !important;
           white-space: nowrap !important;
           color: #475569 !important;
           background: #ffffff !important;
@@ -112,6 +112,22 @@
       @media (min-width: 769px) and (max-width: 1099px) {
         body[data-page="listings"] .lp-body {
           grid-template-columns: 280px minmax(0, 1fr) 300px !important;
+        }
+      }
+
+      /* 방문자 통계 박스(#visitorCounter) 위치 고정.
+         PC: .lp-sidebar가 display:flex + gap:14px라서 대표번호 박스와 자동으로 간격이 생기지만,
+         모바일(max-width:768px)은 .lp-sidebar가 display:block으로 전환되어 flex gap이 적용되지 않아
+         카테고리 알약 목록 바로 아래에 여백 없이 붙어버리는 문제가 있었다.
+         여기서 명시적으로 여백을 주고, position/z-index를 고정해 지도 위로 겹치지 않게 한다. */
+      body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+        position: static !important;
+        z-index: 0 !important;
+        margin-top: 14px !important;
+      }
+      @media (max-width: 768px) {
+        body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+          margin: 12px 16px 16px !important;
         }
       }
     </style>
@@ -240,57 +256,48 @@
       <section class="cat-cards-section">
         <div class="cat-cards-grid">
 
-          <a class="cat-card" href="listings.html?category=공장창고">
+          <a class="cat-card" href="listings.html">
+            <div class="cat-card-img" style="background:linear-gradient(135deg, #0A1F5C, #1c3f8f);"></div>
+            <div class="cat-card-overlay"></div>
+            <div class="cat-card-body">
+              <span class="cat-card-name">전체 매물</span>
+              <span class="cat-card-more">전체보기 →</span>
+            </div>
+          </a>
+
+          <a class="cat-card" href="factory-warehouse.html">
             <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400')"></div>
             <div class="cat-card-overlay"></div>
             <div class="cat-card-body">
               <span class="cat-card-name">공장·창고</span>
-              <span class="cat-card-more">전체보기 →</span>
+              <span class="cat-card-more">전문관 보기 →</span>
             </div>
           </a>
 
-          <a class="cat-card" href="listings.html?category=상가사무실">
+          <a class="cat-card" href="commercial-office.html">
             <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400')"></div>
             <div class="cat-card-overlay"></div>
             <div class="cat-card-body">
               <span class="cat-card-name">상가·사무실</span>
-              <span class="cat-card-more">전체보기 →</span>
+              <span class="cat-card-more">전문관 보기 →</span>
             </div>
           </a>
 
-          <a class="cat-card" href="listings.html?category=토지">
+          <a class="cat-card" href="land.html">
             <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400')"></div>
             <div class="cat-card-overlay"></div>
             <div class="cat-card-body">
               <span class="cat-card-name">토지</span>
-              <span class="cat-card-more">전체보기 →</span>
+              <span class="cat-card-more">전문관 보기 →</span>
             </div>
           </a>
 
-          <a class="cat-card" href="listings.html?category=주거용">
+          <a class="cat-card" href="residential.html">
             <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400')"></div>
             <div class="cat-card-overlay"></div>
             <div class="cat-card-body">
               <span class="cat-card-name">주거용<br><span class="cat-card-sub">아파트·오피스텔</span></span>
-              <span class="cat-card-more">전체보기 →</span>
-            </div>
-          </a>
-
-          <a class="cat-card" href="listings.html?category=단독전원주택">
-            <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400')"></div>
-            <div class="cat-card-overlay"></div>
-            <div class="cat-card-body">
-              <span class="cat-card-name">단독·전원주택</span>
-              <span class="cat-card-more">전체보기 →</span>
-            </div>
-          </a>
-
-          <a class="cat-card" href="listings.html?category=건물빌딩">
-            <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400')"></div>
-            <div class="cat-card-overlay"></div>
-            <div class="cat-card-body">
-              <span class="cat-card-name">건물·빌딩</span>
-              <span class="cat-card-more">전체보기 →</span>
+              <span class="cat-card-more">전문관 보기 →</span>
             </div>
           </a>
 

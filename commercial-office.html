@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -53,19 +54,50 @@
       .office-section { padding:40px 0 60px; }
       .office-section-title { font-size:1.2rem; font-weight:800; color:#0f172a; margin:0 0 18px; }
 
+      /* 전체/상가/사무실 필터 */
+      .office-filter-bar { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+      .office-filter-btn {
+        padding:9px 20px; border-radius:999px; border:1.5px solid #e2e8f0;
+        background:#fff; color:#475569; font-size:14px; font-weight:700;
+        cursor:pointer; transition:background .15s, border-color .15s, color .15s;
+      }
+      .office-filter-btn:hover { border-color:var(--green); color:var(--green); }
+      .office-filter-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+      /* 지도형 매물보기 */
+      .office-map-wrap { margin-bottom:24px; }
+      .office-map { width:100%; height:420px; border-radius:14px; overflow:hidden; background:#e2e8f0; position:relative; }
+      .office-map-loading {
+        position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+        color:#64748b; font-size:14px; background:#eef1f5;
+      }
+      .co-iw { font-family:"Pretendard","Noto Sans KR",sans-serif; padding:10px 12px; min-width:180px; }
+      .co-iw-title { font-size:13.5px; font-weight:800; color:#0f172a; margin-bottom:3px; }
+      .co-iw-price { font-size:14px; font-weight:800; color:var(--green); margin-bottom:2px; }
+      .co-iw-area { font-size:12px; color:#64748b; margin-bottom:8px; }
+      .co-iw-link {
+        display:inline-block; font-size:12.5px; font-weight:700; color:#fff;
+        background:var(--navy); padding:6px 12px; border-radius:6px; text-decoration:none;
+      }
+
       .office-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px; }
       .office-card { display:block; background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:transform .15s, box-shadow .15s; }
-      .office-card:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.1); }
+      .office-card:hover, .office-card.is-active { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.1); }
+      .office-card.is-active { outline:2px solid var(--green); outline-offset:-2px; }
       .office-card-img { width:100%; aspect-ratio:4/3; object-fit:cover; background:#e2e8f0; display:block; }
       .office-card-noimg { width:100%; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; background:#f1f5f9; }
       .office-card-body { padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
       .office-card-badges { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:2px; }
       .office-card-badge { font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:999px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
       .office-card-badge.deal { background:var(--green-soft); color:var(--green); border-color:#cde7d9; }
-      .office-card-title { font-size:14px; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .office-card-price { font-size:15px; font-weight:800; color:var(--green); }
-      .office-card-area  { font-size:12px; color:#64748b; }
+      .office-card-title { font-size:16px; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .office-card-price { font-size:19px; font-weight:900; color:var(--green); letter-spacing:-0.2px; }
+      .office-card-area  { font-size:13.5px; color:#475569; font-weight:600; }
       .office-card-addr  { font-size:12px; color:#94a3b8; }
+
+      @media (max-width:768px) {
+        .office-map { height:280px; }
+      }
 
       .office-empty, .office-loading { grid-column:1/-1; text-align:center; padding:60px 20px; color:#9ca3af; font-size:14px; }
       .office-error { color:#dc2626; }
@@ -120,6 +152,19 @@
     <section class="office-section">
       <div class="container">
         <h2 class="office-section-title">상가·사무실 매물</h2>
+
+        <div class="office-filter-bar" id="officeFilterBar">
+          <button type="button" class="office-filter-btn active" data-filter="all">전체</button>
+          <button type="button" class="office-filter-btn" data-filter="상가">상가</button>
+          <button type="button" class="office-filter-btn" data-filter="사무실">사무실</button>
+        </div>
+
+        <div class="office-map-wrap">
+          <div id="officeMap" class="office-map">
+            <div class="office-map-loading">📍 지도를 불러오는 중입니다…</div>
+          </div>
+        </div>
+
         <div id="officeGrid" class="office-grid">
           <p class="office-loading">매물을 불러오는 중입니다…</p>
         </div>
@@ -180,6 +225,13 @@
       import { supabase } from './supabase-config.js';
 
       const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+      // ── 지도/필터 상태 ──
+      let map = null;
+      let markers = [];        // [{ item, marker, position }]
+      let activeInfowindow = null;
+      let allItems = [];
+      let currentFilter = 'all'; // all | 상가 | 사무실
 
       /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 (listing-detail.html과 동일 규칙) */
       function flattenListingRow(row) {
@@ -272,7 +324,7 @@
           .concat((item.stickers || []).filter(Boolean).map(s => `<span class="office-card-badge">${esc(s)}</span>`))
           .join('');
         return `
-          <a class="office-card" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
+          <a class="office-card" data-id="${esc(item.id)}" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
             ${img
               ? `<img class="office-card-img" src="${esc(img)}" alt="${esc(item.title)}" loading="lazy" onerror="this.style.display='none'" />`
               : `<div class="office-card-noimg">등록된 이미지 없음</div>`}
@@ -285,6 +337,177 @@
             </div>
           </a>`;
       }
+
+      /* ══════════ 지도형 매물보기 (전체/상가/사무실 필터와 카드-마커 동기화) ══════════ */
+
+      const getLat = i => { const v = i.lat ?? i.latitude ?? null; return (v != null && !isNaN(Number(v))) ? Number(v) : null; };
+      const getLng = i => { const v = i.lng ?? i.longitude ?? null; return (v != null && !isNaN(Number(v))) ? Number(v) : null; };
+
+      /* 좌표가 없는 매물의 geocoding용 주소 후보 목록 (mapAddress 우선, 없으면 address/displayAddress 조합) */
+      function addressCandidates(item) {
+        const list = [];
+        const add = v => { const c = String(v || '').replace(/\s+/g, ' ').trim(); if (c && !list.includes(c)) list.push(c); };
+        add(item.mapAddress);
+        add(item.map_address);
+        add(item.address);
+        if (item.displayAddress && item.address && item.displayAddress !== item.address) add(`${item.displayAddress} ${item.address}`);
+        add(item.displayAddress);
+        add(item.publicAddress);
+        return list;
+      }
+
+      function ensureKakao(cb, onFail) {
+        if (window.kakao && window.kakao.maps) { kakao.maps.load(cb); return; }
+        let tries = 0;
+        const wait = () => {
+          if (window.kakao && window.kakao.maps) { kakao.maps.load(cb); return; }
+          if (++tries > 50) { if (onFail) onFail(); return; }
+          setTimeout(wait, 100);
+        };
+        wait();
+      }
+
+      function iwContent(item) {
+        const areaText = buildAreaText(item) || '';
+        return `<div class="co-iw">
+          <div class="co-iw-title">${esc(item.title || '제목 없음')}</div>
+          <div class="co-iw-price">${esc(buildPriceText(item))}</div>
+          ${areaText ? `<div class="co-iw-area">${esc(areaText)}</div>` : ''}
+          <a class="co-iw-link" href="listing-detail.html?id=${encodeURIComponent(item.id)}">상세보기 →</a>
+        </div>`;
+      }
+
+      function clearMarkers() {
+        markers.forEach(m => m.marker.setMap(null));
+        markers = [];
+        if (activeInfowindow) { activeInfowindow.close(); activeInfowindow = null; }
+      }
+
+      function addMarker(item, position) {
+        const marker = new kakao.maps.Marker({ position, map });
+        kakao.maps.event.addListener(marker, 'click', () => {
+          if (activeInfowindow) activeInfowindow.close();
+          const iw = new kakao.maps.InfoWindow({ content: iwContent(item), removable: true });
+          iw.open(map, marker);
+          activeInfowindow = iw;
+        });
+        markers.push({ item, marker, position });
+      }
+
+      function tryGeocode(geocoder, candidates, idx, done) {
+        if (idx >= candidates.length) { done(null, null); return; }
+        geocoder.addressSearch(candidates[idx], (result, status) => {
+          if (status === kakao.maps.services.Status.OK && result[0]) {
+            done(Number(result[0].y), Number(result[0].x));
+          } else {
+            tryGeocode(geocoder, candidates, idx + 1, done);
+          }
+        });
+      }
+
+      function geocodeSequential(geocoder, items, idx) {
+        if (idx >= items.length || !map) return;
+        const item = items[idx];
+        tryGeocode(geocoder, addressCandidates(item), 0, (lat, lng) => {
+          if (lat != null && map) addMarker(item, new kakao.maps.LatLng(lat, lng));
+          setTimeout(() => geocodeSequential(geocoder, items, idx + 1), 60);
+        });
+      }
+
+      function renderMarkers(items) {
+        if (!map) return;
+        clearMarkers();
+        const withCoord = [];
+        const withoutCoord = [];
+        items.forEach(item => {
+          const lat = getLat(item), lng = getLng(item);
+          if (lat != null && lng != null) withCoord.push({ item, lat, lng });
+          else withoutCoord.push(item);
+        });
+
+        withCoord.forEach(({ item, lat, lng }) => addMarker(item, new kakao.maps.LatLng(lat, lng)));
+
+        if (withCoord.length === 1) {
+          map.setCenter(new kakao.maps.LatLng(withCoord[0].lat, withCoord[0].lng));
+          map.setLevel(5);
+        } else if (withCoord.length > 1) {
+          const bounds = new kakao.maps.LatLngBounds();
+          withCoord.forEach(({ lat, lng }) => bounds.extend(new kakao.maps.LatLng(lat, lng)));
+          map.setBounds(bounds);
+        }
+
+        // 좌표가 없는 매물은 주소 geocoding으로 최선을 다해 표시 (실패해도 오류 없이 무시)
+        if (withoutCoord.length && window.kakao && kakao.maps.services) {
+          const geocoder = new kakao.maps.services.Geocoder();
+          geocodeSequential(geocoder, withoutCoord.slice(0, 30), 0);
+        }
+      }
+
+      function highlightMarker(id) {
+        const found = markers.find(m => String(m.item.id) === String(id));
+        if (!found || !map) return;
+        map.panTo(found.position);
+        if (activeInfowindow) activeInfowindow.close();
+        const iw = new kakao.maps.InfoWindow({ content: iwContent(found.item), removable: true });
+        iw.open(map, found.marker);
+        activeInfowindow = iw;
+      }
+
+      function bindCardHover() {
+        document.querySelectorAll('#officeGrid .office-card').forEach(card => {
+          card.addEventListener('mouseenter', () => highlightMarker(card.dataset.id));
+        });
+      }
+
+      /* category2 값이 정확히 "상가"/"사무실"이 아니라 "상가사무실", "지식산업센터",
+         "점포", "오피스"처럼 들어있어도 해당 필터에 걸리도록 포함(substring) 매칭 사용.
+         "상가사무실"처럼 두 단어를 모두 포함하는 값은 상가/사무실 양쪽 필터에 모두 노출됨. */
+      function matchesOfficeFilter(item, filter) {
+        if (filter === 'all') return true;
+        const raw = String(item.category2 || item.propertyType || '').trim();
+        if (!raw) return false;
+        if (filter === '상가') return raw.includes('상가') || /점포|매장/.test(raw);
+        if (filter === '사무실') return raw.includes('사무실') || /오피스|지식산업/.test(raw);
+        return raw === filter;
+      }
+
+      function getFilteredItems() {
+        if (currentFilter === 'all') return allItems;
+        return allItems.filter(i => matchesOfficeFilter(i, currentFilter));
+      }
+
+      function renderAll() {
+        const gridEl = document.getElementById('officeGrid');
+        const filtered = getFilteredItems();
+        gridEl.innerHTML = filtered.length
+          ? filtered.map(cardHTML).join('')
+          : '<p class="office-empty">해당 조건의 매물이 없습니다.</p>';
+        bindCardHover();
+        if (map) renderMarkers(filtered);
+      }
+
+      function initMap() {
+        const mapEl = document.getElementById('officeMap');
+        if (!mapEl) return;
+        ensureKakao(() => {
+          mapEl.innerHTML = '';
+          map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(37.7512, 126.7820), level: 7 });
+          if (typeof map.setDraggable === 'function') map.setDraggable(true);
+          if (typeof map.setZoomable === 'function') map.setZoomable(true);
+          renderMarkers(getFilteredItems());
+        }, () => {
+          mapEl.innerHTML = '<div class="office-map-loading">지도를 불러오지 못했습니다.</div>';
+        });
+      }
+
+      document.getElementById('officeFilterBar')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.office-filter-btn');
+        if (!btn) return;
+        document.querySelectorAll('#officeFilterBar .office-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderAll();
+      });
 
       async function init() {
         const gridEl = document.getElementById('officeGrid');
@@ -300,13 +523,14 @@
           return;
         }
 
-        const items = (data || []).map(flattenListingRow);
-        if (!items.length) {
+        allItems = (data || []).map(flattenListingRow);
+        if (!allItems.length) {
           gridEl.innerHTML = '<p class="office-empty">현재 등록된 상가·사무실 매물이 없습니다. 전화 또는 카카오 상담으로 문의해주세요.</p>';
           return;
         }
 
-        gridEl.innerHTML = items.map(cardHTML).join('');
+        renderAll();
+        initMap();
       }
 
       init();

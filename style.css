@@ -3555,6 +3555,25 @@ body[data-page="listings"] .lp-header-search .lp-search-reset {
 
 }
 
+/* 태블릿 구간(769px~1099px) 전용 — 헤더가 브랜드+메뉴+검색폼(grid: auto auto 1fr) 한 줄에
+   들어가지 못해 nav-wrap이 가로로 넘치는 문제를 검색폼 줄바꿈으로 해결.
+   브랜드+메뉴는 1행에 그대로 두고, 검색폼만 2행 전체 폭으로 내려서 가로 스크롤을 없앤다.
+   PC(1440px 이상)의 grid 3단 레이아웃과 모바일(≤768px)의 기존 2행 레이아웃에는 영향 없음. */
+@media (min-width: 769px) and (max-width: 1099px) {
+  body[data-page="listings"] .site-header .container.nav-wrap {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    height: auto !important;
+    padding: 12px 24px !important;
+  }
+
+  body[data-page="listings"] .lp-header-search {
+    flex: 1 1 100% !important;
+    max-width: none !important;
+    margin: 8px 0 0 0 !important;
+  }
+}
+
 /* 매물보기 상단 헤더 3단 정렬 복구 */
 
 body[data-page="listings"] .site-header {
@@ -4163,15 +4182,15 @@ body[data-page="listings"] .side-consult-link-box {
 
   flex-shrink: 0 !important;
 
-  flex-grow: 1 !important;   /* 사이드바 남은 공간 채우기 */
+  flex-grow: 0 !important;   /* 전화문의 박스와 동일하게 콘텐츠 높이만큼만 차지 (남는 공간 채우지 않음) */
 
   background: #ffffff !important;
 
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
 
   border-radius: 8px !important;
 
-  padding: 12px 12px 10px !important;
+  padding: 14px 14px 12px !important;
 
   display: flex !important;
 
@@ -4368,15 +4387,15 @@ body[data-page="listings"] .cat-cards-section {
 
 }
 
-/* 6개 카드 가로 1줄 정렬 (PC) */
+/* 5개 카드 가로 1줄 정렬 (PC) */
 
 body[data-page="listings"] .cat-cards-grid {
 
   display: grid !important;
 
-  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
 
-  gap: 6px !important;
+  gap: 8px !important;
 
 }
 
