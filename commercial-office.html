@@ -65,9 +65,10 @@
       .office-filter-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
 
       /* 지도형 매물보기 — listings.html과 동일하게 왼쪽 지도 + 오른쪽 매물 목록(.lp-panel) 2단 구조.
-         .lp-panel / .lp-panel-hd-sticky / .lp-panel-scroll-body / .lp-panel-section-body / .lp-mini-card 는
-         style.css에 이미 정의된 listings.html 공용 컴포넌트 클래스를 그대로 재사용(스타일 추가 정의 없음). */
-      .co-viewer { display:grid; grid-template-columns: minmax(0,1fr) 380px; gap:16px; margin-bottom:24px; }
+         .lp-panel / .lp-panel-hd-sticky / .lp-panel-scroll-body 는 style.css의 listings.html 공용
+         컴포넌트 클래스를 재사용(스타일 추가 정의 없음)하되, 카드 자체는 "추천매물 미니카드"가 아니라
+         전문관 전용 1열 큰 카드(.co-card)를 이 페이지에서 새로 정의해 사용한다. */
+      .co-viewer { display:grid; grid-template-columns: minmax(0,1fr) 440px; gap:16px; margin-bottom:24px; }
       .co-viewer .office-map { height:560px; }
       /* style.css의 전역 .lp-panel{grid-column:3}(listings.html 3단 그리드 전용)이 여기 2단 그리드에
          그대로 상속되어 3번째 트랙이 암시적으로 생기는 것을 방지 — 실제 위치(2번째 자식)로 명시 고정 */
@@ -85,6 +86,31 @@
         display:inline-block; font-size:12.5px; font-weight:700; color:#fff;
         background:var(--navy); padding:6px 12px; border-radius:6px; text-decoration:none;
       }
+
+      /* 전문관 전용 1열 큰 카드 — listings.html .lp-all-card와 같은 톤(흰 배경/#E5E7EB 테두리/
+         10~12px 라운드/hover 그림자/가격 #F97316 강조)을 패널 폭에 맞춰 확대한 버전 */
+      .co-card-list { display:flex; flex-direction:column; gap:14px; }
+      .co-card {
+        display:block; background:#fff; border:1px solid #E5E7EB; border-radius:12px;
+        overflow:hidden; text-decoration:none; color:inherit;
+        box-shadow:0 2px 8px rgba(7,31,95,0.05); transition:transform .15s, box-shadow .15s;
+      }
+      .co-card:hover { transform:translateY(-2px); box-shadow:0 5px 18px rgba(7,31,95,0.12); }
+      .co-card-img-wrap { position:relative; aspect-ratio:4/3; background:#E5E7EB; }
+      .co-card-img { width:100%; height:100%; object-fit:cover; display:block; }
+      .co-card-noimg { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; }
+      .co-card-cat-badge {
+        position:absolute; top:10px; left:10px; background:#0A1F5C; color:#fff;
+        font-size:12px; font-weight:700; padding:4px 10px; border-radius:5px;
+      }
+      .co-card-body { padding:14px 16px 16px; display:flex; flex-direction:column; gap:7px; }
+      .co-card-title {
+        font-size:17px; font-weight:800; color:#111827; line-height:1.35;
+        display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+      }
+      .co-card-price { font-size:21px; font-weight:900; color:#F97316; letter-spacing:-0.3px; }
+      .co-card-area { font-size:14px; color:#374151; font-weight:600; }
+      .co-card-addr { font-size:13.5px; color:#6B7280; }
 
       @media (max-width:768px) {
         .co-viewer { grid-template-columns: 1fr; }
@@ -164,7 +190,7 @@
               <span class="lp-panel-hd-count" id="officeListCount">0건</span>
             </div>
             <div class="lp-panel-scroll-body">
-              <div id="officeGrid" class="lp-panel-section-body">
+              <div id="officeGrid" class="co-card-list">
                 <p class="office-loading">매물을 불러오는 중입니다…</p>
               </div>
             </div>
@@ -328,30 +354,26 @@
         return 'deal-badge-etc';
       }
 
-      /* listings.html 오른쪽 패널의 .lp-mini-card와 동일한 마크업으로 카드 렌더링 */
+      /* 전문관 전용 1열 큰 카드 렌더링 (listings.html의 "전체 매물" 카드와 같은 톤, 크기는 확대) */
       function cardHTML(item) {
         const img = Array.isArray(item.imageUrls) && item.imageUrls.length ? item.imageUrls[0] : null;
         const areaText = buildAreaText(item);
         const typeTag = item.category2 || '상가·사무실';
         const dealType = item.dealType || '거래유형 미정';
         return `
-          <a class="lp-mini-card" data-id="${esc(item.id)}" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
-            <div class="lp-mini-img-wrap">
+          <a class="co-card" data-id="${esc(item.id)}" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
+            <div class="co-card-img-wrap">
               ${img
-                ? `<img class="lp-mini-img" src="${esc(img)}" alt="${esc(item.title)}" loading="lazy" onerror="this.style.display='none'" />`
-                : `<div class="lp-mini-img lp-mini-img--sample" style="display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;">이미지 없음</div>`}
+                ? `<img class="co-card-img" src="${esc(img)}" alt="${esc(item.title)}" loading="lazy" onerror="this.style.display='none'" />`
+                : `<div class="co-card-noimg">등록된 이미지 없음</div>`}
+              <span class="co-card-cat-badge">${esc(typeTag)}</span>
             </div>
-            <div class="lp-mini-body">
-              <div class="mc-top-row">
-                <span class="lp-mini-type-tag">${esc(typeTag)}</span>
-              </div>
-              <div class="lp-mini-title">${esc(item.title || '제목 없음')}</div>
-              <div class="lp-mini-price-row">
-                <span class="deal-badge ${dealBadgeClass(item.dealType)}">${esc(dealType)}</span>
-                <span class="lp-mini-price">${esc(buildPriceText(item))}</span>
-              </div>
-              <div class="lp-mini-addr">${esc(item.address || '')}</div>
-              ${areaText ? `<div class="lp-mini-area">${esc(areaText)}</div>` : ''}
+            <div class="co-card-body">
+              <span class="deal-badge ${dealBadgeClass(item.dealType)}">${esc(dealType)}</span>
+              <div class="co-card-title">${esc(item.title || '제목 없음')}</div>
+              <div class="co-card-price">${esc(buildPriceText(item))}</div>
+              ${areaText ? `<div class="co-card-area">${esc(areaText)}</div>` : ''}
+              <div class="co-card-addr">${esc(item.address || '')}</div>
             </div>
           </a>`;
       }
@@ -472,7 +494,7 @@
       }
 
       function bindCardHover() {
-        document.querySelectorAll('#officeGrid .lp-mini-card').forEach(card => {
+        document.querySelectorAll('#officeGrid .co-card').forEach(card => {
           card.addEventListener('mouseenter', () => highlightMarker(card.dataset.id));
         });
       }
