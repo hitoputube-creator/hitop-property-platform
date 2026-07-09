@@ -89,12 +89,17 @@
 
       /* 전문관 전용 2열 카드 — listings.html 오른쪽 추천매물 패널 톤을 참고해
          패널 안에서 너무 크거나 작지 않게 정돈한 버전 */
-      .co-card-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .co-card-list {
+        display:grid !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:12px !important;
+      }
       .co-card {
         display:block; background:#fff; border:1px solid #E5E7EB; border-radius:12px;
         overflow:hidden; text-decoration:none; color:inherit;
         box-shadow:0 2px 8px rgba(7,31,95,0.05); transition:transform .15s, box-shadow .15s;
         min-width:0;
+        width:auto !important;
       }
       .co-card:hover { transform:translateY(-2px); box-shadow:0 5px 18px rgba(7,31,95,0.12); }
       .co-card-img-wrap { position:relative; aspect-ratio:4/3; background:#E5E7EB; }
@@ -125,7 +130,7 @@
       }
 
       @media (max-width:520px) {
-        .co-card-list { grid-template-columns:1fr; }
+        .co-card-list { grid-template-columns:1fr !important; }
       }
 
       .office-empty, .office-loading { grid-column:1/-1; text-align:center; padding:60px 20px; color:#9ca3af; font-size:14px; }
