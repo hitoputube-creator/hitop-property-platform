@@ -64,9 +64,15 @@
       .office-filter-btn:hover { border-color:var(--green); color:var(--green); }
       .office-filter-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
 
-      /* 지도형 매물보기 */
-      .office-map-wrap { margin-bottom:24px; }
-      .office-map { width:100%; height:420px; border-radius:14px; overflow:hidden; background:#e2e8f0; position:relative; }
+      /* 지도형 매물보기 — listings.html과 동일하게 왼쪽 지도 + 오른쪽 매물 목록(.lp-panel) 2단 구조.
+         .lp-panel / .lp-panel-hd-sticky / .lp-panel-scroll-body / .lp-panel-section-body / .lp-mini-card 는
+         style.css에 이미 정의된 listings.html 공용 컴포넌트 클래스를 그대로 재사용(스타일 추가 정의 없음). */
+      .co-viewer { display:grid; grid-template-columns: minmax(0,1fr) 380px; gap:16px; margin-bottom:24px; }
+      .co-viewer .office-map { height:560px; }
+      /* style.css의 전역 .lp-panel{grid-column:3}(listings.html 3단 그리드 전용)이 여기 2단 그리드에
+         그대로 상속되어 3번째 트랙이 암시적으로 생기는 것을 방지 — 실제 위치(2번째 자식)로 명시 고정 */
+      .co-viewer .lp-panel { grid-column: 2; height:560px; border-radius:14px; border:1px solid #e2e8f0; }
+      .office-map { width:100%; border-radius:14px; overflow:hidden; background:#e2e8f0; position:relative; }
       .office-map-loading {
         position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
         color:#64748b; font-size:14px; background:#eef1f5;
@@ -80,23 +86,11 @@
         background:var(--navy); padding:6px 12px; border-radius:6px; text-decoration:none;
       }
 
-      .office-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px; }
-      .office-card { display:block; background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:transform .15s, box-shadow .15s; }
-      .office-card:hover, .office-card.is-active { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.1); }
-      .office-card.is-active { outline:2px solid var(--green); outline-offset:-2px; }
-      .office-card-img { width:100%; aspect-ratio:4/3; object-fit:cover; background:#e2e8f0; display:block; }
-      .office-card-noimg { width:100%; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; background:#f1f5f9; }
-      .office-card-body { padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
-      .office-card-badges { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:2px; }
-      .office-card-badge { font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:999px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
-      .office-card-badge.deal { background:var(--green-soft); color:var(--green); border-color:#cde7d9; }
-      .office-card-title { font-size:16px; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .office-card-price { font-size:19px; font-weight:900; color:var(--green); letter-spacing:-0.2px; }
-      .office-card-area  { font-size:13.5px; color:#475569; font-weight:600; }
-      .office-card-addr  { font-size:12px; color:#94a3b8; }
-
       @media (max-width:768px) {
-        .office-map { height:280px; }
+        .co-viewer { grid-template-columns: 1fr; }
+        .co-viewer .office-map { height:280px; }
+        .co-viewer .lp-panel { grid-column: 1; height:auto; }
+        .co-viewer .lp-panel-scroll-body { flex:none; overflow:visible; max-height:none; }
       }
 
       .office-empty, .office-loading { grid-column:1/-1; text-align:center; padding:60px 20px; color:#9ca3af; font-size:14px; }
@@ -159,14 +153,22 @@
           <button type="button" class="office-filter-btn" data-filter="사무실">사무실</button>
         </div>
 
-        <div class="office-map-wrap">
+        <div class="co-viewer">
           <div id="officeMap" class="office-map">
             <div class="office-map-loading">📍 지도를 불러오는 중입니다…</div>
           </div>
-        </div>
 
-        <div id="officeGrid" class="office-grid">
-          <p class="office-loading">매물을 불러오는 중입니다…</p>
+          <div class="lp-panel">
+            <div class="lp-panel-hd-sticky">
+              <span class="lp-panel-hd-title">상가·사무실 매물</span>
+              <span class="lp-panel-hd-count" id="officeListCount">0건</span>
+            </div>
+            <div class="lp-panel-scroll-body">
+              <div id="officeGrid" class="lp-panel-section-body">
+                <p class="office-loading">매물을 불러오는 중입니다…</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="office-cta">
@@ -317,23 +319,39 @@
         return parts.join(' / ') || null;
       }
 
+      /* 거래유형별 배지 색상 클래스 (style.css 공용 .deal-badge-* 재사용) */
+      function dealBadgeClass(dealType) {
+        if (dealType === '매매') return 'deal-badge-mae';
+        if (dealType === '전세') return 'deal-badge-jeon';
+        if (dealType === '월세') return 'deal-badge-wol';
+        if (dealType === '임대') return 'deal-badge-im';
+        return 'deal-badge-etc';
+      }
+
+      /* listings.html 오른쪽 패널의 .lp-mini-card와 동일한 마크업으로 카드 렌더링 */
       function cardHTML(item) {
         const img = Array.isArray(item.imageUrls) && item.imageUrls.length ? item.imageUrls[0] : null;
         const areaText = buildAreaText(item);
-        const badges = [`<span class="office-card-badge deal">${esc(item.dealType || '거래유형 미정')}</span>`]
-          .concat((item.stickers || []).filter(Boolean).map(s => `<span class="office-card-badge">${esc(s)}</span>`))
-          .join('');
+        const typeTag = item.category2 || '상가·사무실';
+        const dealType = item.dealType || '거래유형 미정';
         return `
-          <a class="office-card" data-id="${esc(item.id)}" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
-            ${img
-              ? `<img class="office-card-img" src="${esc(img)}" alt="${esc(item.title)}" loading="lazy" onerror="this.style.display='none'" />`
-              : `<div class="office-card-noimg">등록된 이미지 없음</div>`}
-            <div class="office-card-body">
-              <div class="office-card-badges">${badges}</div>
-              <div class="office-card-title">${esc(item.title || '제목 없음')}</div>
-              <div class="office-card-price">${esc(buildPriceText(item))}</div>
-              ${areaText ? `<div class="office-card-area">${esc(areaText)}</div>` : ''}
-              <div class="office-card-addr">${esc(item.address || '')}</div>
+          <a class="lp-mini-card" data-id="${esc(item.id)}" href="listing-detail.html?id=${encodeURIComponent(item.id)}">
+            <div class="lp-mini-img-wrap">
+              ${img
+                ? `<img class="lp-mini-img" src="${esc(img)}" alt="${esc(item.title)}" loading="lazy" onerror="this.style.display='none'" />`
+                : `<div class="lp-mini-img lp-mini-img--sample" style="display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;">이미지 없음</div>`}
+            </div>
+            <div class="lp-mini-body">
+              <div class="mc-top-row">
+                <span class="lp-mini-type-tag">${esc(typeTag)}</span>
+              </div>
+              <div class="lp-mini-title">${esc(item.title || '제목 없음')}</div>
+              <div class="lp-mini-price-row">
+                <span class="deal-badge ${dealBadgeClass(item.dealType)}">${esc(dealType)}</span>
+                <span class="lp-mini-price">${esc(buildPriceText(item))}</span>
+              </div>
+              <div class="lp-mini-addr">${esc(item.address || '')}</div>
+              ${areaText ? `<div class="lp-mini-area">${esc(areaText)}</div>` : ''}
             </div>
           </a>`;
       }
@@ -454,7 +472,7 @@
       }
 
       function bindCardHover() {
-        document.querySelectorAll('#officeGrid .office-card').forEach(card => {
+        document.querySelectorAll('#officeGrid .lp-mini-card').forEach(card => {
           card.addEventListener('mouseenter', () => highlightMarker(card.dataset.id));
         });
       }
@@ -478,10 +496,12 @@
 
       function renderAll() {
         const gridEl = document.getElementById('officeGrid');
+        const countEl = document.getElementById('officeListCount');
         const filtered = getFilteredItems();
         gridEl.innerHTML = filtered.length
           ? filtered.map(cardHTML).join('')
           : '<p class="office-empty">해당 조건의 매물이 없습니다.</p>';
+        if (countEl) countEl.textContent = `${filtered.length}건`;
         bindCardHover();
         if (map) renderMarkers(filtered);
       }
