@@ -6797,76 +6797,121 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
    - #cnt-* / #visitorCounter 등 app.js가 참조하는 id는 이 섹션에서 사용하지 않음
    ══════════════════════════════════════════════════════════════ */
 
+/* [업데이트] 전문관 페이지에서 좌측 사이드바 콘텐츠가 세로 공간을 초과할 때
+   .lp-sidebar-section의 overflow:hidden과 flex 기본 축소(flex-shrink:1)가 맞물려
+   "매물 구분" 목록 하단 항목이 잘려 보이는 문제가 있었다. 아래에서
+   1) 섹션 래퍼의 카드 껍데기(테두리/그림자/overflow:hidden)를 제거하고 flex-shrink:0을 부여해
+      항목이 압축·클리핑되지 않게 하고,
+   2) 카테고리 항목을 개별 박스가 아닌 하나의 슬림한 리스트(구분선 + 좌측 포인트 강조)로 바꾸고,
+   3) 방문자 박스의 바깥 래퍼(.side-consult-link-box) 카드 스타일을 제거해 안쪽
+      .side-visitor-counter(네이비 카드) 하나만 보이도록 이중 박스를 해소하고,
+   4) 방문자 박스에 margin-top:auto를 줘 사이드바 맨 아래(=지도/전문관 카드 하단)에
+      자연스럽게 붙도록 정렬한다. */
 @media (min-width: 769px) {
-  /* 사이드바 전체 여백 */
+  /* 사이드바 전체 여백 — 흰 배경 위에 슬림 리스트 + 카드 1~2개만 배치 */
   body[data-page="listings"] .lp-sidebar {
-    padding: 14px 12px !important;
-    gap: 14px !important;
-    background: #F5F7FA !important;
+    padding: 14px 14px !important;
+    gap: 12px !important;
+    background: #ffffff !important;
   }
 
-  /* 카드형 섹션 래퍼 */
+  /* 섹션 래퍼 — 카드 껍데기 제거(박스 중첩 방지), 하위 항목이 절대 잘리지 않도록 overflow 해제 */
   body[data-page="listings"] .lp-sidebar .lp-sidebar-section {
-    border: 1px solid #E5EAF2 !important;
-    border-radius: 14px !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
-    overflow: hidden !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    flex-shrink: 0 !important; /* 세로 공간이 부족해도 섹션이 눌려서 잘리지 않게 함 */
     margin-bottom: 0 !important; /* gap으로 간격 통일 */
   }
 
-  /* 세련된 섹션 헤더 */
+  /* "매물 구분" 라벨 — 카드 헤더가 아닌 얇은 네이비 라벨 바 */
   body[data-page="listings"] .lp-sidebar .lp-sidebar-header {
-    height: 46px !important;
-    line-height: 46px !important;
-    padding: 0 16px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    padding: 0 12px !important;
     background: #0A1F5C !important;
     color: #ffffff !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     font-weight: 800 !important;
     letter-spacing: 0.2px !important;
     text-align: left !important;
-    border-left: 4px solid #C9A84C !important;
+    border-left: 3px solid #C9A84C !important;
+    border-radius: 6px !important;
     box-sizing: border-box !important;
   }
 
-  /* 매물 구분 — 작고 깔끔한 버튼 리스트 (실제 링크, JS 필터 아님) */
+  /* 매물 구분 — 개별 박스 대신 얇은 구분선 리스트 (실제 링크, JS 필터 아님) */
   body[data-page="listings"] .lp-sidebar .lp-catlist-item {
-    display: block !important;
-    height: 48px !important;
-    line-height: 48px !important;
-    padding: 0 16px !important;
-    margin: 6px 10px !important;
-    border-radius: 8px !important;
-    background: #ffffff !important;
-    border: 1px solid #E5EAF2 !important;
-    color: #0A1F5C !important;
-    font-size: 15px !important;
-    font-weight: 800 !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 37px !important;
+    line-height: normal !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #EEF1F6 !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #334155 !important;
+    font-size: 14.5px !important;
+    font-weight: 700 !important;
     text-decoration: none !important;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
   }
-  body[data-page="listings"] .lp-sidebar .lp-catlist-item:first-of-type { margin-top: 10px !important; }
-  body[data-page="listings"] .lp-sidebar .lp-catlist-item:last-of-type { margin-bottom: 10px !important; }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item:last-of-type {
+    border-bottom: none !important;
+  }
   body[data-page="listings"] .lp-sidebar .lp-catlist-item:hover {
     background: #F5F7FA !important;
-    border-color: #C9A84C !important;
+    border-left-color: #C9A84C !important;
+    color: #0A1F5C !important;
   }
   /* 현재 보고 있는 전문관 페이지 표시 (listings.html은 "전체 매물", factory-warehouse.html은
      "공장·창고 매물" 링크에 aria-current="page"를 부여해 항상 켜짐 상태로 보이게 한다) */
   body[data-page="listings"] .lp-sidebar .lp-catlist-item[aria-current="page"] {
-    background: #F5F7FA !important;
-    border-color: #C9A84C !important;
+    background: #EEF2FB !important;
+    border-left-color: #0A1F5C !important;
+    color: #0A1F5C !important;
+    font-weight: 800 !important;
   }
 
-  /* 전화문의 / 방문자 카드 — 라운드·그림자 통일 */
-  body[data-page="listings"] .lp-sidebar .phone-inquiry-box,
-  body[data-page="listings"] .lp-sidebar .side-consult-link-box {
-    border-radius: 14px !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+  /* 전화문의 카드 — 단일 카드 유지, 눌려서 잘리지 않도록 flex-shrink 방지.
+     내부 여백/버튼 높이도 함께 슬림화해 짧은 노트북 화면에서도 스크롤 없이 잘 맞도록 함 */
+  body[data-page="listings"] .lp-sidebar .phone-inquiry-box {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05) !important;
+    flex-shrink: 0 !important;
   }
-  body[data-page="listings"] .lp-sidebar .lp-kakao-btn { border-radius: 10px !important; }
-  body[data-page="listings"] .lp-sidebar .side-visitor-counter { border-radius: 12px !important; }
+  body[data-page="listings"] .lp-sidebar .lp-contact-inner {
+    gap: 4px !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-kakao-btn {
+    border-radius: 8px !important;
+    min-height: 38px !important;
+  }
   body[data-page="listings"] .lp-sidebar .lp-phone-big { letter-spacing: -0.3px !important; }
+  /* 카카오 오픈채팅 안내 문구 — 2줄 소형 텍스트 여백 압축 */
+  body[data-page="listings"] .lp-sidebar .lp-contact-inner > p:last-child {
+    margin-top: 2px !important;
+    line-height: 1.25 !important;
+  }
+
+  /* 방문자 박스 — 바깥 래퍼는 순수 여백 컨테이너로 평평하게 만들어 이중 박스를 해소하고,
+     실제 카드 모양은 안쪽 .side-visitor-counter(네이비 그라데이션) 하나만 담당한다.
+     margin-top:auto로 사이드바(=지도+전문관 카드 높이) 맨 아래에 자연스럽게 붙인다. */
+  body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
+  }
+  body[data-page="listings"] .lp-sidebar .side-visitor-counter {
+    border-radius: 10px !important;
+  }
 }
 
 /* 모바일: 가로 스크롤 알약형 (기존 검증된 패턴 재사용) */
@@ -6904,18 +6949,21 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
   }
 }
 
-/* 방문자 통계 박스(#visitorCounter) 위치 고정.
-   PC: .lp-sidebar가 display:flex + gap:14px라서 대표번호 박스와 자동으로 간격이 생기지만,
-   모바일(max-width:768px)은 .lp-sidebar가 display:block으로 전환되어 flex gap이 적용되지 않아
-   카테고리 알약 목록 바로 아래에 여백 없이 붙어버리는 문제가 있었다.
-   여기서 명시적으로 여백을 주고, position/z-index를 고정해 지도 위로 겹치지 않게 한다. */
+/* 방문자 통계 박스(#visitorCounter) 바깥 래퍼 — 위치/이중박스 정리.
+   PC(769px 이상): 위 미디어쿼리에서 margin-top:auto로 사이드바 맨 아래(=지도/전문관 카드 하단)에
+   자연 정렬되고, 바깥 래퍼 자체는 카드 스타일이 없는 순수 컨테이너로 평평해진다.
+   모바일(max-width:768px)은 .lp-sidebar가 display:block으로 전환되어 flex 정렬이 적용되지
+   않으므로, 카테고리 알약 목록 바로 아래에 명시적 여백만 부여하고 바깥 래퍼도 동일하게 평평하게 만든다. */
 body[data-page="listings"] .lp-sidebar .side-consult-link-box {
   position: static !important;
   z-index: 0 !important;
-  margin-top: 14px !important;
 }
 @media (max-width: 768px) {
   body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
     margin: 12px 16px 16px !important;
   }
 }
