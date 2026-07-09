@@ -6805,8 +6805,11 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
    2) 카테고리 항목을 개별 박스가 아닌 하나의 슬림한 리스트(구분선 + 좌측 포인트 강조)로 바꾸고,
    3) 방문자 박스의 바깥 래퍼(.side-consult-link-box) 카드 스타일을 제거해 안쪽
       .side-visitor-counter(네이비 카드) 하나만 보이도록 이중 박스를 해소하고,
-   4) 방문자 박스에 margin-top:auto를 줘 사이드바 맨 아래(=지도/전문관 카드 하단)에
-      자연스럽게 붙도록 정렬한다. */
+   4) 상담 박스(.phone-inquiry-box)에 margin-top:auto를 줘 카테고리 목록 바로 아래가 아니라
+      사이드바 하단으로 내려오게 하고, 방문자 박스는 그 바로 아래에 기본 gap(12px)만으로
+      붙게 해 "상담 박스 + 방문자 박스"가 하나의 하단 그룹처럼 정렬되게 한다.
+      (이전에는 margin-top:auto가 방문자 박스에만 있어 상담 박스만 카테고리 아래에 뜬 채로
+      남아있고 방문자 박스만 바닥에 붙는 문제가 있었다.) */
 @media (min-width: 769px) {
   /* 사이드바 전체 여백 — 흰 배경 위에 슬림 리스트 + 카드 1~2개만 배치 */
   body[data-page="listings"] .lp-sidebar {
@@ -6877,12 +6880,17 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
     font-weight: 800 !important;
   }
 
-  /* 전화문의 카드 — 단일 카드 유지, 눌려서 잘리지 않도록 flex-shrink 방지.
-     내부 여백/버튼 높이도 함께 슬림화해 짧은 노트북 화면에서도 스크롤 없이 잘 맞도록 함 */
+  /* 전화문의(상담) 카드 — 흰 배경 + 연한 회색 테두리 + 약한 그림자로 카드 경계를 분명히 하고,
+     margin-top:auto로 카테고리 목록 바로 아래가 아니라 사이드바 하단(방문자 박스 바로 위)으로
+     내려 붙인다. flex-shrink:0으로 눌려서 잘리지 않게 하고, 내부 여백/버튼 높이는 짧은
+     노트북 화면에서도 스크롤 없이 잘 맞도록 슬림하게 유지 */
   body[data-page="listings"] .lp-sidebar .phone-inquiry-box {
+    background: #ffffff !important;
+    border: 1px solid #DCE2EA !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08) !important;
     flex-shrink: 0 !important;
+    margin-top: auto !important;
   }
   body[data-page="listings"] .lp-sidebar .lp-contact-inner {
     gap: 4px !important;
@@ -6900,14 +6908,14 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
 
   /* 방문자 박스 — 바깥 래퍼는 순수 여백 컨테이너로 평평하게 만들어 이중 박스를 해소하고,
      실제 카드 모양은 안쪽 .side-visitor-counter(네이비 그라데이션) 하나만 담당한다.
-     margin-top:auto로 사이드바(=지도+전문관 카드 높이) 맨 아래에 자연스럽게 붙인다. */
+     margin-top은 auto가 아닌 일반 gap(12px, .lp-sidebar의 flex gap)만 적용해 바로 위
+     상담 박스와 자연스러운 하단 그룹으로 붙는다 (하단 정렬 자체는 상담 박스의 margin-top:auto가 담당). */
   body[data-page="listings"] .lp-sidebar .side-consult-link-box {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
     flex-shrink: 0 !important;
-    margin-top: auto !important;
   }
   body[data-page="listings"] .lp-sidebar .side-visitor-counter {
     border-radius: 10px !important;
@@ -6950,8 +6958,9 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
 }
 
 /* 방문자 통계 박스(#visitorCounter) 바깥 래퍼 — 위치/이중박스 정리.
-   PC(769px 이상): 위 미디어쿼리에서 margin-top:auto로 사이드바 맨 아래(=지도/전문관 카드 하단)에
-   자연 정렬되고, 바깥 래퍼 자체는 카드 스타일이 없는 순수 컨테이너로 평평해진다.
+   PC(769px 이상): 위 미디어쿼리에서 상담 박스(.phone-inquiry-box)가 margin-top:auto로 먼저
+   사이드바 하단까지 내려오고, 방문자 박스는 그 바로 아래에 기본 gap(12px)만으로 붙는다.
+   바깥 래퍼 자체는 카드 스타일이 없는 순수 컨테이너로 평평해진다.
    모바일(max-width:768px)은 .lp-sidebar가 display:block으로 전환되어 flex 정렬이 적용되지
    않으므로, 카테고리 알약 목록 바로 아래에 명시적 여백만 부여하고 바깥 래퍼도 동일하게 평평하게 만든다. */
 body[data-page="listings"] .lp-sidebar .side-consult-link-box {
