@@ -2428,12 +2428,14 @@ const setupListingsPage = () => {
   });
 
   // ── 하단 카테고리 카드 클릭 이벤트 바인딩 ──
+  // href에 ?category=가 있는 경우에만 인터셉트(인페이지 카테고리뷰)하고,
+  // 그 외(예: factory-warehouse.html 같은 실제 페이지 링크)는 기본 이동 동작을 그대로 둔다.
   document.querySelectorAll('.cat-card').forEach(card => {
     card.addEventListener('click', e => {
-      e.preventDefault();
       const href = card.getAttribute('href') || '';
       const m = href.match(/[?&]category=([^&]+)/);
       if (m) {
+        e.preventDefault();
         // URL 값(공장창고, 상가사무실, 토지, 주거용, 단독전원주택, 건물빌딩)을 category1 키로 정규화
         const cat = normalizeCategoryParam(decodeURIComponent(m[1]));
         renderCategoryPanel(cat);
@@ -2447,13 +2449,17 @@ const setupListingsPage = () => {
   const urlListingId = urlParams.get('id');
   // urlCat 을 블록 밖에서도 참조할 수 있도록 함수 스코프에 선언
   const urlCat = urlCatRaw ? normalizeCategoryParam(urlCatRaw) : '';
-  if (urlCat) {
-    flt.cat = urlCat;
+  // 전문관 페이지(factory-warehouse.html 등)는 body[data-default-category]로 기본 카테고리를 지정한다.
+  // URL의 ?category= 파라미터가 있으면 그 값이 우선한다.
+  const defaultCatRaw = document.body.dataset.defaultCategory || '';
+  const initialCat = urlCat || (defaultCatRaw ? normalizeCategoryParam(defaultCatRaw) : '');
+  if (initialCat) {
+    flt.cat = initialCat;
     const catSel = document.getElementById('formCatSelect');
-    if (catSel) catSel.value = urlCat;
+    if (catSel) catSel.value = initialCat;
     // 사이드바 active 상태
     document.querySelectorAll('.lp-cat-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.cat === urlCat);
+      el.classList.toggle('active', el.dataset.cat === initialCat);
     });
   }
 

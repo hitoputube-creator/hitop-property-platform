@@ -8,129 +8,6 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20260604-parking-unit" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
-    <style>
-      /* ══════════════════════════════════════════════════════════════
-         왼쪽 사이드바 정리 (listings.html 전용, style.css 미수정)
-         - "매물 구분" 5개 항목은 실제 <a href> 링크(검색엔진 크롤링 가능),
-           app.js의 .lp-cat-item 클릭 인터셉트(JS 필터)와 무관한 신규 클래스 사용
-         - PC/태블릿(769px 이상): 작은 리스트형 버튼
-         - 모바일(768px 이하): 가로 스크롤 알약형
-         - #cnt-* / #visitorCounter 등 app.js가 참조하는 id는 이 섹션에서 사용하지 않음
-         ══════════════════════════════════════════════════════════════ */
-
-      @media (min-width: 769px) {
-        /* 사이드바 전체 여백 */
-        body[data-page="listings"] .lp-sidebar {
-          padding: 14px 12px !important;
-          gap: 14px !important;
-          background: #F5F7FA !important;
-        }
-
-        /* 카드형 섹션 래퍼 */
-        body[data-page="listings"] .lp-sidebar .lp-sidebar-section {
-          border: 1px solid #E5EAF2 !important;
-          border-radius: 14px !important;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
-          overflow: hidden !important;
-          margin-bottom: 0 !important; /* gap으로 간격 통일 */
-        }
-
-        /* 세련된 섹션 헤더 */
-        body[data-page="listings"] .lp-sidebar .lp-sidebar-header {
-          height: 46px !important;
-          line-height: 46px !important;
-          padding: 0 16px !important;
-          background: #0A1F5C !important;
-          color: #ffffff !important;
-          font-size: 14px !important;
-          font-weight: 800 !important;
-          letter-spacing: 0.2px !important;
-          text-align: left !important;
-          border-left: 4px solid #C9A84C !important;
-          box-sizing: border-box !important;
-        }
-
-        /* 매물 구분 — 작고 깔끔한 버튼 리스트 (실제 링크, JS 필터 아님) */
-        body[data-page="listings"] .lp-sidebar .lp-catlist-item {
-          display: block !important;
-          height: 48px !important;
-          line-height: 48px !important;
-          padding: 0 16px !important;
-          margin: 6px 10px !important;
-          border-radius: 8px !important;
-          background: #ffffff !important;
-          border: 1px solid #E5EAF2 !important;
-          color: #0A1F5C !important;
-          font-size: 15px !important;
-          font-weight: 800 !important;
-          text-decoration: none !important;
-          transition: background 0.15s, border-color 0.15s;
-        }
-        body[data-page="listings"] .lp-sidebar .lp-catlist-item:first-of-type { margin-top: 10px !important; }
-        body[data-page="listings"] .lp-sidebar .lp-catlist-item:last-of-type { margin-bottom: 10px !important; }
-        body[data-page="listings"] .lp-sidebar .lp-catlist-item:hover {
-          background: #F5F7FA !important;
-          border-color: #C9A84C !important;
-        }
-
-        /* 전화문의 / 방문자 카드 — 라운드·그림자 통일 */
-        body[data-page="listings"] .lp-sidebar .phone-inquiry-box,
-        body[data-page="listings"] .lp-sidebar .side-consult-link-box {
-          border-radius: 14px !important;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
-        }
-        body[data-page="listings"] .lp-sidebar .lp-kakao-btn { border-radius: 10px !important; }
-        body[data-page="listings"] .lp-sidebar .side-visitor-counter { border-radius: 12px !important; }
-        body[data-page="listings"] .lp-sidebar .lp-phone-big { letter-spacing: -0.3px !important; }
-      }
-
-      /* 모바일: 가로 스크롤 알약형 (기존 검증된 패턴 재사용) */
-      @media (max-width: 768px) {
-        body[data-page="listings"] .lp-catlist-item {
-          display: inline-flex !important;
-          align-items: center !important;
-          height: auto !important;
-          padding: 8px 14px !important;
-          border: 1.5px solid #cbd5e1 !important;
-          border-radius: 999px !important;
-          font-size: 14px !important;
-          font-weight: 800 !important;
-          white-space: nowrap !important;
-          color: #475569 !important;
-          background: #ffffff !important;
-          text-decoration: none !important;
-        }
-      }
-
-      /* 태블릿 구간(769px~1099px) 전용 — style.css의 고정폭 3단 그리드(260px+820px=1080px)가
-         이 구간에서 minmax(0,1fr) 중앙열을 0(또는 거의 0)으로 붕괴시키는 문제를 이 페이지 안에서만 덮어씀.
-         1080px 정확히는 260+820=1080이라 원본 규칙에서도 중앙열이 0이 되어 769~1079뿐 아니라
-         1080px 자체도 포함해야 하고, 1080~1099px도 남는 폭이 20px 이하로 지나치게 좁아
-         함께 커버 범위를 1099px까지 넓힌다.
-         1열 폭은 style.css:3122의 .lp-sidebar 고정 width:280px와 반드시 일치시켜야
-         사이드바가 그리드 트랙을 넘쳐 지도 영역과 겹치지 않는다. */
-      @media (min-width: 769px) and (max-width: 1099px) {
-        body[data-page="listings"] .lp-body {
-          grid-template-columns: 280px minmax(0, 1fr) 300px !important;
-        }
-      }
-
-      /* 방문자 통계 박스(#visitorCounter) 위치 고정.
-         PC: .lp-sidebar가 display:flex + gap:14px라서 대표번호 박스와 자동으로 간격이 생기지만,
-         모바일(max-width:768px)은 .lp-sidebar가 display:block으로 전환되어 flex gap이 적용되지 않아
-         카테고리 알약 목록 바로 아래에 여백 없이 붙어버리는 문제가 있었다.
-         여기서 명시적으로 여백을 주고, position/z-index를 고정해 지도 위로 겹치지 않게 한다. */
-      body[data-page="listings"] .lp-sidebar .side-consult-link-box {
-        position: static !important;
-        z-index: 0 !important;
-        margin-top: 14px !important;
-      }
-      @media (max-width: 768px) {
-        body[data-page="listings"] .lp-sidebar .side-consult-link-box {
-          margin: 12px 16px 16px !important;
-        }
-      }
-    </style>
   </head>
   <body data-page="listings">
 
@@ -194,7 +71,7 @@
         <!-- 매물 구분 -->
         <div class="lp-sidebar-section lp-catlist-section">
           <div class="lp-sidebar-header">매물 구분</div>
-          <a class="lp-catlist-item" href="listings.html">전체 매물</a>
+          <a class="lp-catlist-item" href="listings.html" aria-current="page">전체 매물</a>
           <a class="lp-catlist-item" href="factory-warehouse.html">공장·창고 매물</a>
           <a class="lp-catlist-item" href="commercial-office.html">상가·사무실 매물</a>
           <a class="lp-catlist-item" href="land.html">토지 매물</a>

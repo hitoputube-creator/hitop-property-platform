@@ -2604,10 +2604,10 @@ body {
   transform: translateY(-2px);
 }
 
-/* 이미지 영역 — 왼쪽 42% 고정 */
+/* 이미지 영역 — 왼쪽 50% 고정 (공장창고 등 배너형 썸네일의 글자 잘림을 줄이기 위해 42%→50%로 확대) */
 .lp-mini-img-wrap {
-  width: 42%;
-  min-width: 42%;
+  width: 50%;
+  min-width: 50%;
   flex-shrink: 0;
   overflow: hidden;
   background: #dce8f5;
@@ -2618,6 +2618,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   transition: transform 0.22s ease;
 }
@@ -5752,13 +5753,13 @@ body[data-page="listings"] .cat-card.active .cat-card-overlay {
     white-space: normal !important; /* 모바일 가독성 향상 줄바꿈 */
   }
 
-  /* 6b. 모바일: 최근등록매물 1열 전환, 이미지 42% 가로형 유지 */
+  /* 6b. 모바일: 최근등록매물 1열 전환, 이미지 50% 가로형 유지 (PC와 동일 비율) */
   .lp-panel-section-body {
     grid-template-columns: 1fr !important;
   }
   .lp-mini-img-wrap {
-    width: 42% !important;
-    min-width: 42% !important;
+    width: 50% !important;
+    min-width: 50% !important;
     height: auto !important;
   }
 
@@ -6784,4 +6785,171 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
   body[data-page="listings"] .map-placeholder-text {
     pointer-events: none !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   listings.html 전용 사이드바 정리 (원래 listings.html 인라인 <style>이었던 블록을
+   전문관 페이지(factory-warehouse.html 등)와 공유하기 위해 이곳으로 이전)
+   - "매물 구분" 5개 항목은 실제 <a href> 링크(검색엔진 크롤링 가능),
+     app.js의 .lp-cat-item 클릭 인터셉트(JS 필터)와 무관한 신규 클래스 사용
+   - PC/태블릿(769px 이상): 작은 리스트형 버튼
+   - 모바일(768px 이하): 가로 스크롤 알약형
+   - #cnt-* / #visitorCounter 등 app.js가 참조하는 id는 이 섹션에서 사용하지 않음
+   ══════════════════════════════════════════════════════════════ */
+
+@media (min-width: 769px) {
+  /* 사이드바 전체 여백 */
+  body[data-page="listings"] .lp-sidebar {
+    padding: 14px 12px !important;
+    gap: 14px !important;
+    background: #F5F7FA !important;
+  }
+
+  /* 카드형 섹션 래퍼 */
+  body[data-page="listings"] .lp-sidebar .lp-sidebar-section {
+    border: 1px solid #E5EAF2 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+    overflow: hidden !important;
+    margin-bottom: 0 !important; /* gap으로 간격 통일 */
+  }
+
+  /* 세련된 섹션 헤더 */
+  body[data-page="listings"] .lp-sidebar .lp-sidebar-header {
+    height: 46px !important;
+    line-height: 46px !important;
+    padding: 0 16px !important;
+    background: #0A1F5C !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2px !important;
+    text-align: left !important;
+    border-left: 4px solid #C9A84C !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 매물 구분 — 작고 깔끔한 버튼 리스트 (실제 링크, JS 필터 아님) */
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item {
+    display: block !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    padding: 0 16px !important;
+    margin: 6px 10px !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    border: 1px solid #E5EAF2 !important;
+    color: #0A1F5C !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item:first-of-type { margin-top: 10px !important; }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item:last-of-type { margin-bottom: 10px !important; }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item:hover {
+    background: #F5F7FA !important;
+    border-color: #C9A84C !important;
+  }
+  /* 현재 보고 있는 전문관 페이지 표시 (listings.html은 "전체 매물", factory-warehouse.html은
+     "공장·창고 매물" 링크에 aria-current="page"를 부여해 항상 켜짐 상태로 보이게 한다) */
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item[aria-current="page"] {
+    background: #F5F7FA !important;
+    border-color: #C9A84C !important;
+  }
+
+  /* 전화문의 / 방문자 카드 — 라운드·그림자 통일 */
+  body[data-page="listings"] .lp-sidebar .phone-inquiry-box,
+  body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+    border-radius: 14px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-kakao-btn { border-radius: 10px !important; }
+  body[data-page="listings"] .lp-sidebar .side-visitor-counter { border-radius: 12px !important; }
+  body[data-page="listings"] .lp-sidebar .lp-phone-big { letter-spacing: -0.3px !important; }
+}
+
+/* 모바일: 가로 스크롤 알약형 (기존 검증된 패턴 재사용) */
+@media (max-width: 768px) {
+  body[data-page="listings"] .lp-catlist-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    height: auto !important;
+    padding: 8px 14px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 999px !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    color: #475569 !important;
+    background: #ffffff !important;
+    text-decoration: none !important;
+  }
+  body[data-page="listings"] .lp-catlist-item[aria-current="page"] {
+    border-color: #C9A84C !important;
+    color: #0A1F5C !important;
+  }
+}
+
+/* 태블릿 구간(769px~1099px) 전용 — style.css의 고정폭 3단 그리드(260px+820px=1080px)가
+   이 구간에서 minmax(0,1fr) 중앙열을 0(또는 거의 0)으로 붕괴시키는 문제를 이 페이지 안에서만 덮어씀.
+   1080px 정확히는 260+820=1080이라 원본 규칙에서도 중앙열이 0이 되어 769~1079뿐 아니라
+   1080px 자체도 포함해야 하고, 1080~1099px도 남는 폭이 20px 이하로 지나치게 좁아
+   함께 커버 범위를 1099px까지 넓힌다.
+   1열 폭은 style.css:3122의 .lp-sidebar 고정 width:280px와 반드시 일치시켜야
+   사이드바가 그리드 트랙을 넘쳐 지도 영역과 겹치지 않는다. */
+@media (min-width: 769px) and (max-width: 1099px) {
+  body[data-page="listings"] .lp-body {
+    grid-template-columns: 280px minmax(0, 1fr) 300px !important;
+  }
+}
+
+/* 방문자 통계 박스(#visitorCounter) 위치 고정.
+   PC: .lp-sidebar가 display:flex + gap:14px라서 대표번호 박스와 자동으로 간격이 생기지만,
+   모바일(max-width:768px)은 .lp-sidebar가 display:block으로 전환되어 flex gap이 적용되지 않아
+   카테고리 알약 목록 바로 아래에 여백 없이 붙어버리는 문제가 있었다.
+   여기서 명시적으로 여백을 주고, position/z-index를 고정해 지도 위로 겹치지 않게 한다. */
+body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+  position: static !important;
+  z-index: 0 !important;
+  margin-top: 14px !important;
+}
+@media (max-width: 768px) {
+  body[data-page="listings"] .lp-sidebar .side-consult-link-box {
+    margin: 12px 16px 16px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   전문관 페이지(factory-warehouse.html / commercial-office.html / land.html /
+   residential.html) 전용 — listings.html 구조를 그대로 재사용하되, 좌측에 세로로
+   쌓인 소개문구/콜센터/이동 박스 대신 상단에 얇은 타이틀바 한 줄만 둔다.
+   ══════════════════════════════════════════════════════════════ */
+.specialty-title-bar {
+  background: #0A1F5C;
+  padding: 14px 20px;
+  border-bottom: 3px solid #C9A84C;
+}
+.specialty-title-bar-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.specialty-title-bar h1 {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 3px;
+  letter-spacing: -0.2px;
+}
+.specialty-title-bar p {
+  color: #aab8d8;
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin: 0;
+  word-break: keep-all;
+}
+@media (max-width: 768px) {
+  .specialty-title-bar { padding: 12px 16px; }
+  .specialty-title-bar h1 { font-size: 0.98rem; }
+  .specialty-title-bar p { font-size: 12px; }
 }
