@@ -43,16 +43,34 @@
       .top-bar-phone:hover { color:#e0c070; }
       @media (max-width:768px) { .top-bar-hours { display:none; } }
 
-      .office-hero { background:linear-gradient(125deg, var(--navy-dark), var(--navy)); color:#fff; padding:56px 0 44px; }
-      .office-hero h1 { font-size:1.9rem; font-weight:800; margin:0 0 10px; }
-      .office-hero p { font-size:14.5px; color:#cbd5e1; max-width:720px; line-height:1.7; margin:0 0 20px; }
-      .office-hero-actions { display:flex; gap:10px; flex-wrap:wrap; }
-      .office-hero-btn { padding:10px 20px; border-radius:8px; font-size:14px; font-weight:700; text-decoration:none; }
-      .office-hero-btn.primary { background:var(--green); color:#fff; }
-      .office-hero-btn.outline { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.5); }
-
-      .office-section { padding:40px 0 60px; }
+      /* 전문관 공통 사이드바 레이아웃 */
+      .specialty-page-section { padding:40px 0 60px; }
       .co-container { width: 100%; max-width: 1520px; margin: 0 auto; padding: 0 20px; }
+      
+      .specialty-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 24px; align-items: start; }
+      
+      .specialty-sidebar { display: flex; flex-direction: column; gap: 16px; }
+      .sidebar-box { background: #fff; border: 1px solid #E5EAF2; border-radius: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.04); overflow: hidden; }
+      
+      .intro-box { background: #0A1F5C; color: #fff; padding: 22px 18px; border: none; }
+      .intro-title { font-size: 1.25rem; font-weight: 800; margin: 0 0 10px; color: #fff; line-height: 1.3; }
+      .intro-desc { font-size: 13.5px; line-height: 1.6; margin: 0; color: #cbd5e1; word-break: keep-all; }
+      
+      .contact-box { padding: 20px 18px; text-align: center; }
+      .contact-header { font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+      .contact-phone { display: block; font-size: 24px; font-weight: 800; color: #0A1F5C; text-decoration: none; margin-bottom: 12px; letter-spacing: -0.5px; }
+      .contact-btn { display: block; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; background: #FEE500; color: #3C1E1E; }
+      
+      .nav-box { padding: 16px 14px; }
+      .nav-header { font-size: 14px; font-weight: 800; color: #0A1F5C; margin: 0 0 12px 6px; }
+      .nav-item { display: block; padding: 10px 14px; border-radius: 8px; color: #475569; font-size: 14px; font-weight: 700; text-decoration: none; transition: background 0.15s, color 0.15s; }
+      .nav-item:hover { background: #F5F7FA; color: #0A1F5C; }
+      .nav-item.active { background: #0A1F5C; color: #fff; }
+
+      @media (max-width: 900px) {
+        .specialty-grid { grid-template-columns: 1fr; gap: 32px; }
+        .specialty-sidebar { margin-bottom: 8px; }
+      }
       .office-section-title { font-size:1.2rem; font-weight:800; color:#0f172a; margin:0 0 18px; }
 
       /* 전체/상가/사무실 필터 */
@@ -173,20 +191,40 @@
       </div>
     </header>
 
-    <section class="office-hero">
-      <div class="container">
-        <h1>파주 운정 상가·사무실 전문관</h1>
-        <p>운정신도시 와동동 상권을 중심으로 상가·사무실 매매·임대 매물을 하이탑부동산이 엄선해 소개합니다. 배후세대와 유동인구, 권리금과 업종변경 가능 여부, 전용면적과 보증금·월세 조건, 주차 대수까지 꼼꼼히 확인하고 상담받으세요.</p>
-        <div class="office-hero-actions">
-          <a href="listings.html" class="office-hero-btn primary">전체 매물보기</a>
-          <a href="tel:031-949-8969" class="office-hero-btn outline">📞 전화 상담</a>
-        </div>
-      </div>
-    </section>
+    <section class="specialty-page-section">
+      <div class="co-container specialty-grid">
+        
+        <!-- [좌측 안내 패널] -->
+        <aside class="specialty-sidebar">
+          
+          <!-- 타이틀 & SEO -->
+          <div class="sidebar-box intro-box">
+            <h1 class="intro-title">파주 운정 상가·사무실 전문관</h1>
+            <p class="intro-desc">운정신도시 와동동 상권을 중심으로 상가·사무실 매매·임대 매물을 하이탑부동산이 엄선해 소개합니다. 배후세대와 유동인구, 권리금과 업종변경 가능 여부, 전용면적과 보증금·월세 조건, 주차 대수까지 꼼꼼히 확인하고 상담받으세요.</p>
+          </div>
 
-    <section class="office-section">
-      <div class="co-container">
-        <h2 class="office-section-title">상가·사무실 매물</h2>
+          <!-- 전화 문의 -->
+          <div class="sidebar-box contact-box">
+            <div class="contact-header">대표번호 CALL CENTER</div>
+            <a href="tel:031-949-8969" class="contact-phone">031-949-8969</a>
+            <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="contact-btn">💬 카톡 오픈채팅 상담</a>
+          </div>
+
+          <!-- 매물 구분 (네비게이션) -->
+          <div class="sidebar-box nav-box">
+            <div class="nav-header">전문관 이동</div>
+            <a class="nav-item" href="listings.html">전체 매물 보기</a>
+            <a class="nav-item active" href="commercial-office.html">상가·사무실 매물</a>
+            <a class="nav-item" href="factory-warehouse.html">공장·창고 매물</a>
+            <a class="nav-item" href="land.html">토지 매물</a>
+            <a class="nav-item" href="residential.html">주거용 매물</a>
+          </div>
+          
+        </aside>
+
+        <!-- [우측 매물 영역] -->
+        <main class="specialty-main">
+          <h2 class="office-section-title">상가·사무실 매물</h2>
 
         <div class="office-filter-bar" id="officeFilterBar">
           <button type="button" class="office-filter-btn active" data-filter="all">전체</button>
@@ -220,6 +258,8 @@
             <a href="contact.html" class="office-cta-consult">✉️ 상담신청</a>
           </div>
         </div>
+        
+        </main>
       </div>
     </section>
 
