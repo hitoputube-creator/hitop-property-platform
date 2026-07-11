@@ -657,6 +657,18 @@ body {
 
 .modal-thumb.active, .modal-thumb:hover { opacity: 1; border-color: #12335a; }
 
+/* 사진 갤러리 하단 SEO 키워드 캡션 — 배경/테두리 없이 작은 글씨로 자연스럽게, 강조하지 않음 */
+.modal-seo-keywords {
+  padding: 8px 12px 12px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .modal-desc-section { padding: 20px; border-top: 1px solid #e5e9f0; }
 
 .modal-desc-section h4 { font-size: 15px; font-weight: 700; color: #12335a; margin: 0 0 10px; }
@@ -7009,4 +7021,103 @@ body[data-page="listings"] .lp-sidebar .side-consult-link-box {
   .specialty-title-bar { padding: 12px 16px; }
   .specialty-title-bar h1 { font-size: 0.98rem; }
   .specialty-title-bar p { font-size: 12px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   listing-detail.html — 검색노출용 개별 매물 URL(listing-detail.html?id=)이지만
+   화면은 listings.html/전문관 페이지의 매물 클릭 상세모달(#listingModal, .modal-*)과
+   완전히 동일한 마크업/CSS를 재사용한다. 다만 오버레이(딤 배경·고정 위치·90vh 높이 제한)로
+   뜨는 게 아니라 일반 페이지 콘텐츠로 항상 노출되고 페이지 자체가 자연스럽게 스크롤되어야
+   하므로, 그 부분만 이 페이지에서 덮어쓴다. 색상·폰트·간격 등 나머지는 전부 원본 .modal-*
+   규칙을 그대로 물려받는다. */
+body[data-page="listing-detail"] .detail-page-wrap {
+  max-width: 1600px;
+  margin: 20px auto 60px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+body[data-page="listing-detail"] .detail-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #9ca3af;
+  font-size: 15px;
+}
+body[data-page="listing-detail"] .detail-state.error { color: #dc2626; }
+body[data-page="listing-detail"] .detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-decoration: none;
+}
+body[data-page="listing-detail"] .detail-back:hover { color: #0A1F5C; }
+
+body[data-page="listing-detail"] .modal-overlay {
+  position: static !important;
+  inset: auto !important;
+  background: none !important;
+  display: block !important;
+  z-index: auto !important;
+  padding: 0 !important;
+}
+body[data-page="listing-detail"] .modal-box {
+  width: 100% !important;
+  max-width: 1600px !important;
+  max-height: none !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  border: 1px solid #e5e9f0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  overflow: visible !important;
+}
+body[data-page="listing-detail"] .modal-body {
+  overflow: visible !important;
+  min-height: 0 !important;
+}
+body[data-page="listing-detail"] .modal-col-photo,
+body[data-page="listing-detail"] .modal-col-info,
+body[data-page="listing-detail"] .modal-col-side {
+  overflow: visible !important;
+  overflow-y: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+/* 오버레이 안에서는 flex:1로 남는 세로 공간을 채우는 방식이었지만, 페이지 모드는
+   높이 기준이 없으므로 사진 비율 기반 고정 높이로 전환 */
+body[data-page="listing-detail"] .modal-main-img {
+  flex: none !important;
+  aspect-ratio: 16 / 10 !important;
+  min-height: 320px !important;
+  height: auto !important;
+}
+body[data-page="listing-detail"] .modal-no-img {
+  aspect-ratio: 16 / 10;
+  min-height: 320px;
+}
+body[data-page="listing-detail"] .modal-header a.detail-list-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-decoration: none;
+}
+body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color: #0A1F5C; }
+
+@media (max-width: 768px) {
+  body[data-page="listing-detail"] .modal-box {
+    max-height: none !important;
+    border-radius: 0;
+  }
+  body[data-page="listing-detail"] .modal-body {
+    overflow-y: visible !important;
+  }
+  body[data-page="listing-detail"] .modal-col-photo,
+  body[data-page="listing-detail"] .modal-col-side,
+  body[data-page="listing-detail"] .modal-col-info {
+    overflow: visible !important;
+  }
+  body[data-page="listing-detail"] .modal-main-img {
+    min-height: 240px !important;
+  }
 }

@@ -1124,6 +1124,40 @@ const lightboxNav = (dir) => {
   if (mainImg) { mainImg.src = lightboxImages[lightboxIdx]; mainImg.dataset.index = lightboxIdx; }
 };
 
+// ── 전문관별 SEO 대표 키워드 (매물 상세 모달 사진 하단 캡션 + listing-detail.html meta keywords 공용) ──
+const SEO_KEYWORD_POOLS = {
+  '공장창고': ['파주공장창고매매', '파주공장창고임대', '파주공장매매', '파주창고매매', '파주공장임대', '파주창고임대', '파주공장창고전문부동산', '일산공장창고', '파주물류창고임대', '파주공장부지매매'],
+  '상가사무실': ['운정상가임대', '운정상가매매', '파주상가임대', '파주상가매매', '파주사무실임대', '운정사무실임대', '운정역상가', '운정중심상업지구상가', '파주상가사무실', '파주상가사무실전문부동산'],
+  '토지': ['파주토지매매', '파주땅매매', '파주공장부지매매', '파주창고부지매매', '파주개발부지', '파주투자토지', '파주야적장부지', '파주계획관리지역토지', '파주공장용지', '파주토지전문부동산'],
+  '주거용': ['운정아파트전세', '운정아파트매매', '파주아파트전세', '파주아파트매매', '운정오피스텔월세', '운정오피스텔전세', '운정역오피스텔', '힐스테이트더운정', '파주단독주택매매', '파주단독택지'],
+};
+
+/* category1/category2/type/propertyType 등 여러 필드에 값이 섞여 있을 수 있어
+   정규화된 getCategory1() 결과를 우선 쓰되, 혹시 정확히 매칭되지 않는 레거시 값을 대비해
+   원본 필드들도 문자열 포함(includes) 방식으로 한 번 더 안전하게 훑는다. */
+const resolveSeoKeywordCategory = (item = {}) => {
+  const cat1 = String(getCategory1(item) || '');
+  if (cat1.includes('공장') || cat1.includes('창고')) return '공장창고';
+  if (cat1.includes('상가') || cat1.includes('사무실')) return '상가사무실';
+  if (cat1.includes('토지')) return '토지';
+  if (cat1.includes('주거') || cat1.includes('아파트') || cat1.includes('오피스텔')) return '주거용';
+
+  const raw = [item.category1, item.category2, item.type, item.propertyType, item.property_type]
+    .map(v => String(v || '')).join(' ');
+  if (raw.includes('공장') || raw.includes('창고')) return '공장창고';
+  if (raw.includes('상가') || raw.includes('사무실')) return '상가사무실';
+  if (raw.includes('토지')) return '토지';
+  if (raw.includes('아파트') || raw.includes('오피스텔') || raw.includes('주거') || raw.includes('단독주택')) return '주거용';
+  return null;
+};
+
+/* count 생략 시 전체 10개(meta keywords용), 지정 시 앞에서부터 그만큼(화면 캡션용) 반환 */
+const getSeoKeywords = (item, count) => {
+  const cat = resolveSeoKeywordCategory(item);
+  const pool = SEO_KEYWORD_POOLS[cat] || [];
+  return count ? pool.slice(0, count) : pool.slice();
+};
+
 // ── 매물 상세 모달 ──
 const openModal = (item) => {
   const modal = document.getElementById('listingModal');
@@ -1409,6 +1443,28 @@ const openModal = (item) => {
   // 모달 열릴 때마다 이미지가 있으면 img 다시 표시
   if (images.length > 0) { mainImg.style.display = ''; mainImg.closest('.modal-main-img')?.querySelector('.modal-no-img')?.remove(); }
 
+  // ── 사진 갤러리 하단 SEO 키워드 캡션 (전문관별 대표 키워드, listing-detail.html과 공용) ──
+  // listing-detail.html은 이 openModal()을 그대로 재사용하므로 여기 한 곳만 고치면
+  // listings.html/전문관 상세모달과 listing-detail.html 화면에 동일하게 반영된다.
+  let seoKeywordsEl = document.getElementById('modalSeoKeywords');
+  const photoCol = document.querySelector('.modal-col-photo');
+  if (!seoKeywordsEl && photoCol) {
+    seoKeywordsEl = document.createElement('div');
+    seoKeywordsEl.id = 'modalSeoKeywords';
+    seoKeywordsEl.className = 'modal-seo-keywords';
+    photoCol.appendChild(seoKeywordsEl);
+  }
+  if (seoKeywordsEl) {
+    const seoKeywords = getSeoKeywords(item, 6);
+    if (seoKeywords.length) {
+      seoKeywordsEl.textContent = `검색 키워드: ${seoKeywords.join(' · ')}`;
+      seoKeywordsEl.style.display = '';
+    } else {
+      seoKeywordsEl.textContent = '';
+      seoKeywordsEl.style.display = 'none';
+    }
+  }
+
   const printBtn = document.getElementById('modalPrintBtn');
   if (printBtn) {
     printBtn.dataset.id = getListingPrintId(item);
@@ -1495,6 +1551,21 @@ const priceInRange = (price, range) => {
 const setupListingsPage = () => {
   const filterForm = document.getElementById('filterForm');
   if (!filterForm) return;
+
+  // ── 레거시 ?id= 상세보기 URL 정리 ──
+  // listings.html?id=매물ID / factory-warehouse.html?id=매물ID 등으로 접속하면
+  // 예전에는 모달을 자동으로 띄웠지만, 검색노출용 상세 URL을 listing-detail.html?id=
+  // 하나로 통일하기 위해 모달을 열지 않고 즉시 그 주소로 리다이렉트한다.
+  // listing-detail.html 자체는 data-page="listings"가 아니라 이 함수가 실행되지
+  // 않지만, 방어적으로 한 번 더 경로를 확인한다.
+  {
+    const legacyId = new URLSearchParams(window.location.search).get('id');
+    if (legacyId && !/listing-detail\.html$/.test(window.location.pathname)) {
+      window.location.replace(`listing-detail.html?id=${encodeURIComponent(legacyId)}`);
+      return;
+    }
+  }
+
   setupVisitorCounter();
 
   const CAT_LABELS = {
@@ -2328,6 +2399,9 @@ const setupListingsPage = () => {
         const found = filtered.find(x => x.id === card.dataset.id);
         if (found) openModalFull(found);
       });
+      card.querySelector('.lp-all-detail-link')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
     });
     const pgEl = document.getElementById('lpPagination');
     if (pgEl) {
@@ -2444,9 +2518,9 @@ const setupListingsPage = () => {
   });
 
   // ── URL 파라미터 ──
+  // ?id= 는 위에서 이미 listing-detail.html로 리다이렉트 처리했으므로 여기서는 다루지 않는다.
   const urlParams = new URLSearchParams(window.location.search);
   const urlCatRaw = urlParams.get('category');
-  const urlListingId = urlParams.get('id');
   // urlCat 을 블록 밖에서도 참조할 수 있도록 함수 스코프에 선언
   const urlCat = urlCatRaw ? normalizeCategoryParam(urlCatRaw) : '';
   // 전문관 페이지(factory-warehouse.html 등)는 body[data-default-category]로 기본 카테고리를 지정한다.
@@ -2486,10 +2560,6 @@ const setupListingsPage = () => {
     applyFilters();
     _tryShowMarkers();
     if (urlCat) renderCategoryPanel(urlCat);
-    if (urlListingId) {
-      const target = _listings.find(item => String(item.id) === String(urlListingId));
-      if (target) window.setTimeout(() => openModalFull(target), 250);
-    }
   })();
 };
 

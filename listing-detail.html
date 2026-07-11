@@ -8,102 +8,10 @@
     <meta name="keywords" content="파주 공장 매매, 파주 상가 임대, 파주 토지 매매, 하이탑부동산" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      .top-bar { background:#0A1F5C; padding:6px 0; }
-      .top-bar .container { display:flex; justify-content:flex-end; align-items:center; gap:20px; }
-      .top-bar-hours { font-size:12px; color:#aab8d8; }
-      .top-bar-phone { font-size:12px; font-weight:600; color:#C9A84C; text-decoration:none; }
-      .top-bar-phone:hover { color:#e0c070; }
-      @media (max-width:768px) { .top-bar-hours { display:none; } }
-
-      .detail-state { text-align:center; padding:80px 20px; color:#9ca3af; font-size:15px; }
-      .detail-state.error { color:#dc2626; }
-
-      .detail-wrap { max-width: 1200px; margin: 28px auto 60px; padding: 0 20px; }
-      .detail-back { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569; text-decoration:none; margin-bottom:16px; }
-      .detail-back:hover { color:var(--navy); }
-
-      .detail-panel { background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
-
-      .detail-gallery { position:relative; background:#0f172a; }
-      .detail-main-img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; cursor:zoom-in; background:#0f172a; }
-      .detail-no-img { width:100%; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:14px; }
-      .detail-thumbs { display:flex; gap:6px; padding:8px; background:#0f172a; overflow-x:auto; }
-      .detail-thumb { width:72px; height:54px; object-fit:cover; border-radius:6px; cursor:pointer; opacity:.55; border:2px solid transparent; flex-shrink:0; }
-      .detail-thumb.active { opacity:1; border-color:var(--green); }
-
-      .detail-body { padding:24px 28px 32px; }
-      .detail-badges { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
-      .detail-badge { font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; background:var(--navy); color:#fff; }
-      .detail-badge.deal { background:var(--green); }
-      .detail-badge.sticker { background:#fee2e2; color:#dc2626; }
-      .detail-badge.done { background:#fee2e2; color:#dc2626; }
-
-      .detail-title { font-size:1.5rem; font-weight:800; color:#0f172a; margin:0 0 6px; }
-      .detail-address { font-size:14px; color:#64748b; margin:0 0 18px; }
-
-      .detail-price-box { background:#f0fdf7; border:1px solid #cde7d9; border-left:4px solid var(--green); border-radius:10px; padding:14px 18px; margin-bottom:18px; }
-      .detail-price-row { display:flex; justify-content:space-between; font-size:15px; padding:2px 0; }
-      .detail-price-row .lbl { color:#475569; }
-      .detail-price-row .val { font-weight:800; color:var(--green); }
-
-      .detail-info-table { width:100%; border-collapse:collapse; font-size:14.5px; margin-bottom:22px; }
-      .detail-info-table tr { border-bottom:1px solid #f1f5f9; }
-      .detail-info-table tr:last-child { border-bottom:none; }
-      .detail-info-table td { padding:9px 4px; }
-      .detail-info-table td:first-child { color:#64748b; width:110px; white-space:nowrap; }
-      .detail-info-table td:last-child { color:#0f172a; font-weight:600; }
-
-      .detail-section-title { font-size:15px; font-weight:700; color:var(--navy); margin:0 0 10px; }
-      .detail-desc { font-size:14.5px; color:#374151; line-height:1.9; background:#f8fafc; padding:14px 16px; border-radius:8px; border:1px solid #e2e8f0; white-space:pre-line; margin-bottom:24px; }
-
-      .detail-related { margin:20px 0 18px; padding-top:14px; border-top:1px solid #f1f5f9; font-size:12.5px; color:#94a3b8; line-height:1.7; }
-      .detail-related-label { font-weight:700; color:#64748b; margin-right:4px; }
-
-      /* PC/태블릿(769px 이상): 좌측 이미지 갤러리 + 우측 매물 정보 2단 레이아웃.
-         모바일(768px 이하)은 위 기본 규칙(세로 스택) 그대로 유지 — 별도 수정 없음. */
-      @media (min-width: 769px) {
-        .detail-panel { display:grid; grid-template-columns: 520px 1fr; align-items:start; }
-        .detail-gallery { border-right:1px solid #1e293b; }
-        .detail-body { padding:24px 32px 32px; }
-        .detail-price-box { padding:12px 16px; }
-        .detail-desc { padding:12px 14px; line-height:1.75; margin-bottom:18px; }
-      }
-
-      /* 이미지 아래 빈 공간에 배치하는 상담 CTA 박스 */
-      .detail-consult-point { margin:12px; padding:16px; background:#16213a; border:1px solid #24314f; border-radius:10px; }
-      .detail-consult-point-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
-      .detail-consult-point-logo { display:inline-flex; align-items:center; gap:6px; color:#fff; font-size:13px; font-weight:900; letter-spacing:.01em; }
-      .detail-consult-point-logo::before { content:''; width:8px; height:8px; border-radius:999px; background:#C9A84C; box-shadow:0 0 0 4px rgba(201,168,76,.16); }
-      .detail-consult-point-phone { font-size:12px; color:#aab8d8; margin:0; white-space:nowrap; }
-      .detail-consult-point-phone strong { color:#fff; font-weight:800; }
-      .detail-consult-point-title { font-size:16px; font-weight:900; color:#f4d47a; margin:0 0 8px; }
-      .detail-consult-point-text { font-size:12.5px; color:#dbe4f0; line-height:1.65; margin:0 0 12px; word-break:keep-all; }
-      .detail-consult-point-actions { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
-      .detail-consult-point-actions a { text-align:center; text-decoration:none; border-radius:7px; padding:9px 8px; font-size:12.5px; font-weight:800; white-space:nowrap; }
-      .detail-consult-point-tel { background:#fff; color:#0A1F5C; }
-      .detail-consult-point-kakao { background:#FEE500; color:#3C1E1E; }
-      .detail-consult-point-consult { background:#e8eef7; color:#0A1F5C; }
-      @media (min-width: 769px) {
-        .detail-consult-point { min-height:260px; display:flex; flex-direction:column; }
-        .detail-consult-point-actions { margin-top:auto; }
-      }
-      @media (max-width: 768px) {
-        .detail-consult-point { margin:10px 0 0; border-radius:0; border-left:none; border-right:none; }
-        .detail-consult-point-head { align-items:flex-start; flex-direction:column; gap:4px; }
-        .detail-consult-point-actions { grid-template-columns:1fr; }
-        .detail-consult-point-actions a { padding:11px 10px; font-size:13px; }
-      }
-
-      /* 라이트박스 */
-      .detail-lightbox { position:fixed; inset:0; background:rgba(0,0,0,.9); display:flex; align-items:center; justify-content:center; z-index:1000; }
-      .detail-lightbox.hidden { display:none; }
-      .detail-lightbox img { max-width:92vw; max-height:88vh; object-fit:contain; }
-      .detail-lightbox-close { position:absolute; top:18px; right:24px; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; }
-    </style>
+    <link rel="stylesheet" href="style.css?v=20260604-parking-unit" />
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
   </head>
-  <body>
+  <body data-page="listing-detail">
 
     <div class="top-bar">
       <div class="container">
@@ -130,53 +38,77 @@
       </div>
     </header>
 
-    <div class="detail-wrap">
+    <div class="detail-page-wrap">
       <a class="detail-back" href="listings.html">← 매물 목록으로</a>
 
       <div id="detailState" class="detail-state">매물 정보를 불러오는 중입니다…</div>
 
-      <div id="detailPanel" class="detail-panel" style="display:none;">
-        <div class="detail-gallery">
-          <img id="detailMainImg" class="detail-main-img" src="" alt="" style="display:none;" />
-          <div id="detailNoImg" class="detail-no-img" style="display:none;">등록된 이미지가 없습니다</div>
-          <div id="detailThumbs" class="detail-thumbs"></div>
-          <div id="detailConsultPoint" class="detail-consult-point" style="display:none;">
-            <div class="detail-consult-point-head">
-              <span class="detail-consult-point-logo">하이탑부동산</span>
-              <p class="detail-consult-point-phone">대표번호 <strong>031-949-8969</strong></p>
-            </div>
-            <h3 id="detailConsultPointTitle" class="detail-consult-point-title"></h3>
-            <p id="detailConsultPointText" class="detail-consult-point-text"></p>
-            <div class="detail-consult-point-actions">
-              <a href="tel:031-949-8969" class="detail-consult-point-tel">전화문의</a>
-              <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="detail-consult-point-kakao">카톡상담</a>
-              <a href="contact.html" class="detail-consult-point-consult">상담신청</a>
+      <!-- ══ listings.html의 #listingModal과 동일한 마크업/CSS(.modal-*)를 그대로 재사용.
+           오버레이가 아닌 페이지 콘텐츠로 항상 노출되도록 style.css에서
+           body[data-page="listing-detail"] 스코프로만 레이아웃을 조정한다. ══ -->
+      <div id="listingModal" class="modal-overlay" style="display:none;" role="region" aria-label="매물 상세보기">
+        <div class="modal-box">
+          <div class="modal-header">
+            <span class="modal-id">매물번호: <strong id="modalId">-</strong></span>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span id="modalDoneTag" class="badge-done hidden">거래완료</span>
+              <a href="listings.html" class="detail-list-link">← 매물 목록</a>
             </div>
           </div>
-        </div>
-        <div class="detail-body">
-          <div id="detailBadges" class="detail-badges"></div>
-          <h1 id="detailTitle" class="detail-title"></h1>
-          <p id="detailAddress" class="detail-address"></p>
-
-          <div id="detailPriceBox" class="detail-price-box"></div>
-
-          <table id="detailInfoTable" class="detail-info-table"></table>
-
-          <h2 class="detail-section-title">📝 매물 설명</h2>
-          <div id="detailDesc" class="detail-desc"></div>
-
-          <p id="detailRelated" class="detail-related" style="display:none;">
-            <span class="detail-related-label">관련 검색어</span><span id="detailRelatedKeywords"></span>
-          </p>
-
+          <div class="modal-body">
+            <!-- ① 왼쪽: 사진 + 썸네일 -->
+            <div class="modal-col-photo">
+              <div class="modal-main-img">
+                <img id="modalMainImg" src="" alt="매물사진" />
+              </div>
+              <div class="modal-thumbs" id="modalThumbs"></div>
+            </div>
+            <!-- ② 오른쪽: 요약 + 가격 + 문의 + 중개소 + 지도 -->
+            <div class="modal-col-side">
+              <div class="modal-summary">
+                <span class="modal-badge" id="modalBadge"></span>
+                <h1 class="modal-title" id="modalTitle"></h1>
+                <p class="modal-address" id="modalAddress"></p>
+              </div>
+              <div class="modal-price-area" id="modalPriceArea"></div>
+              <div id="modalAreaHighlight" class="modal-area-highlight" style="display:none;"></div>
+              <div class="modal-agent">
+                <strong>하이탑부동산공인중개사사무소</strong>
+                <span>대표: 주현희 · 031-949-8969</span>
+                <span>경기도 파주시 책향기로 830, 1층</span>
+              </div>
+              <div class="modal-contact">
+                <a href="tel:031-949-8969" class="btn modal-tel">전화문의</a>
+                <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="modal-kakao-btn">카톡상담</a>
+                <button id="modalPrintBtn" class="modal-print-btn" type="button">🖨 프린트</button>
+              </div>
+              <div class="modal-minimap-wrap" id="modalBodyMapWrap" style="display:none;">
+                <h4>📍 매물 위치</h4>
+                <div id="modalBodyMap"></div>
+              </div>
+            </div>
+            <!-- ③ 가운데: 매물정보 표 + 매물설명 -->
+            <div class="modal-col-info">
+              <div class="modal-info-section">
+                <h4 class="modal-section-title">📋 매물 정보</h4>
+                <table class="modal-info-table" id="modalInfoTable"></table>
+              </div>
+              <div class="modal-desc-section">
+                <h4 class="modal-section-title">📝 매물 설명</h4>
+                <div id="modalDesc" class="modal-desc"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div id="detailLightbox" class="detail-lightbox hidden">
-      <button class="detail-lightbox-close" id="detailLightboxClose" aria-label="닫기">✕</button>
-      <img id="detailLightboxImg" src="" alt="사진 크게보기" />
+    <!-- ══ 라이트박스 (listings.html과 동일) ══ -->
+    <div id="lightbox" class="lightbox-overlay hidden" role="dialog" aria-modal="true">
+      <button class="lightbox-close" id="lightboxClose" type="button" aria-label="닫기">✕</button>
+      <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="이전">‹</button>
+      <img id="lightboxImg" src="" alt="사진 크게보기" />
+      <button class="lightbox-next" id="lightboxNext" type="button" aria-label="다음">›</button>
     </div>
 
     <footer class="site-footer-v2">
@@ -211,131 +143,56 @@
       </div>
     </footer>
 
-    <!-- 햄버거 메뉴 -->
+    <!-- ══ 매물 카드/모달 렌더링 공용 로직(openModal, 이미지/가격/면적 헬퍼 등) 재사용 ══ -->
+    <script src="app.js?v=20260604-no-parking-card"></script>
+
+    <!-- ══ 검색노출용 SEO 메타(title/description/keywords/canonical/og/JSON-LD) +
+         listing-detail.html 전용 데이터 로딩·거래상태 배지·미니맵 렌더링.
+         app.js를 일반 스크립트로 로드했으므로 openModal 등 app.js 최상단 함수를
+         그대로 호출할 수 있다(모듈이 아닌 클래식 스크립트는 최상위 스코프를 공유). ══ -->
     <script>
-      const _navToggle = document.querySelector('.nav-toggle');
-      const _navMenu   = document.querySelector('.nav-menu');
-      if (_navToggle && _navMenu) {
-        _navToggle.addEventListener('click', () => _navMenu.classList.toggle('open'));
-      }
-    </script>
-
-    <script type="module">
-      import { supabase } from './supabase-config.js';
-
-      const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-
-      const CAT1_LABEL = {
-        '공장창고': '공장·창고',
-        '상가사무실': '상가·사무실',
-        '토지': '토지',
-        '주거용': '주거용',
-        '단독전원주택': '단독·전원주택',
-        '건물빌딩': '건물·빌딩',
-      };
-
-      /* 카테고리별 업종 특화 키워드 풀 — 지역명이 아닌 일반 업종 용어만 포함 (허위 지역명 삽입 금지) */
       const CAT_GENERIC_KEYWORDS = {
         '공장창고': ['공장창고', '야적장', '물류창고', '산업단지', '공업지역', '공장용지'],
         '상가사무실': ['상가사무실', '상가 투자', '오피스텔 상가', '중심상업지구'],
         '토지': ['공장부지', '창고부지', '개발부지', '계획관리지역'],
       };
 
-      const CONSULT_TRUST_TEXT = '신뢰를 바탕으로 고객에게 맞는 부동산을 함께 찾아드립니다.';
-
-      function getConsultTitle(item) {
-        const fields = [
-          item.category1,
-          item.category2,
-          item.category,
-          item.type,
-          item.propertyType,
-          item.property_type,
-          item.listingType,
-          item.listing_type,
-        ].map(v => String(v || '').trim()).filter(Boolean);
-        const text = fields.join(' ');
-
-        if (/공장|창고|공장[·\/\s-]*창고/.test(text)) return '공장·창고 전문 상담';
-        if (/상가|사무실|상가[·\/\s-]*사무실/.test(text)) return '상가·사무실 전문 상담';
-        if (/토지|대지|임야|(?:^|\s)전(?:\s|$)|(?:^|\s)답(?:\s|$)/.test(text)) return '토지 전문 상담';
-        if (/단독|전원주택|단독[·\/\s-]*전원주택/.test(text)) return '단독·전원주택 상담';
-        if (/건물|빌딩|건물[·\/\s-]*빌딩/.test(text)) return '건물·빌딩 전문 상담';
-        if (/주거|아파트|오피스텔|빌라|주택/.test(text)) return '주거용 매물 상담';
-        return '부동산 전문 상담';
+      /* 주소에서 "OO시 OO읍/면/동/리" 정도의 지역명만 추출 (없으면 앞 두 단어로 대체) */
+      function extractRegion(address) {
+        if (!address) return '';
+        const m = String(address).match(/([가-힣]+시)\s*([가-힣]+(?:구|읍|면|동|리))?/);
+        if (m) return [m[1], m[2]].filter(Boolean).join(' ');
+        return String(address).split(' ').slice(0, 2).join(' ');
       }
 
-      /* row(컬럼) + data(JSONB) 를 합쳐서 하나의 평면 객체로 사용 */
-      function flattenListingRow(row) {
-        const d = row.data && typeof row.data === 'object' ? row.data : {};
-        return {
-          ...d,
-          ...row,
-          title: row.title || d.title || '',
-          address: row.display_address || d.publicAddress || d.displayAddress || row.address || d.address || '',
-          category1: row.category1 || d.category1 || '',
-          category2: row.category2 || d.category2 || '',
-          dealType: row.deal_type || d.dealType || '',
-          salePrice: row.sale_price || d.salePrice || '',
-          deposit: row.deposit || d.deposit || '',
-          monthlyRent: row.monthly_rent || d.monthlyRent || '',
-          areaM2: row.area_m2 ?? d.areaM2 ?? null,
-          areaPy: row.area_py ?? d.areaPy ?? null,
-          floorInfo: row.floor_info || d.floorInfo || d.floor || '',
-          zoning: row.zoning || d.zoning || d.zoningArea || '',
-          detailDescription: row.detail_description || d.detailDescription || '',
-          imageUrls: Array.isArray(row.image_urls) && row.image_urls.length ? row.image_urls : (Array.isArray(d.imageUrls) ? d.imageUrls : []),
-          stickers: Array.isArray(row.stickers) && row.stickers.length ? row.stickers : (Array.isArray(d.stickers) ? d.stickers : []),
-        };
-      }
-
-      const wonToManwon = (v) => {
-        const n = Number(String(v ?? '').replace(/[,\s]/g, ''));
-        if (!n || isNaN(n)) return null;
-        return Math.round(n / 10000);
-      };
-
-      /* salePrice·deposit(매매/전세)는 원 단위와 만원 단위가 혼재되어 저장되어 있어,
-         1억 이상이면 원 단위로 간주해 만원으로 환산한다 (app.js formatPropertyPrice와 동일 규칙) */
-      const normalizeManwon = (v) => {
-        const n = Number(String(v ?? '').replace(/[,\s]/g, ''));
-        if (!n || isNaN(n)) return null;
-        return n >= 100000000 ? Math.round(n / 10000) : n;
-      };
-
-      const toKoreanPrice = (manwon) => {
-        const n = Number(manwon);
-        if (!n || isNaN(n)) return '';
-        const eok = Math.floor(n / 10000);
-        const remain = n % 10000;
-        if (eok && remain) return `${eok}억 ${remain.toLocaleString('ko-KR')}만원`;
-        if (eok) return `${eok}억원`;
-        return `${remain.toLocaleString('ko-KR')}만원`;
-      };
-
-      /* 매매/전세는 만원 단위 원본, 월세/임대 보증금·월세는 원 단위 원본 → 만원 변환해서 표시 */
+      /* 매매/전세는 만원 단위 원본, 월세/임대 보증금·월세는 원 단위 원본 → 만원 변환해서 표시
+         (app.js의 wonToManwon/toKoreanPrice 전역 함수를 그대로 사용) */
       function buildPriceRows(item) {
         const rows = [];
         const isRent = item.dealType === '월세' || item.dealType === '임대';
         if (item.dealType === '매매' && item.salePrice) {
-          rows.push(['매매가', toKoreanPrice(normalizeManwon(item.salePrice))]);
+          const mw = Number(String(item.salePrice).replace(/[,\s]/g, ''));
+          rows.push(['매매가', toKoreanPrice(mw >= 100000000 ? Math.round(mw / 10000) : mw)]);
         } else if (item.dealType === '전세' && item.deposit) {
-          rows.push(['전세보증금', toKoreanPrice(normalizeManwon(item.deposit))]);
+          const mw = Number(String(item.deposit).replace(/[,\s]/g, ''));
+          rows.push(['전세보증금', toKoreanPrice(mw >= 100000000 ? Math.round(mw / 10000) : mw)]);
         } else if (isRent) {
           const dep  = wonToManwon(item.deposit);
           const rent = wonToManwon(item.monthlyRent);
           if (dep)  rows.push(['보증금', toKoreanPrice(dep)]);
           if (rent) rows.push(['월세', toKoreanPrice(rent)]);
         } else if (item.salePrice) {
-          rows.push(['가격', toKoreanPrice(normalizeManwon(item.salePrice))]);
+          const mw = Number(String(item.salePrice).replace(/[,\s]/g, ''));
+          rows.push(['가격', toKoreanPrice(mw >= 100000000 ? Math.round(mw / 10000) : mw)]);
         } else if (item.deposit) {
-          rows.push(['보증금', toKoreanPrice(normalizeManwon(item.deposit))]);
+          const mw = Number(String(item.deposit).replace(/[,\s]/g, ''));
+          rows.push(['보증금', toKoreanPrice(mw >= 100000000 ? Math.round(mw / 10000) : mw)]);
         }
         if (!rows.length) rows.push([item.dealType || '가격', '가격문의']);
         return rows;
       }
 
-      /* 면적: 카테고리별 세부 필드 우선, 없으면 area_m2/area_py 폴백 */
+      /* 면적: 카테고리별 세부 필드 우선, 없으면 area_m2/area_py 폴백 (메타 설명용 텍스트) */
       function buildAreaText(item) {
         const fmt = (m2, py) => {
           const m = m2 != null && m2 !== '' ? Number(m2) : null;
@@ -368,118 +225,12 @@
         return parts.join(' / ') || null;
       }
 
-      function normalizeImageUrl(url) {
-        if (!url) return '';
-        return String(url);
+      function buildPriceSummaryText(item) {
+        return buildPriceRows(item).map(([label, val]) => `${label} ${val}`).join(' / ');
       }
 
-      let _images = [];
-      let _mainIdx = 0;
-      let _altBase = '';
-
-      function setMainImage(idx) {
-        _mainIdx = idx;
-        const mainImg = document.getElementById('detailMainImg');
-        mainImg.src = normalizeImageUrl(_images[idx]);
-        mainImg.alt = _altBase ? `${_altBase} 대표 이미지` : '';
-        document.querySelectorAll('.detail-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
-      }
-
-      function openLightbox(idx) {
-        const lb = document.getElementById('detailLightbox');
-        document.getElementById('detailLightboxImg').src = normalizeImageUrl(_images[idx]);
-        lb.classList.remove('hidden');
-      }
-      document.getElementById('detailLightboxClose').addEventListener('click', () => {
-        document.getElementById('detailLightbox').classList.add('hidden');
-      });
-      document.getElementById('detailLightbox').addEventListener('click', (e) => {
-        if (e.target.id === 'detailLightbox') e.currentTarget.classList.add('hidden');
-      });
-
-      function renderGallery(item, keywords) {
-        _images = Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [];
-        const altKeyword = (keywords || []).find(k => k !== item.title);
-        _altBase = [item.title, altKeyword].filter(Boolean).join(' ');
-        const mainImg = document.getElementById('detailMainImg');
-        const noImg   = document.getElementById('detailNoImg');
-        const thumbs  = document.getElementById('detailThumbs');
-
-        if (_images.length) {
-          mainImg.style.display = '';
-          noImg.style.display = 'none';
-          setMainImage(0);
-          mainImg.onclick = () => openLightbox(_mainIdx);
-          thumbs.innerHTML = _images.map((url, i) =>
-            `<img src="${esc(normalizeImageUrl(url))}" alt="${esc(_altBase ? _altBase + ' 사진 ' + (i + 1) : '')}" class="detail-thumb${i === 0 ? ' active' : ''}" data-idx="${i}" />`
-          ).join('');
-          thumbs.querySelectorAll('.detail-thumb').forEach(t => {
-            t.addEventListener('click', () => setMainImage(Number(t.dataset.idx)));
-          });
-        } else {
-          mainImg.style.display = 'none';
-          noImg.style.display = 'flex';
-          thumbs.innerHTML = '';
-        }
-      }
-
-      function renderBadges(item) {
-        const badges = [];
-        const catLabel = CAT1_LABEL[item.category1] || item.category1 || '기타';
-        badges.push(`<span class="detail-badge">${esc(catLabel)}</span>`);
-        if (item.dealType) badges.push(`<span class="detail-badge deal">${esc(item.dealType)}</span>`);
-        if (item.status === '거래완료' || item.is_completed === true) {
-          badges.push(`<span class="detail-badge done">거래완료</span>`);
-        }
-        (item.stickers || []).forEach(s => {
-          if (s) badges.push(`<span class="detail-badge sticker">${esc(s)}</span>`);
-        });
-        document.getElementById('detailBadges').innerHTML = badges.join('');
-      }
-
-      function renderPrice(item) {
-        const rows = buildPriceRows(item);
-        document.getElementById('detailPriceBox').innerHTML = rows.map(([label, val]) =>
-          `<div class="detail-price-row"><span class="lbl">${esc(label)}</span><span class="val">${esc(val)}</span></div>`
-        ).join('');
-      }
-
-      function renderInfoTable(item) {
-        const rows = [];
-        const addRow = (label, value) => { if (value !== null && value !== undefined && value !== '') rows.push([label, value]); };
-        addRow('주소', item.address);
-        addRow('매물종류', CAT1_LABEL[item.category1] || item.category1);
-        addRow('거래유형', item.dealType);
-        const areaText = buildAreaText(item);
-        addRow('면적정보', areaText);
-        addRow('층정보', item.floorInfo);
-        addRow('용도지역', item.zoning);
-        document.getElementById('detailInfoTable').innerHTML = rows.map(([label, val]) =>
-          `<tr><td>${esc(label)}</td><td>${esc(val)}</td></tr>`
-        ).join('');
-      }
-
-      function renderConsultPoint(item) {
-        const wrap = document.getElementById('detailConsultPoint');
-        const title = document.getElementById('detailConsultPointTitle');
-        const text = document.getElementById('detailConsultPointText');
-        if (!wrap || !title || !text) return;
-        title.textContent = getConsultTitle(item);
-        text.textContent = CONSULT_TRUST_TEXT;
-        wrap.style.display = '';
-      }
-
-      /* 주소에서 "OO시 OO읍/면/동/리" 정도의 지역명만 추출 (없으면 앞 두 단어로 대체) */
-      function extractRegion(address) {
-        if (!address) return '';
-        const m = String(address).match(/([가-힣]+시)\s*([가-힣]+(?:구|읍|면|동|리))?/);
-        if (m) return [m[1], m[2]].filter(Boolean).join(' ');
-        return String(address).split(' ').slice(0, 2).join(' ');
-      }
-
-      /* 매물 데이터(카테고리·주소·거래유형·용도지역·태그·설명) 기반 검색 키워드 자동 생성.
-         매물 데이터에 없는 지역명·허위 키워드는 넣지 않고, 카테고리별 업종 용어만 조합한다.
-         중복 제거 후 10~20개로 제한. */
+      /* 매물 데이터(카테고리·주소·거래유형·용도지역·태그) 기반 검색 키워드 자동 생성.
+         매물 데이터에 없는 지역명·허위 키워드는 넣지 않고, 카테고리별 업종 용어만 조합한다. */
       function buildSearchKeywords(item) {
         const keywords = [];
         const push = (k) => {
@@ -488,7 +239,7 @@
         };
 
         const cat1 = item.category1 || '';
-        const catLabel = CAT1_LABEL[cat1] || cat1;
+        const catLabel = getPropertyTypeLabel(item);
         const address = item.address || '';
         const cityMatch = address.match(/([가-힣]+)시/);
         const city = cityMatch ? cityMatch[1] : '';
@@ -499,7 +250,10 @@
         if (catLabel) push(catLabel);
         if (region) push(region);
 
-        // 도시 + 실제 2차분류(category2) + 거래유형 조합 (예: "파주 공장 매매")
+        // 전문관별 대표 키워드 10개(app.js SEO_KEYWORD_POOLS, 매물 상세 모달 사진 하단
+        // 캡션과 공용) — meta keywords에는 가능하면 10개 전체가 들어가도록 앞쪽에 push
+        getSeoKeywords(item).forEach(push);
+
         if (city && item.category2) {
           push(`${city} ${item.category2} ${dealType}`.trim());
           push(`${city} ${item.category2}`);
@@ -508,10 +262,8 @@
         if (item.category2) push(item.category2);
         if (catLabel && dealType) push(`${catLabel} ${dealType}`);
 
-        // 카테고리별 업종 특화 용어 (일반명사, 지역 특정 아님)
         (CAT_GENERIC_KEYWORDS[cat1] || []).forEach(push);
 
-        // 신도시·역세권 등은 주소에 실제로 포함된 경우에만 추가
         if (/운정/.test(address) && cat1 === '상가사무실') {
           push('운정역 상가');
           push('운정신도시 상가 매매');
@@ -521,17 +273,13 @@
         (item.stickers || []).forEach(push);
         push('하이탑부동산');
 
-        return keywords.filter(Boolean).slice(0, 20);
-      }
-
-      function buildPriceSummaryText(item) {
-        return buildPriceRows(item).map(([label, val]) => `${label} ${val}`).join(' / ');
+        return keywords.filter(Boolean).slice(0, 30);
       }
 
       /* 매물명 · 지역 · 거래유형 기준 동적 페이지 타이틀 */
       function buildPageTitle(item) {
         const region = extractRegion(item.address);
-        const catLabel = CAT1_LABEL[item.category1] || item.category1 || '';
+        const catLabel = getPropertyTypeLabel(item);
         const meta = [region, catLabel, item.dealType].filter(Boolean).join(' ');
         const head = item.title || '매물 상세';
         return meta ? `${head} | ${meta} - 하이탑부동산` : `${head} - 하이탑부동산`;
@@ -571,15 +319,47 @@
         meta.content = keywords.join(', ');
       }
 
-      /* 자동 생성된 키워드 중 일부를 "관련 검색어" 영역에 자연스러운 텍스트로 노출 (숨김 처리 금지) */
-      function renderRelatedKeywords(keywords) {
-        const wrap = document.getElementById('detailRelated');
-        const el = document.getElementById('detailRelatedKeywords');
-        if (!wrap || !el) return;
-        const shown = keywords.slice(0, 10);
-        if (!shown.length) { wrap.style.display = 'none'; return; }
-        el.textContent = shown.join(', ');
-        wrap.style.display = '';
+      /* 검색노출용 정식 상세 URL. listings.html?id= / 전문관페이지.html?id= 등은
+         app.js에서 이 주소로 리다이렉트되므로, 매물별 canonical·og:url은 항상
+         이 형식 하나로만 생성한다. */
+      function buildCanonicalUrl(item) {
+        return `https://hitoprealty.com/listing-detail.html?id=${encodeURIComponent(item.id)}`;
+      }
+
+      function upsertLinkCanonical(href) {
+        let link = document.querySelector('link[rel="canonical"]');
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'canonical';
+          document.head.appendChild(link);
+        }
+        link.href = href;
+      }
+
+      function upsertMetaProperty(property, content) {
+        let meta = document.querySelector(`meta[property="${property}"]`);
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('property', property);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      }
+
+      /* canonical + Open Graph 태그를 매물별로 갱신. 대표 이미지가 없으면 기본 로고 이미지로 대체 */
+      function updateSeoTags(item) {
+        const url = buildCanonicalUrl(item);
+        const title = buildPageTitle(item);
+        const description = buildMetaDescription(item);
+        const image = (Array.isArray(item.imageUrls) && item.imageUrls.find(Boolean))
+          || 'https://hitoprealty.com/images/hitoplogo.png';
+
+        upsertLinkCanonical(url);
+        upsertMetaProperty('og:type', 'website');
+        upsertMetaProperty('og:title', title);
+        upsertMetaProperty('og:description', description);
+        upsertMetaProperty('og:url', url);
+        upsertMetaProperty('og:image', image);
       }
 
       /* 매물명, 카테고리, 이미지, 주소, 가격, 설명, 검색 키워드, 하이탑부동산 연락처를 담은 JSON-LD */
@@ -590,7 +370,7 @@
           '@context': 'https://schema.org',
           '@type': 'RealEstateListing',
           name: item.title || '매물',
-          category: CAT1_LABEL[item.category1] || item.category1 || '',
+          category: getPropertyTypeLabel(item),
           description: item.detailDescription || buildMetaDescription(item),
           keywords: (keywords || []).join(', '),
           image: Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [],
@@ -620,25 +400,133 @@
         document.head.appendChild(script);
       }
 
+      /* ── 거래상태 배지 + 매물 위치 미니맵 ──
+         listings.html의 openModalFull()과 동일한 로직이지만, 그 함수는 setupListingsPage()
+         내부 지역함수라 재사용이 불가능해 필요한 부분만 이 페이지에 맞게 다시 구현한다. */
+      function isCompleted(item) {
+        return item.is_completed === true || item.status === 'done' || item.status === '거래완료';
+      }
+
+      function renderDoneTag(item) {
+        const doneTag = document.getElementById('modalDoneTag');
+        if (!doneTag) return;
+        const completed = isCompleted(item);
+        const statusText = item.status || (completed ? '거래완료' : '거래가능');
+        if (!statusText) { doneTag.classList.add('hidden'); return; }
+        doneTag.textContent = statusText;
+        doneTag.classList.remove('hidden');
+        if (statusText === '거래완료') { doneTag.style.background = '#fee2e2'; doneTag.style.color = '#dc2626'; }
+        else if (statusText === '상담중') { doneTag.style.background = '#ffedd5'; doneTag.style.color = '#ea580c'; }
+        else if (statusText === '계약진행') { doneTag.style.background = '#f3e8ff'; doneTag.style.color = '#7c3aed'; }
+        else { doneTag.style.background = '#e0f2fe'; doneTag.style.color = '#0284c7'; }
+      }
+
+      function getLat(item) {
+        const v = item.lat ?? item.latitude ?? item.coordY ?? item.y ?? null;
+        return (v !== null && !isNaN(Number(v))) ? Number(v) : null;
+      }
+      function getLng(item) {
+        const v = item.lng ?? item.longitude ?? item.coordX ?? item.x ?? null;
+        return (v !== null && !isNaN(Number(v))) ? Number(v) : null;
+      }
+      function hasCoord(item) { return getLat(item) !== null && getLng(item) !== null; }
+
+      /* 좌표가 없는 매물의 geocoding용 주소 후보 목록 (app.js getListingAddressCandidates와 동일 규칙,
+         getPublicAddress/getMapSearchAddress는 app.js의 전역 함수를 그대로 사용) */
+      function getAddressCandidates(item) {
+        const values = ['mapAddress', 'map_address', 'roadAddress', 'road_address', 'jibunAddress', 'jibun_address', 'address', 'publicAddress', 'public_address']
+          .map(field => (typeof item[field] === 'string' ? item[field].trim() : ''))
+          .filter(Boolean);
+        const list = [];
+        const add = value => {
+          const clean = String(value || '').replace(/\s+/g, ' ').trim();
+          if (clean && !list.includes(clean)) list.push(clean);
+        };
+        const address = getMapSearchAddress(item);
+        const display = getPublicAddress(item);
+        values.forEach(add);
+        if (display && address && address !== display) {
+          add(`${display} ${address}`);
+          if (!/^경기|^서울|^인천|^부산|^대구|^광주|^대전|^울산|^세종|^강원|^충청|^전라|^경상|^제주/.test(display)) {
+            add(`경기도 ${display} ${address}`);
+          }
+        }
+        values.forEach(value => { if (/^파주/.test(value)) add(`경기도 ${value}`); });
+        return list;
+      }
+
+      function ensureKakaoMaps(onReady, onFail) {
+        if (window.kakao && kakao.maps) { kakao.maps.load(onReady); return; }
+        let script = document.getElementById('kakaoMapSdkLoader');
+        const handleLoad = () => { if (window.kakao && kakao.maps) kakao.maps.load(onReady); else if (onFail) onFail(); };
+        const handleError = () => { if (onFail) onFail(); };
+        if (script) {
+          script.addEventListener('load', handleLoad, { once: true });
+          script.addEventListener('error', handleError, { once: true });
+          return;
+        }
+        script = document.createElement('script');
+        script.id = 'kakaoMapSdkLoader';
+        script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false';
+        script.onload = handleLoad;
+        script.onerror = handleError;
+        document.head.appendChild(script);
+      }
+
+      function renderMinimap(item) {
+        const wrap = document.getElementById('modalBodyMapWrap');
+        const mapEl = document.getElementById('modalBodyMap');
+        if (!wrap || !mapEl) return;
+        const candidates = getAddressCandidates(item);
+        wrap.style.display = hasCoord(item) || candidates.length ? 'block' : 'none';
+        const showError = () => { wrap.style.display = 'block'; mapEl.innerHTML = '<div class="map-loading">지도를 불러올 수 없습니다</div>'; };
+
+        ensureKakaoMaps(() => {
+          const paint = (coords) => {
+            wrap.style.display = 'block';
+            mapEl.innerHTML = '';
+            const mm = new kakao.maps.Map(mapEl, { center: coords, level: 4 });
+            new kakao.maps.Marker({ map: mm, position: coords });
+            window.setTimeout(() => { mm.relayout(); mm.setCenter(coords); }, 120);
+          };
+          if (hasCoord(item)) {
+            paint(new kakao.maps.LatLng(getLat(item), getLng(item)));
+          } else if (candidates.length && kakao.maps.services) {
+            const geocoder = new kakao.maps.services.Geocoder();
+            const tryNext = (idx) => {
+              if (idx >= candidates.length) { showError(); return; }
+              geocoder.addressSearch(candidates[idx], (result, status) => {
+                if (status !== kakao.maps.services.Status.OK || !result || !result[0]) { tryNext(idx + 1); return; }
+                paint(new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x)));
+              });
+            };
+            tryNext(0);
+          } else if (candidates.length) {
+            showError();
+          }
+        }, showError);
+      }
+
       function renderListing(item) {
         const keywords = buildSearchKeywords(item);
 
+        // ── SEO ──
         document.title = buildPageTitle(item);
         updateMetaDescription(buildMetaDescription(item));
         updateMetaKeywords(keywords);
+        updateSeoTags(item);
         injectJsonLd(item, keywords);
-        renderGallery(item, keywords);
-        renderBadges(item);
-        document.getElementById('detailTitle').textContent = item.title || '제목 없음';
-        document.getElementById('detailAddress').textContent = item.address || '';
-        renderPrice(item);
-        renderInfoTable(item);
-        document.getElementById('detailDesc').textContent = item.detailDescription || '상세 설명 준비중입니다.';
-        renderRelatedKeywords(keywords);
-        renderConsultPoint(item);
+
+        // ── 화면: listings.html과 동일한 openModal()로 렌더링 ──
+        openModal(item);
+        renderDoneTag(item);
+        renderMinimap(item);
+        // openModal()은 오버레이 전제로 document.body.style.overflow='hidden'을 설정하므로,
+        // 페이지 모드에서는 즉시 리셋해 페이지 스크롤을 막지 않게 한다.
+        document.body.style.overflow = '';
 
         document.getElementById('detailState').style.display = 'none';
-        document.getElementById('detailPanel').style.display = '';
+        document.getElementById('listingModal').style.display = '';
       }
 
       async function init() {
@@ -652,8 +540,9 @@
           return;
         }
 
+        const { supabase } = await _supabaseCfg();
         const { data, error } = await supabase
-          .from('listings')
+          .from(SUPABASE_LISTINGS_TABLE)
           .select('*')
           .eq('id', id)
           .single();
@@ -664,7 +553,7 @@
           return;
         }
 
-        renderListing(flattenListingRow(data));
+        renderListing(normalizeSupabaseListing(data));
       }
 
       init();
