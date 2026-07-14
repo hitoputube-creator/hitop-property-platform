@@ -68,14 +68,63 @@
       <!-- ── 왼쪽 사이드바 (15%) ── -->
       <aside class="lp-sidebar" aria-label="카테고리 사이드바">
 
-        <!-- 매물 구분 -->
+        <!-- 매물 구분 (고객용으로 재편성한 1차·2차구분 — app.js의 LP_CATEGORY_TREE와 매칭) -->
         <div class="lp-sidebar-section lp-catlist-section">
           <div class="lp-sidebar-header">매물 구분</div>
-          <a class="lp-catlist-item" href="listings.html" aria-current="page">전체 매물</a>
-          <a class="lp-catlist-item" href="factory-warehouse.html">공장·창고 매물</a>
-          <a class="lp-catlist-item" href="commercial-office.html">상가·사무실 매물</a>
-          <a class="lp-catlist-item" href="land.html">토지 매물</a>
-          <a class="lp-catlist-item" href="residential.html">주거용 매물</a>
+          <a class="lp-catlist-item lp-cat-all active" href="listings.html" data-group="">전체 매물</a>
+
+          <div class="lp-cat-group" data-group="공장창고">
+            <a class="lp-catlist-item lp-cat-group-toggle" href="factory-warehouse.html" data-group="공장창고">
+              <span class="lp-cat-label">공장·창고</span>
+              <span class="lp-cat-arrow" aria-hidden="true">▾</span>
+            </a>
+            <div class="lp-cat-sub-list">
+              <button type="button" class="lp-cat-sub-item" data-group="공장창고" data-child="공장">공장</button>
+              <button type="button" class="lp-cat-sub-item" data-group="공장창고" data-child="창고">창고</button>
+            </div>
+          </div>
+
+          <div class="lp-cat-group" data-group="상가사무실">
+            <a class="lp-catlist-item lp-cat-group-toggle" href="commercial-office.html" data-group="상가사무실">
+              <span class="lp-cat-label">상가·사무실</span>
+              <span class="lp-cat-arrow" aria-hidden="true">▾</span>
+            </a>
+            <div class="lp-cat-sub-list">
+              <button type="button" class="lp-cat-sub-item" data-group="상가사무실" data-child="상가">상가</button>
+              <button type="button" class="lp-cat-sub-item" data-group="상가사무실" data-child="사무실">사무실</button>
+            </div>
+          </div>
+
+          <div class="lp-cat-group" data-group="토지">
+            <a class="lp-catlist-item lp-cat-group-toggle" href="land.html" data-group="토지">
+              <span class="lp-cat-label">토지</span>
+              <span class="lp-cat-arrow" aria-hidden="true">▾</span>
+            </a>
+            <div class="lp-cat-sub-list">
+              <button type="button" class="lp-cat-sub-item" data-group="토지" data-child="토지">토지</button>
+              <button type="button" class="lp-cat-sub-item" data-group="토지" data-child="단독택지">단독택지</button>
+            </div>
+          </div>
+
+          <div class="lp-cat-group" data-group="주거용">
+            <a class="lp-catlist-item lp-cat-group-toggle" href="residential.html" data-group="주거용">
+              <span class="lp-cat-label">주거용</span>
+              <span class="lp-cat-arrow" aria-hidden="true">▾</span>
+            </a>
+            <div class="lp-cat-sub-list">
+              <button type="button" class="lp-cat-sub-item" data-group="주거용" data-child="아파트">아파트</button>
+              <button type="button" class="lp-cat-sub-item" data-group="주거용" data-child="오피스텔">오피스텔</button>
+              <button type="button" class="lp-cat-sub-item" data-group="주거용" data-child="단독주택">단독주택</button>
+              <button type="button" class="lp-cat-sub-item" data-group="주거용" data-child="다가구주택">다가구주택</button>
+              <button type="button" class="lp-cat-sub-item" data-group="주거용" data-child="상가주택">상가주택</button>
+            </div>
+          </div>
+
+          <div class="lp-cat-group" data-group="건물빌딩">
+            <a class="lp-catlist-item lp-cat-group-toggle lp-cat-group-toggle--leaf" href="listings.html?category=건물빌딩" data-group="건물빌딩">
+              <span class="lp-cat-label">건물·빌딩</span>
+            </a>
+          </div>
         </div>
 
         <!-- 전화 문의 -->

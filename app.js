@@ -211,6 +211,14 @@ const getCategory1 = (item = {}) => {
   return PT_TO_CAT1[rawType] || PT_TO_CAT1[rawType.toLowerCase()] || rawType;
 };
 
+// category2(2차구분) 정규화 — category1과 동일하게 legacy propertyType/type도 PT_TO_CAT2로 폴백
+const getCategory2 = (item = {}) => {
+  const rawCat2 = String(item.category2 || '').trim();
+  if (rawCat2) return rawCat2;
+  const rawType = String(item.propertyType || item.type || '').trim();
+  return PT_TO_CAT2[rawType] || PT_TO_CAT2[rawType.toLowerCase()] || '';
+};
+
 const CAT1_DISPLAY = {
   "\uacf5\uc7a5\ucc3d\uace0": "\uacf5\uc7a5\u00b7\ucc3d\uace0",
   "\uc0c1\uac00\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
@@ -1576,7 +1584,75 @@ const setupListingsPage = () => {
     '단독전원주택': '단독·전원주택',
     '건물빌딩': '건물·빌딩',
   };
-  const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '' };
+  const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '', sidebarMatch: null };
+
+  // ── "매물 구분" 사이드바 — 고객용으로 재편성한 1차·2차구분 트리 ──
+  // 매물관리 프로그램 category1/category2(getCategory1/getCategory2로 레거시 표기까지 정규화됨)를
+  // 홈페이지 노출 구조로 매핑한다. DB 값은 변경하지 않고 필터 매칭 함수로만 재편성한다.
+  //  - 토지 > 단독택지  = category1=토지 & category2=택지
+  //  - 주거용 > 단독주택 = category1=단독전원주택 (전원주택 포함 전부 병합)
+  //  - 주거용 > 다가구주택/상가주택 = category1=건물빌딩 & category2가 각각 일치
+  //  - 건물·빌딩(하위 없음) = category1=건물빌딩 전체 (다가구주택·상가주택 포함 — 주거용 쪽과 중복 노출 의도)
+  const LP_CATEGORY_TREE = [
+    {
+      key: '공장창고',
+      match: (i) => getCategory1(i) === '공장창고',
+      children: [
+        { key: '공장', match: (i) => getCategory1(i) === '공장창고' && getCategory2(i) === '공장' },
+        { key: '창고', match: (i) => getCategory1(i) === '공장창고' && getCategory2(i) === '창고' },
+      ],
+    },
+    {
+      key: '상가사무실',
+      match: (i) => getCategory1(i) === '상가사무실',
+      children: [
+        { key: '상가',   match: (i) => getCategory1(i) === '상가사무실' && getCategory2(i) === '상가' },
+        { key: '사무실', match: (i) => getCategory1(i) === '상가사무실' && getCategory2(i) === '사무실' },
+      ],
+    },
+    {
+      key: '토지',
+      match: (i) => getCategory1(i) === '토지',
+      children: [
+        { key: '토지',     match: (i) => getCategory1(i) === '토지' && getCategory2(i) === '토지' },
+        { key: '단독택지', match: (i) => getCategory1(i) === '토지' && getCategory2(i) === '택지' },
+      ],
+    },
+    {
+      key: '주거용',
+      match: (i) => {
+        const c1 = getCategory1(i);
+        if (c1 === '주거용' || c1 === '단독전원주택') return true;
+        if (c1 === '건물빌딩') {
+          const c2 = getCategory2(i);
+          return c2 === '다가구주택' || c2 === '상가주택';
+        }
+        return false;
+      },
+      children: [
+        { key: '아파트',     match: (i) => getCategory1(i) === '주거용' && getCategory2(i) === '아파트' },
+        { key: '오피스텔',   match: (i) => getCategory1(i) === '주거용' && getCategory2(i) === '오피스텔' },
+        { key: '단독주택',   match: (i) => getCategory1(i) === '단독전원주택' },
+        { key: '다가구주택', match: (i) => getCategory1(i) === '건물빌딩' && getCategory2(i) === '다가구주택' },
+        { key: '상가주택',   match: (i) => getCategory1(i) === '건물빌딩' && getCategory2(i) === '상가주택' },
+      ],
+    },
+    {
+      key: '건물빌딩',
+      // 다가구주택·상가주택은 "주거용"으로 이관되어 여기서는 제외(건물/빌딩/건물빌딩 등 순수 건물·빌딩 매물만)
+      match: (i) => {
+        if (getCategory1(i) !== '건물빌딩') return false;
+        const c2 = getCategory2(i);
+        return c2 !== '다가구주택' && c2 !== '상가주택';
+      },
+      children: [],
+    },
+  ];
+  // ?category= / data-default-category 초기 복원 시 CRM category1 값을 사이드바 그룹 키로 매핑
+  const CAT1_TO_LP_GROUP = {
+    '공장창고': '공장창고', '상가사무실': '상가사무실', '토지': '토지',
+    '주거용': '주거용', '단독전원주택': '주거용', '건물빌딩': '건물빌딩',
+  };
   let sortMode = 'date';
   let allPage  = 1;
   const ALL_SIZE = 15;
@@ -2421,8 +2497,9 @@ const setupListingsPage = () => {
     const effectiveCat  = flt.cat  || flt.formCat;
     const effectiveDeal = flt.deal || flt.formDeal;
     let items = [..._listings];
-    if (effectiveCat)  items = items.filter(i => getCategory1(i) === effectiveCat);
-    if (effectiveDeal) items = items.filter(i => i.dealType === effectiveDeal);
+    if (effectiveCat)     items = items.filter(i => getCategory1(i) === effectiveCat);
+    if (flt.sidebarMatch) items = items.filter(flt.sidebarMatch);
+    if (effectiveDeal)    items = items.filter(i => i.dealType === effectiveDeal);
     if (flt.kw)        items = items.filter(i => {
       const kw = flt.kw;
       return (i.title        || '').toLowerCase().includes(kw) ||
@@ -2477,6 +2554,63 @@ const setupListingsPage = () => {
     });
   });
 
+  // ── 사이드바 "매물 구분" 아코디언 (LP_CATEGORY_TREE 기반) ──
+  const setSidebarActive = (el) => {
+    document.querySelectorAll('.lp-catlist-item.active, .lp-cat-sub-item.active')
+      .forEach(x => x.classList.remove('active'));
+    el?.classList.add('active');
+  };
+  const openSidebarGroup = (groupKey) => {
+    document.querySelectorAll('.lp-cat-group').forEach(g =>
+      g.classList.toggle('open', !!groupKey && g.dataset.group === groupKey));
+  };
+  // 사이드바 선택은 formCatSelect(매물관리 6종 원본 구분)와 값 체계가 달라(예: 주거용은
+  // 3개 category1을 묶은 값) 실제 필터에는 관여하지 않고, 큰 카테고리 클릭 시 표시만 맞춰준다.
+  const syncFormCatSelect = (groupKey) => {
+    const fc = document.getElementById('formCatSelect');
+    if (fc) fc.value = groupKey || '';
+  };
+
+  // 전체 매물
+  document.querySelectorAll('.lp-cat-all').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      flt.sidebarMatch = null;
+      syncFormCatSelect('');
+      openSidebarGroup('');
+      setSidebarActive(el);
+      applyFilters();
+    });
+  });
+
+  // 큰 카테고리 — 해당 그룹 전체 표시 + 하위 선택 해제 + 하위 메뉴 펼침(다른 그룹은 접힘)
+  document.querySelectorAll('.lp-cat-group-toggle').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const groupKey = el.dataset.group;
+      const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
+      flt.sidebarMatch = group ? group.match : null;
+      syncFormCatSelect(groupKey);
+      openSidebarGroup(groupKey);
+      setSidebarActive(el);
+      applyFilters();
+    });
+  });
+
+  // 작은 카테고리 — 그룹의 하위 매칭함수 적용(부모 그룹은 펼쳐진 채 유지)
+  document.querySelectorAll('.lp-cat-sub-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const groupKey = el.dataset.group;
+      const childKey = el.dataset.child;
+      const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
+      const child = group?.children.find(c => c.key === childKey);
+      flt.sidebarMatch = child ? child.match : null;
+      syncFormCatSelect(groupKey);
+      setSidebarActive(el);
+      applyFilters();
+    });
+  });
+
   // ── 오버레이 검색 폼 ──
   filterForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -2487,7 +2621,7 @@ const setupListingsPage = () => {
     applyFilters();
   });
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
-    Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '' });
+    Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '', sidebarMatch: null });
     filterForm.reset();
     document.querySelectorAll('.lp-cat-item').forEach(x =>
       x.classList.toggle('active', x.dataset.cat === ''));
@@ -2528,13 +2662,27 @@ const setupListingsPage = () => {
   const defaultCatRaw = document.body.dataset.defaultCategory || '';
   const initialCat = urlCat || (defaultCatRaw ? normalizeCategoryParam(defaultCatRaw) : '');
   if (initialCat) {
-    flt.cat = initialCat;
-    const catSel = document.getElementById('formCatSelect');
-    if (catSel) catSel.value = initialCat;
-    // 사이드바 active 상태
+    // 사이드바 active 상태 (레거시 .lp-cat-item — 현재 HTML에는 없음)
     document.querySelectorAll('.lp-cat-item').forEach(el => {
       el.classList.toggle('active', el.dataset.cat === initialCat);
     });
+    // initialCat(매물관리 원본 category1, 예: 단독전원주택)을 사이드바 그룹 키로 매핑해
+    // LP_CATEGORY_TREE의 매칭함수를 그대로 적용한다(주거용 통합 그룹 등도 올바르게 복원됨).
+    const initialGroupKey = CAT1_TO_LP_GROUP[initialCat] || initialCat;
+    const initialGroup = LP_CATEGORY_TREE.find(g => g.key === initialGroupKey);
+    if (initialGroup) {
+      flt.sidebarMatch = initialGroup.match;
+      const catSel = document.getElementById('formCatSelect');
+      if (catSel) catSel.value = initialGroupKey;
+      document.querySelectorAll('.lp-cat-group').forEach(g =>
+        g.classList.toggle('open', g.dataset.group === initialGroupKey));
+      const initialToggle = document.querySelector(`.lp-cat-group-toggle[data-group="${initialGroupKey}"]`);
+      document.querySelectorAll('.lp-catlist-item.active, .lp-cat-sub-item.active')
+        .forEach(x => x.classList.remove('active'));
+      initialToggle?.classList.add('active');
+    } else {
+      flt.cat = initialCat;
+    }
   }
 
   // 초기 렌더 (Supabase 로드 후 renderSpecialPanels가 채움)
