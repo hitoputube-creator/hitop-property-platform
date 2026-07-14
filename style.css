@@ -7121,3 +7121,158 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
     min-height: 240px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   listings.html "매물 구분" 사이드바 — 1차·2차구분 아코디언 필터
+   (신규 클래스만 추가하는 방식으로, 4개 전문관 페이지가 공유하는
+    기존 .lp-catlist-item 규칙은 건드리지 않는다 — 그 페이지들에는
+    이 신규 마크업이 없으므로 아래 규칙은 자연히 영향을 주지 않는다)
+   ══════════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  body[data-page="listings"] .lp-sidebar .lp-cat-group-toggle {
+    justify-content: space-between !important;
+    cursor: pointer !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-arrow {
+    font-size: 11px !important;
+    color: #94A3B8 !important;
+    transition: transform 0.18s ease !important;
+    flex-shrink: 0 !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-arrow {
+    transform: rotate(180deg) !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-item.active,
+  body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-group-toggle {
+    background: #EEF2FB !important;
+    border-left-color: #0A1F5C !important;
+    color: #0A1F5C !important;
+    font-weight: 800 !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-list {
+    max-height: 0;
+    overflow: hidden;
+    background: #FAFBFC !important;
+    transition: max-height 0.22s ease;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-sub-list {
+    max-height: 260px;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-item {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 32px !important;
+    padding: 0 10px 0 26px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #F1F3F6 !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #64748B !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-list .lp-cat-sub-item:last-child {
+    border-bottom: none !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-item:hover {
+    background: #EEF2FB !important;
+    color: #0A1F5C !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-item.active {
+    background: #0A1F5C !important;
+    color: #fff !important;
+    border-left-color: #C9A84C !important;
+    font-weight: 800 !important;
+  }
+}
+
+/* 모바일: 기존 "가로 스크롤 알약형"은 하위 메뉴 펼침과 양립하기 어려워
+   "매물 구분" 섹션만 세로 아코디언 목록으로 전환한다(터치하기 쉬운 높이 확보,
+   가로 스크롤 없음). 다른 사이드바 섹션(전화문의 등)의 기존 모바일 레이아웃은 그대로 둔다. */
+@media (max-width: 768px) {
+  body[data-page="listings"] .lp-sidebar .lp-catlist-section {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-x: visible !important;
+    white-space: normal !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-section .lp-catlist-item {
+    display: flex !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 46px !important;
+    height: auto !important;
+    padding: 0 14px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #EEF1F6 !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    white-space: normal !important;
+    background: transparent !important;
+    color: #334155 !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-catlist-section .lp-catlist-item.active,
+  body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-group-toggle {
+    background: #EEF2FB !important;
+    border-left-color: #0A1F5C !important;
+    color: #0A1F5C !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-group-toggle {
+    justify-content: space-between !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-arrow {
+    font-size: 12px !important;
+    color: #94A3B8 !important;
+    transition: transform 0.18s ease !important;
+    flex-shrink: 0 !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-arrow {
+    transform: rotate(180deg) !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-list {
+    max-height: 0;
+    overflow: hidden;
+    background: #FAFBFC !important;
+    transition: max-height 0.22s ease;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-sub-list {
+    max-height: 320px;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-item {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 42px !important;
+    padding: 0 14px 0 30px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #F1F3F6 !important;
+    border-left: 3px solid transparent !important;
+    background: transparent !important;
+    color: #64748B !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    font-family: inherit !important;
+  }
+  body[data-page="listings"] .lp-sidebar .lp-cat-sub-item.active {
+    background: #0A1F5C !important;
+    color: #fff !important;
+    border-left-color: #C9A84C !important;
+    font-weight: 800 !important;
+  }
+}
