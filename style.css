@@ -7136,7 +7136,8 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
   body[data-page="listings"] .lp-sidebar .lp-cat-arrow {
     font-size: 11px !important;
     color: #94A3B8 !important;
-    transition: transform 0.18s ease !important;
+    /* transition: transform 0.18s ease !important; — 제거함: .lp-cat-sub-list의 max-height와
+       동일한 원인으로 rotate(180deg) 전환이 트리거되지 않고 0deg에 고정되는 현상이 있었음 */
     flex-shrink: 0 !important;
   }
   body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-arrow {
@@ -7153,7 +7154,9 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
     max-height: 0;
     overflow: hidden;
     background: #FAFBFC !important;
-    transition: max-height 0.22s ease;
+    /* transition: max-height 0.22s ease; — 제거함: 이 transition이 걸린 상태에서는
+       max-height:0 → 260px 전환이 트리거되지 않고 0에 고정되는 현상이 재현됨
+       (transition 선언을 없애면 즉시 정상 반영됨. 강제 리플로우로도 해결 안 됨) */
   }
   body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-sub-list {
     max-height: 260px;
@@ -7177,7 +7180,8 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
     text-align: left !important;
     font-family: inherit !important;
     cursor: pointer !important;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    /* transition: background 0.15s, color 0.15s, border-color 0.15s; — 제거함: 동일 원인으로
+       .active 클래스의 배경/글자색 전환이 트리거되지 않고 비활성 색상에 고정되는 현상이 있었음 */
   }
   body[data-page="listings"] .lp-sidebar .lp-cat-sub-list .lp-cat-sub-item:last-child {
     border-bottom: none !important;
@@ -7236,7 +7240,7 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
   body[data-page="listings"] .lp-sidebar .lp-cat-arrow {
     font-size: 12px !important;
     color: #94A3B8 !important;
-    transition: transform 0.18s ease !important;
+    /* transition 제거 이유는 데스크톱 블록의 동일 규칙 주석 참고 */
     flex-shrink: 0 !important;
   }
   body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-arrow {
@@ -7246,7 +7250,7 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
     max-height: 0;
     overflow: hidden;
     background: #FAFBFC !important;
-    transition: max-height 0.22s ease;
+    /* transition 제거 이유는 데스크톱 블록의 동일 규칙 주석 참고 */
   }
   body[data-page="listings"] .lp-sidebar .lp-cat-group.open .lp-cat-sub-list {
     max-height: 320px;
