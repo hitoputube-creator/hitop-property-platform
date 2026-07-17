@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>운정신도시 단독택지 지도 | 하이탑부동산</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=20260604-parking-unit" />
+    <link rel="stylesheet" href="unj3-land-map.css" />
+  </head>
+  <body data-page="unj3-land-map">
+
+    <!-- 탑바: 영업시간 + 전화 -->
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">031-949-8969</a>
+      </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="index.html">
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+      </div>
+    </header>
+
+    <main class="unj3-page">
+      <div class="container unj3-hero">
+        <div class="unj3-hero-text">
+          <h1>운정신도시 단독택지 지도</h1>
+          <p>운정3지구 블록별 위치와 단독택지 매물 현황을 확인하세요.</p>
+        </div>
+        <div class="unj3-hero-actions">
+          <a class="btn btn-outline" href="listings.html">전체매물 보기</a>
+          <a class="btn btn-outline" href="index.html">홈페이지로</a>
+        </div>
+      </div>
+
+      <div class="container unj3-layout">
+        <section class="unj3-map-section" aria-label="운정3지구 전체 토지이용계획도">
+          <div class="unj3-map-toolbar">
+            <div class="unj3-map-toolbar-group" role="group" aria-label="지도 확대 축소 도구">
+              <button type="button" id="unj3ZoomIn" class="unj3-tool-btn" aria-label="지도 확대">확대</button>
+              <button type="button" id="unj3ZoomOut" class="unj3-tool-btn" aria-label="지도 축소">축소</button>
+              <button type="button" id="unj3ZoomReset" class="unj3-tool-btn" aria-label="지도 원래 크기로 초기화">초기화</button>
+              <button type="button" id="unj3ZoomFit" class="unj3-tool-btn" aria-label="전체지도 맞춤">전체맞춤</button>
+              <button type="button" id="unj3Deselect" class="unj3-tool-btn" aria-label="선택한 블록 해제">선택 해제</button>
+            </div>
+            <div class="unj3-select-wrap">
+              <label class="unj3-select-label" for="unj3BlockSelect">블록 선택</label>
+              <select id="unj3BlockSelect" class="unj3-block-select" aria-label="블록 선택 드롭다운">
+                <option value="">블록 선택...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="unj3-map-viewport" id="unj3Viewport">
+            <div class="unj3-map-stage" id="unj3Stage">
+              <div class="unj3-map-image-wrap" id="unj3ImageWrap">
+                <img
+                  id="unj3MapImage"
+                  class="unj3-map-image"
+                  src="images/unj3-land-use-map.webp"
+                  alt="파주 운정3지구 단독택지 토지이용계획도 - C1부터 C18까지 블록 위치 표시"
+                  draggable="false"
+                />
+                <p class="unj3-map-error" id="unj3ImageError" hidden>
+                  지도 이미지를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+                </p>
+                <div class="unj3-badges" id="unj3Badges" aria-label="운정3지구 단독택지 블록 목록"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="unj3-info-panel" id="unj3InfoPanel" aria-live="polite"></aside>
+      </div>
+    </main>
+
+    <div class="unj3-modal-overlay" id="unj3ModalOverlay" hidden>
+      <div class="unj3-modal" role="dialog" aria-modal="true" aria-labelledby="unj3ModalTitle">
+        <h2 id="unj3ModalTitle">상세 필지도 준비 중</h2>
+        <p id="unj3ModalMessage"></p>
+        <button type="button" class="btn btn-primary" id="unj3ModalClose">확인</button>
+      </div>
+    </div>
+
+    <script src="unj3-land-map.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,397 @@
+/* 운정신도시 단독택지 지도 - 전용 스타일 (style.css의 --navy / --gold 토큰 재사용) */
+
+.unj3-page {
+  padding-bottom: 48px;
+}
+
+.unj3-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 28px 0 18px;
+  border-bottom: 1px solid var(--gray-200);
+  margin-bottom: 18px;
+}
+
+.unj3-hero-text h1 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.unj3-hero-text p {
+  margin: 0;
+  color: var(--gray-700);
+  font-size: 0.95rem;
+}
+
+.unj3-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.unj3-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* ── 지도 영역 ── */
+
+.unj3-map-section {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.unj3-map-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-100);
+}
+
+.unj3-map-toolbar-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.unj3-tool-btn {
+  border: 1px solid var(--navy);
+  background: var(--white);
+  color: var(--navy);
+  border-radius: 8px;
+  padding: 9px 13px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.unj3-tool-btn:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.unj3-tool-btn:focus-visible {
+  outline: 2px solid var(--gold, #c9a84c);
+  outline-offset: 2px;
+}
+
+.unj3-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.unj3-select-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.unj3-block-select {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-size: 0.85rem;
+  min-height: 40px;
+  color: #1e293b;
+  background: var(--white);
+}
+
+/* ── 지도 뷰포트 (확대/이동) ── */
+
+.unj3-map-viewport {
+  position: relative;
+  width: 100%;
+  height: 640px;
+  overflow: hidden;
+  background: #eef1f6;
+  touch-action: none;
+  cursor: grab;
+}
+
+.unj3-map-viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.unj3-map-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.unj3-map-stage.unj3-anim {
+  transition: transform 0.28s ease;
+}
+
+.unj3-map-image-wrap {
+  position: relative;
+  width: 1600px;
+  aspect-ratio: 2787 / 1889;
+}
+
+.unj3-map-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.unj3-map-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* ── 블록 배지 ── */
+
+.unj3-badges {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.unj3-block-badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  min-width: 46px;
+  min-height: 30px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 2px solid var(--navy);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.unj3-block-badge:hover {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.unj3-block-badge:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+.unj3-block-badge.is-active {
+  background: var(--gold, #c9a84c);
+  border-color: var(--navy);
+  color: var(--navy);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+/* ── 정보 패널 ── */
+
+.unj3-info-panel {
+  flex: 0 0 340px;
+  width: 340px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  align-self: stretch;
+}
+
+.unj3-info-panel h2 {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.unj3-info-placeholder {
+  margin: 0 0 10px;
+  color: var(--gray-700);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.unj3-info-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--navy);
+  background: var(--gray-100);
+  border-left: 3px solid var(--gold, #c9a84c);
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.unj3-info-list {
+  margin: 0 0 14px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.unj3-info-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 0.9rem;
+}
+
+.unj3-info-list dt {
+  color: var(--gray-700);
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+
+.unj3-info-list dd {
+  margin: 0;
+  color: #1e293b;
+  font-weight: 700;
+  text-align: right;
+}
+
+.unj3-info-note {
+  margin: 0 0 16px;
+  font-size: 0.84rem;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+.unj3-btn-gold {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: var(--gold, #c9a84c);
+  color: var(--navy);
+}
+
+.unj3-btn-gold:hover {
+  filter: brightness(0.96);
+}
+
+/* ── 안내 모달 ── */
+
+.unj3-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 35, 64, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.unj3-modal-overlay[hidden] {
+  display: none;
+}
+
+.unj3-modal {
+  background: var(--white);
+  border-radius: 12px;
+  max-width: 380px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.unj3-modal h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: var(--navy);
+}
+
+.unj3-modal p {
+  margin: 0 0 18px;
+  color: #1e293b;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* ── 반응형 ── */
+
+@media (max-width: 1023px) {
+  .unj3-layout {
+    flex-direction: column;
+  }
+
+  .unj3-info-panel {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .unj3-map-viewport {
+    height: 520px;
+  }
+}
+
+@media (max-width: 767px) {
+  .unj3-hero {
+    padding: 20px 0 14px;
+  }
+
+  .unj3-hero-text h1 {
+    font-size: 1.3rem;
+  }
+
+  .unj3-map-viewport {
+    height: 62vh;
+    min-height: 360px;
+  }
+
+  .unj3-select-wrap {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .unj3-block-select {
+    flex: 1 1 auto;
+  }
+
+  .unj3-tool-btn {
+    padding: 9px 11px;
+    font-size: 0.8rem;
+  }
+
+  .unj3-block-badge {
+    min-width: 42px;
+    min-height: 30px;
+    font-size: 12px;
+  }
+}
