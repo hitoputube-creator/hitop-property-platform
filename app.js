@@ -1138,6 +1138,7 @@ const SEO_KEYWORD_POOLS = {
   '상가사무실': ['운정상가임대', '운정상가매매', '파주상가임대', '파주상가매매', '파주사무실임대', '운정사무실임대', '운정역상가', '운정중심상업지구상가', '파주상가사무실', '파주상가사무실전문부동산'],
   '토지': ['파주토지매매', '파주땅매매', '파주공장부지매매', '파주창고부지매매', '파주개발부지', '파주투자토지', '파주야적장부지', '파주계획관리지역토지', '파주공장용지', '파주토지전문부동산'],
   '주거용': ['운정아파트전세', '운정아파트매매', '파주아파트전세', '파주아파트매매', '운정오피스텔월세', '운정오피스텔전세', '운정역오피스텔', '힐스테이트더운정', '파주단독주택매매', '파주단독택지'],
+  '건물빌딩': ['파주건물매매', '파주빌딩매매', '운정건물매매', '운정빌딩매매', '파주근린생활시설매매', '파주상가주택매매', '파주꼬마빌딩매매', '파주건물임대', '파주빌딩임대', '파주건물빌딩전문부동산'],
 };
 
 /* category1/category2/type/propertyType 등 여러 필드에 값이 섞여 있을 수 있어
@@ -1145,6 +1146,12 @@ const SEO_KEYWORD_POOLS = {
    원본 필드들도 문자열 포함(includes) 방식으로 한 번 더 안전하게 훑는다. */
 const resolveSeoKeywordCategory = (item = {}) => {
   const cat1 = String(getCategory1(item) || '');
+  // 상가주택·다가구주택은 category1이 건물빌딩이어도 "주거용" 이관 대상이므로 먼저 확인한다.
+  const cat2 = String(getCategory2(item) || '');
+  if (cat1.includes('건물') || cat1.includes('빌딩')) {
+    if (cat2.includes('상가주택') || cat2.includes('다가구주택')) return '주거용';
+    return '건물빌딩';
+  }
   if (cat1.includes('공장') || cat1.includes('창고')) return '공장창고';
   if (cat1.includes('상가') || cat1.includes('사무실')) return '상가사무실';
   if (cat1.includes('토지')) return '토지';
@@ -1152,6 +1159,8 @@ const resolveSeoKeywordCategory = (item = {}) => {
 
   const raw = [item.category1, item.category2, item.type, item.propertyType, item.property_type]
     .map(v => String(v || '')).join(' ');
+  if (raw.includes('상가주택') || raw.includes('다가구주택')) return '주거용';
+  if (raw.includes('건물') || raw.includes('빌딩')) return '건물빌딩';
   if (raw.includes('공장') || raw.includes('창고')) return '공장창고';
   if (raw.includes('상가') || raw.includes('사무실')) return '상가사무실';
   if (raw.includes('토지')) return '토지';
@@ -1592,7 +1601,7 @@ const setupListingsPage = () => {
   //  - 토지 > 단독택지  = category1=토지 & category2=택지
   //  - 주거용 > 단독주택 = category1=단독전원주택 (전원주택 포함 전부 병합)
   //  - 주거용 > 다가구주택/상가주택 = category1=건물빌딩 & category2가 각각 일치
-  //  - 건물·빌딩(하위 없음) = category1=건물빌딩 전체 (다가구주택·상가주택 포함 — 주거용 쪽과 중복 노출 의도)
+  //  - 건물·빌딩 > 건물/빌딩 = category1=건물빌딩 & category2가 각각 일치 (다가구주택·상가주택은 주거용으로만 노출, 여기서는 제외)
   const LP_CATEGORY_TREE = [
     {
       key: '공장창고',
@@ -1645,7 +1654,10 @@ const setupListingsPage = () => {
         const c2 = getCategory2(i);
         return c2 !== '다가구주택' && c2 !== '상가주택';
       },
-      children: [],
+      children: [
+        { key: '건물', match: (i) => getCategory1(i) === '건물빌딩' && getCategory2(i) === '건물' },
+        { key: '빌딩', match: (i) => getCategory1(i) === '건물빌딩' && getCategory2(i) === '빌딩' },
+      ],
     },
   ];
   // ?category= / data-default-category 초기 복원 시 CRM category1 값을 사이드바 그룹 키로 매핑
@@ -2165,12 +2177,13 @@ const setupListingsPage = () => {
   };
 
   // ── 지도+데이터 모두 준비됐을 때 마커 표시 ──
+  // applyFilters()가 이미 계산해 둔 filtered(사이드바 sidebarMatch 포함 전체 필터 결과)를 그대로 사용한다.
+  // 과거에는 여기서 category1만으로 별도 필터링해 sidebarMatch(예: 건물·빌딩에서 상가주택/다가구주택 제외)를
+  // 무시한 채 마커를 덮어써, 카드 목록과 지도 마커 개수가 어긋나는 문제가 있었다.
   const _tryShowMarkers = () => {
     if (!_mapReady || !_dataReady) return;
-    const cat = flt.cat || flt.formCat;
-    const toShow = cat ? _listings.filter(i => getCategory1(i) === cat) : _listings;
-    console.log('[_tryShowMarkers] 마커 표시 시작 | 필터:', cat || '전체', '| 표시할 매물수:', toShow.length);
-    placeMarkers(toShow);
+    console.log('[_tryShowMarkers] 마커 표시 시작 | 필터 적용된 매물수:', filtered.length);
+    placeMarkers(filtered);
   };
 
   // ── 지도 초기화 ──

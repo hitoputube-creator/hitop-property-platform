@@ -3999,6 +3999,19 @@ body[data-page="listings"] .lp-body {
 
 }
 
+/* 추천 패널을 820px 고정폭으로 두면 1280~1440px대(노트북·일반 PC)에서 지도·카테고리 카드
+   영역이 200px 안팎으로 눌려 카드가 찌그러진다. 1100px 이상 전 구간에서 패널 폭을 줄여
+   지도 영역을 확보한다(초광폭 화면에서도 패널이 지나치게 넓어지는 것을 함께 방지). */
+@media (min-width: 1100px) {
+
+  body[data-page="listings"] .lp-body {
+
+    grid-template-columns: 260px minmax(0, 1fr) 340px !important;
+
+  }
+
+}
+
 /* ── 왼쪽 사이드바 (그리드 1열 전체, 1~2행 관통) ── */
 
 body[data-page="listings"] .lp-sidebar {
@@ -4400,13 +4413,13 @@ body[data-page="listings"] .cat-cards-section {
 
 }
 
-/* 5개 카드 가로 1줄 정렬 (PC) */
+/* 6개 카드 가로 1줄 정렬 (PC) */
 
 body[data-page="listings"] .cat-cards-grid {
 
   display: grid !important;
 
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
 
   gap: 8px !important;
 
@@ -6802,7 +6815,7 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
 /* ══════════════════════════════════════════════════════════════
    listings.html 전용 사이드바 정리 (원래 listings.html 인라인 <style>이었던 블록을
    전문관 페이지(factory-warehouse.html 등)와 공유하기 위해 이곳으로 이전)
-   - "매물 구분" 5개 항목은 실제 <a href> 링크(검색엔진 크롤링 가능),
+   - "매물 구분" 6개 항목은 실제 <a href> 링크(검색엔진 크롤링 가능),
      app.js의 .lp-cat-item 클릭 인터셉트(JS 필터)와 무관한 신규 클래스 사용
    - PC/태블릿(769px 이상): 작은 리스트형 버튼
    - 모바일(768px 이하): 가로 스크롤 알약형

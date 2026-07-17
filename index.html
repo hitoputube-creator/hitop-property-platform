@@ -25,7 +25,7 @@
       .cat-tab.active { font-weight: 700; color: #0A1F5C; border-bottom: 3px solid #C9A84C; }
 
       /* 매물 카드 — listings.html 이미지 카드와 동일 구조 */
-      .property-card-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+      .property-card-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
       .property-card {
         border-radius: 10px; overflow: hidden; position: relative;
         height: 140px; cursor: pointer; text-decoration: none;
@@ -101,7 +101,6 @@
 
       @media (max-width: 768px) {
         .property-card-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .property-card-grid .property-card:nth-child(5) { grid-column: 1 / -1; }
         .property-card { height: 120px; }
         .property-card .cat-card-name { font-size: 15px; }
         .top-bar-hours { display: none; }
@@ -192,6 +191,14 @@
               <div class="cat-card-overlay"></div>
               <div class="cat-card-body">
                 <span class="cat-card-name">주거용<br><span class="cat-card-sub">아파트·오피스텔</span></span>
+                <span class="cat-card-more">전문관 보기 →</span>
+              </div>
+            </a>
+            <a class="property-card" href="building.html">
+              <div class="cat-card-img" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=400')"></div>
+              <div class="cat-card-overlay"></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">건물·빌딩</span>
                 <span class="cat-card-more">전문관 보기 →</span>
               </div>
             </a>
