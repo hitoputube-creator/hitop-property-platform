@@ -3999,19 +3999,6 @@ body[data-page="listings"] .lp-body {
 
 }
 
-/* 추천 패널을 820px 고정폭으로 두면 1280~1440px대(노트북·일반 PC)에서 지도·카테고리 카드
-   영역이 200px 안팎으로 눌려 카드가 찌그러진다. 1100px 이상 전 구간에서 패널 폭을 줄여
-   지도 영역을 확보한다(초광폭 화면에서도 패널이 지나치게 넓어지는 것을 함께 방지). */
-@media (min-width: 1100px) {
-
-  body[data-page="listings"] .lp-body {
-
-    grid-template-columns: 260px minmax(0, 1fr) 340px !important;
-
-  }
-
-}
-
 /* ── 왼쪽 사이드바 (그리드 1열 전체, 1~2행 관통) ── */
 
 body[data-page="listings"] .lp-sidebar {
@@ -4351,6 +4338,8 @@ body[data-page="listings"] .lp-center {
 
   position: relative !important;
 
+  min-width: 0 !important;
+
 }
 
 body[data-page="listings"] #map {
@@ -4380,6 +4369,8 @@ body[data-page="listings"] .lp-panel {
   overflow-x: hidden !important; /* 가로 스크롤 방지 */
 
   box-sizing: border-box !important;
+
+  min-width: 0 !important;
 
 }
 
@@ -4411,6 +4402,10 @@ body[data-page="listings"] .cat-cards-section {
 
   box-sizing: border-box !important;
 
+  min-width: 0 !important;
+
+  overflow: hidden !important;
+
 }
 
 /* 6개 카드 가로 1줄 정렬 (PC) */
@@ -4421,13 +4416,15 @@ body[data-page="listings"] .cat-cards-grid {
 
   grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
 
-  gap: 8px !important;
+  gap: 4px !important;
+
+  min-width: 0 !important;
 
 }
 
 body[data-page="listings"] .cat-card {
 
-  height: 110px !important;
+  height: 92px !important;
 
   min-width: 0 !important; /* 자동 수축 허용 */
 
@@ -4435,7 +4432,17 @@ body[data-page="listings"] .cat-card {
 
 body[data-page="listings"] .cat-card-name {
 
-  font-size: 14px !important;
+  display: block !important;
+
+  max-width: 100% !important;
+
+  overflow: hidden !important;
+
+  text-overflow: ellipsis !important;
+
+  white-space: nowrap !important;
+
+  font-size: 12px !important;
 
   font-weight: 800 !important;
 
@@ -4450,7 +4457,15 @@ body[data-page="listings"] .cat-card-sub {
 
   display: block !important;
 
-  font-size: 11px !important;
+  max-width: 100% !important;
+
+  overflow: hidden !important;
+
+  text-overflow: ellipsis !important;
+
+  white-space: nowrap !important;
+
+  font-size: 10px !important;
 
   font-weight: 600 !important;
 
@@ -4462,7 +4477,17 @@ body[data-page="listings"] .cat-card-sub {
 
 body[data-page="listings"] .cat-card-more {
 
-  font-size: 12px !important;
+  display: block !important;
+
+  max-width: 100% !important;
+
+  overflow: hidden !important;
+
+  text-overflow: ellipsis !important;
+
+  white-space: nowrap !important;
+
+  font-size: 10px !important;
 
   font-weight: 600 !important;
 
@@ -4472,7 +4497,9 @@ body[data-page="listings"] .cat-card-more {
 
 body[data-page="listings"] .cat-card-body {
 
-  padding: 6px 8px !important;
+  min-width: 0 !important;
+
+  padding: 6px 4px !important;
 
 }
 
