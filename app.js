@@ -48,7 +48,7 @@ const CAT_LABELS = {
   "\uc544\ud30c\ud2b8": "\uc8fc\uac70\uc6a9",
   "\ub2e8\ub3c5\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
   "\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
-  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\uc8fc\uac70\uc6a9",
   "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
   "\uac74\ubb3c": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
@@ -224,7 +224,7 @@ const CAT1_DISPLAY = {
   "\uc0c1\uac00\uc0ac\ubb34\uc2e4": "\uc0c1\uac00\u00b7\uc0ac\ubb34\uc2e4",
   "\ud1a0\uc9c0": "\ud1a0\uc9c0",
   "\uc8fc\uac70\uc6a9": "\uc8fc\uac70\uc6a9",
-  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\ub2e8\ub3c5\u00b7\uc804\uc6d0\uc8fc\ud0dd",
+  "\ub2e8\ub3c5\uc804\uc6d0\uc8fc\ud0dd": "\uc8fc\uac70\uc6a9",
   "\uac74\ubb3c\ube4c\ub529": "\uac74\ubb3c\u00b7\ube4c\ub529",
   "\uae30\ud0c0": "\uae30\ud0c0"
 };
@@ -1599,7 +1599,7 @@ const setupListingsPage = () => {
   // 매물관리 프로그램 category1/category2(getCategory1/getCategory2로 레거시 표기까지 정규화됨)를
   // 홈페이지 노출 구조로 매핑한다. DB 값은 변경하지 않고 필터 매칭 함수로만 재편성한다.
   //  - 토지 > 단독택지  = category1=토지 & category2=택지
-  //  - 주거용 > 단독주택 = category1=단독전원주택 (전원주택 포함 전부 병합)
+  //  - 주거용 > 단독주택/전원주택 = category1=단독전원주택 & category2로 구분(레거시로 category2가 비어있으면 단독주택으로 처리)
   //  - 주거용 > 다가구주택/상가주택 = category1=건물빌딩 & category2가 각각 일치
   //  - 건물·빌딩 > 건물/빌딩 = category1=건물빌딩 & category2가 각각 일치 (다가구주택·상가주택은 주거용으로만 노출, 여기서는 제외)
   const LP_CATEGORY_TREE = [
@@ -1641,7 +1641,8 @@ const setupListingsPage = () => {
       children: [
         { key: '아파트',     match: (i) => getCategory1(i) === '주거용' && getCategory2(i) === '아파트' },
         { key: '오피스텔',   match: (i) => getCategory1(i) === '주거용' && getCategory2(i) === '오피스텔' },
-        { key: '단독주택',   match: (i) => getCategory1(i) === '단독전원주택' },
+        { key: '단독주택',   match: (i) => getCategory1(i) === '단독전원주택' && getCategory2(i) !== '전원주택' },
+        { key: '전원주택',   match: (i) => getCategory1(i) === '단독전원주택' && getCategory2(i) === '전원주택' },
         { key: '다가구주택', match: (i) => getCategory1(i) === '건물빌딩' && getCategory2(i) === '다가구주택' },
         { key: '상가주택',   match: (i) => getCategory1(i) === '건물빌딩' && getCategory2(i) === '상가주택' },
       ],
@@ -2629,8 +2630,19 @@ const setupListingsPage = () => {
     e.preventDefault();
     const kwInput = document.getElementById('kwInput');
     flt.kw       = (kwInput?.value || '').toLowerCase();
-    flt.formCat  = document.getElementById('formCatSelect')?.value  || '';
     flt.formDeal = document.getElementById('formDealSelect')?.value || '';
+    // 상단 검색의 "매물종류"도 사이드바·URL 복원과 동일한 LP_CATEGORY_TREE 매칭 규칙을 사용한다.
+    // (예전에는 category1 단순 일치만 사용해, 건물·빌딩 선택 시 상가주택/다가구주택이 섞여 나오거나
+    //  주거용 선택 시 단독전원주택·건물빌딩(상가주택/다가구주택) 매물이 누락되는 문제가 있었다.)
+    const rawFormCat = document.getElementById('formCatSelect')?.value || '';
+    flt.formCat = '';
+    if (rawFormCat) {
+      const groupKey = CAT1_TO_LP_GROUP[rawFormCat] || rawFormCat;
+      const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
+      flt.sidebarMatch = group ? group.match : (i => getCategory1(i) === rawFormCat);
+    } else {
+      flt.sidebarMatch = null;
+    }
     applyFilters();
   });
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
