@@ -1593,6 +1593,21 @@ const setupListingsPage = () => {
     '단독전원주택': '단독·전원주택',
     '건물빌딩': '건물·빌딩',
   };
+  const SPECIALTY_TITLES = {
+    '공장창고': '파주 공장·창고 전문관',
+    '상가사무실': '파주 운정 상가·사무실 전문관',
+    '토지': '파주 토지 매물 전문관',
+    '주거용': '파주 주거용 매물 전문관',
+    '건물빌딩': '파주 건물·빌딩 전문관',
+  };
+  const setSidebarSpecialtyTitle = (groupKey) => {
+    const titleBar = document.getElementById('sidebarSpecialtyTitle');
+    const titleText = document.getElementById('sidebarSpecialtyTitleText');
+    if (!titleBar || !titleText) return;
+    const title = SPECIALTY_TITLES[groupKey] || '';
+    titleBar.hidden = !title;
+    titleText.textContent = title;
+  };
   const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '', sidebarMatch: null };
 
   // ── "매물 구분" 사이드바 — 고객용으로 재편성한 1차·2차구분 트리 ──
@@ -1741,6 +1756,7 @@ const setupListingsPage = () => {
   };
 
   const renderCategoryPanel = (categoryKey) => {
+    setSidebarSpecialtyTitle(CAT1_TO_LP_GROUP[categoryKey] || categoryKey);
     const lpPanel = document.getElementById('lpPanel');
     if (!lpPanel) return;
 
@@ -2591,6 +2607,7 @@ const setupListingsPage = () => {
       e.preventDefault();
       flt.sidebarMatch = null;
       syncFormCatSelect('');
+      setSidebarSpecialtyTitle('');
       openSidebarGroup('');
       setSidebarActive(el);
       applyFilters();
@@ -2605,6 +2622,7 @@ const setupListingsPage = () => {
       const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
       flt.sidebarMatch = group ? group.match : null;
       syncFormCatSelect(groupKey);
+      setSidebarSpecialtyTitle(groupKey);
       openSidebarGroup(groupKey);
       setSidebarActive(el);
       applyFilters();
@@ -2620,6 +2638,7 @@ const setupListingsPage = () => {
       const child = group?.children.find(c => c.key === childKey);
       flt.sidebarMatch = child ? child.match : null;
       syncFormCatSelect(groupKey);
+      setSidebarSpecialtyTitle(groupKey);
       setSidebarActive(el);
       applyFilters();
     });
@@ -2636,18 +2655,21 @@ const setupListingsPage = () => {
     //  주거용 선택 시 단독전원주택·건물빌딩(상가주택/다가구주택) 매물이 누락되는 문제가 있었다.)
     const rawFormCat = document.getElementById('formCatSelect')?.value || '';
     flt.formCat = '';
+    let formGroupKey = '';
     if (rawFormCat) {
-      const groupKey = CAT1_TO_LP_GROUP[rawFormCat] || rawFormCat;
-      const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
+      formGroupKey = CAT1_TO_LP_GROUP[rawFormCat] || rawFormCat;
+      const group = LP_CATEGORY_TREE.find(g => g.key === formGroupKey);
       flt.sidebarMatch = group ? group.match : (i => getCategory1(i) === rawFormCat);
     } else {
       flt.sidebarMatch = null;
     }
+    setSidebarSpecialtyTitle(formGroupKey);
     applyFilters();
   });
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
     Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '', sidebarMatch: null });
     filterForm.reset();
+    setSidebarSpecialtyTitle('');
     document.querySelectorAll('.lp-cat-item').forEach(x =>
       x.classList.toggle('active', x.dataset.cat === ''));
     setSortMode('date');
@@ -2699,6 +2721,7 @@ const setupListingsPage = () => {
       flt.sidebarMatch = initialGroup.match;
       const catSel = document.getElementById('formCatSelect');
       if (catSel) catSel.value = initialGroupKey;
+      setSidebarSpecialtyTitle(initialGroupKey);
       document.querySelectorAll('.lp-cat-group').forEach(g =>
         g.classList.toggle('open', g.dataset.group === initialGroupKey));
       const initialToggle = document.querySelector(`.lp-cat-group-toggle[data-group="${initialGroupKey}"]`);

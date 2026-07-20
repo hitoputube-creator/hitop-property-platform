@@ -67,6 +67,13 @@
       <!-- ── 왼쪽 사이드바 (15%) ── -->
       <aside class="lp-sidebar" aria-label="카테고리 사이드바">
 
+        <!-- 선택 카테고리 전문관 타이틀바 (전체 매물 상태에서는 숨김) -->
+        <section class="specialty-title-bar lp-dynamic-specialty-title" id="sidebarSpecialtyTitle" hidden aria-live="polite">
+          <div class="specialty-title-bar-inner">
+            <h1 id="sidebarSpecialtyTitleText"></h1>
+          </div>
+        </section>
+
         <!-- 매물 구분 (고객용으로 재편성한 1차·2차구분 — app.js의 LP_CATEGORY_TREE와 매칭) -->
         <div class="lp-sidebar-section lp-catlist-section">
           <div class="lp-sidebar-header">매물 구분</div>

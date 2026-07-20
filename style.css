@@ -7036,31 +7036,34 @@ body[data-page="listings"] .lp-sidebar .side-consult-link-box {
    ══════════════════════════════════════════════════════════════ */
 .specialty-title-bar {
   background: #0A1F5C;
-  padding: 14px 20px;
+  padding: 12px 14px;
   border-bottom: 3px solid #C9A84C;
+  border-radius: 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin-right: 20px;
 }
+.specialty-title-bar[hidden] { display: none !important; }
 .specialty-title-bar-inner {
-  max-width: 1600px;
-  margin: 0 auto;
+  margin: 0;
 }
 .specialty-title-bar h1 {
   color: #ffffff;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 800;
-  margin: 0 0 3px;
-  letter-spacing: -0.2px;
-}
-.specialty-title-bar p {
-  color: #aab8d8;
-  font-size: 12.5px;
-  line-height: 1.5;
   margin: 0;
-  word-break: keep-all;
+  letter-spacing: -0.2px;
+  line-height: 1.35;
 }
 @media (max-width: 768px) {
-  .specialty-title-bar { padding: 12px 16px; }
-  .specialty-title-bar h1 { font-size: 0.98rem; }
-  .specialty-title-bar p { font-size: 12px; }
+  body[data-page="listings"] .lp-sidebar .specialty-title-bar {
+    margin: 10px 16px 0;
+  }
+  .specialty-title-bar {
+    padding: 11px 12px;
+    border-radius: 8px;
+  }
+  .specialty-title-bar h1 { font-size: 0.95rem; }
 }
 
 /* ══════════════════════════════════════════════════════════════
