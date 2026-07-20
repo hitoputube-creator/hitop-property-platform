@@ -7019,6 +7019,11 @@ body[data-page="listings"] .lp-sidebar .side-consult-link-box {
   position: static !important;
   z-index: 0 !important;
 }
+@media (min-width: 1100px) {
+  body[data-page="listings"] .lp-body {
+    grid-template-columns: 280px minmax(0, 1fr) 820px !important;
+  }
+}
 @media (max-width: 768px) {
   body[data-page="listings"] .lp-sidebar .side-consult-link-box {
     background: transparent !important;
@@ -7041,7 +7046,8 @@ body[data-page="listings"] .lp-sidebar .side-consult-link-box {
   border-radius: 8px;
   box-sizing: border-box;
   flex-shrink: 0;
-  margin-right: 20px;
+  width: 100%;
+  margin: 0;
 }
 .specialty-title-bar[hidden] { display: none !important; }
 .specialty-title-bar-inner {
@@ -7058,6 +7064,7 @@ body[data-page="listings"] .lp-sidebar .side-consult-link-box {
 @media (max-width: 768px) {
   body[data-page="listings"] .lp-sidebar .specialty-title-bar {
     margin: 10px 16px 0;
+    width: auto;
   }
   .specialty-title-bar {
     padding: 11px 12px;

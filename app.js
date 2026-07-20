@@ -1594,11 +1594,11 @@ const setupListingsPage = () => {
     '건물빌딩': '건물·빌딩',
   };
   const SPECIALTY_TITLES = {
-    '공장창고': '파주 공장·창고 전문관',
-    '상가사무실': '파주 운정 상가·사무실 전문관',
-    '토지': '파주 토지 매물 전문관',
-    '주거용': '파주 주거용 매물 전문관',
-    '건물빌딩': '파주 건물·빌딩 전문관',
+    '공장창고': '공장·창고 전문관',
+    '상가사무실': '상가·사무실 전문관',
+    '토지': '토지 전문관',
+    '주거용': '주거용 전문관',
+    '건물빌딩': '건물·빌딩 전문관',
   };
   const setSidebarSpecialtyTitle = (groupKey) => {
     const titleBar = document.getElementById('sidebarSpecialtyTitle');
@@ -2600,17 +2600,49 @@ const setupListingsPage = () => {
     const fc = document.getElementById('formCatSelect');
     if (fc) fc.value = groupKey || '';
   };
+  const selectCategoryGroup = (groupKey) => {
+    const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
+    flt.sidebarMatch = group ? group.match : null;
+    flt.cat = '';
+    flt.formCat = '';
+    syncFormCatSelect(groupKey);
+    setSidebarSpecialtyTitle(groupKey);
+    openSidebarGroup(groupKey);
+    document.querySelectorAll('.lp-catlist-item.active, .lp-cat-sub-item.active')
+      .forEach(x => x.classList.remove('active'));
+    document.querySelector(`.lp-cat-group-toggle[data-group="${groupKey}"]`)?.classList.add('active');
+    document.querySelectorAll('.cat-card').forEach(card => {
+      const href = (card.getAttribute('href') || '').split('?')[0];
+      const activeHref = {
+        '공장창고': 'factory-warehouse.html',
+        '상가사무실': 'commercial-office.html',
+        '토지': 'land.html',
+        '주거용': 'residential.html',
+        '건물빌딩': 'building.html',
+      }[groupKey];
+      card.classList.toggle('active', href === activeHref);
+    });
+    applyFilters();
+  };
+  const clearCategoryGroup = () => {
+    Object.assign(flt, { cat: '', formCat: '', sidebarMatch: null });
+    syncFormCatSelect('');
+    setSidebarSpecialtyTitle('');
+    openSidebarGroup('');
+    document.querySelectorAll('.lp-catlist-item.active, .lp-cat-sub-item.active')
+      .forEach(x => x.classList.remove('active'));
+    document.querySelector('.lp-cat-all')?.classList.add('active');
+    document.querySelectorAll('.cat-card').forEach(card =>
+      card.classList.toggle('active', (card.getAttribute('href') || '') === 'listings.html'));
+    applyFilters();
+  };
 
   // 전체 매물
   document.querySelectorAll('.lp-cat-all').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      flt.sidebarMatch = null;
-      syncFormCatSelect('');
-      setSidebarSpecialtyTitle('');
-      openSidebarGroup('');
+      clearCategoryGroup();
       setSidebarActive(el);
-      applyFilters();
     });
   });
 
@@ -2618,14 +2650,8 @@ const setupListingsPage = () => {
   document.querySelectorAll('.lp-cat-group-toggle').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      const groupKey = el.dataset.group;
-      const group = LP_CATEGORY_TREE.find(g => g.key === groupKey);
-      flt.sidebarMatch = group ? group.match : null;
-      syncFormCatSelect(groupKey);
-      setSidebarSpecialtyTitle(groupKey);
-      openSidebarGroup(groupKey);
+      selectCategoryGroup(el.dataset.group);
       setSidebarActive(el);
-      applyFilters();
     });
   });
 
@@ -2688,6 +2714,24 @@ const setupListingsPage = () => {
   document.querySelectorAll('.cat-card').forEach(card => {
     card.addEventListener('click', e => {
       const href = card.getAttribute('href') || '';
+      const path = href.split('?')[0];
+      const hrefToGroup = {
+        'factory-warehouse.html': '공장창고',
+        'commercial-office.html': '상가사무실',
+        'land.html': '토지',
+        'residential.html': '주거용',
+        'building.html': '건물빌딩',
+      };
+      if (href === 'listings.html') {
+        e.preventDefault();
+        clearCategoryGroup();
+        return;
+      }
+      if (hrefToGroup[path]) {
+        e.preventDefault();
+        selectCategoryGroup(hrefToGroup[path]);
+        return;
+      }
       const m = href.match(/[?&]category=([^&]+)/);
       if (m) {
         e.preventDefault();
