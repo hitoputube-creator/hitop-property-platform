@@ -1,4 +1,4 @@
-:root {
+﻿:root {
 
   --navy: #12335a;
 
@@ -7429,22 +7429,6 @@ body[data-page="listing-detail"] .modal-header a.detail-list-link:hover { color:
   }
 }
 
-/* final readable category sizing */
-body[data-page="listings"] .lp-sidebar .lp-catlist-item,
-body[data-page="listings"] .lp-sidebar .lp-cat-group-toggle {
-  font-size: 16px !important;
-  line-height: 1.35 !important;
-}
-
-body[data-page="listings"] .lp-sidebar .lp-cat-sub-item {
-  font-size: 14.5px !important;
-  line-height: 1.35 !important;
-}
-
-body[data-page="listings"] .lp-cat-label {
-  font-size: inherit !important;
-}
-
 /* final listings.html UI overrides */
 body[data-page="listings"] .lp-all-card {
   height: auto !important;
@@ -7725,5 +7709,74 @@ body[data-page="listings"] .cat-card-more {
     color: #fff !important;
     border-left-color: #C9A84C !important;
     font-weight: 800 !important;
+  }
+}
+
+/* final action/category overrides after every responsive block */
+.modal-contact {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) repeat(4, 36px) !important;
+  align-items: center !important;
+  gap: 7px !important;
+}
+
+.modal-contact > * {
+  flex: none !important;
+  min-width: 0 !important;
+}
+
+.modal-tel,
+.modal-kakao-btn {
+  min-height: 42px !important;
+  padding: 0 10px !important;
+  border-radius: 9px !important;
+  font-size: 14px !important;
+}
+
+.modal-print-btn,
+.modal-copy-btn {
+  width: 36px !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  aspect-ratio: 1 / 1;
+}
+
+.modal-copy-btn.modal-favorite-btn {
+  font-size: 20px !important;
+}
+
+body[data-page="listings"] .lp-sidebar .lp-catlist-item,
+body[data-page="listings"] .lp-sidebar .lp-cat-group-toggle {
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+}
+
+body[data-page="listings"] .lp-sidebar .lp-cat-sub-item {
+  font-size: 14.5px !important;
+  line-height: 1.35 !important;
+}
+
+body[data-page="listings"] .lp-cat-label {
+  font-size: inherit !important;
+}
+
+@media (max-width: 900px) {
+  .modal-contact {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) repeat(4, 36px) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .modal-contact {
+    grid-template-columns: repeat(4, 36px) !important;
+  }
+  .modal-tel,
+  .modal-kakao-btn {
+    grid-column: span 2;
   }
 }
