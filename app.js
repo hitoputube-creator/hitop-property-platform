@@ -12,6 +12,133 @@ const openListingPrintPage = (id) => {
   window.open(`print-listing.html?id=${encodeURIComponent(printId)}`, '_blank');
 };
 
+const HITOP_SITE_ORIGIN = 'https://hitoprealty.com';
+const FAVORITE_STORAGE_KEY = 'hitop_favorite_listings_v1';
+
+const escapeHTML = (value = '') => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+const getListingDetailPath = (itemOrId = {}) => {
+  const id = typeof itemOrId === 'object'
+    ? (itemOrId.id || itemOrId.listing_id || itemOrId.listingNo || '')
+    : itemOrId;
+  const cleanId = String(id || '').trim();
+  return cleanId ? `/listing/${encodeURIComponent(cleanId)}/` : '';
+};
+
+const getListingDetailUrl = (itemOrId = {}) => getListingDetailPath(itemOrId) || 'listings.html';
+const getListingDetailAbsoluteUrl = (itemOrId = {}) => {
+  const path = getListingDetailPath(itemOrId);
+  return path ? `${HITOP_SITE_ORIGIN}${path}` : `${HITOP_SITE_ORIGIN}/listings.html`;
+};
+
+const getListingVerifiedDate = (item = {}) => String(item.lastVerifiedAt || item.last_verified_at || '').slice(0, 10);
+const getListingVerifiedBadgeHTML = (item = {}, className = 'listing-verified-badge') => {
+  const date = getListingVerifiedDate(item);
+  return date ? `<span class="${className}">확인 ${escapeHTML(date)}</span>` : '';
+};
+
+const getListingVerificationDateKey = () => {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+  } catch (_) {
+    return new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
+  }
+};
+
+const showSiteToast = (message) => {
+  let toast = document.getElementById('siteToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'siteToast';
+    toast.className = 'site-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  window.clearTimeout(showSiteToast._timer);
+  showSiteToast._timer = window.setTimeout(() => toast.classList.remove('show'), 1800);
+};
+
+const writeClipboardText = async (text) => {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const input = document.createElement('textarea');
+  input.value = text;
+  input.setAttribute('readonly', '');
+  input.style.position = 'fixed';
+  input.style.opacity = '0';
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand('copy');
+  input.remove();
+};
+
+const copyListingLink = async (item = {}) => {
+  try {
+    await writeClipboardText(getListingDetailAbsoluteUrl(item));
+    showSiteToast('매물 링크를 복사했습니다.');
+  } catch (err) {
+    console.error('Listing link copy failed:', err);
+    showSiteToast('링크 복사에 실패했습니다.');
+  }
+};
+
+const getFavoriteIds = () => {
+  try {
+    return JSON.parse(localStorage.getItem(FAVORITE_STORAGE_KEY) || '[]').map(String);
+  } catch (_) {
+    return [];
+  }
+};
+
+const setFavoriteIds = (ids) => localStorage.setItem(FAVORITE_STORAGE_KEY, JSON.stringify([...new Set(ids.map(String))]));
+const isFavoriteListing = (id) => getFavoriteIds().includes(String(id || ''));
+const toggleFavoriteListing = (id) => {
+  const cleanId = String(id || '');
+  if (!cleanId) return false;
+  const ids = getFavoriteIds();
+  const next = ids.includes(cleanId) ? ids.filter(v => v !== cleanId) : [...ids, cleanId];
+  setFavoriteIds(next);
+  return next.includes(cleanId);
+};
+
+const refreshFavoriteButtons = () => {
+  document.querySelectorAll('[data-favorite-id]').forEach(btn => {
+    const active = isFavoriteListing(btn.dataset.favoriteId);
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    btn.textContent = active ? '찜해제' : '찜하기';
+  });
+};
+
+const shareListing = async (item = {}) => {
+  const url = getListingDetailAbsoluteUrl(item);
+  const title = item.title || '하이탑부동산 매물';
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text: title, url });
+      return;
+    } catch (err) {
+      if (err?.name === 'AbortError') return;
+    }
+  }
+  await copyListingLink(item);
+};
+
 // 매물종류 표시 라벨 (전역 — 모든 함수에서 접근 가능)
 
 const CAT_LABELS = {
@@ -539,6 +666,8 @@ function normalizeSupabaseListing(row) {
     resource_id: row.resource_id ?? d.resource_id ?? d.resourceId ?? null,
     createdAt: row.created_at ?? d.createdAt ?? d.created_at ?? null,
     updatedAt: row.updated_at ?? d.updatedAt ?? d.updated_at ?? null,
+    lastVerifiedAt: row.last_verified_at ?? d.lastVerifiedAt ?? d.last_verified_at ?? null,
+    last_verified_at: row.last_verified_at ?? d.lastVerifiedAt ?? d.last_verified_at ?? null,
     is_public: row.is_public ?? d.is_public ?? false,
     displayAddress: row.display_address ?? d.displayAddress ?? d.display_address ?? d.publicAddress ?? d.public_address ?? '',
     category1,
@@ -574,7 +703,8 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
   const publicAddress = getPublicAddress(listing);
   const mapAddress = getMapSearchAddress(listing);
   const privateDetailAddress = getPrivateDetailAddress(listing);
-  const data = { ...listing, publicAddress, mapAddress, privateDetailAddress, category1, category2, propertyType, imageUrls, stickers };
+  const verifiedDate = getListingVerificationDateKey();
+  const data = { ...listing, publicAddress, mapAddress, privateDetailAddress, category1, category2, propertyType, imageUrls, stickers, lastVerifiedAt: verifiedDate, last_verified_at: verifiedDate };
   delete data.id;
   delete data.createdAt;
   delete data.updatedAt;
@@ -614,6 +744,7 @@ function toSupabaseListingRow(listing, { isInsert = false } = {}) {
     detail_description: listing.detailDescription || listing.description || null,
     stickers,
     image_urls: imageUrls,
+    last_verified_at: verifiedDate,
     pin_slot: Number(listing.pinSlot ?? listing.pin_slot ?? 0),
     data,
   });
@@ -657,6 +788,9 @@ function toSupabasePartialListingRow(listing) {
   if ('detailDescription' in listing) row.detail_description = listing.detailDescription || null;
   if ('stickers' in listing) row.stickers = normalizePromotionStickers(listing);
   if ('imageUrls' in listing) row.image_urls = asArray(listing.imageUrls);
+  if ('lastVerifiedAt' in listing || 'last_verified_at' in listing) {
+    row.last_verified_at = listing.lastVerifiedAt || listing.last_verified_at || null;
+  }
   if ('pinSlot' in listing || 'pin_slot' in listing) row.pin_slot = Number(listing.pinSlot ?? listing.pin_slot ?? 0);
   return row;
 }
@@ -947,6 +1081,35 @@ const getAdminAddressSummary = (item = {}) => {
 };
 const getMainPrice  = (item) => item.deposit || item.salePrice || item.price || 0;
 
+const getComparablePriceManwon = (item = {}) => {
+  const raw = getMainPrice(item);
+  if (raw === undefined || raw === null || raw === '') return null;
+  const n = Number(String(raw).replace(/[,\s]/g, ''));
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return n >= 100000000 ? Math.round(n / 10000) : n;
+};
+
+const getComparableAreaPy = (item = {}) => {
+  const pyCandidates = [
+    item.exclusiveAreaPy,
+    item.areaPy,
+    item.buildingAreaPy,
+    item.landAreaPy,
+    item.supplyAreaPy,
+  ];
+  const py = pyCandidates.map(Number).find(v => Number.isFinite(v) && v > 0);
+  if (py) return py;
+  const m2Candidates = [
+    item.exclusiveAreaM2 ?? item.exclusiveArea,
+    item.areaM2 ?? item.area,
+    item.buildingAreaM2 ?? item.buildingArea,
+    item.landAreaM2 ?? item.landArea,
+    item.supplyAreaM2 ?? item.supplyArea ?? item.contractArea,
+  ];
+  const m2 = m2Candidates.map(Number).find(v => Number.isFinite(v) && v > 0);
+  return m2 ? m2 / M2_PER_PY : null;
+};
+
 const getDealBadgeHTML = (dealType) => {
   if (!dealType) return '';
   const classMap = {
@@ -1176,6 +1339,106 @@ const getSeoKeywords = (item, count) => {
 };
 
 // ── 매물 상세 모달 ──
+const ensureListingActionButton = (host, item, className = 'listing-favorite-btn') => {
+  if (!host || !item?.id || host.querySelector('[data-favorite-id]')) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = className;
+  btn.dataset.favoriteId = String(item.id);
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const active = toggleFavoriteListing(item.id);
+    refreshFavoriteButtons();
+    showSiteToast(active ? '찜한 매물에 담았습니다.' : '찜한 매물에서 뺐습니다.');
+  });
+  host.appendChild(btn);
+  refreshFavoriteButtons();
+};
+
+const ensureModalActionButtons = (item = {}) => {
+  const contact = document.querySelector('#listingModal .modal-contact');
+  if (!contact) return;
+  let favBtn = document.getElementById('modalFavoriteBtn');
+  if (!favBtn) {
+    favBtn = document.createElement('button');
+    favBtn.id = 'modalFavoriteBtn';
+    favBtn.type = 'button';
+    favBtn.className = 'modal-copy-btn modal-favorite-btn';
+    contact.appendChild(favBtn);
+  }
+  favBtn.dataset.favoriteId = String(item.id || '');
+  favBtn.onclick = () => {
+    const active = toggleFavoriteListing(item.id);
+    refreshFavoriteButtons();
+    showSiteToast(active ? '찜한 매물에 담았습니다.' : '찜한 매물에서 뺐습니다.');
+  };
+  let shareBtn = document.getElementById('modalShareBtn');
+  if (!shareBtn) {
+    shareBtn = document.createElement('button');
+    shareBtn.id = 'modalShareBtn';
+    shareBtn.type = 'button';
+    shareBtn.className = 'modal-copy-btn modal-share-btn';
+    shareBtn.textContent = '공유';
+    contact.appendChild(shareBtn);
+  }
+  shareBtn.onclick = () => shareListing(item);
+  refreshFavoriteButtons();
+};
+
+const renderInlineConsultForm = (item = {}) => {
+  const side = document.querySelector('#listingModal .modal-col-side');
+  if (!side) return;
+  let box = document.getElementById('modalInlineConsult');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'modalInlineConsult';
+    box.className = 'modal-inline-consult';
+    side.appendChild(box);
+  }
+  box.innerHTML = `
+    <form id="modalConsultForm" class="modal-consult-form">
+      <strong>매물 상담신청</strong>
+      <div class="modal-consult-grid">
+        <input id="modalConsultName" type="text" placeholder="이름" autocomplete="name" />
+        <input id="modalConsultPhone" type="tel" placeholder="연락처" autocomplete="tel" />
+      </div>
+      <textarea id="modalConsultMessage" rows="3" placeholder="문의 내용을 남겨주세요."></textarea>
+      <button type="submit">상담신청</button>
+    </form>
+  `;
+  box.querySelector('#modalConsultForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = box.querySelector('#modalConsultName')?.value.trim();
+    const phone = box.querySelector('#modalConsultPhone')?.value.trim();
+    const message = box.querySelector('#modalConsultMessage')?.value.trim();
+    if (!name || !phone) {
+      showSiteToast('이름과 연락처를 입력해주세요.');
+      return;
+    }
+    try {
+      const { supabase } = await _supabaseCfg();
+      const listingTitle = item.title || getShortListingNo(item) || '매물';
+      const { error } = await supabase.from('consultations').insert({
+        inquiry_type: '매물문의',
+        title: `매물문의 - ${listingTitle}`,
+        name,
+        phone,
+        message: message || `${listingTitle} 상담을 요청합니다.`,
+        listing_title: listingTitle,
+        source: 'listings-sidebar',
+        status: '접수',
+      });
+      if (error) throw error;
+      e.target.reset();
+      showSiteToast('상담신청이 접수되었습니다.');
+    } catch (err) {
+      console.error('Listing consultation failed:', err);
+      showSiteToast('상담신청 저장에 실패했습니다.');
+    }
+  });
+};
+
 const openModal = (item) => {
   const modal = document.getElementById('listingModal');
   if (!modal) return;
@@ -1211,7 +1474,7 @@ const openModal = (item) => {
     const propCls = propClassMap[_badgeCat1] || propClassMap[pt] || 'prop-etc';
     const _badgeLabel = getPropertyTypeLabel(item);
     const promoHTML = getPromotionStickerHTML(item, 'modal-promo-sticker');
-    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${_badgeLabel}</span>${getDealBadgeHTML(item.dealType)}${promoHTML}`;
+    modalBadgeEl.innerHTML = `<span class="modal-prop-badge ${propCls}">${_badgeLabel}</span>${getDealBadgeHTML(item.dealType)}${promoHTML}${getListingVerifiedBadgeHTML(item, 'modal-verified-badge')}`;
   }
   document.getElementById('modalAddress').textContent = getDisplayAddress(item);
 
@@ -1486,6 +1749,12 @@ const openModal = (item) => {
   if (printBtn) {
     printBtn.dataset.id = getListingPrintId(item);
   }
+  const copyBtn = document.getElementById('modalCopyLinkBtn');
+  if (copyBtn) {
+    copyBtn.onclick = () => copyListingLink(item);
+  }
+  ensureModalActionButtons(item);
+  renderInlineConsultForm(item);
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -1578,7 +1847,7 @@ const setupListingsPage = () => {
   {
     const legacyId = new URLSearchParams(window.location.search).get('id');
     if (legacyId && !/listing-detail\.html$/.test(window.location.pathname)) {
-      window.location.replace(`listing-detail.html?id=${encodeURIComponent(legacyId)}`);
+      window.location.replace(getListingDetailUrl(legacyId));
       return;
     }
   }
@@ -1608,7 +1877,7 @@ const setupListingsPage = () => {
     titleBar.hidden = !title;
     titleText.textContent = title;
   };
-  const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '', sidebarMatch: null };
+  const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '', minPrice: '', maxPrice: '', minAreaPy: '', maxAreaPy: '', sidebarMatch: null };
 
   // ── "매물 구분" 사이드바 — 고객용으로 재편성한 1차·2차구분 트리 ──
   // 매물관리 프로그램 category1/category2(getCategory1/getCategory2로 레거시 표기까지 정규화됨)를
@@ -1971,7 +2240,7 @@ const setupListingsPage = () => {
   };
 
   // ── 카카오맵 ──
-  let map = null, openIw = null;
+  let map = null, openIw = null, markerClusterer = null, markerRenderSeq = 0;
   let _mapReady = false;   // 지도 초기화 완료 플래그
   let _dataReady = false;  // Supabase 로드 완료 플래그
   const activeMarkers = [];
@@ -2048,12 +2317,41 @@ const setupListingsPage = () => {
   };
 
   // ── 지도 마커 (숫자 원형 마커) ──
+  const updateDynamicCounts = () => {
+    const all = _listings.filter(i => !isCompleted(i));
+    const ensureBadge = (el) => {
+      if (!el) return null;
+      let badge = el.querySelector('.lp-cat-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'lp-cat-badge';
+        el.appendChild(badge);
+      }
+      return badge;
+    };
+    const setBadge = (el, count) => {
+      const badge = ensureBadge(el);
+      if (badge) badge.textContent = count.toLocaleString('ko-KR');
+    };
+    document.querySelectorAll('.lp-cat-all').forEach(el => setBadge(el, all.length));
+    LP_CATEGORY_TREE.forEach(group => {
+      const groupCount = all.filter(group.match).length;
+      document.querySelectorAll(`.lp-cat-group-toggle[data-group="${group.key}"]`).forEach(el => setBadge(el, groupCount));
+      group.children.forEach(child => {
+        const childCount = all.filter(child.match).length;
+        document.querySelectorAll(`.lp-cat-sub-item[data-group="${group.key}"][data-child="${child.key}"]`).forEach(el => setBadge(el, childCount));
+      });
+    });
+  };
+
   const placeMarkers = (items) => {
     console.log('[placeMarkers] 호출됨 | map준비:', _mapReady, '| 매물수:', items.length);
     if (!map || typeof kakao === 'undefined') {
       console.warn('[placeMarkers] 지도 미초기화 — 건너뜀');
       return;
     }
+    const renderSeq = ++markerRenderSeq;
+    markerClusterer?.clear();
     activeMarkers.forEach(m => m.setMap(null));
     activeMarkers.length = 0;
     if (openIw) { openIw.close(); openIw = null; }
@@ -2077,6 +2375,18 @@ const setupListingsPage = () => {
     const addOverlay = (coords, gi) => {
       const { hid, html } = makeMarkerContent(gi.length, getGroupColor(gi));
       const overlay = new kakao.maps.CustomOverlay({ map, position: coords, content: html, yAnchor: 0.5, zIndex: 3 });
+      if (markerClusterer && kakao.maps.Marker) {
+        const marker = new kakao.maps.Marker({ position: coords, clickable: true });
+        kakao.maps.event.addListener(marker, 'click', () => {
+          if (gi.length === 1) openModalFull(gi[0]);
+          else {
+            map.setCenter(coords);
+            map.setLevel(Math.max(1, map.getLevel() - 2));
+          }
+        });
+        markerClusterer.addMarker(marker);
+        activeMarkers.push(marker);
+      }
       window._mhHandlers[hid] = () => {
         if (gi.length === 1) {
           openModalFull(gi[0]);
@@ -2173,6 +2483,7 @@ const setupListingsPage = () => {
           if (idx >= addrList.length) return;
           const addr = addrList[idx];
           geocoder.addressSearch(addr, (result, status) => {
+            if (renderSeq !== markerRenderSeq) return;
             if (status !== kakao.maps.services.Status.OK) {
               console.log(`[지오코딩 실패 ${idx + 1}순위] ${addr}`);
               tryNext(idx + 1);
@@ -2225,7 +2536,7 @@ const setupListingsPage = () => {
 
     script = document.createElement('script');
     script.id = 'kakaoMapSdkLoader';
-    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false';
+    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services,clusterer&autoload=false';
     script.onload = handleLoad;
     script.onerror = handleError;
     document.head.appendChild(script);
@@ -2257,6 +2568,14 @@ const setupListingsPage = () => {
         center: new kakao.maps.LatLng(37.7512, 126.7820),
         level: 7
       });
+      if (kakao.maps.MarkerClusterer) {
+        markerClusterer = new kakao.maps.MarkerClusterer({
+          map,
+          averageCenter: true,
+          minLevel: 6,
+          minClusterSize: 2,
+        });
+      }
       if (typeof map.setDraggable === 'function') map.setDraggable(true);
       if (typeof map.setZoomable === 'function') map.setZoomable(true);
       scheduleMainMapRelayout();
@@ -2387,6 +2706,7 @@ const setupListingsPage = () => {
       const areaHTML = getCardAreaHTML(item);
       const isSample = thumb.startsWith('images/') || thumb === fallback;
       const imgClass = `lp-mini-img${isSample ? ' lp-mini-img--sample' : ''}`;
+      const verifiedHTML = getListingVerifiedBadgeHTML(item, 'lp-mini-verified');
 
       // ── 이미지 위 좌측 상태 배지 (최대 2개) ──
       const statusBadges = [];
@@ -2423,6 +2743,7 @@ const setupListingsPage = () => {
             ${propNoHTML}
           </div>
           <div class="lp-mini-title">${item.title || '(제목 없음)'}</div>
+          ${verifiedHTML}
           <div class="lp-mini-price-row">
             ${getDealBadgeHTML(item.dealType)}
             <span class="lp-mini-price">${formatPropertyPrice(item)}</span>
@@ -2445,8 +2766,9 @@ const setupListingsPage = () => {
       </div>`;
 
     lpPanel.querySelectorAll('.lp-mini-card').forEach(card => {
+      const found = _listings.find(x => x.id === card.dataset.id);
+      if (found) ensureListingActionButton(card.querySelector('.lp-mini-img-wrap'), found, 'listing-favorite-btn lp-mini-favorite-btn');
       card.addEventListener('click', () => {
-        const found = _listings.find(x => x.id === card.dataset.id);
         if (found) openModalFull(found);
       });
     });
@@ -2459,6 +2781,7 @@ const setupListingsPage = () => {
     const catLabel = getPropertyTypeLabel(item);
     const imgSrc  = getThumbnail(item);
     const areaHTML = getCardAreaHTML(item);
+    const verifiedHTML = getListingVerifiedBadgeHTML(item, 'lp-all-verified');
     return `
       <article class="lp-all-card${done ? ' lp-all-done' : ''}" data-id="${item.id}">
         <div class="lp-all-img">
@@ -2479,6 +2802,7 @@ const setupListingsPage = () => {
           </div>
           <div class="lp-all-price">${formatCardPrice(item)}</div>
           <div class="lp-all-title">${item.title || ''}</div>
+          ${verifiedHTML}
           ${areaHTML ? `<div class="lp-all-area-wrap">${areaHTML}</div>` : ''}
           ${getParkingMetaHTML(item, 'lp-all-parking')}
           <div class="lp-all-addr">${getDisplayAddress(item)}</div>
@@ -2500,6 +2824,10 @@ const setupListingsPage = () => {
       ? items.map(fullCardHTML).join('')
       : '<div class="lp-empty" style="grid-column:1/-1;">조건에 맞는 매물이 없습니다.</div>';
     cardsEl.querySelectorAll('.lp-all-card').forEach(card => {
+      const foundForLink = filtered.find(x => x.id === card.dataset.id);
+      const detailLink = card.querySelector('.lp-all-detail-link');
+      if (foundForLink && detailLink) detailLink.href = getListingDetailUrl(foundForLink);
+      if (foundForLink) ensureListingActionButton(card.querySelector('.lp-all-img'), foundForLink, 'listing-favorite-btn lp-all-favorite-btn');
       card.addEventListener('click', (e) => {
         if (e.target.closest('.lp-all-detail-link')) return;
         const found = filtered.find(x => x.id === card.dataset.id);
@@ -2530,6 +2858,20 @@ const setupListingsPage = () => {
     if (effectiveCat)     items = items.filter(i => getCategory1(i) === effectiveCat);
     if (flt.sidebarMatch) items = items.filter(flt.sidebarMatch);
     if (effectiveDeal)    items = items.filter(i => i.dealType === effectiveDeal);
+    const minPrice = Number(flt.minPrice);
+    const maxPrice = Number(flt.maxPrice);
+    const minAreaPy = Number(flt.minAreaPy);
+    const maxAreaPy = Number(flt.maxAreaPy);
+    if (Number.isFinite(minPrice) && minPrice > 0) items = items.filter(i => (getComparablePriceManwon(i) ?? -1) >= minPrice);
+    if (Number.isFinite(maxPrice) && maxPrice > 0) items = items.filter(i => {
+      const price = getComparablePriceManwon(i);
+      return price !== null && price <= maxPrice;
+    });
+    if (Number.isFinite(minAreaPy) && minAreaPy > 0) items = items.filter(i => (getComparableAreaPy(i) ?? -1) >= minAreaPy);
+    if (Number.isFinite(maxAreaPy) && maxAreaPy > 0) items = items.filter(i => {
+      const area = getComparableAreaPy(i);
+      return area !== null && area <= maxAreaPy;
+    });
     if (flt.kw)        items = items.filter(i => {
       const kw = flt.kw;
       return (i.title        || '').toLowerCase().includes(kw) ||
@@ -2552,6 +2894,7 @@ const setupListingsPage = () => {
     renderAllGrid();
     renderSpecialPanels();
     updateCounts();
+    updateDynamicCounts();
     placeMarkers(items);
   };
 
@@ -2676,6 +3019,10 @@ const setupListingsPage = () => {
     const kwInput = document.getElementById('kwInput');
     flt.kw       = (kwInput?.value || '').toLowerCase();
     flt.formDeal = document.getElementById('formDealSelect')?.value || '';
+    flt.minPrice = document.getElementById('minPriceInput')?.value || '';
+    flt.maxPrice = document.getElementById('maxPriceInput')?.value || '';
+    flt.minAreaPy = document.getElementById('minAreaInput')?.value || '';
+    flt.maxAreaPy = document.getElementById('maxAreaInput')?.value || '';
     // 상단 검색의 "매물종류"도 사이드바·URL 복원과 동일한 LP_CATEGORY_TREE 매칭 규칙을 사용한다.
     // (예전에는 category1 단순 일치만 사용해, 건물·빌딩 선택 시 상가주택/다가구주택이 섞여 나오거나
     //  주거용 선택 시 단독전원주택·건물빌딩(상가주택/다가구주택) 매물이 누락되는 문제가 있었다.)
@@ -2693,7 +3040,7 @@ const setupListingsPage = () => {
     applyFilters();
   });
   document.getElementById('filterResetBtn')?.addEventListener('click', () => {
-    Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '', sidebarMatch: null });
+    Object.assign(flt, { cat: '', deal: '', kw: '', formCat: '', formDeal: '', minPrice: '', maxPrice: '', minAreaPy: '', maxAreaPy: '', sidebarMatch: null });
     filterForm.reset();
     setSidebarSpecialtyTitle('');
     document.querySelectorAll('.lp-cat-item').forEach(x =>

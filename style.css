@@ -740,7 +740,8 @@ body {
 
 .modal-kakao-btn { background: #FEE500; color: #3a1d1d; justify-content: center; min-height: 46px; padding: 0 8px; font-size: 14px; line-height: 1; text-align: center; text-decoration: none; display: flex; align-items: center; border-radius: 8px; font-weight: 700; white-space: nowrap; }
 
-.modal-print-btn {
+.modal-print-btn,
+.modal-copy-btn {
   background: var(--white);
   border: 1px solid var(--gray-200);
   color: var(--gray-700);
@@ -760,9 +761,188 @@ body {
   box-sizing: border-box;
   transition: background 0.15s, color 0.15s;
 }
-.modal-print-btn:hover {
+.modal-print-btn:hover,
+.modal-copy-btn:hover {
   background: var(--gray-100);
   color: var(--navy);
+}
+
+.listing-verified-badge,
+.lp-mini-verified,
+.lp-all-verified,
+.modal-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid rgba(196, 150, 47, 0.45);
+  background: rgba(255, 248, 225, 0.9);
+  color: #8a5d09;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.lp-mini-verified {
+  margin-top: 2px;
+}
+
+.lp-all-verified {
+  margin-top: 6px;
+}
+
+.modal-verified-badge {
+  margin-left: 4px;
+}
+
+.site-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 9999;
+  transform: translate(-50%, 16px);
+  opacity: 0;
+  pointer-events: none;
+  background: #10233f;
+  color: #fff;
+  border: 1px solid rgba(196, 150, 47, 0.5);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.24);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.site-toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.lp-range-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+  gap: 6px;
+  min-width: 320px;
+}
+
+.lp-range-filters input {
+  min-width: 0;
+  height: 34px;
+  border: 1px solid #d9e0ea;
+  border-radius: 8px;
+  padding: 0 8px;
+  font-size: 12px;
+  background: #fff;
+  color: #1e293b;
+}
+
+.lp-cat-badge {
+  margin-left: auto;
+  min-width: 22px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: rgba(196, 150, 47, 0.14);
+  color: #8a5d09;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.listing-favorite-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.74);
+  color: #fff;
+  min-width: 62px;
+  height: 28px;
+  padding: 0 9px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.24);
+}
+
+.listing-favorite-btn.is-active {
+  background: #c4962f;
+  color: #111827;
+}
+
+.lp-all-img,
+.lp-mini-img-wrap {
+  position: relative;
+}
+
+.modal-inline-consult {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.modal-consult-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-consult-form strong {
+  color: #12335a;
+  font-size: 14px;
+}
+
+.modal-consult-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.modal-consult-form input,
+.modal-consult-form textarea {
+  width: 100%;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  padding: 9px 10px;
+  font: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.modal-consult-form button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: #12335a;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .lp-range-filters {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .lp-range-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .modal-consult-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .modal-agent { background: #fff; border-radius: 10px; padding: 14px; font-size: 13px; color: #64748b; display: flex; flex-direction: column; gap: 4px; border: 1px solid #e2e8f0; }

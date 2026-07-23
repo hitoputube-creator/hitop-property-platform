@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20260718-specialty-widths" />
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services,clusterer&autoload=false"></script>
   </head>
   <body data-page="listings">
 
@@ -56,6 +56,12 @@
         <option value="임대">임대</option>
       </select>
       <button type="submit" class="lp-search-submit">검색</button>
+      <div class="lp-range-filters" aria-label="범위 필터">
+        <input type="number" name="minPrice" id="minPriceInput" min="0" inputmode="numeric" placeholder="최소금액" />
+        <input type="number" name="maxPrice" id="maxPriceInput" min="0" inputmode="numeric" placeholder="최대금액" />
+        <input type="number" name="minAreaPy" id="minAreaInput" min="0" inputmode="decimal" placeholder="최소평" />
+        <input type="number" name="maxAreaPy" id="maxAreaInput" min="0" inputmode="decimal" placeholder="최대평" />
+      </div>
     </form>
 
   </div>
@@ -295,6 +301,7 @@
               <a href="tel:031-949-8969" class="btn modal-tel">전화문의</a>
               <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="modal-kakao-btn">카톡상담</a>
               <button id="modalPrintBtn" class="modal-print-btn" type="button">🖨 프린트</button>
+              <button id="modalCopyLinkBtn" class="modal-copy-btn" type="button">링크복사</button>
             </div>
             <div class="modal-minimap-wrap" id="modalBodyMapWrap" style="display:none;">
               <h4>📍 매물 위치</h4>
