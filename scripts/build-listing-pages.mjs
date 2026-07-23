@@ -145,7 +145,10 @@ const injectStaticMetadata = (template, listing) => {
     .replace(/<meta name="description" content="[^"]*"\s*\/?>/i, `<meta name="description" content="${escapeHtml(description)}" />`)
     .replace(/<meta name="keywords" content="[^"]*"\s*\/?>/i, `<meta name="keywords" content="${escapeHtml(keywords)}" />`);
 
-  html = html.replace('</head>', `    ${seoBlock}\n  </head>`);
+  html = html.replace(
+    /(<meta name="viewport" content="[^"]*"\s*\/?>)/i,
+    `$1\n    ${seoBlock}`
+  );
   html = html.replace(
     '<script src="app.js',
     `<script>window.HITOP_STATIC_LISTING_ID = ${JSON.stringify(String(listing.id))};</script>\n    <script src="app.js`
