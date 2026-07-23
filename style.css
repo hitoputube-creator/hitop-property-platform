@@ -7703,8 +7703,8 @@ body[data-page="listings"] .lp-mini-area {
 body[data-page="listings"] .cat-card-body {
   align-items: center !important;
   justify-content: flex-end !important;
-  gap: 4px !important;
-  padding: 10px 8px !important;
+  gap: 1px !important;
+  padding: 4px 6px !important;
   text-align: center !important;
 }
 
@@ -7723,11 +7723,20 @@ body[data-page="listings"] .cat-card-sub {
 
 body[data-page="listings"] .cat-card-more {
   width: 100% !important;
-  margin-top: 2px !important;
+  margin-top: 0 !important;
   font-size: 12px !important;
   line-height: 1.25 !important;
   text-align: center !important;
   white-space: normal !important;
+}
+
+body[data-page="listings"] .cat-cards-section {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+body[data-page="listings"] .cat-card {
+  height: 58px !important;
 }
 
 @media (min-width: 1100px) {
