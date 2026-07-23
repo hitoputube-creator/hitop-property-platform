@@ -7913,3 +7913,73 @@ body[data-page="listings"] .lp-cat-label {
     grid-column: span 2;
   }
 }
+
+/* Listing card height normalization across listings and specialty pages */
+.lp-cat-view .lp-rec-card,
+body[data-page="listings"] .lp-rec-card {
+  height: 126px !important;
+  min-height: 126px !important;
+  max-height: 126px !important;
+  flex: 0 0 126px !important;
+}
+
+.lp-rec-body {
+  justify-content: flex-start !important;
+  gap: 4px !important;
+}
+
+.lp-rec-row {
+  flex: 0 0 auto !important;
+}
+
+.lp-rec-row-mid,
+body[data-page="listings"] .lp-rec-row-mid {
+  display: block !important;
+  height: 17px !important;
+  min-height: 17px !important;
+  max-height: 17px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  line-height: 17px !important;
+}
+
+.lp-rec-row-price,
+.lp-rec-row-area,
+.lp-rec-row-bot {
+  min-height: 18px !important;
+  max-height: 18px !important;
+  overflow: hidden !important;
+}
+
+body[data-page="listings"] .lp-panel-section-body {
+  align-items: stretch !important;
+}
+
+body[data-page="listings"] .lp-mini-card {
+  height: 156px !important;
+  min-height: 156px !important;
+  max-height: 156px !important;
+}
+
+body[data-page="listings"] .lp-mini-title,
+body[data-page="listings"] .lp-all-title {
+  display: block !important;
+  height: 21px !important;
+  min-height: 21px !important;
+  max-height: 21px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  line-height: 21px !important;
+}
+
+body[data-page="listings"] .lp-all-card {
+  height: 410px !important;
+  min-height: 410px !important;
+  max-height: 410px !important;
+}
