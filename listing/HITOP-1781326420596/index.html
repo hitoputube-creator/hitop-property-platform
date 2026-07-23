@@ -8,7 +8,7 @@
     <meta name="keywords" content="파주시 탄현면 축현리, 토지, 토지, 매매, 하이탑부동산" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20260604-parking-unit" />
+    <link rel="stylesheet" href="style.css?v=20260723-listing-ui" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services,clusterer&autoload=false"></script>
       <base href="/" />
     <link rel="canonical" href="https://hitoprealty.com/listing/HITOP-1781326420596/" />
@@ -92,8 +92,8 @@
               <div class="modal-contact">
                 <a href="tel:031-949-8969" class="btn modal-tel">전화문의</a>
                 <a href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer" class="modal-kakao-btn">카톡상담</a>
-                <button id="modalPrintBtn" class="modal-print-btn" type="button">🖨 프린트</button>
-                <button id="modalCopyLinkBtn" class="modal-copy-btn" type="button">링크복사</button>
+                <button id="modalPrintBtn" class="modal-print-btn" type="button" aria-label="프린트" title="프린트">⎙</button>
+                <button id="modalCopyLinkBtn" class="modal-copy-btn" type="button" aria-label="링크복사" title="링크복사">🔗</button>
               </div>
               <div class="modal-minimap-wrap" id="modalBodyMapWrap" style="display:none;">
                 <h4>📍 매물 위치</h4>
@@ -158,7 +158,7 @@
 
     <!-- ══ 매물 카드/모달 렌더링 공용 로직(openModal, 이미지/가격/면적 헬퍼 등) 재사용 ══ -->
     <script>window.HITOP_STATIC_LISTING_ID = "HITOP-1781326420596";</script>
-    <script src="app.js?v=20260604-no-parking-card"></script>
+    <script src="app.js?v=20260723-listing-ui"></script>
 
     <!-- ══ 검색노출용 SEO 메타(title/description/keywords/canonical/og/JSON-LD) +
          listing-detail.html 전용 데이터 로딩·거래상태 배지·미니맵 렌더링.

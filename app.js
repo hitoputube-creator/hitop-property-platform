@@ -121,7 +121,9 @@ const refreshFavoriteButtons = () => {
     const active = isFavoriteListing(btn.dataset.favoriteId);
     btn.classList.toggle('is-active', active);
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    btn.textContent = active ? '찜해제' : '찜하기';
+    btn.textContent = active ? '♥' : '♡';
+    btn.setAttribute('aria-label', active ? '찜 해제' : '찜하기');
+    btn.title = active ? '찜 해제' : '찜하기';
   });
 };
 
@@ -1379,9 +1381,11 @@ const ensureModalActionButtons = (item = {}) => {
     shareBtn.id = 'modalShareBtn';
     shareBtn.type = 'button';
     shareBtn.className = 'modal-copy-btn modal-share-btn';
-    shareBtn.textContent = '공유';
     contact.appendChild(shareBtn);
   }
+  shareBtn.textContent = '↗';
+  shareBtn.setAttribute('aria-label', '공유');
+  shareBtn.title = '공유';
   shareBtn.onclick = () => shareListing(item);
   refreshFavoriteButtons();
 };
@@ -1748,9 +1752,15 @@ const openModal = (item) => {
   const printBtn = document.getElementById('modalPrintBtn');
   if (printBtn) {
     printBtn.dataset.id = getListingPrintId(item);
+    printBtn.textContent = '⎙';
+    printBtn.setAttribute('aria-label', '프린트');
+    printBtn.title = '프린트';
   }
   const copyBtn = document.getElementById('modalCopyLinkBtn');
   if (copyBtn) {
+    copyBtn.textContent = '🔗';
+    copyBtn.setAttribute('aria-label', '링크복사');
+    copyBtn.title = '링크복사';
     copyBtn.onclick = () => copyListingLink(item);
   }
   ensureModalActionButtons(item);
@@ -2375,18 +2385,6 @@ const setupListingsPage = () => {
     const addOverlay = (coords, gi) => {
       const { hid, html } = makeMarkerContent(gi.length, getGroupColor(gi));
       const overlay = new kakao.maps.CustomOverlay({ map, position: coords, content: html, yAnchor: 0.5, zIndex: 3 });
-      if (markerClusterer && kakao.maps.Marker) {
-        const marker = new kakao.maps.Marker({ position: coords, clickable: true });
-        kakao.maps.event.addListener(marker, 'click', () => {
-          if (gi.length === 1) openModalFull(gi[0]);
-          else {
-            map.setCenter(coords);
-            map.setLevel(Math.max(1, map.getLevel() - 2));
-          }
-        });
-        markerClusterer.addMarker(marker);
-        activeMarkers.push(marker);
-      }
       window._mhHandlers[hid] = () => {
         if (gi.length === 1) {
           openModalFull(gi[0]);
