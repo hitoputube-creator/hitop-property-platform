@@ -14,6 +14,123 @@ const openListingPrintPage = (id) => {
 
 const HITOP_SITE_ORIGIN = 'https://hitoprealty.com';
 const FAVORITE_STORAGE_KEY = 'hitop_favorite_listings_v1';
+const HITOP_PUBLIC_ANALYTICS_PAGES = new Set([
+  'home',
+  'listings',
+  'listing-detail',
+  'about',
+  'info',
+  'consult',
+  'write-consult',
+  'contact',
+  'unj3-land-map'
+]);
+const HITOP_ANALYTICS_DEDUP_MS = 800;
+const hitopAnalyticsClickTimes = new WeakMap();
+
+const getHitopPagePath = () => window.location.pathname || '/';
+
+const getHitopPageType = () => {
+  const page = document.body?.dataset?.page || '';
+  if (page === 'listings' && document.body?.dataset?.defaultCategory) return 'listings_category';
+  if (/^\/listing\/[^/]+\/?$/i.test(window.location.pathname || '')) return 'listing-detail';
+  return page || 'public';
+};
+
+const isHitopPublicAnalyticsPage = () => {
+  const page = document.body?.dataset?.page || '';
+  const path = window.location.pathname || '';
+  if (page.startsWith('admin') || path.includes('/hitop-ai-workcenter/') || /^\/admin/i.test(path)) return false;
+  return HITOP_PUBLIC_ANALYTICS_PAGES.has(page) || /^\/listing\/[^/]+\/?$/i.test(path);
+};
+
+const normalizeHitopListingId = (value) => {
+  const clean = String(value || '').trim();
+  return /^[A-Za-z0-9_-]{3,100}$/.test(clean) ? clean : '';
+};
+
+const getHitopListingId = (element, fallback) => {
+  const fromElement = normalizeHitopListingId(element?.dataset?.listingId)
+    || normalizeHitopListingId(element?.closest?.('[data-listing-id]')?.dataset?.listingId)
+    || normalizeHitopListingId(document.getElementById('listingModal')?.dataset?.listingId)
+    || normalizeHitopListingId(fallback)
+    || normalizeHitopListingId(window.HITOP_STATIC_LISTING_ID)
+    || normalizeHitopListingId(new URLSearchParams(window.location.search).get('id'));
+  if (fromElement) return fromElement;
+  const match = (window.location.pathname || '').match(/^\/listing\/([^/]+)\/?$/i);
+  return normalizeHitopListingId(match?.[1]);
+};
+
+const getHitopButtonLocation = (element) => {
+  if (!element) return 'unknown';
+  if (element.dataset?.buttonLocation) return element.dataset.buttonLocation;
+  if (element.closest('#listingModal')) return 'listing_modal';
+  if (element.closest('.top-bar')) return 'top_bar';
+  if (element.closest('.info-contact-section')) return 'home_contact_section';
+  if (element.closest('.lp-sidebar')) return 'listings_sidebar';
+  if (element.closest('.footer-v2-btns') || element.closest('.site-footer')) return 'footer';
+  if (element.closest('.contact-info-row')) return 'contact_card';
+  if (element.closest('.info-consult-box')) return 'info_consult';
+  if (element.matches('.fv2-tel, .fv2-kakao')) return 'floating_footer';
+  return 'content';
+};
+
+const shouldTrackHitopClick = (element, eventName) => {
+  if (!element) return false;
+  const now = Date.now();
+  const previous = hitopAnalyticsClickTimes.get(element) || {};
+  if (previous[eventName] && now - previous[eventName] < HITOP_ANALYTICS_DEDUP_MS) return false;
+  previous[eventName] = now;
+  hitopAnalyticsClickTimes.set(element, previous);
+  return true;
+};
+
+const sendHitopAnalyticsEvent = (eventName, params = {}) => {
+  if (!isHitopPublicAnalyticsPage() || typeof window.gtag !== 'function') return false;
+  const payload = {
+    page_path: getHitopPagePath(),
+    page_type: getHitopPageType(),
+    ...params
+  };
+  Object.keys(payload).forEach(key => {
+    if (payload[key] === undefined || payload[key] === null || payload[key] === '') delete payload[key];
+  });
+  window.gtag('event', eventName, payload);
+  return true;
+};
+
+const trackHitopGenerateLead = (params = {}) => {
+  const listingId = getHitopListingId(null, params.listing_id);
+  return sendHitopAnalyticsEvent('generate_lead', {
+    lead_type: params.lead_type || 'consultation',
+    ...(listingId ? { listing_id: listingId } : {})
+  });
+};
+
+const setupHitopAnalyticsTracking = () => {
+  if (window.__hitopAnalyticsTrackingReady || !isHitopPublicAnalyticsPage()) return;
+  window.__hitopAnalyticsTrackingReady = true;
+  document.addEventListener('click', (event) => {
+    const anchor = event.target?.closest?.('a[href]');
+    if (!anchor) return;
+    const href = anchor.getAttribute('href') || '';
+    const absoluteHref = anchor.href || href;
+    const isPhone = href.trim().toLowerCase().startsWith('tel:');
+    const isKakao = /(^|\/\/)(open\.)?kakao\.com/i.test(absoluteHref) || /kakao/i.test(anchor.className || '');
+    if (!isPhone && !isKakao) return;
+
+    const eventName = isPhone ? 'click_phone' : 'click_kakao';
+    if (!shouldTrackHitopClick(anchor, eventName)) return;
+    const listingId = getHitopListingId(anchor);
+    sendHitopAnalyticsEvent(eventName, {
+      button_location: getHitopButtonLocation(anchor),
+      ...(listingId ? { listing_id: listingId } : {})
+    });
+  }, true);
+};
+
+window.hitopTrackGenerateLead = trackHitopGenerateLead;
+window.hitopTrackCustomerEvent = sendHitopAnalyticsEvent;
 
 const escapeHTML = (value = '') => String(value)
   .replace(/&/g, '&amp;')
@@ -1434,6 +1551,10 @@ const renderInlineConsultForm = (item = {}) => {
         status: '접수',
       });
       if (error) throw error;
+      trackHitopGenerateLead({
+        lead_type: 'listing_consultation',
+        listing_id: getListingPrintId(item)
+      });
       e.target.reset();
       showSiteToast('상담신청이 접수되었습니다.');
     } catch (err) {
@@ -1446,6 +1567,12 @@ const renderInlineConsultForm = (item = {}) => {
 const openModal = (item) => {
   const modal = document.getElementById('listingModal');
   if (!modal) return;
+  const analyticsListingId = getListingPrintId(item);
+  modal.dataset.listingId = analyticsListingId;
+  modal.querySelectorAll('a[href^="tel:"], a[href*="kakao.com"]').forEach(anchor => {
+    anchor.dataset.listingId = analyticsListingId;
+    anchor.dataset.buttonLocation = 'listing_modal';
+  });
   const pt     = item.propertyType || '';
   const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
   const _mCat1      = getCategory1(item);
@@ -4234,6 +4361,7 @@ const setupAdminListingsMgmt = () => {
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   setupMobileNav();
+  setupHitopAnalyticsTracking();
   const page = document.body.dataset.page;
   if      (page === 'home')             setupHomePage();
   else if (page === 'listings')         setupListingsPage();

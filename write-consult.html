@@ -315,7 +315,7 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20260602j"></script>
+    <script src="app.js?v=20260730-ga-events"></script>
     <script type="module">
       import { supabase } from "./supabase-config.js";
 
@@ -348,6 +348,7 @@
             status:        '접수'
           });
           if (error) throw error;
+          window.hitopTrackGenerateLead?.({ lead_type: type || 'write_consult' });
 
           alert('상담문의가 등록되었습니다.');
           location.href = 'consult.html';
