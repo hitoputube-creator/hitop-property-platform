@@ -88,6 +88,7 @@ const shouldTrackHitopClick = (element, eventName) => {
 const sendHitopAnalyticsEvent = (eventName, params = {}) => {
   if (!isHitopPublicAnalyticsPage() || typeof window.gtag !== 'function') return false;
   const payload = {
+    send_to: 'G-Z8XP3W0Z8G',
     page_path: getHitopPagePath(),
     page_type: getHitopPageType(),
     ...params
