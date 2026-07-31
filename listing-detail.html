@@ -12,10 +12,12 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="하이탑부동산 매물 상세 템플릿 페이지입니다. 정식 매물 URL을 이용해 주세요." />
+    <meta name="robots" content="noindex,follow" />
+    <link rel="canonical" href="https://hitoprealty.com/listing-detail.html" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <title>매물 상세보기 | 하이탑부동산</title>
-    <meta name="description" content="하이탑부동산 매물 상세 정보입니다. 파주 공장·창고, 상가·사무실, 토지, 주거용 매물 상담문의: 031-949-8969" />
-    <meta name="keywords" content="파주 공장 매매, 파주 상가 임대, 파주 토지 매매, 하이탑부동산" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20260723-listing-readjust" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services,clusterer&autoload=false"></script>
@@ -31,7 +33,7 @@
 
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="brand" href="index.html">
+        <a class="brand" href="/">
           <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
         </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
@@ -50,12 +52,14 @@
     <div class="detail-page-wrap">
       <a class="detail-back" href="listings.html">← 매물 목록으로</a>
 
+      <!-- STATIC_LISTING_SEO_CONTENT -->
+
       <div id="detailState" class="detail-state">매물 정보를 불러오는 중입니다…</div>
 
       <!-- ══ listings.html의 #listingModal과 동일한 마크업/CSS(.modal-*)를 그대로 재사용.
            오버레이가 아닌 페이지 콘텐츠로 항상 노출되도록 style.css에서
            body[data-page="listing-detail"] 스코프로만 레이아웃을 조정한다. ══ -->
-      <div id="listingModal" class="modal-overlay" style="display:none;" role="region" aria-label="매물 상세보기">
+      <div id="listingModal" class="modal-overlay" style="display:none;" role="region" aria-label="매물 상세보기" data-static-title="" data-static-summary="">
         <div class="modal-box">
           <div class="modal-header">
             <span class="modal-id">매물번호: <strong id="modalId">-</strong></span>
@@ -330,6 +334,16 @@
         meta.content = keywords.join(', ');
       }
 
+      function upsertMetaName(name, content) {
+        let meta = document.querySelector(`meta[name="${name}"]`);
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = name;
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      }
+
       /* 검색노출용 정식 상세 URL. listings.html?id= / 전문관페이지.html?id= 등은
          app.js에서 이 주소로 리다이렉트되므로, 매물별 canonical·og:url은 항상
          이 형식 하나로만 생성한다. */
@@ -371,31 +385,25 @@
         upsertMetaProperty('og:description', description);
         upsertMetaProperty('og:url', url);
         upsertMetaProperty('og:image', image);
+        upsertMetaName('twitter:card', 'summary_large_image');
+        upsertMetaName('twitter:title', title);
+        upsertMetaName('twitter:description', description);
+        upsertMetaName('twitter:image', image);
       }
 
-      /* 매물명, 카테고리, 이미지, 주소, 가격, 설명, 검색 키워드, 하이탑부동산 연락처를 담은 JSON-LD */
+      /* 매물명, 카테고리, 이미지, 공개 주소 요약, 검색 키워드, 하이탑부동산 연락처를 담은 JSON-LD */
       function injectJsonLd(item, keywords) {
         document.getElementById('detailJsonLd')?.remove();
 
         const jsonLd = {
           '@context': 'https://schema.org',
-          '@type': 'RealEstateListing',
+          '@type': 'WebPage',
           name: item.title || '매물',
           category: getPropertyTypeLabel(item),
-          description: item.detailDescription || buildMetaDescription(item),
+          description: buildMetaDescription(item),
           keywords: (keywords || []).join(', '),
           image: Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [],
           url: buildCanonicalUrl(item),
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: item.address || '',
-            addressCountry: 'KR',
-          },
-          offers: {
-            '@type': 'Offer',
-            price: buildPriceSummaryText(item) || '가격문의',
-            priceCurrency: 'KRW',
-          },
           provider: {
             '@type': 'RealEstateAgent',
             name: '하이탑부동산공인중개사사무소',

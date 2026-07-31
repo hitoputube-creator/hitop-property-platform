@@ -15,19 +15,21 @@
     <base href="/" />
     <link rel="canonical" href="https://hitoprealty.com/listing/HITOP-1781077962447/" />
     <meta name="robots" content="index,follow" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="하이탑부동산" />
     <meta property="og:title" content="GTX부근 대로변 목좋은 상가부지 | 하이탑부동산" />
-    <meta property="og:description" content="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000 · 주식회사 오브제디벨롭먼트컴퍼니" />
+    <meta property="og:description" content="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000" />
     <meta property="og:url" content="https://hitoprealty.com/listing/HITOP-1781077962447/" />
     <meta property="og:image" content="https://xaxbkdnrzsghsabkdvzj.supabase.co/storage/v1/object/public/listing-images/HITOP-1781077962447/1781077962447-bmde33geycc.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="GTX부근 대로변 목좋은 상가부지 | 하이탑부동산" />
-    <meta name="twitter:description" content="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000 · 주식회사 오브제디벨롭먼트컴퍼니" />
+    <meta name="twitter:description" content="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000" />
     <meta name="twitter:image" content="https://xaxbkdnrzsghsabkdvzj.supabase.co/storage/v1/object/public/listing-images/HITOP-1781077962447/1781077962447-bmde33geycc.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"GTX부근 대로변 목좋은 상가부지 | 하이탑부동산","description":"파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000","url":"https://hitoprealty.com/listing/HITOP-1781077962447/","image":"https://xaxbkdnrzsghsabkdvzj.supabase.co/storage/v1/object/public/listing-images/HITOP-1781077962447/1781077962447-bmde33geycc.png","isPartOf":{"@type":"WebSite","name":"하이탑부동산","url":"https://hitoprealty.com"},"provider":{"@type":"RealEstateAgent","name":"하이탑부동산공인중개사사무소","telephone":"031-949-8969","address":"경기도 파주시 책향기로 830, 1층"}}</script>
+    <meta name="description" content="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000" />
     <title>GTX부근 대로변 목좋은 상가부지 | 하이탑부동산</title>
-    <meta name="description" content="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000 · 주식회사 오브제디벨롭먼트컴퍼니" />
-    <meta name="keywords" content="파주시 동패동, 토지, 토지, 매매, 하이탑부동산" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20260723-listing-readjust" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services,clusterer&autoload=false"></script>
@@ -43,7 +45,7 @@
 
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="brand" href="index.html">
+        <a class="brand" href="/">
           <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
         </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
@@ -62,12 +64,17 @@
     <div class="detail-page-wrap">
       <a class="detail-back" href="listings.html">← 매물 목록으로</a>
 
+      <section class="static-listing-seo" aria-label="매물 요약">
+        <h1>GTX부근 대로변 목좋은 상가부지</h1>
+        <p>파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000</p>
+      </section>
+
       <div id="detailState" class="detail-state">매물 정보를 불러오는 중입니다…</div>
 
       <!-- ══ listings.html의 #listingModal과 동일한 마크업/CSS(.modal-*)를 그대로 재사용.
            오버레이가 아닌 페이지 콘텐츠로 항상 노출되도록 style.css에서
            body[data-page="listing-detail"] 스코프로만 레이아웃을 조정한다. ══ -->
-      <div id="listingModal" class="modal-overlay" style="display:none;" role="region" aria-label="매물 상세보기">
+      <div id="listingModal" class="modal-overlay" style="display:none;" role="region" aria-label="매물 상세보기" data-static-title="GTX부근 대로변 목좋은 상가부지 | 하이탑부동산" data-static-summary="파주시 동패동 · 토지 · 매매 · 매매 9,000,000,000">
         <div class="modal-box">
           <div class="modal-header">
             <span class="modal-id">매물번호: <strong id="modalId">-</strong></span>
@@ -343,6 +350,16 @@
         meta.content = keywords.join(', ');
       }
 
+      function upsertMetaName(name, content) {
+        let meta = document.querySelector(`meta[name="${name}"]`);
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = name;
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      }
+
       /* 검색노출용 정식 상세 URL. listings.html?id= / 전문관페이지.html?id= 등은
          app.js에서 이 주소로 리다이렉트되므로, 매물별 canonical·og:url은 항상
          이 형식 하나로만 생성한다. */
@@ -384,31 +401,25 @@
         upsertMetaProperty('og:description', description);
         upsertMetaProperty('og:url', url);
         upsertMetaProperty('og:image', image);
+        upsertMetaName('twitter:card', 'summary_large_image');
+        upsertMetaName('twitter:title', title);
+        upsertMetaName('twitter:description', description);
+        upsertMetaName('twitter:image', image);
       }
 
-      /* 매물명, 카테고리, 이미지, 주소, 가격, 설명, 검색 키워드, 하이탑부동산 연락처를 담은 JSON-LD */
+      /* 매물명, 카테고리, 이미지, 공개 주소 요약, 검색 키워드, 하이탑부동산 연락처를 담은 JSON-LD */
       function injectJsonLd(item, keywords) {
         document.getElementById('detailJsonLd')?.remove();
 
         const jsonLd = {
           '@context': 'https://schema.org',
-          '@type': 'RealEstateListing',
+          '@type': 'WebPage',
           name: item.title || '매물',
           category: getPropertyTypeLabel(item),
-          description: item.detailDescription || buildMetaDescription(item),
+          description: buildMetaDescription(item),
           keywords: (keywords || []).join(', '),
           image: Array.isArray(item.imageUrls) ? item.imageUrls.filter(Boolean) : [],
           url: buildCanonicalUrl(item),
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: item.address || '',
-            addressCountry: 'KR',
-          },
-          offers: {
-            '@type': 'Offer',
-            price: buildPriceSummaryText(item) || '가격문의',
-            priceCurrency: 'KRW',
-          },
           provider: {
             '@type': 'RealEstateAgent',
             name: '하이탑부동산공인중개사사무소',

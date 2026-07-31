@@ -2011,8 +2011,8 @@ const setupListingsPage = () => {
     const titleBar = document.getElementById('sidebarSpecialtyTitle');
     const titleText = document.getElementById('sidebarSpecialtyTitleText');
     if (!titleBar || !titleText) return;
-    const title = SPECIALTY_TITLES[groupKey] || '';
-    titleBar.hidden = !title;
+    const title = SPECIALTY_TITLES[groupKey] || '파주 부동산 매물 검색';
+    titleBar.hidden = false;
     titleText.textContent = title;
   };
   const flt = { cat: '', deal: '', kw: '', formCat: '', formDeal: '', minPrice: '', maxPrice: '', minAreaPy: '', maxAreaPy: '', sidebarMatch: null };

@@ -28,6 +28,8 @@ const escapeHtml = (value = '') => String(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
+const escapeJsonLd = (value = {}) => JSON.stringify(value).replace(/<\/script/gi, '<\\/script');
+
 const stripTags = (value = '') => String(value)
   .replace(/<[^>]*>/g, ' ')
   .replace(/\s+/g, ' ')
@@ -37,6 +39,17 @@ const truncate = (value = '', max = 155) => {
   const text = stripTags(value);
   return text.length > max ? `${text.slice(0, max - 1).trim()}...` : text;
 };
+
+const sanitizeSeoText = (value = '') => stripTags(value)
+  .replace(/\b01[016789][-\s.]?\d{3,4}[-\s.]?\d{4}\b/g, '')
+  .replace(/\b0(?:2|3[1-3]|4[1-4]|5[1-5]|6[1-4])[-\s.]?\d{3,4}[-\s.]?\d{4}\b/g, '')
+  .replace(/(?:비번|비밀번호|문\s*비번|키번호)\s*[:：]?\s*[\w*#-]+/gi, '')
+  .replace(/(?:주인번호|대표번호|담당자|임차인|세입자|소유자|명의|방문함|방문|전화)\s*[:：]?\s*[가-힣A-Za-z0-9().\s-]{0,24}/g, '')
+  .replace(/\b\d{3,4}[-\s.]?\d{3,4}\b/g, '')
+  .replace(/\s*[,，]\s*(?=,|·|$)/g, '')
+  .replace(/\s+/g, ' ')
+  .replace(/\s*[·,]\s*$/g, '')
+  .trim();
 
 const readSupabaseConfig = async () => {
   const source = await readFile(path.join(rootDir, 'supabase-config.js'), 'utf8');
@@ -104,32 +117,65 @@ const buildTitle = (listing) => {
   return `${base} | 하이탑부동산`;
 };
 
-const buildDescription = (listing) => {
+const buildSummary = (listing) => {
   const parts = [
-    listing.address,
+    sanitizeSeoText(listing.address),
     listing.category2 || listing.category1,
     listing.dealType,
     buildPriceSummary(listing),
-    listing.description,
   ].filter(Boolean);
-  return truncate(parts.join(' · '), 160) || '하이탑부동산 매물 상세 정보입니다. 상담문의 031-949-8969';
+  return parts.join(' · ');
+};
+
+const buildDescription = (listing) => {
+  return truncate(buildSummary(listing), 160) || '하이탑부동산 매물 상세 정보입니다. 상담문의 031-949-8969';
 };
 
 const getListingUrl = (listing) => `${siteOrigin}/listing/${encodeURIComponent(String(listing.id))}/`;
 
+const stripTemplateSeo = (html) => html
+  .replace(/\s*<link\s+rel=["']canonical["'][^>]*>/gi, '')
+  .replace(/\s*<meta\s+name=["']robots["'][^>]*>/gi, '')
+  .replace(/\s*<link\s+rel=["']icon["'][^>]*>/gi, '')
+  .replace(/\s*<meta\s+property=["']og:[^"']+["'][^>]*>/gi, '')
+  .replace(/\s*<meta\s+name=["']twitter:[^"']+["'][^>]*>/gi, '')
+  .replace(/\s*<script\s+type=["']application\/ld\+json["'][\s\S]*?<\/script>/gi, '');
+
 const injectStaticMetadata = (template, listing) => {
   const title = buildTitle(listing);
   const description = buildDescription(listing);
+  const summary = buildSummary(listing);
   const image = listing.imageUrls.find(Boolean) || `${siteOrigin}/images/hitoplogo.png`;
   const url = getListingUrl(listing);
-  const keywords = [listing.address, listing.category1, listing.category2, listing.dealType, '하이탑부동산']
+  const keywords = [sanitizeSeoText(listing.address), listing.category1, listing.category2, listing.dealType, '하이탑부동산']
     .filter(Boolean)
     .join(', ');
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: title,
+    description,
+    url,
+    image,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: '하이탑부동산',
+      url: siteOrigin,
+    },
+    provider: {
+      '@type': 'RealEstateAgent',
+      name: '하이탑부동산공인중개사사무소',
+      telephone: '031-949-8969',
+      address: '경기도 파주시 책향기로 830, 1층',
+    },
+  };
   const seoBlock = [
     '<base href="/" />',
     `<link rel="canonical" href="${escapeHtml(url)}" />`,
     '<meta name="robots" content="index,follow" />',
+    '<link rel="icon" href="/favicon.ico" sizes="any" />',
     '<meta property="og:type" content="website" />',
+    '<meta property="og:site_name" content="하이탑부동산" />',
     `<meta property="og:title" content="${escapeHtml(title)}" />`,
     `<meta property="og:description" content="${escapeHtml(description)}" />`,
     `<meta property="og:url" content="${escapeHtml(url)}" />`,
@@ -138,9 +184,10 @@ const injectStaticMetadata = (template, listing) => {
     `<meta name="twitter:title" content="${escapeHtml(title)}" />`,
     `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(image)}" />`,
+    `<script type="application/ld+json">${escapeJsonLd(jsonLd)}</script>`,
   ].join('\n    ');
 
-  let html = template
+  let html = stripTemplateSeo(template)
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/?>/i, `<meta name="description" content="${escapeHtml(description)}" />`)
     .replace(/<meta name="keywords" content="[^"]*"\s*\/?>/i, `<meta name="keywords" content="${escapeHtml(keywords)}" />`);
@@ -153,6 +200,14 @@ const injectStaticMetadata = (template, listing) => {
     '<script src="app.js',
     `<script>window.HITOP_STATIC_LISTING_ID = ${JSON.stringify(String(listing.id))};</script>\n    <script src="app.js`
   );
+  html = html.replace('data-static-title=""', `data-static-title="${escapeHtml(title)}"`);
+  html = html.replace('data-static-summary=""', `data-static-summary="${escapeHtml(summary || description)}"`);
+  html = html.replace('<!-- STATIC_LISTING_SEO_CONTENT -->', [
+    '<section class="static-listing-seo" aria-label="매물 요약">',
+    `  <h1>${escapeHtml(stripTags(listing.title || '하이탑부동산 매물'))}</h1>`,
+    `  <p>${escapeHtml(summary || description)}</p>`,
+    '</section>',
+  ].join('\n      '));
   return html;
 };
 
@@ -167,8 +222,7 @@ const buildSitemap = (listings) => {
     '/building.html',
     '/about.html',
     '/info.html',
-    '/consult.html',
-    '/contact.html',
+    '/unj3-land-map.html',
   ];
 
   const urls = [

@@ -7274,6 +7274,26 @@ body[data-page="listing-detail"] .detail-state {
   font-size: 15px;
 }
 body[data-page="listing-detail"] .detail-state.error { color: #dc2626; }
+body[data-page="listing-detail"] .static-listing-seo {
+  margin: 14px 0 16px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #e5e9f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+body[data-page="listing-detail"] .static-listing-seo h1 {
+  margin: 0 0 8px;
+  color: #0A1F5C;
+  font-size: 22px;
+  line-height: 1.35;
+}
+body[data-page="listing-detail"] .static-listing-seo p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.7;
+}
 body[data-page="listing-detail"] .detail-back {
   display: inline-flex;
   align-items: center;

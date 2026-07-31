@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /hitop-ai-workcenter/
+Disallow: /scripts/
+Disallow: /listings_modal_snippet.html
+Disallow: /*test*
 
 Sitemap: https://hitoprealty.com/sitemap.xml
