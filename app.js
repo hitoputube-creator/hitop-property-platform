@@ -27,6 +27,47 @@ const HITOP_PUBLIC_ANALYTICS_PAGES = new Set([
 ]);
 const HITOP_ANALYTICS_DEDUP_MS = 800;
 const hitopAnalyticsClickTimes = new WeakMap();
+const hitopCustomerEventTimes = new Map();
+
+const HITOP_AD_TRACKING_CONFIG = {
+  GOOGLE_ADS_ID: '',
+  GOOGLE_ADS_PHONE_CONVERSION_LABEL: '',
+  GOOGLE_ADS_KAKAO_CONVERSION_LABEL: '',
+  GOOGLE_ADS_LEAD_CONVERSION_LABEL: '',
+  META_PIXEL_ID: '',
+  ENABLE_GOOGLE_ADS: false,
+  ENABLE_META_PIXEL: false,
+};
+
+const HITOP_AD_ATTRIBUTION_STORAGE_KEY = 'hitop_ad_attribution_v1';
+const HITOP_ALLOWED_AD_ATTRIBUTION_KEYS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+  'gclid',
+  'fbclid',
+];
+const HITOP_SAFE_EVENT_PARAM_KEYS = new Set([
+  'listing_id',
+  'page_path',
+  'page_type',
+  'button_location',
+  'lead_type',
+]);
+const HITOP_GOOGLE_ADS_LABEL_BY_EVENT = {
+  click_phone: 'GOOGLE_ADS_PHONE_CONVERSION_LABEL',
+  click_kakao: 'GOOGLE_ADS_KAKAO_CONVERSION_LABEL',
+  generate_lead: 'GOOGLE_ADS_LEAD_CONVERSION_LABEL',
+};
+const HITOP_META_STANDARD_EVENT_BY_EVENT = {
+  click_phone: 'Contact',
+  click_kakao: 'Contact',
+  generate_lead: 'Lead',
+};
+
+window.HITOP_AD_TRACKING_CONFIG = HITOP_AD_TRACKING_CONFIG;
 
 const getHitopPagePath = () => window.location.pathname || '/';
 
@@ -35,6 +76,49 @@ const getHitopPageType = () => {
   if (page === 'listings' && document.body?.dataset?.defaultCategory) return 'listings_category';
   if (/^\/listing\/[^/]+\/?$/i.test(window.location.pathname || '')) return 'listing-detail';
   return page || 'public';
+};
+
+const sanitizeHitopAdValue = (value, maxLength = 120) => {
+  const clean = String(value || '')
+    .replace(/[<>"'`]/g, '')
+    .replace(/[\r\n\t]/g, ' ')
+    .trim();
+  return clean.length > maxLength ? clean.slice(0, maxLength) : clean;
+};
+
+const readHitopAdAttribution = () => {
+  const params = new URLSearchParams(window.location.search || '');
+  const attribution = {};
+  HITOP_ALLOWED_AD_ATTRIBUTION_KEYS.forEach((key) => {
+    const value = sanitizeHitopAdValue(params.get(key), key === 'gclid' || key === 'fbclid' ? 220 : 120);
+    if (value) attribution[key] = value;
+  });
+
+  try {
+    if (Object.keys(attribution).length) {
+      const stored = { ...attribution, landing_page_path: getHitopPagePath() };
+      sessionStorage.setItem(HITOP_AD_ATTRIBUTION_STORAGE_KEY, JSON.stringify(stored));
+      return stored;
+    }
+    const stored = JSON.parse(sessionStorage.getItem(HITOP_AD_ATTRIBUTION_STORAGE_KEY) || '{}');
+    return stored && typeof stored === 'object' ? stored : {};
+  } catch {
+    return attribution;
+  }
+};
+
+const buildHitopSafeEventParams = (eventName, params = {}) => {
+  const safe = {
+    page_path: getHitopPagePath(),
+    page_type: getHitopPageType(),
+  };
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (!HITOP_SAFE_EVENT_PARAM_KEYS.has(key)) return;
+    const clean = sanitizeHitopAdValue(value);
+    if (clean) safe[key] = clean;
+  });
+  safe.event_type = sanitizeHitopAdValue(eventName, 40);
+  return safe;
 };
 
 const isHitopPublicAnalyticsPage = () => {
@@ -85,6 +169,99 @@ const shouldTrackHitopClick = (element, eventName) => {
   return true;
 };
 
+const shouldTrackHitopCustomerEvent = (eventName, params = {}) => {
+  const now = Date.now();
+  const key = [
+    eventName,
+    getHitopPagePath(),
+    params.listing_id || '',
+    params.button_location || '',
+    params.lead_type || '',
+  ].join('|');
+  const previous = hitopCustomerEventTimes.get(key) || 0;
+  if (previous && now - previous < HITOP_ANALYTICS_DEDUP_MS) return false;
+  hitopCustomerEventTimes.set(key, now);
+  return true;
+};
+
+const isGoogleAdsReady = () => (
+  HITOP_AD_TRACKING_CONFIG.ENABLE_GOOGLE_ADS === true
+  && /^AW-\d+$/i.test(HITOP_AD_TRACKING_CONFIG.GOOGLE_ADS_ID || '')
+  && typeof window.gtag === 'function'
+);
+
+const initHitopGoogleAdsTracking = () => {
+  if (window.__hitopGoogleAdsReady || !isHitopPublicAnalyticsPage() || !isGoogleAdsReady()) return;
+  window.__hitopGoogleAdsReady = true;
+  window.gtag('config', HITOP_AD_TRACKING_CONFIG.GOOGLE_ADS_ID);
+};
+
+const sendHitopGoogleAdsConversion = (eventName, params = {}) => {
+  if (!isHitopPublicAnalyticsPage() || !isGoogleAdsReady()) return false;
+  const labelKey = HITOP_GOOGLE_ADS_LABEL_BY_EVENT[eventName];
+  const label = sanitizeHitopAdValue(HITOP_AD_TRACKING_CONFIG[labelKey] || '', 120);
+  if (!label) return false;
+  initHitopGoogleAdsTracking();
+  window.gtag('event', 'conversion', {
+    send_to: `${HITOP_AD_TRACKING_CONFIG.GOOGLE_ADS_ID}/${label}`,
+    page_path: params.page_path || getHitopPagePath(),
+    page_type: params.page_type || getHitopPageType(),
+    event_type: eventName,
+    ...(params.button_location ? { button_location: params.button_location } : {}),
+    ...(params.listing_id ? { listing_id: params.listing_id } : {}),
+  });
+  return true;
+};
+
+const isMetaPixelReady = () => (
+  HITOP_AD_TRACKING_CONFIG.ENABLE_META_PIXEL === true
+  && /^\d{6,30}$/.test(HITOP_AD_TRACKING_CONFIG.META_PIXEL_ID || '')
+);
+
+const loadHitopMetaPixel = () => {
+  if (window.__hitopMetaPixelReady || !isHitopPublicAnalyticsPage() || !isMetaPixelReady()) return false;
+  window.__hitopMetaPixelReady = true;
+  /* Meta standard events are for ad optimization; matching trackCustom events
+     keep local event names aligned with GA4. Count them separately in Meta to avoid double-reporting. */
+  (function(f,b,e,v,n,t,s) {
+    if (f.fbq) return;
+    n = f.fbq = function(){ n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+    if (!f._fbq) f._fbq = n;
+    n.push = n;
+    n.loaded = true;
+    n.version = '2.0';
+    n.queue = [];
+    t = b.createElement(e);
+    t.async = true;
+    t.src = v;
+    s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s);
+  })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+  window.fbq('init', HITOP_AD_TRACKING_CONFIG.META_PIXEL_ID);
+  window.fbq('track', 'PageView', {
+    page_path: getHitopPagePath(),
+    page_type: getHitopPageType(),
+  });
+  return true;
+};
+
+const sendHitopMetaEvent = (eventName, params = {}) => {
+  if (!isHitopPublicAnalyticsPage() || !isMetaPixelReady()) return false;
+  loadHitopMetaPixel();
+  if (typeof window.fbq !== 'function') return false;
+  const metaParams = {
+    page_path: params.page_path || getHitopPagePath(),
+    page_type: params.page_type || getHitopPageType(),
+    event_type: eventName,
+    ...(params.button_location ? { button_location: params.button_location } : {}),
+    ...(params.listing_id ? { listing_id: params.listing_id } : {}),
+  };
+  const standardEvent = HITOP_META_STANDARD_EVENT_BY_EVENT[eventName];
+  if (standardEvent) window.fbq('track', standardEvent, metaParams);
+  window.fbq('trackCustom', eventName, metaParams);
+  return true;
+};
+
 const sendHitopAnalyticsEvent = (eventName, params = {}) => {
   if (!isHitopPublicAnalyticsPage() || typeof window.gtag !== 'function') return false;
   const payload = {
@@ -100,9 +277,19 @@ const sendHitopAnalyticsEvent = (eventName, params = {}) => {
   return true;
 };
 
+const trackHitopCustomerAction = (eventName, params = {}) => {
+  if (!isHitopPublicAnalyticsPage()) return false;
+  const safeParams = buildHitopSafeEventParams(eventName, params);
+  if (!shouldTrackHitopCustomerEvent(eventName, safeParams)) return false;
+  const sentGa4 = sendHitopAnalyticsEvent(eventName, safeParams);
+  sendHitopGoogleAdsConversion(eventName, safeParams);
+  sendHitopMetaEvent(eventName, safeParams);
+  return sentGa4;
+};
+
 const trackHitopGenerateLead = (params = {}) => {
   const listingId = getHitopListingId(null, params.listing_id);
-  return sendHitopAnalyticsEvent('generate_lead', {
+  return trackHitopCustomerAction('generate_lead', {
     lead_type: params.lead_type || 'consultation',
     ...(listingId ? { listing_id: listingId } : {})
   });
@@ -123,7 +310,7 @@ const setupHitopAnalyticsTracking = () => {
     const eventName = isPhone ? 'click_phone' : 'click_kakao';
     if (!shouldTrackHitopClick(anchor, eventName)) return;
     const listingId = getHitopListingId(anchor);
-    sendHitopAnalyticsEvent(eventName, {
+    trackHitopCustomerAction(eventName, {
       button_location: getHitopButtonLocation(anchor),
       ...(listingId ? { listing_id: listingId } : {})
     });
@@ -131,7 +318,8 @@ const setupHitopAnalyticsTracking = () => {
 };
 
 window.hitopTrackGenerateLead = trackHitopGenerateLead;
-window.hitopTrackCustomerEvent = sendHitopAnalyticsEvent;
+window.hitopTrackCustomerEvent = trackHitopCustomerAction;
+window.hitopGetAdAttribution = readHitopAdAttribution;
 
 const escapeHTML = (value = '') => String(value)
   .replace(/&/g, '&amp;')
@@ -4361,6 +4549,11 @@ const setupAdminListingsMgmt = () => {
 // 진입점
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  if (isHitopPublicAnalyticsPage()) {
+    readHitopAdAttribution();
+    initHitopGoogleAdsTracking();
+    loadHitopMetaPixel();
+  }
   setupMobileNav();
   setupHitopAnalyticsTracking();
   const page = document.body.dataset.page;
