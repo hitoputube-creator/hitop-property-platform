@@ -2115,14 +2115,24 @@ const setupMobileNav = () => {
 };
 
 // ── 백그라운드 관리자 인증 대기 ──
-const waitForAdminAuth = () => Promise.resolve(sessionStorage.getItem('hitopAdminLoggedIn') === 'true');
+// 실제 Supabase Auth 세션 유무를 확인한다. listings 등 관리자 데이터 요청은 전부
+// 이 함수를 통과해야만 진행되므로, 아래 requireAdminLogin()의 화면 표시 상태와
+// 무관하게 이 함수가 진짜 권한 검사 역할을 한다.
+const waitForAdminAuth = async () => {
+  const { supabase } = await _supabaseCfg();
+  const { data } = await supabase.auth.getSession();
+  return !!data.session;
+};
 window.waitForAdminAuth = waitForAdminAuth;
+
+// 이 앱의 유일한 관리자 계정 — Supabase Auth에 이미 등록되어 있음(hitop_realestate_diary/
+// haitop-realty-system 등 같은 Supabase 프로젝트를 공유하는 다른 HITOP 앱과 동일 계정).
+const ADMIN_EMAIL = 'hh720403@gmail.com';
 
 const requireAdminLogin = () => {
   const overlay = document.getElementById('loginOverlay');
   const mainEl  = document.getElementById('adminMain');
   if (!overlay || !mainEl) return true;
-  const ADMIN_PW = 'hitop2025';
 
   const showAdmin = () => {
     overlay.classList.add('hidden');
@@ -2130,7 +2140,9 @@ const requireAdminLogin = () => {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
       logoutBtn.style.display = 'inline-flex';
-      logoutBtn.addEventListener('click', () => {
+      logoutBtn.addEventListener('click', async () => {
+        const { supabase } = await _supabaseCfg();
+        await supabase.auth.signOut();
         sessionStorage.removeItem('hitopAdminLoggedIn');
         location.reload();
       }, { once: true });
@@ -2148,9 +2160,16 @@ const requireAdminLogin = () => {
   const loginBtn   = document.getElementById('loginBtn');
   const loginPw    = document.getElementById('loginPw');
   const loginError = document.getElementById('loginError');
-  const doLogin = () => {
+  const doLogin = async () => {
     if (!loginPw) return;
-    if (loginPw.value === ADMIN_PW) {
+    const password = loginPw.value;
+    if (!password) return;
+    loginError?.classList.add('hidden');
+    if (loginBtn) loginBtn.disabled = true;
+    const { supabase } = await _supabaseCfg();
+    const { error } = await supabase.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
+    if (loginBtn) loginBtn.disabled = false;
+    if (!error) {
       sessionStorage.setItem('hitopAdminLoggedIn', 'true');
       location.reload();
       return;
