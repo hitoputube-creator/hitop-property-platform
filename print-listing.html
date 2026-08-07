@@ -532,7 +532,11 @@
     import { db, LISTINGS_COLLECTION } from "./firebase-config.js";
     import { supabase } from "./supabase-config.js";
 
-    const SUPABASE_LISTINGS_TABLE = 'listings';
+    // 공개 인쇄 페이지는 원본 listings 테이블이 아닌 공개용 뷰만 조회한다.
+    // public_listings 뷰는 owner_name/owner_phone*/quick_*/privateDetailAddress/drive_links/description 등
+    // 비공개 필드를 뷰 정의 자체에서 제외한다.
+    const SUPABASE_PUBLIC_LISTINGS_VIEW = 'public_listings';
+    const PUBLIC_LISTING_COLUMNS = 'id,type,title,address,status,created_at,resource_id,is_public,display_address,category1,category2,deal_type,sale_price,deposit,monthly_rent,area_m2,area_py,floor_info,zoning,detail_description,stickers,image_urls,pin_slot,last_verified_at,data';
 
     // 고객 화면용 단축 매물번호: 영문1자 + 숫자4자리 (내부 id 불변)
     const getShortListingNo = (item) => {
@@ -718,8 +722,8 @@
 
     const getListingFromSupabase = async (id) => {
       const { data, error } = await supabase
-        .from(SUPABASE_LISTINGS_TABLE)
-        .select('*')
+        .from(SUPABASE_PUBLIC_LISTINGS_VIEW)
+        .select(PUBLIC_LISTING_COLUMNS)
         .eq('id', id)
         .maybeSingle();
 

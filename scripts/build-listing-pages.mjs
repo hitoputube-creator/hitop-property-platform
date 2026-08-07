@@ -6,7 +6,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const siteOrigin = process.env.SITE_ORIGIN || 'https://hitoprealty.com';
-const listingTable = 'listings';
+// SEO 정적 페이지는 원본 listings 테이블이 아닌 공개용 뷰만 조회한다.
+// public_listings 뷰는 owner_name/owner_phone*/quick_*/privateDetailAddress/drive_links/description 등
+// 비공개 필드를 뷰 정의 자체에서 제외하며, is_public=true 행만 노출한다.
+const listingTable = 'public_listings';
+const publicListingColumns = 'id,type,title,address,status,created_at,resource_id,is_public,display_address,category1,category2,deal_type,sale_price,deposit,monthly_rent,area_m2,area_py,floor_info,zoning,detail_description,stickers,image_urls,pin_slot,last_verified_at,data';
 
 const todayKst = () => {
   try {
@@ -254,8 +258,7 @@ const buildSitemap = (listings) => {
 const fetchListings = async () => {
   const { url, anonKey } = await readSupabaseConfig();
   const endpoint = new URL(`/rest/v1/${listingTable}`, url);
-  endpoint.searchParams.set('select', '*');
-  endpoint.searchParams.set('is_public', 'eq.true');
+  endpoint.searchParams.set('select', publicListingColumns);
   endpoint.searchParams.set('order', 'created_at.desc');
 
   const res = await fetch(endpoint, {

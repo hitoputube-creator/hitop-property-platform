@@ -1,6 +1,10 @@
 console.log('app.js 로드됨!');
 const SUPABASE_LISTINGS_TABLE = 'listings';
 const SUPABASE_VISITORS_TABLE = 'visitors';
+// 공개(비로그인) 조회 전용 뷰 — owner_name/owner_phone*/quick_*/privateDetailAddress/drive_links/description 등
+// 비공개 필드는 뷰 정의 자체에서 제외되어 있다. 공개 페이지는 원본 listings 테이블을 직접 조회하지 않는다.
+const SUPABASE_PUBLIC_LISTINGS_VIEW = 'public_listings';
+const PUBLIC_LISTING_COLUMNS = 'id,type,title,address,status,created_at,resource_id,is_public,display_address,category1,category2,deal_type,sale_price,deposit,monthly_rent,area_m2,area_py,floor_info,zoning,detail_description,stickers,image_urls,pin_slot,last_verified_at,data';
 
 const getListingPrintId = (item = {}) => (
   item.id || item.property_number || item.listingNo || item.listing_id || ''
@@ -1111,6 +1115,18 @@ async function readListingsFromSupabase({ publicOnly = false } = {}) {
     .order('created_at', { ascending: false });
   if (publicOnly) query = query.eq('is_public', true);
   const { data, error } = await query;
+  if (error) throw error;
+  return (data || []).map(normalizeSupabaseListing);
+}
+
+// 공개 목록(listings.html) 전용 — public_listings 뷰에서 공개 컬럼만 명시적으로 조회한다.
+// 뷰가 이미 is_public=true 행만 노출하므로 별도 필터가 필요 없다.
+async function readPublicListingsFromSupabase() {
+  const { supabase } = await _supabaseCfg();
+  const { data, error } = await supabase
+    .from(SUPABASE_PUBLIC_LISTINGS_VIEW)
+    .select(PUBLIC_LISTING_COLUMNS)
+    .order('created_at', { ascending: false });
   if (error) throw error;
   return (data || []).map(normalizeSupabaseListing);
 }
@@ -3444,7 +3460,7 @@ const setupListingsPage = () => {
     const cardsEl = document.getElementById('listingCards');
     if (cardsEl) cardsEl.innerHTML = '<div class="lp-empty" style="grid-column:1/-1;">매물 목록을 불러오는 중...</div>';
     try {
-      _listings = await readListingsFromSupabase({ publicOnly: true });
+      _listings = await readPublicListingsFromSupabase();
     } catch (err) {
       console.error('[Supabase] 매물 조회 오류 — 원인:', err?.code || err?.message || err);
       console.warn('[Supabase] Supabase 보안 규칙에서 비인증 읽기를 허용했는지 확인하세요.');
