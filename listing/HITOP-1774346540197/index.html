@@ -577,8 +577,8 @@
 
         const { supabase } = await _supabaseCfg();
         const { data, error } = await supabase
-          .from(SUPABASE_LISTINGS_TABLE)
-          .select('*')
+          .from(SUPABASE_PUBLIC_LISTINGS_VIEW)
+          .select(PUBLIC_LISTING_COLUMNS)
           .eq('id', id)
           .single();
 
