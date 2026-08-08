@@ -6987,13 +6987,18 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
   .info-promo-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Mobile map touch guard: keep Kakao map gestures available on listings. */
+/* Mobile map touch guard: keep Kakao map gestures available on listings.
+   touch-action: none disables the browser's native pinch-zoom gesture
+   recognition entirely, which broke 2-finger pinch on mobile. "manipulation"
+   (= pan-x pan-y pinch-zoom) keeps native pan+pinch available to the map
+   while still blocking double-tap-zoom, without affecting anything outside
+   this fixed-height map box. */
 @media (max-width: 768px) {
   body[data-page="listings"] .lp-center {
     position: relative !important;
     z-index: 1 !important;
     pointer-events: auto !important;
-    touch-action: none !important;
+    touch-action: manipulation !important;
     overflow: hidden !important;
   }
 
@@ -7004,7 +7009,7 @@ body[data-page="admin-consult-detail"] > .site-footer-v2 {
     height: 100% !important;
     min-height: 360px !important;
     pointer-events: auto !important;
-    touch-action: none !important;
+    touch-action: manipulation !important;
   }
 
   body[data-page="listings"] .lp-panel,
