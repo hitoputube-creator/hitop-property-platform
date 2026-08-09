@@ -36,6 +36,20 @@
       .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
       .top-bar-phone:hover { color: #e0c070; }
 
+      /* 업무센터와 동일한 HT 원형 브랜드 아이덴티티 */
+      .brand.brand-unified { display: inline-flex; align-items: center; gap: 12px; color: #0d1b3e; }
+      .hitop-brand-mark {
+        width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%;
+        display: grid; place-items: center; box-sizing: border-box;
+        border: 1px solid rgba(216,184,74,.82);
+        background: linear-gradient(145deg,#0d1b3e,#142847);
+        color: #e6c364; font-size: 13px; font-weight: 900; letter-spacing: .2px;
+        box-shadow: 0 0 0 4px rgba(216,184,74,.08), inset 0 1px 0 rgba(255,255,255,.12);
+      }
+      .hitop-brand-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+      .hitop-brand-title { color: #0d1b3e; font-size: 19px; font-weight: 850; letter-spacing: -.35px; white-space: nowrap; }
+      .hitop-brand-sub { margin-top: 3px; color: #6f7f93; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+
       /* 카테고리 탭 */
       .category-tab-bar { background: #fff; border-bottom: 1px solid #e5e8ed; }
       .category-tab-bar .container { display: flex; align-items: center; gap: 0; overflow-x: auto; }
@@ -130,6 +144,9 @@
         .top-bar-hours { display: none; }
         .info-contact-wrap { grid-template-columns: 1fr; gap: 32px 0; }
         .divider-line { height: 1px; width: 100%; }
+        .hitop-brand-mark { width: 38px; height: 38px; flex-basis: 38px; }
+        .hitop-brand-title { font-size: 17px; }
+        .hitop-brand-sub { font-size: 10.5px; }
       }
     </style>
   </head>
@@ -144,8 +161,12 @@
 
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="brand" href="/">
-          <img src="images/hitoplogo.png" alt="" class="brand-logo" />
+        <a class="brand brand-unified" href="/" aria-label="하이탑부동산 홈">
+          <span class="hitop-brand-mark" aria-hidden="true">HT</span>
+          <span class="hitop-brand-copy">
+            <span class="hitop-brand-title">하이탑부동산</span>
+            <span class="hitop-brand-sub">파주·운정 부동산 전문</span>
+          </span>
         </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
         <nav class="nav-menu" aria-label="메인 메뉴">
