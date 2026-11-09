@@ -6,7 +6,7 @@
     <meta name="description" content="하이탑부동산 네이버 블로그의 최신 글을 한눈에 확인하세요." />
     <link rel="canonical" href="https://hitoprealty.com/blog.html" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
-    <title>하이탑부동산 블로그 새 글 | 하이탑부동산</title>
+    <title>하이탑 블로그 | 하이탑부동산</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
@@ -36,6 +36,27 @@
       .bp-go a { color:#03a94d; font-weight:700; font-size:14px; text-decoration:none; }
       @media (max-width:900px) { .bp-grid { grid-template-columns:repeat(2,1fr); } }
       @media (max-width:520px) { .bp-wrap { padding:28px 16px 48px; } .bp-grid { gap:28px 14px; } .bp-card-title { font-size:15px; } }
+
+      .bp-tools { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:24px; }
+      .bp-view { display:inline-flex; border:1px solid #d1d5db; border-radius:999px; overflow:hidden; background:#fff; }
+      .bp-view button { border:0; background:#fff; padding:9px 18px; font-size:14px; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
+      .bp-view button.active { background:#0A1F5C; color:#fff; }
+      .bp-search { flex:1; min-width:180px; max-width:320px; border:1px solid #d1d5db; border-radius:999px; padding:9px 16px; font-size:14px; font-family:inherit; background:#fff; }
+      .bp-cat em { font-style:normal; opacity:.65; margin-left:4px; font-size:12px; }
+      .bp-count { font-size:14px; color:#6b7280; margin:0 0 14px; }
+      .bp-note { margin-top:36px; text-align:center; font-size:14px; color:#6b7280; }
+      .bp-note button { border:0; background:none; color:#0A1F5C; font-weight:800; text-decoration:underline; cursor:pointer; font-size:14px; font-family:inherit; }
+      .bp-list { border-top:2px solid #111; }
+      .bp-row { display:grid; grid-template-columns:110px 150px 1fr; gap:12px; align-items:center; padding:14px 8px; border-bottom:1px solid #e5e7eb; text-decoration:none; color:#222; font-size:16px; }
+      .bp-row:hover { background:#f3f6fb; }
+      .bp-row .d { color:#9ca3af; font-size:14px; }
+      .bp-row .c { color:#0A1F5C; font-size:14px; font-weight:600; }
+      .bp-row .t { font-weight:600; line-height:1.4; }
+      .bp-pager { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:32px; }
+      .bp-pager button { min-width:38px; height:38px; border:1px solid #d1d5db; background:#fff; border-radius:8px; font-size:14px; font-weight:700; color:#374151; cursor:pointer; font-family:inherit; }
+      .bp-pager button.active { background:#0A1F5C; border-color:#0A1F5C; color:#fff; }
+      .bp-pager button:disabled { opacity:.4; cursor:default; }
+      @media (max-width:640px) { .bp-row { grid-template-columns:1fr; gap:4px; padding:12px 4px; } .bp-row .d,.bp-row .c { display:inline; } .bp-row .meta { display:flex; gap:10px; } }
     </style>
   </head>
   <body>
@@ -65,11 +86,15 @@
       </div>
     </header>
     <main class="bp-wrap">
-      <h1 class="bp-title">블로그 새 글</h1>
-      <p class="bp-sub">하이탑부동산 네이버 블로그의 최신 글입니다. 사진을 누르면 블로그 글로 이동합니다.</p>
+      <h1 class="bp-title">하이탑 블로그</h1>
+      <p class="bp-sub">하이탑부동산 네이버 블로그의 전체 글입니다. 글을 누르면 블로그로 이동합니다.</p>
+      <div class="bp-tools"><div class="bp-view"><button type="button" data-v="card" class="active">사진으로 보기</button><button type="button" data-v="list">목록으로 보기</button></div><input class="bp-search" id="bpSearch" type="search" placeholder="글 제목 검색" aria-label="글 제목 검색"></div>
       <div class="bp-cats" id="bpCats"></div>
+      <p class="bp-count" id="bpCount"></p>
       <div class="bp-grid" id="bpGrid"><p>불러오는 중입니다…</p></div>
       <button class="bp-more" id="bpMore" hidden>더 보기</button>
+      <div class="bp-pager" id="bpPager"></div>
+      <p class="bp-note" id="bpNote"></p>
       <p class="bp-go"><a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">네이버 블로그 바로가기 ›</a></p>
     </main>
     <footer class="site-footer-v2">
@@ -107,21 +132,46 @@
       const _t=document.querySelector('.nav-toggle'),_m=document.querySelector('.nav-menu');
       if(_t&&_m)_t.addEventListener('click',()=>_m.classList.toggle('open'));
       (function(){
-        const PAGE=12;let all=[],cat='전체',shown=PAGE;
-        const grid=document.getElementById('bpGrid'),cats=document.getElementById('bpCats'),more=document.getElementById('bpMore');
+        const CARD_PAGE=12,LIST_PAGE=20;
+        const ORDER=['하이탑부동산소개','운정역 상가','운정3지구 상가','야당역 상가','산내마을 상가','기타상가','토지','오피스텔/아파트','기타 매물','운정 상권 분석','부동산 정보','자유게시판'];
+        let all=[],cat='전체',q='',view='card',shown=CARD_PAGE,page=1;
+        const $=id=>document.getElementById(id);
+        const grid=$('bpGrid'),cats=$('bpCats'),more=$('bpMore'),pager=$('bpPager'),info=$('bpCount'),note=$('bpNote'),search=$('bpSearch');
         const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        function list(){return cat==='전체'?all:all.filter(p=>p.category===cat);}
+        function base(){return all.filter(p=>(cat==='전체'||p.category===cat)&&(!q||p.title.toLowerCase().includes(q)));}
         function render(){
-          const l=list();
-          grid.innerHTML=l.slice(0,shown).map(p=>'<a class="bp-card" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer"><div class="bp-thumb">'+(p.img?'<img class="bp-bg" src="'+esc(p.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer"><img class="bp-fg" src="'+esc(p.img)+'" alt="'+esc(p.title)+'" loading="lazy" referrerpolicy="no-referrer">':'')+'</div><div class="bp-card-title">'+esc(p.title)+'</div><div class="bp-card-meta">'+esc(p.category)+' · '+esc(p.date)+'</div></a>').join('')||'<p>등록된 글이 없습니다.</p>';
-          more.hidden=l.length<=shown;
+          const l=base();
+          document.querySelectorAll('.bp-view button').forEach(b=>b.classList.toggle('active',b.dataset.v===view));
+          if(view==='card'){
+            const withImg=l.filter(p=>p.img),noImg=l.length-withImg.length;
+            info.textContent='글 '+l.length+'개 중 사진이 있는 최근 글 '+withImg.length+'개';
+            grid.className='bp-grid';
+            grid.innerHTML=withImg.slice(0,shown).map(p=>'<a class="bp-card" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer"><div class="bp-thumb"><img class="bp-bg" src="'+esc(p.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer"><img class="bp-fg" src="'+esc(p.img)+'" alt="'+esc(p.title)+'" loading="lazy" referrerpolicy="no-referrer"></div><div class="bp-card-title">'+esc(p.title)+'</div><div class="bp-card-meta">'+esc(p.category)+' · '+esc(p.date)+'</div></a>').join('')||'<p>사진이 있는 글이 없습니다.</p>';
+            more.hidden=withImg.length<=shown;pager.innerHTML='';
+            note.innerHTML=noImg>0?'오래된 글 '+noImg+'개는 사진 없이 <button type="button" data-v="list">목록으로 보기</button>에서 볼 수 있어요.':'';
+          }else{
+            const pages=Math.max(1,Math.ceil(l.length/LIST_PAGE));if(page>pages)page=pages;
+            info.textContent='글 '+l.length+'개 · '+page+'/'+pages+' 쪽';
+            grid.className='bp-list';
+            grid.innerHTML=l.slice((page-1)*LIST_PAGE,page*LIST_PAGE).map(p=>'<a class="bp-row" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer"><span class="d">'+esc(p.date)+'</span><span class="c">'+esc(p.category)+'</span><span class="t">'+esc(p.title)+'</span></a>').join('')||'<p>검색된 글이 없습니다.</p>';
+            more.hidden=true;note.innerHTML='';
+            let h='<button data-p="'+(page-1)+'"'+(page<=1?' disabled':'')+'>‹</button>';
+            const s=Math.max(1,Math.min(page-2,pages-4)),e=Math.min(pages,s+4);
+            for(let i=s;i<=e;i++)h+='<button data-p="'+i+'"'+(i===page?' class="active"':'')+'>'+i+'</button>';
+            h+='<button data-p="'+(page+1)+'"'+(page>=pages?' disabled':'')+'>›</button>';
+            pager.innerHTML=pages>1?h:'';
+          }
         }
         function renderCats(){
-          const names=['전체'].concat([...new Set(all.map(p=>p.category))]);
-          cats.innerHTML=names.map(n=>'<button class="bp-cat'+(n===cat?' active':'')+'" data-c="'+esc(n)+'">'+esc(n)+'</button>').join('');
+          const cnt={};all.forEach(p=>cnt[p.category]=(cnt[p.category]||0)+1);
+          const names=['전체'].concat(ORDER.filter(n=>cnt[n]),Object.keys(cnt).filter(n=>!ORDER.includes(n)));
+          cats.innerHTML=names.map(n=>'<button class="bp-cat'+(n===cat?' active':'')+'" data-c="'+esc(n)+'">'+esc(n)+'<em>'+(n==='전체'?all.length:cnt[n])+'</em></button>').join('');
         }
-        cats.addEventListener('click',e=>{const b=e.target.closest('.bp-cat');if(!b)return;cat=b.dataset.c;shown=PAGE;renderCats();render();});
-        more.addEventListener('click',()=>{shown+=PAGE;render();});
+        cats.addEventListener('click',e=>{const b=e.target.closest('.bp-cat');if(!b)return;cat=b.dataset.c;shown=CARD_PAGE;page=1;renderCats();render();});
+        document.addEventListener('click',e=>{const v=e.target.closest('[data-v]');if(v){view=v.dataset.v;shown=CARD_PAGE;page=1;render();window.scrollTo({top:0});}});
+        pager.addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;page=+b.dataset.p;render();window.scrollTo({top:0});});
+        more.addEventListener('click',()=>{shown+=CARD_PAGE;render();});
+        search.addEventListener('input',()=>{q=search.value.trim().toLowerCase();shown=CARD_PAGE;page=1;render();});
         fetch('blog-posts.json?v='+Date.now()).then(r=>r.json()).then(d=>{all=d.posts||[];renderCats();render();}).catch(()=>{grid.innerHTML='<p>글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>';});
       })();
     </script>
