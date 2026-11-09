@@ -46,19 +46,20 @@ let prev = {};
 try { prev = JSON.parse(fs.readFileSync('blog-posts.json', 'utf8')); } catch {}
 const prevImg = Object.fromEntries((prev.posts || []).map(p => [p.id, p.img]));
 
-const posts = list.map(a => {
+const decEnt = s => String(s).replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n))).replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+const posts = list.filter(a => String(a.openType) === '2').map(a => {
   const m = String(a.addDate).match(/(\d+)\.\s*(\d+)\.\s*(\d+)/);
   const date = m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : '';
   return {
     id: a.logNo,
-    title: dec(a.title),
+    title: decEnt(dec(a.title)),
     category: CATS[a.categoryNo] || String(rssCat[a.logNo] || '').replace(/\s+/g, ' ').trim() || '기타',
     date,
     img: rssImg[a.logNo] || prevImg[a.logNo] || '',
     url: 'https://blog.naver.com/' + BLOG + '/' + a.logNo
   };
 });
-if (prev.posts && posts.length < prev.posts.length * 0.9) throw new Error('too few posts: ' + posts.length + ' < ' + prev.posts.length);
+if (prev.posts && posts.length < prev.posts.length * 0.7) throw new Error('too few posts: ' + posts.length + ' < ' + prev.posts.length);
 if (JSON.stringify(prev.posts) === JSON.stringify(posts)) { console.log('no change'); process.exit(0); }
 fs.writeFileSync('blog-posts.json', JSON.stringify({ updated: new Date().toISOString(), posts }));
 console.log('updated', posts.length);
