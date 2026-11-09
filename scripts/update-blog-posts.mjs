@@ -5,16 +5,29 @@ const CATS = {"1":"하이탑부동산소개","6":"부동산 정보","8":"운정�
 const dec = s => decodeURIComponent(String(s).replace(/\+/g, ' '));
 const enc = u => { if (!u) return ''; const k = u.lastIndexOf('/'); return u.slice(0, k + 1) + encodeURIComponent(decodeURIComponent(u.slice(k + 1))); };
 
-// 1) 전체 글 목록
-const list = [];
-for (let pg = 1; pg <= 30; pg++) {
-  const r = await fetch('https://blog.naver.com/PostTitleListAsync.naver?blogId=' + BLOG + '&viewdate=&currentPage=' + pg + '&categoryNo=0&parentCategoryNo=&countPerPage=30');
-  if (!r.ok) throw new Error('list ' + r.status);
-  const j = JSON.parse((await r.text()).replace(/\\'/g, "'"));
-  list.push(...(j.postList || []));
-  if (!j.postList || j.postList.length < 30) break;
+// 1) 전체 글 목록 (개수가 맞지 않으면 최대 3번 다시 시도)
+async function fetchAll() {
+  const out = [];
+  let total = 0;
+  for (let pg = 1; pg <= 30; pg++) {
+    const r = await fetch('https://blog.naver.com/PostTitleListAsync.naver?blogId=' + BLOG + '&viewdate=&currentPage=' + pg + '&categoryNo=0&parentCategoryNo=&countPerPage=30');
+    if (!r.ok) throw new Error('list ' + r.status);
+    const j = JSON.parse((await r.text()).replace(/\\'/g, "'"));
+    if (pg === 1) total = Number(j.totalCount) || 0;
+    out.push(...(j.postList || []));
+    if (!j.postList || j.postList.length < 30) break;
+  }
+  return { out, total };
 }
-if (!list.length) throw new Error('no posts');
+let list = [];
+for (let t = 1; t <= 3; t++) {
+  const { out, total } = await fetchAll();
+  list = out;
+  if (out.length && (!total || out.length >= total)) break;
+  console.log('retry', t, out.length, total);
+  list = [];
+}
+if (!list.length) throw new Error('list incomplete');
 
 // 2) RSS(최근 50개) 썸네일·카테고리 이름
 const rss = await (await fetch('https://rss.blog.naver.com/' + BLOG + '.xml')).text();
@@ -45,6 +58,7 @@ const posts = list.map(a => {
     url: 'https://blog.naver.com/' + BLOG + '/' + a.logNo
   };
 });
+if (prev.posts && posts.length < prev.posts.length * 0.9) throw new Error('too few posts: ' + posts.length + ' < ' + prev.posts.length);
 if (JSON.stringify(prev.posts) === JSON.stringify(posts)) { console.log('no change'); process.exit(0); }
 fs.writeFileSync('blog-posts.json', JSON.stringify({ updated: new Date().toISOString(), posts }));
 console.log('updated', posts.length);
