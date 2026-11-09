@@ -39,7 +39,7 @@ const posts = list.map(a => {
   return {
     id: a.logNo,
     title: dec(a.title),
-    category: rssCat[a.logNo] || CATS[a.categoryNo] || '기타',
+    category: CATS[a.categoryNo] || String(rssCat[a.logNo] || '').replace(/\s+/g, ' ').trim() || '기타',
     date,
     img: rssImg[a.logNo] || prevImg[a.logNo] || '',
     url: 'https://blog.naver.com/' + BLOG + '/' + a.logNo
