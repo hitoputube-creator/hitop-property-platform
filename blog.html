@@ -75,6 +75,23 @@
       .bp-row .src i { width:26px; height:26px; border-radius:50%; background:#0A1F5C; color:#fff; font-style:normal; font-size:10px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; }
       .bp-row .go { background:#C9A84C; color:#fff; font-weight:800; font-size:14px; padding:10px 22px; border-radius:999px; white-space:nowrap; }
       @media (max-width:640px) { .bp-row { flex-direction:column; height:auto; } .bp-row .th { flex:none; aspect-ratio:3/2; } .bp-row .bd { padding:14px 16px; } .bp-row .t { font-size:16px; } }
+      /* 버튼 작고 조용하게 (네모 박스) */
+      .bp-tools { margin-bottom:16px; }
+      .bp-view { border-radius:2px; border-color:#cdd3dd; }
+      .bp-view button { padding:6px 12px; font-size:12px; font-weight:600; color:#4b5563; }
+      .bp-view button.active { background:#0A1F5C; color:#fff; }
+      .bp-search { border-radius:2px; padding:6px 10px; font-size:12px; max-width:220px; border-color:#cdd3dd; }
+      .bp-cats { gap:4px; margin-bottom:20px; }
+      .bp-cat { border-radius:2px; padding:4px 9px; font-size:12px; font-weight:500; border-color:#cdd3dd; background:#f7f8fa; color:#2f3b52; }
+      .bp-cat.active { background:#0A1F5C; border-color:#0A1F5C; color:#fff; }
+      .bp-cat em { font-size:11px; margin-left:3px; }
+      .bp-more { border-radius:2px; padding:7px 22px; font-size:13px; font-weight:600; border-color:#cdd3dd; background:#f7f8fa; }
+      .bp-pager { gap:4px; }
+      .bp-pager button { min-width:28px; height:28px; border-radius:2px; font-size:12px; font-weight:600; border-color:#cdd3dd; }
+      .bp-row .go { background:#f7f8fa; color:#2f3b52; border:1px solid #cdd3dd; border-radius:2px; font-weight:600; font-size:12px; padding:5px 14px; }
+      .bp-row:hover .go { border-color:#0A1F5C; color:#0A1F5C; }
+      .bp-note button { font-size:13px; }
+
     </style>
   </head>
   <body>
