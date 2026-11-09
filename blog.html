@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="하이탑부동산 네이버 블로그의 최신 글을 한눈에 확인하세요." />
+    <link rel="canonical" href="https://hitoprealty.com/blog.html" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <title>하이탑부동산 블로그 새 글 | 하이탑부동산</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .top-bar { background:#0A1F5C; padding:6px 0; }
+      .top-bar .container { display:flex; justify-content:flex-end; align-items:center; gap:20px; }
+      .top-bar-hours { font-size:12px; color:#aab8d8; }
+      .top-bar-phone { font-size:12px; font-weight:600; color:#C9A84C; text-decoration:none; }
+      @media (max-width:768px) { .top-bar-hours { display:none; } }
+      .bp-wrap { max-width:1040px; margin:0 auto; padding:40px 24px 64px; font-family:Pretendard,'Malgun Gothic',sans-serif; }
+      .bp-title { font-size:26px; font-weight:800; color:#111; margin:0 0 6px; }
+      .bp-sub { font-size:15px; color:#6b7280; margin:0 0 22px; }
+      .bp-cats { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+      .bp-cat { border:1px solid #d1d5db; background:#fff; color:#374151; border-radius:999px; padding:8px 16px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
+      .bp-cat.active { background:#0A1F5C; border-color:#0A1F5C; color:#fff; }
+      .bp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:36px 24px; }
+      .bp-card { display:block; text-decoration:none; color:inherit; }
+      .bp-thumb { position:relative; aspect-ratio:4/3; border-radius:12px; overflow:hidden; background:#eef0f3; }
+      .bp-thumb .bp-bg { position:absolute; inset:-24px; width:calc(100% + 48px); height:calc(100% + 48px); object-fit:cover; filter:blur(22px) brightness(.92); }
+      .bp-thumb .bp-fg { position:relative; width:100%; height:100%; object-fit:contain; display:block; transition:transform .25s; }
+      .bp-card:hover .bp-thumb .bp-fg { transform:scale(1.03); }
+      .bp-card-title { margin-top:12px; font-size:17px; font-weight:700; color:#222; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+      .bp-card-meta { margin-top:6px; font-size:13px; color:#9ca3af; }
+      .bp-more { display:block; margin:40px auto 0; padding:12px 36px; border:1px solid #d1d5db; background:#fff; border-radius:999px; font-size:15px; font-weight:700; color:#374151; cursor:pointer; font-family:inherit; }
+      .bp-more[hidden] { display:none; }
+      .bp-go { text-align:center; margin-top:18px; }
+      .bp-go a { color:#03a94d; font-weight:700; font-size:14px; text-decoration:none; }
+      @media (max-width:900px) { .bp-grid { grid-template-columns:repeat(2,1fr); } }
+      @media (max-width:520px) { .bp-wrap { padding:28px 16px 48px; } .bp-grid { gap:28px 14px; } .bp-card-title { font-size:15px; } }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="/">
+          <img src="images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="about.html">하이탑소개</a>
+          <a href="listings.html">매물보기</a>
+          <a href="info.html" aria-current="page">부동산정보</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="consult.html">상담문의 게시판</a>
+        </nav>
+      </div>
+    </header>
+    <main class="bp-wrap">
+      <h1 class="bp-title">블로그 새 글</h1>
+      <p class="bp-sub">하이탑부동산 네이버 블로그의 최신 글입니다. 사진을 누르면 블로그 글로 이동합니다.</p>
+      <div class="bp-cats" id="bpCats"></div>
+      <div class="bp-grid" id="bpGrid"><p>불러오는 중입니다…</p></div>
+      <button class="bp-more" id="bpMore" hidden>더 보기</button>
+      <p class="bp-go"><a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">네이버 블로그 바로가기 ›</a></p>
+    </main>
+    <footer class="site-footer-v2">
+      <div class="footer-v2-inner">
+        <div class="footer-v2-company">
+          <p class="footer-v2-name">하이탑부동산공인중개사사무소</p>
+          <div class="footer-v2-info">
+            <span>대표: 주현희</span>
+            <span>주소: 경기도 파주시 책향기로 830, 1층</span>
+            <span>전화: 031-949-8969</span>
+            <span>팩스: 031-944-1108</span>
+          </div>
+          <div class="footer-v2-info">
+            <span>사업자등록번호: 305-48-62183</span>
+            <span>중개사무소 등록번호: 41480-2016-00026</span>
+            <span>이메일: newpajucity@naver.com</span>
+          </div>
+          <p class="footer-v2-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
+        </div>
+        <div class="footer-v2-divider"></div>
+        <div class="footer-v2-right">
+          <div class="footer-v2-btns">
+            <a class="fv2-btn fv2-tel" href="tel:031-949-8969"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>전화상담</a>
+            <a class="fv2-btn fv2-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>블로그</a>
+            <a class="fv2-btn fv2-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/></svg>카카오 상담</a>
+            <a class="fv2-btn fv2-inquiry" href="consult.html"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>매물문의</a>
+            <a class="fv2-btn fv2-youtube" href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>유튜브</a>
+            <a class="fv2-btn fv2-contact" href="contact.html"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>상담신청</a>
+          </div>
+          <a class="fv2-admin-btn" href="admin.html">관리자</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const _t=document.querySelector('.nav-toggle'),_m=document.querySelector('.nav-menu');
+      if(_t&&_m)_t.addEventListener('click',()=>_m.classList.toggle('open'));
+      (function(){
+        const PAGE=12;let all=[],cat='전체',shown=PAGE;
+        const grid=document.getElementById('bpGrid'),cats=document.getElementById('bpCats'),more=document.getElementById('bpMore');
+        const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        function list(){return cat==='전체'?all:all.filter(p=>p.category===cat);}
+        function render(){
+          const l=list();
+          grid.innerHTML=l.slice(0,shown).map(p=>'<a class="bp-card" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer"><div class="bp-thumb">'+(p.img?'<img class="bp-bg" src="'+esc(p.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer"><img class="bp-fg" src="'+esc(p.img)+'" alt="'+esc(p.title)+'" loading="lazy" referrerpolicy="no-referrer">':'')+'</div><div class="bp-card-title">'+esc(p.title)+'</div><div class="bp-card-meta">'+esc(p.category)+' · '+esc(p.date)+'</div></a>').join('')||'<p>등록된 글이 없습니다.</p>';
+          more.hidden=l.length<=shown;
+        }
+        function renderCats(){
+          const names=['전체'].concat([...new Set(all.map(p=>p.category))]);
+          cats.innerHTML=names.map(n=>'<button class="bp-cat'+(n===cat?' active':'')+'" data-c="'+esc(n)+'">'+esc(n)+'</button>').join('');
+        }
+        cats.addEventListener('click',e=>{const b=e.target.closest('.bp-cat');if(!b)return;cat=b.dataset.c;shown=PAGE;renderCats();render();});
+        more.addEventListener('click',()=>{shown+=PAGE;render();});
+        fetch('blog-posts.json?v='+Date.now()).then(r=>r.json()).then(d=>{all=d.posts||[];renderCats();render();}).catch(()=>{grid.innerHTML='<p>글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>';});
+      })();
+    </script>
+  </body>
+</html>
