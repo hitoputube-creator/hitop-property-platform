@@ -113,6 +113,15 @@
       .phone-wrap input { flex: 1; min-width: 0; }
       .phone-wrap select { flex: 0 0 128px; width: 128px; }
 
+      /* 매물접수: 물건종류·거래방식 선택 버튼 */
+      .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chip { position: relative; cursor: pointer; }
+      .chip input { position: absolute; opacity: 0; pointer-events: none; }
+      .chip span { display: inline-block; min-width: 72px; padding: 9px 16px; border: 1px solid #dde2ea; border-radius: 8px; background: #f8f9fb; color: #333; font-size: 14px; text-align: center; transition: all .15s; }
+      .chip:hover span { border-color: #0B7476; }
+      .chip input:checked + span { background: #0B7476; border-color: #0B7476; color: #fff; font-weight: 600; }
+      .chip input:focus-visible + span { outline: 2px solid #0B7476; outline-offset: 2px; }
+
       /* 두 칸 나란히 */
       .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
@@ -412,13 +421,44 @@
           '<li>동의를 거부할 수 있으며, 거부 시 매물 접수가 불가합니다.</li>' +
           '</ul>';
         var sel = document.getElementById('w-type');
-        if (sel) sel.value = '매도·임대 의뢰';
+        if (sel) {
+          sel.value = '매도·임대 의뢰';
+          var typeGroup = sel.closest('.form-group');
+          if (typeGroup) {
+            typeGroup.style.display = 'none';
+            var chipChoice = function (name, type, items) {
+              return items.map(function (v) { return '<label class="chip"><input type="' + type + '" name="' + name + '" value="' + v + '"><span>' + v + '</span></label>'; }).join('');
+            };
+            var box = document.createElement('div');
+            box.innerHTML =
+              '<div class="form-group"><label class="form-label">물건 종류<span class="req">*</span></label>' +
+              '<div class="chip-group">' + chipChoice('s-kind', 'radio', ['아파트', '오피스텔', '상가', '토지', '공장·창고', '기타']) + '</div></div>' +
+              '<div class="form-group"><label class="form-label">거래 방식<span class="req">*</span> <small style="font-weight:400;color:#888;">(여러 개 선택 가능)</small></label>' +
+              '<div class="chip-group">' + chipChoice('s-deal', 'checkbox', ['매매', '전세', '월세']) + '</div></div>';
+            while (box.firstChild) typeGroup.parentNode.insertBefore(box.firstChild, typeGroup);
+          }
+        }
+        var lstLabel = document.querySelector('label[for="w-listing"]');
+        if (lstLabel && lstLabel.firstChild) lstLabel.firstChild.textContent = '소재지 (주소·건물명·호수)';
+        var form = document.getElementById('writeForm');
+        if (form) form.addEventListener('submit', function (e) {
+          var kind = document.querySelector('input[name="s-kind"]:checked');
+          var deals = [].slice.call(document.querySelectorAll('input[name="s-deal"]:checked')).map(function (x) { return x.value; });
+          if (!kind) { e.preventDefault(); e.stopImmediatePropagation(); alert('물건 종류를 선택해 주세요.'); return; }
+          if (!deals.length) { e.preventDefault(); e.stopImmediatePropagation(); alert('거래 방식을 선택해 주세요.'); return; }
+          var tag = '[' + kind.value + '·' + deals.join('/') + '] ';
+          var subEl = document.getElementById('w-subject');
+          subEl.value = tag + subEl.value.replace(/^\[[^\]]*\]\s*/, '');
+          var cEl = document.getElementById('w-content');
+          var head = '물건 종류: ' + kind.value + '\n거래 방식: ' + deals.join(', ') + '\n';
+          cEl.value = head + cEl.value.replace(/^물건 종류: .*\n거래 방식: .*\n/, '');
+        }, true);
         var lst = document.getElementById('w-listing');
         if (lst) lst.placeholder = '예: 운정역 OO프라자 1층 101호, 탄현면 창고 (주소나 건물명)';
         var sub = document.getElementById('w-subject');
         if (sub && !sub.value) sub.value = '매물 접수합니다';
         var c = document.getElementById('w-content');
-        if (c && !c.value) c.value = '매물 종류(상가/토지/오피스텔/아파트/공장·창고 등): \n거래 방식(매매/전세/월세): \n희망 가격(보증금/월세/매매가): \n면적: \n현재 상태(공실/임차 중 등): \n기타 내용: ';
+        if (c && !c.value) c.value = '희망 가격(보증금/월세/매매가): \n면적: \n현재 상태(공실/임차 중 등): \n기타 내용: ';
       })();
     </script>
   </body>
