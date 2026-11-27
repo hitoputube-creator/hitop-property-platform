@@ -251,7 +251,7 @@
                 '<tr><th>문의 유형</th><td><span class="type-badge">' + escHtml(row.inquiry_type) + '</span></td></tr>' +
                 '<tr><th>제목</th><td>' + escHtml(row.title) + '</td></tr>' +
                 '<tr><th>작성자</th><td>' + escHtml(row.name) + '</td></tr>' +
-                '<tr><th>연락처</th><td>' + escHtml(row.phone) + '</td></tr>' +
+                '<tr><th>연락처</th><td>' + escHtml(row.phone) + (row.phone_carrier ? ' <span style="color:#666;">(' + escHtml(row.phone_carrier) + ')</span>' : '') + '</td></tr>' +
                 '<tr><th>관심 매물</th><td>' + (row.listing_title ? escHtml(row.listing_title) : '—') + '</td></tr>' +
                 '<tr><th>등록일</th><td>' + formatDate(row.created_at) + '</td></tr>' +
                 '<tr><th>상태</th><td><span class="status-badge ' + statusClass(row.status) + '" id="statusBadge">' + escHtml(row.status) + '</span></td></tr>' +

@@ -104,9 +104,14 @@
       }
       textarea.form-control {
         resize: vertical;
-        min-height: 120px;
+        min-height: 260px;
         line-height: 1.7;
       }
+
+      /* 연락처 + 통신사 */
+      .phone-wrap { display: flex; gap: 8px; }
+      .phone-wrap input { flex: 1; min-width: 0; }
+      .phone-wrap select { flex: 0 0 128px; width: 128px; }
 
       /* 두 칸 나란히 */
       .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -125,6 +130,10 @@
         line-height: 1.8;
         margin: 0 0 10px;
       }
+      .privacy-text ul { margin: 0; padding: 0; list-style: none; }
+      .privacy-text li { position: relative; padding-left: 10px; }
+      .privacy-text li::before { content: "·"; position: absolute; left: 0; }
+      .privacy-text b { color: #333; font-weight: 600; }
       .privacy-check-label {
         display: flex;
         align-items: center;
@@ -241,7 +250,18 @@
               </div>
               <div class="form-group">
                 <label class="form-label" for="w-phone">연락처<span class="req">*</span></label>
-                <input class="form-control" type="tel" id="w-phone" placeholder="010-0000-0000" autocomplete="tel" />
+                <div class="phone-wrap">
+                  <input class="form-control" type="tel" id="w-phone" placeholder="010-0000-0000" autocomplete="tel" />
+                  <select class="form-control" id="w-carrier" aria-label="통신사">
+                    <option value="">통신사</option>
+                    <option value="SKT">SKT</option>
+                    <option value="KT">KT</option>
+                    <option value="LG U+">LG U+</option>
+                    <option value="알뜰폰(SKT)">알뜰폰(SKT)</option>
+                    <option value="알뜰폰(KT)">알뜰폰(KT)</option>
+                    <option value="알뜰폰(LG U+)">알뜰폰(LG U+)</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -275,9 +295,15 @@
             </div>
 
             <div class="privacy-box">
-              <p class="privacy-text">
-                하이탑부동산은 상담 응대를 위해 이름, 연락처를 수집·이용합니다. 수집된 정보는 상담 목적 외 사용되지 않으며, 상담 완료 후 파기됩니다.
-              </p>
+              <div class="privacy-text" id="privacyText">
+                <ul>
+                  <li><b>수집 항목:</b> 이름, 연락처, 통신사(선택), 문의 내용</li>
+                  <li><b>수집·이용 목적:</b> 상담 문의 확인 및 답변 연락</li>
+                  <li><b>보유·이용 기간:</b> 접수일로부터 1년간 보관 후 파기합니다. 다만 중개가 완성되어 거래계약을 체결한 경우, 거래계약서·중개대상물 확인설명서에 기재된 정보는 공인중개사법에 따라 각 5년·3년간 보관합니다.</li>
+                  <li>수집된 정보는 위 목적 외에 사용하거나 제3자에게 제공하지 않습니다.</li>
+                  <li>동의를 거부할 수 있으며, 거부 시 상담 접수가 불가합니다.</li>
+                </ul>
+              </div>
               <label class="privacy-check-label">
                 <input type="checkbox" id="w-privacy" />
                 개인정보 수집 및 이용에 동의합니다 <span class="req">*</span>
@@ -328,6 +354,7 @@
         e.preventDefault();
         var name    = document.getElementById('w-name').value.trim();
         var phone   = document.getElementById('w-phone').value.trim();
+        var carrier = document.getElementById('w-carrier').value;
         var type    = document.getElementById('w-type').value;
         var listing = document.getElementById('w-listing').value.trim();
         var subject = document.getElementById('w-subject').value.trim();
@@ -347,6 +374,7 @@
             title:         subject,
             name:          name,
             phone:         phone,
+            phone_carrier: carrier || null,
             message:       content,
             listing_title: listing || null,
             source:        'write-consult',
@@ -373,6 +401,16 @@
         if (t) t.textContent = '매물접수';
         var n = document.querySelector('.write-notice');
         if (n) n.textContent = '🔒 매도·임대하실 매물 정보를 남겨주시면 담당자가 확인 후 개별 연락드립니다.';
+        var nameLabel = document.querySelector('label[for="w-name"]');
+        if (nameLabel && nameLabel.firstChild) nameLabel.firstChild.textContent = '소유자 성함';
+        var pv = document.getElementById('privacyText');
+        if (pv) pv.innerHTML = '<ul>' +
+          '<li><b>수집 항목:</b> 소유자 성함, 연락처, 통신사, 물건 정보(소재지·종류·가격·면적 등)</li>' +
+          '<li><b>수집·이용 목적:</b> 매물 접수 확인 및 중개 상담 연락</li>' +
+          '<li><b>보유·이용 기간:</b> 접수일로부터 1년간 보관 후 파기합니다. 다만 중개가 완성되어 거래계약을 체결한 경우, 거래계약서·중개대상물 확인설명서에 기재된 정보는 공인중개사법에 따라 각 5년·3년간 보관합니다.</li>' +
+          '<li>수집된 정보는 위 목적 외에 사용하거나 제3자에게 제공하지 않습니다.</li>' +
+          '<li>동의를 거부할 수 있으며, 거부 시 매물 접수가 불가합니다.</li>' +
+          '</ul>';
         var sel = document.getElementById('w-type');
         if (sel) sel.value = '매도·임대 의뢰';
         var lst = document.getElementById('w-listing');
