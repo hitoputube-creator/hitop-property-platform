@@ -51,10 +51,11 @@
 #listingModal .modal-agent::after { content: ""; position: absolute; right: 16px; top: 10px; width: 92px; height: 22px; background: url("/images/hitoplogo.png") right center / contain no-repeat; }
 #listingModal .modal-agent strong { font-size: 14px !important; color: var(--m-ink) !important; }
 /* 버튼 */
-#listingModal .modal-contact { display: grid !important; grid-template-columns: 1fr 1fr repeat(4, 44px); gap: 6px !important; margin-top: 14px !important; align-items: start; }
+#listingModal .modal-contact { display: grid !important; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px 6px !important; margin-top: 14px !important; align-items: start; }
+#listingModal .modal-contact .modal-tel, #listingModal .modal-contact .modal-kakao-btn { grid-column: span 2; }
 #listingModal .modal-tel, #listingModal .modal-kakao-btn { height: 48px !important; min-height: 48px !important; border-radius: 10px !important; font-size: 14.5px !important; font-weight: 800 !important; }
 #listingModal .modal-tel { background: var(--m-navy) !important; color: #fff !important; }
-#listingModal .modal-contact .modal-print-btn, #listingModal .modal-contact .modal-copy-btn { width: 44px !important; height: 44px !important; border-radius: 10px !important; border: 1px solid var(--m-line) !important; background: #fff !important; margin-bottom: 16px !important; }
+#listingModal .modal-contact .modal-print-btn, #listingModal .modal-contact .modal-copy-btn { width: 100% !important; height: 40px !important; border-radius: 10px !important; border: 1px solid var(--m-line) !important; background: #fff !important; margin-bottom: 16px !important; }
 #listingModal .modal-inquiry-jump { margin-top: 2px !important; height: 46px; border-radius: 10px !important; background: #fff !important; border: 1.5px solid var(--m-navy) !important; color: var(--m-navy) !important; font-weight: 800 !important; }
 #listingModal .modal-inquiry-jump:hover { background: #f2f5fb !important; }
 #listingModal .modal-minimap-wrap { margin-top: 16px !important; background: #fff; border: 1px solid var(--m-line); border-radius: 14px; padding: 12px; }
