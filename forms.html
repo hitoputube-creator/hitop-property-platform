@@ -68,12 +68,9 @@
       .forms-table .col-file { width:90px; text-align:center; }
       .forms-table .col-title a { color:#1e293b; text-decoration:none; }
       .forms-table .col-title a:hover { color:#0A1F5C; text-decoration:underline; }
-      .file-icon {
-        display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
-        border-radius:6px; color:#0A1F5C; text-decoration:none; transition:background .15s;
-      }
-      .file-icon:hover { background:#e8eef8; }
-      .file-icon svg { width:20px; height:20px; fill:currentColor; }
+      .forms-table .col-title a { display:inline-flex; align-items:center; gap:6px; }
+      .file-icon { display:inline-flex; color:#0A1F5C; flex-shrink:0; }
+      .file-icon svg { width:17px; height:17px; fill:currentColor; }
       .forms-empty { text-align:center; color:#94a3b8; padding:50px 0; font-size:15px; }
 
       .forms-more {
@@ -94,7 +91,6 @@
 
       @media (max-width:640px) {
         .forms-table .col-no { width:44px; }
-        .forms-table .col-file { width:56px; }
         .forms-table td, .forms-table th { padding:12px 6px; font-size:13.5px; }
         .forms-more { padding:22px 18px; }
         .forms-more-btns, .forms-more a { width:100%; text-align:center; box-sizing:border-box; }
@@ -149,7 +145,7 @@
     <section class="info-list-section">
       <div class="container">
         <div class="forms-notice">
-          <strong>안내</strong> · 제목이나 첨부 아이콘을 누르면 <strong>한국공인중개사협회</strong> 또는 <strong>국가법령정보센터</strong>의 해당 서식 페이지가 새 창으로 열리고, 그곳에서 파일을 내려받을 수 있습니다.
+          <strong>안내</strong> · 서식 제목을 누르면 <strong>한국공인중개사협회</strong> 또는 <strong>국가법령정보센터</strong>의 해당 서식 페이지가 새 창으로 열리고, 그곳에서 파일을 내려받을 수 있습니다.
           모든 서식은 <strong>참고용</strong>이며, 실제 계약 전에는 권리관계와 특약을 전문가와 꼭 확인하시기 바랍니다.
         </div>
 
@@ -331,7 +327,7 @@
         grid.innerHTML = `
           <p class="forms-count">총 <b>${list.length}</b> 건</p>
           <table class="forms-table">
-            <thead><tr><th class="col-no">번호</th><th>제목</th><th class="col-file">첨부</th></tr></thead>
+            <thead><tr><th class="col-no">번호</th><th>제목</th></tr></thead>
             <tbody>
             ${list.map((f, i) => {
               const href = esc(f.url || (KAR + f.kar));
@@ -339,9 +335,7 @@
               return `<tr>
                 <td class="col-no">${i + 1}</td>
                 <td class="col-title"><a href="${href}" target="_blank" rel="noopener noreferrer" title="${tipText}"
-                    data-track="form_get" data-form="${esc(f.title)}">${esc(f.title)}</a></td>
-                <td class="col-file"><a class="file-icon" href="${href}" target="_blank" rel="noopener noreferrer"
-                    aria-label="${esc(f.title)} 받기" data-track="form_get" data-form="${esc(f.title)}">${icon}</a></td>
+                    data-track="form_get" data-form="${esc(f.title)}">${esc(f.title)}<span class="file-icon" aria-hidden="true">${icon}</span></a></td>
               </tr>`;
             }).join('')}
             </tbody>
