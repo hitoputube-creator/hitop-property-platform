@@ -206,6 +206,12 @@
         .top-bar-hours { display: none; }
         .write-title { font-size: 18px; }
       }
+          .write-done { background:#fff; border-radius:14px; border:1px solid #e2e6ed; padding:48px 24px; text-align:center; }
+      .write-done-ico { font-size:42px; margin-bottom:10px; }
+      .write-done h2 { font-size:20px; color:#0A1F5C; margin:0 0 12px; }
+      .write-done p { font-size:14px; color:#475569; line-height:1.8; margin:0 0 22px; }
+      .write-done a { color:#0A1F5C; font-weight:700; }
+      .write-done .write-done-btn { display:inline-block; background:#0A1F5C; color:#fff; padding:11px 26px; border-radius:8px; text-decoration:none; }
     </style>
   </head>
   <body data-page="write-consult">
@@ -320,8 +326,8 @@
             </div>
 
             <div class="btn-row">
-              <button type="submit" class="btn-submit">상담글 등록하기</button>
-              <a href="consult.html" class="btn-back">목록으로 돌아가기</a>
+              <button type="submit" class="btn-submit">의뢰서 보내기</button>
+              <a href="consult.html" class="btn-back">← 의뢰 선택으로</a>
             </div>
 
           </form>
@@ -392,11 +398,18 @@
           if (error) throw error;
           window.hitopTrackGenerateLead?.({ lead_type: type || 'write_consult' });
 
-          alert('상담문의가 등록되었습니다.');
-          location.href = 'consult.html';
+          var card = document.getElementById('writeForm');
+          var done = document.createElement('div');
+          done.className = 'write-done';
+          done.innerHTML = '<div class="write-done-ico">✅</div>' +
+            '<h2>의뢰서가 접수되었습니다</h2>' +
+            '<p>담당 공인중개사가 확인 후 남겨주신 연락처로 연락드리겠습니다.<br>급하신 경우 <a href="tel:031-949-8969">031-949-8969</a>로 전화 주세요.</p>' +
+            '<a class="write-done-btn" href="index.html">홈으로</a>';
+          card.replaceWith(done);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
           console.error('상담문의 저장 오류:', err);
-          alert('상담문의 등록 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+          alert('접수 중 오류가 발생했습니다. 잠시 후 다시 시도하시거나 031-949-8969로 전화 주세요.');
         }
       });
     </script>
