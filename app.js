@@ -4,6 +4,21 @@ console.log('app.js 로드됨!');
 // 1) 이 브라우저에 관리자 로그인이 이미 살아 있으면 탭마다 비밀번호를 다시 묻지 않는다.
 //    (실제 자료 권한은 Supabase 세션·RLS가 따로 검사한다.)
 // 2) 업무센터에서 넘어온 1회용 입장권(#sso=...)이 있으면 비밀번호 없이 로그인한다.
+// 매물보기: 지도·목록 높이를 헤더(검색줄 포함) 아래 남은 화면 높이에 맞춘다.
+(function hitopListingsHeight() {
+  if (!document.body || document.body.dataset.page !== 'listings') {
+    document.addEventListener('DOMContentLoaded', () => { if (document.body.dataset.page === 'listings') hitopListingsHeight(); }, { once: true });
+    return;
+  }
+  const fit = () => {
+    const h = document.querySelector('.site-header');
+    if (h) document.documentElement.style.setProperty('--lp-top', Math.round(h.getBoundingClientRect().bottom + window.scrollY) + 'px');
+  };
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+})();
+
 (function hitopSsoBootstrap() {
   const KEY = 'sb-xaxbkdnrzsghsabkdvzj-auth-token';
   const ADMIN = 'hh720403@gmail.com';
@@ -13,6 +28,8 @@ console.log('app.js 로드됨!');
       const s = JSON.parse(raw);
       const email = String((s && s.user && s.user.email) || '').toLowerCase();
       if (email === ADMIN && s.refresh_token) sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+      // 관리자에게만 방문자 수 등 내부 정보를 보여준다.
+      if (email === ADMIN && s.refresh_token) document.documentElement.classList.add('is-admin');
     }
   } catch (_) {}
   const m = location.hash.match(/[#&]sso=([^&]+)/);
@@ -378,9 +395,14 @@ const getListingDetailAbsoluteUrl = (itemOrId = {}) => {
 };
 
 const getListingVerifiedDate = (item = {}) => String(item.lastVerifiedAt || item.last_verified_at || '').slice(0, 10);
+// 확인일은 최근 60일 이내일 때만 손님에게 보여준다 (오래된 날짜는 오히려 신뢰를 떨어뜨림).
+const LISTING_VERIFIED_SHOW_DAYS = 60;
 const getListingVerifiedBadgeHTML = (item = {}, className = 'listing-verified-badge') => {
   const date = getListingVerifiedDate(item);
-  return date ? `<span class="${className}">확인 ${escapeHTML(date)}</span>` : '';
+  if (!date) return '';
+  const age = (Date.now() - new Date(date + 'T00:00:00+09:00').getTime()) / 86400000;
+  if (!(age >= -1 && age <= LISTING_VERIFIED_SHOW_DAYS)) return '';
+  return `<span class="${className}">확인 ${escapeHTML(date)}</span>`;
 };
 
 const getListingVerificationDateKey = () => {
@@ -1539,8 +1561,10 @@ const formatPropertyPrice = (item) => {
     // deposit·monthlyRent 는 원 단위 → wonToManwon 적용
     const dep  = wonToManwon(item.deposit);
     const rent = wonToManwon(item.monthlyRent ?? item.rent);
-    if (dep && rent) return `${dep.toLocaleString('ko-KR')}/${rent.toLocaleString('ko-KR')}만원`;
-    if (dep)  return `${dep.toLocaleString('ko-KR')}만원`;
+    // 보증금이 1억 이상이면 억 단위로 (예: 26,000 → "2억 6,000/2,600만원")
+    const depShort = (mw) => toKoreanPrice(mw).replace(/만원$/, '').replace(/억원$/, '억');
+    if (dep && rent) return `${depShort(dep)}/${rent.toLocaleString('ko-KR')}만원`;
+    if (dep)  return toKoreanPrice(dep);
     if (rent) return `${rent.toLocaleString('ko-KR')}만원`;
     return fmtManwon(item.price) || '가격문의';
   }
@@ -1575,7 +1599,10 @@ const getCardAreaHTML = (item) => {
   if (cat1 === '상가사무실') {
     const es = fmtA(item.exclusiveAreaM2 ?? item.exclusiveArea, item.exclusiveAreaPy);
     const ss = fmtA(item.supplyAreaM2 ?? item.contractArea, item.supplyAreaPy);
-    return es ? `<span class="lp-area-highlight"><span class="lp-area-lbl">전용</span> <strong class="lp-area-val">${es}</strong>${ss ? ` · <span class="lp-area-lbl">공급</span> <strong class="lp-area-val">${ss}</strong>` : ''}</span>` : '';
+    // 카드 폭에 맞게: 전용은 ㎡/평, 공급은 평만 (전체 면적은 상세 팝업에서 확인)
+    const sp = (item.supplyAreaPy ?? ((item.supplyAreaM2 ?? item.contractArea) ? Number(item.supplyAreaM2 ?? item.contractArea) / 3.305785 : null));
+    const ssShort = sp ? `공급 ${Number(sp).toFixed(2)}평` : '';
+    return es ? lbl('전용', es, ssShort) : '';
   }
   if (cat1 === '토지') {
     const s = fmtA(item.areaM2 ?? item.landArea ?? item.area, item.areaPy);
@@ -1775,7 +1802,8 @@ const renderInlineConsultForm = (item = {}) => {
     }
     try {
       const { supabase } = await _supabaseCfg();
-      const listingTitle = item.title || getShortListingNo(item) || '매물';
+      const _no = getShortListingNo(item);
+      const listingTitle = [_no ? `No.${_no}` : '', item.title || ''].filter(Boolean).join(' ') || '매물';
       const { error } = await supabase.from('consultations').insert({
         inquiry_type: '매물문의',
         title: `매물문의 - ${listingTitle}`,
@@ -1857,7 +1885,7 @@ const openModal = (item) => {
     const isWonField = _isRentDeal && (f.key === 'deposit' || f.key === 'monthlyRent');
     if (isWonField) {
       const mw = wonToManwon(val);
-      return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
+      return mw != null ? toKoreanPrice(mw) : String(val);
     }
     // 그 외(매매가·분양가·전세보증금 등): 1억 이상이면 원 단위 간주 → 만원 변환
     const mw = n >= 100000000 ? Math.round(n / 10000) : n;
@@ -1959,7 +1987,7 @@ const openModal = (item) => {
     if (isNaN(n) || n <= 0) return String(val) || null;
     if (isWon) {
       const mw = wonToManwon(val);
-      return mw != null ? mw.toLocaleString('ko-KR') + '만원' : String(val);
+      return mw != null ? toKoreanPrice(mw) : String(val);
     }
     const mw = n >= 100000000 ? Math.round(n / 10000) : n;
     return toKoreanPrice(mw);
@@ -2724,6 +2752,7 @@ const setupListingsPage = () => {
     const setBadge = (el, count) => {
       const badge = ensureBadge(el);
       if (badge) badge.textContent = count.toLocaleString('ko-KR');
+      el.classList.toggle('is-empty', count === 0); // 매물 0건 분류는 흐리게/숨김
     };
     document.querySelectorAll('.lp-cat-all').forEach(el => setBadge(el, all.length));
     LP_CATEGORY_TREE.forEach(group => {
@@ -2805,6 +2834,18 @@ const setupListingsPage = () => {
     });
     groups.forEach(({ lat, lng, items: gi }) => addOverlay(new kakao.maps.LatLng(lat, lng), gi));
 
+    // 지도 범위: 좌표 있는 매물 + 주소로 찾은 매물을 모두 포함하도록 맞춘다.
+    const _allBounds = new kakao.maps.LatLngBounds();
+    let _boundsCount = 0, _fitTimer = null;
+    withCoords.slice(0, 100).forEach(i => { _allBounds.extend(new kakao.maps.LatLng(_getLat(i), _getLng(i))); _boundsCount++; });
+    const _refit = () => {
+      clearTimeout(_fitTimer);
+      _fitTimer = setTimeout(() => {
+        if (renderSeq !== markerRenderSeq || _boundsCount < 2) return;
+        map.setBounds(_allBounds, 40, 40, 40, 40);
+      }, 250);
+    };
+
     // 좌표 기준 bounds 조정
     if (withCoords.length === 1) {
       map.setCenter(new kakao.maps.LatLng(_getLat(withCoords[0]), _getLng(withCoords[0])));
@@ -2872,10 +2913,12 @@ const setupListingsPage = () => {
             console.log(`[지오코딩 성공 ${idx + 1}순위] ${addr}`);
             const coords = new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x));
             addOverlay(coords, [item]);
+            _allBounds.extend(coords); _boundsCount++;
             if (withCoords.length === 0 && activeMarkers.length === 1) {
               map.setCenter(coords);
               map.setLevel(5);
             }
+            _refit();
           });
         };
 
@@ -3061,6 +3104,21 @@ const setupListingsPage = () => {
   };
 
   // ── 오른쪽 패널: 최근 등록 매물 (최신순, 내부 스크롤) ──
+  // 정렬 기준 (추천순 / 최신순 / 가격 낮은순 / 가격 높은순 / 면적 넓은순)
+  let _panelSort = 'recommend';
+  const _priceKey = (i) => {
+    const big = (v) => { const n = Number(String(v ?? '').replace(/[,\s]/g, '')); if (!n || isNaN(n)) return 0; return n >= 100000000 ? n / 10000 : n; };
+    const deal = i.dealType || '';
+    if (deal === '월세' || deal === '임대') return wonToManwon(i.deposit) || 0;
+    if (deal === '전세') return big(i.deposit ?? i.price);
+    return big(i.salePrice ?? i.price ?? i.presalePrice);
+  };
+  const _areaKey = (i) => {
+    const m2 = Number(i.exclusiveAreaM2 ?? i.exclusiveArea ?? i.buildingAreaM2 ?? i.buildingArea ?? i.areaM2 ?? i.landAreaM2 ?? i.landArea ?? i.area ?? 0);
+    const py = Number(i.exclusiveAreaPy ?? i.buildingAreaPy ?? i.areaPy ?? 0);
+    return m2 || py * 3.305785 || 0;
+  };
+
   const renderSpecialPanels = () => {
     const lpPanel = document.getElementById('lpPanel');
     if (!lpPanel) return;
@@ -3076,6 +3134,11 @@ const setupListingsPage = () => {
       const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return tb - ta;
     });
+    const _created = (i) => (i.createdAt ? new Date(i.createdAt).getTime() : 0);
+    if (_panelSort === 'new') recentItems.sort((a, b) => _created(b) - _created(a));
+    else if (_panelSort === 'priceAsc') recentItems.sort((a, b) => (_priceKey(a) || Infinity) - (_priceKey(b) || Infinity));
+    else if (_panelSort === 'priceDesc') recentItems.sort((a, b) => _priceKey(b) - _priceKey(a));
+    else if (_panelSort === 'areaDesc') recentItems.sort((a, b) => _areaKey(b) - _areaKey(a));
     const hasPinned = recentItems.some(i => (i.pinSlot || 0) > 0);
 
     const miniCardHTML = item => {
@@ -3137,13 +3200,23 @@ const setupListingsPage = () => {
     lpPanel.innerHTML = `
       <div class="lp-panel-hd-sticky">
         <span class="lp-panel-hd-title">${hasPinned ? '⭐ 추천 매물' : '🆕 최근 등록 매물'}</span>
-        <span class="lp-panel-hd-count">${recentItems.length}건</span>
+        <span class="lp-panel-hd-right">
+          <select class="lp-sort-select" aria-label="정렬">
+            ${[['recommend','추천순'],['new','최신순'],['priceAsc','가격 낮은순'],['priceDesc','가격 높은순'],['areaDesc','면적 넓은순']].map(([v, t]) => `<option value="${v}"${v === _panelSort ? ' selected' : ''}>${t}</option>`).join('')}
+          </select>
+          <span class="lp-panel-hd-count">${recentItems.length}건</span>
+        </span>
       </div>
       <div class="lp-panel-scroll-body">
         ${recentItems.length
           ? `<div class="lp-panel-section-body">${recentItems.map(miniCardHTML).join('')}</div>`
           : '<div class="lp-panel-empty" style="padding:20px 16px;">등록된 매물이 없습니다.</div>'}
       </div>`;
+
+    lpPanel.querySelector('.lp-sort-select')?.addEventListener('change', (e) => {
+      _panelSort = e.target.value;
+      renderSpecialPanels();
+    });
 
     lpPanel.querySelectorAll('.lp-mini-card').forEach(card => {
       const found = _listings.find(x => x.id === card.dataset.id);

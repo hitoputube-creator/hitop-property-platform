@@ -8026,3 +8026,27 @@ body[data-page="listings"] .lp-all-card {
   .hitop-brand-title { font-size: 17px; }
   .hitop-brand-sub { font-size: 10.5px; }
 }
+
+
+/* ══ 매물보기 개선 (2026-11-28) ══ */
+/* 1) 검색칸을 메뉴 아래 별도 줄로, 2) 지도·목록이 화면 높이를 다 쓰고 바닥글은 그 아래로 */
+@media (min-width: 769px) {
+  body[data-page="listings"] { height: auto !important; max-height: none !important; overflow: visible !important; display: block !important; }
+  body[data-page="listings"] .site-header .nav-wrap { grid-template-columns: auto 1fr !important; height: auto !important; min-height: 0 !important; row-gap: 0 !important; }
+  body[data-page="listings"] .site-header .nav-menu { justify-self: end !important; }
+  body[data-page="listings"] .lp-header-search { grid-column: 1 / -1 !important; max-width: none !important; width: 100% !important; margin: 0 !important; padding: 10px 0 12px !important; border-top: 1px solid #eef1f6 !important; justify-content: flex-start !important; }
+  body[data-page="listings"] .lp-header-search input[type=text] { flex: 0 1 320px !important; }
+  body[data-page="listings"] .lp-range-filters { display: flex !important; gap: 5px !important; margin-left: 8px !important; }
+  body[data-page="listings"] .lp-range-filters input { width: 110px !important; }
+  body[data-page="listings"] .lp-body { height: calc(100vh - var(--lp-top, 170px)) !important; min-height: 560px !important; }
+}
+/* 5) 방문자 수는 관리자에게만 */
+#visitorCounter { display: none !important; }
+html.is-admin #visitorCounter { display: block !important; }
+/* 7) 매물 0건 분류: 큰 분류는 흐리게, 작은 분류는 숨김 */
+body[data-page="listings"] .lp-cat-group-toggle.is-empty { opacity: .45; }
+body[data-page="listings"] .lp-cat-sub-item.is-empty { display: none !important; }
+/* 9) 정렬 선택 */
+.lp-panel-hd-right { display: inline-flex; align-items: center; gap: 10px; }
+.lp-sort-select { height: 28px; padding: 0 26px 0 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); color: #fff; font-size: 12.5px; font-weight: 600; font-family: inherit; cursor: pointer; }
+.lp-sort-select option { color: #0A1F5C; }
