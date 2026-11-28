@@ -1761,49 +1761,64 @@ const ensureListingActionButton = (host, item, className = 'listing-favorite-btn
 const ensureModalActionButtons = (item = {}) => {
   const contact = document.querySelector('#listingModal .modal-contact');
   if (!contact) return;
-  let favBtn = document.getElementById('modalFavoriteBtn');
-  if (!favBtn) {
-    favBtn = document.createElement('button');
-    favBtn.id = 'modalFavoriteBtn';
-    favBtn.type = 'button';
-    favBtn.className = 'modal-copy-btn modal-favorite-btn';
-    contact.appendChild(favBtn);
+  // 찜하기·카톡상담·문의 남기기 버튼은 쓰지 않음
+  document.getElementById('modalFavoriteBtn')?.remove();
+  document.getElementById('modalInquiryJump')?.remove();
+  contact.querySelector('.modal-kakao-btn')?.remove();
+  // 큰 버튼: 전화문의 + 매물상담
+  let consultBtn = document.getElementById('modalConsultBtn');
+  if (!consultBtn) {
+    consultBtn = document.createElement('button');
+    consultBtn.id = 'modalConsultBtn';
+    consultBtn.type = 'button';
+    consultBtn.className = 'modal-consult-btn';
+    consultBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>매물상담';
+    contact.querySelector('.modal-tel')?.insertAdjacentElement('afterend', consultBtn);
   }
-  favBtn.dataset.favoriteId = String(item.id || '');
-  favBtn.onclick = () => {
-    const active = toggleFavoriteListing(item.id);
-    refreshFavoriteButtons();
-    showSiteToast(active ? '찜한 매물에 담았습니다.' : '찜한 매물에서 뺐습니다.');
+  const tel = contact.querySelector('.modal-tel');
+  if (tel && !tel.dataset.iconed) {
+    tel.dataset.iconed = '1';
+    tel.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>전화문의';
+  }
+  consultBtn.onclick = () => {
+    const form = document.getElementById('modalInlineConsult');
+    if (!form) return;
+    form.classList.add('is-focus');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => { document.getElementById('modalConsultName')?.focus(); form.classList.remove('is-focus'); }, 900);
   };
+  // 작은 도구 버튼 줄: 프린트 · 링크복사 · 공유
+  let tools = document.getElementById('modalTools');
+  if (!tools) {
+    tools = document.createElement('div');
+    tools.id = 'modalTools';
+    tools.className = 'modal-tools';
+    contact.insertAdjacentElement('afterend', tools);
+  }
+  const ICON = {
+    print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>'
+  };
+  const printBtn = document.getElementById('modalPrintBtn');
+  const copyBtn = document.getElementById('modalCopyLinkBtn');
   let shareBtn = document.getElementById('modalShareBtn');
   if (!shareBtn) {
     shareBtn = document.createElement('button');
     shareBtn.id = 'modalShareBtn';
     shareBtn.type = 'button';
-    shareBtn.className = 'modal-copy-btn modal-share-btn';
-    contact.appendChild(shareBtn);
   }
-  shareBtn.textContent = '↗';
-  shareBtn.setAttribute('aria-label', '공유');
-  shareBtn.title = '공유';
   shareBtn.onclick = () => shareListing(item);
-  refreshFavoriteButtons();
-  // 문의 남기기: 아래쪽 매물 상담신청 폼으로 바로 이동
-  let jump = document.getElementById('modalInquiryJump');
-  if (!jump) {
-    jump = document.createElement('button');
-    jump.id = 'modalInquiryJump';
-    jump.type = 'button';
-    jump.className = 'modal-inquiry-jump';
-    jump.textContent = '✉️ 이 매물 문의 남기기';
-    contact.insertAdjacentElement('afterend', jump);
-  }
-  jump.onclick = () => {
-    const form = document.getElementById('modalInlineConsult');
-    if (!form) return;
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => document.getElementById('modalConsultName')?.focus(), 400);
-  };
+  [[printBtn, 'print', '프린트'], [copyBtn, 'link', '링크복사'], [shareBtn, 'share', '공유']].forEach(([btn, ic, label]) => {
+    if (!btn) return;
+    btn.className = 'modal-tool-btn' + (btn.id === 'modalPrintBtn' ? ' modal-print-btn' : '');
+    btn.innerHTML = ICON[ic] + `<span>${label}</span>`;
+    btn.setAttribute('aria-label', label); btn.title = label;
+    tools.appendChild(btn);
+  });
+  // 매물 위치 지도는 표시하지 않음
+  const mapWrap = document.getElementById('modalBodyMapWrap');
+  if (mapWrap) mapWrap.classList.add('is-off');
 };
 
 // 상세 팝업 사진: 뒤 배경을 같은 사진으로 흐리게 채우고, 사진 순번(1/5)을 표시
@@ -1840,7 +1855,7 @@ const renderInlineConsultForm = (item = {}) => {
   }
   box.innerHTML = `
     <form id="modalConsultForm" class="modal-consult-form">
-      <strong>매물상담</strong>
+      <strong>매물상담</strong><span class="mcf-sub">남겨주시면 확인 후 바로 연락드립니다</span>
       <div class="modal-consult-grid">
         <input id="modalConsultName" type="text" placeholder="이름" autocomplete="name" />
         <input id="modalConsultPhone" type="tel" placeholder="연락처" autocomplete="tel" />
@@ -2002,9 +2017,24 @@ const openModal = (item) => {
     const m2str = parts.map(p => p.label ? `${p.label} ${_fmtM2(p.m2)}㎡` : `${_fmtM2(p.m2)}㎡`).join(' / ');
     const pystr = parts.map(p => p.label ? `${p.label} ${_fmtPy(p.py)}평` : `${_fmtPy(p.py)}평`).join(' / ');
     const py2str = parts.map(p => p.label ? `${p.label} ${toPyeong(p.m2)}평` : `${toPyeong(p.m2)}평`).join(' / ');
-    return { m2str, pystr, py2str };
+    return { m2str, pystr, py2str, parts };
   };
   const areaInfo = buildAreaInfo();
+  // 평당가 (매매만, 첫 면적 기준: 상가·주거=전용, 건물=대지, 토지=토지)
+  try {
+    const _pf = priceFields.find(f => f.money && item[f.key]);
+    const _p0 = areaInfo && areaInfo.parts && areaInfo.parts[0];
+    if (item.dealType === '매매' && _pf && _p0 && _p0.py > 0) {
+      const _n = Number(String(item[_pf.key]).replace(/[,\s]/g, ''));
+      const _mw = _n >= 100000000 ? _n / 10000 : _n;
+      if (_mw > 0) {
+        const _per = Math.round(_mw / _p0.py);
+        const _lbl = _p0.label ? `${_p0.label} 기준` : '';
+        document.getElementById('modalPriceArea').insertAdjacentHTML('beforeend',
+          `<div class="modal-ppy"><span>평당가${_lbl ? ' · ' + _lbl : ''}</span><b>${_per.toLocaleString('ko-KR')}만원</b></div>`);
+      }
+    }
+  } catch (e) { /* 평당가 계산 실패 시 생략 */ }
 
   // ── 오른쪽 패널: 면적 하이라이트 ──
   const areaHlEl = document.getElementById('modalAreaHighlight');
@@ -2117,7 +2147,7 @@ const openModal = (item) => {
       noteEl.className = 'modal-change-note';
       infoTableEl.insertAdjacentElement('afterend', noteEl);
     }
-    noteEl.textContent = '※ 등록일 이후 가격·조건 등 변동사항이 있을 수 있으며, 거래가 완료되었을 수도 있습니다. 방문 전 전화로 꼭 확인해 주세요.';
+    noteEl.textContent = '등록일 이후 가격·조건이 바뀌었거나 거래가 완료되었을 수 있습니다. 방문 전 전화로 확인해 주세요.';
     infoTableEl.querySelectorAll('tr').forEach(row => {
       const labelEl = row.querySelector('.info-label');
       const valueEl = row.querySelector('.info-value');
@@ -2143,8 +2173,18 @@ const openModal = (item) => {
   const descEl = document.getElementById('modalDesc');
   if (descEl) {
     const descText = item.detailDescription || '';   // description/memo/note 는 내부메모이므로 제외
-    descEl.style.whiteSpace = 'pre-line';
-    descEl.textContent = descText || '상세 설명 준비중입니다.';
+    const _lines = String(descText).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const _esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const _bullet = /^(✅|✔️|✔|☑️|☑|✓|■|□|●|○|◆|◇|▶|►|•|·|-|\*|\d+[.)])\s*/u;
+    if (_lines.length) {
+      descEl.style.whiteSpace = 'normal';
+      descEl.innerHTML = _lines.map(l => _bullet.test(l)
+        ? `<p class="md-li">${_esc(l.replace(_bullet, ''))}</p>`
+        : `<p class="md-p">${_esc(l)}</p>`).join('');
+    } else {
+      descEl.style.whiteSpace = 'pre-line';
+      descEl.textContent = '상세 설명 준비중입니다.';
+    }
     const descSection = descEl.closest('.modal-desc-section');
     if (descSection) descSection.style.display = '';  // 항상 표시
   }
@@ -2190,18 +2230,22 @@ const openModal = (item) => {
   // listing-detail.html은 이 openModal()을 그대로 재사용하므로 여기 한 곳만 고치면
   // listings.html/전문관 상세모달과 listing-detail.html 화면에 동일하게 반영된다.
   let seoKeywordsEl = document.getElementById('modalSeoKeywords');
-  const photoCol = document.querySelector('.modal-col-photo');
-  if (!seoKeywordsEl && photoCol) {
+  const infoCol = document.querySelector('#listingModal .modal-col-info') || document.querySelector('.modal-col-photo');
+  if (!seoKeywordsEl && infoCol) {
     seoKeywordsEl = document.createElement('div');
     seoKeywordsEl.id = 'modalSeoKeywords';
     seoKeywordsEl.className = 'modal-seo-keywords';
-    photoCol.appendChild(seoKeywordsEl);
   }
+  if (seoKeywordsEl && infoCol && seoKeywordsEl.parentElement !== infoCol) infoCol.appendChild(seoKeywordsEl);
   if (seoKeywordsEl) {
     const seoKeywords = getSeoKeywords(item, 6);
     if (seoKeywords.length) {
-      seoKeywordsEl.textContent = '';
-      seoKeywordsEl.style.display = 'none'; // 검색용 단어는 손님 화면에 보이지 않게
+      // 검색 노출용 키워드: 해시태그 형태로 깔끔하게 표시 + 사진 설명(alt)에도 넣음
+      const _esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      seoKeywordsEl.innerHTML = `<span class="msk-h">관련 키워드</span>` + seoKeywords.map(k => `<span class="msk-tag">#${_esc(String(k).replace(/\s+/g, ''))}</span>`).join('');
+      seoKeywordsEl.style.display = '';
+      const _img = document.getElementById('modalMainImg');
+      if (_img) _img.alt = [item.title || '매물사진', ...seoKeywords].join(' · ');
     } else {
       seoKeywordsEl.textContent = '';
       seoKeywordsEl.style.display = 'none';

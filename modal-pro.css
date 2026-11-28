@@ -1,74 +1,140 @@
-/* ══ 매물 상세 팝업 — 전문 디자인 (2026-11-28) ══ */
-#listingModal { --m-navy:#0A1F5C; --m-ink:#111827; --m-sub:#6b7280; --m-line:#e6e9ef; --m-soft:#f6f8fb; --m-gold:#b8923a; backdrop-filter: blur(2px); }
-#listingModal .modal-box { border-radius: 18px !important; overflow: hidden !important; box-shadow: 0 40px 90px rgba(8,15,35,.45) !important; border: none !important; }
+/* ══ 매물 상세 팝업 — 프리미엄 디자인 v3 (2026-11-28) ══ */
+#listingModal { --m-navy:#0A1F5C; --m-navy2:#16357f; --m-ink:#0f172a; --m-sub:#64748b; --m-line:#e6e9ef; --m-soft:#f7f9fc; --m-gold:#b8923a; --m-gold2:#e6c76e; backdrop-filter: blur(3px); }
+#listingModal .modal-box { border-radius: 22px !important; overflow: hidden !important; box-shadow: 0 50px 100px -20px rgba(8,15,35,.55) !important; border: none !important; }
+
 /* 상단 바 */
-#listingModal .modal-header { height: 56px !important; padding: 0 22px !important; background: #fff !important; border-bottom: 1px solid var(--m-line) !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
-#listingModal .modal-id { font-size: 12px !important; color: var(--m-sub) !important; letter-spacing: .02em; display: inline-flex; align-items: center; gap: 8px; }
-#listingModal .modal-id strong { font-family: "Pretendard", sans-serif; font-size: 13px !important; color: var(--m-navy) !important; background: var(--m-soft); border: 1px solid var(--m-line); padding: 4px 10px; border-radius: 999px; letter-spacing: .04em; }
-#listingModal .badge-done { border-radius: 999px !important; padding: 4px 10px !important; font-size: 11.5px !important; font-weight: 700 !important; background: #ecfdf3 !important; color: #067647 !important; border: 1px solid #abefc6 !important; }
-#listingModal .modal-close { width: 36px !important; height: 36px !important; border-radius: 50% !important; border: 1px solid var(--m-line) !important; background: #fff !important; color: var(--m-ink) !important; font-size: 16px !important; display: grid !important; place-items: center !important; transition: background .15s; }
-#listingModal .modal-close:hover { background: var(--m-soft) !important; }
+#listingModal .modal-header { height: 58px !important; padding: 0 22px !important; background: #fff !important; border-bottom: 1px solid var(--m-line) !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
+#listingModal .modal-id { font-size: 11.5px !important; color: var(--m-sub) !important; letter-spacing: .06em; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+#listingModal .modal-id strong { font-size: 13px !important; color: #fff !important; background: linear-gradient(135deg,var(--m-navy),var(--m-navy2)); padding: 5px 12px; border-radius: 999px; letter-spacing: .06em; }
+#listingModal .badge-done { border-radius: 999px !important; padding: 5px 11px !important; font-size: 11.5px !important; font-weight: 800 !important; background: #ecfdf3 !important; color: #067647 !important; border: 1px solid #abefc6 !important; }
+#listingModal .modal-close { width: 38px !important; height: 38px !important; border-radius: 50% !important; border: 1px solid var(--m-line) !important; background: #fff !important; color: var(--m-ink) !important; font-size: 16px !important; display: grid !important; place-items: center !important; transition: background .15s, transform .15s; }
+#listingModal .modal-close:hover { background: var(--m-soft) !important; transform: rotate(90deg); }
+
+/* ── 데스크톱: 왼쪽(사진+정보) / 오른쪽(가격·문의) 2단 ── */
+@media (min-width: 1025px) {
+  #listingModal .modal-box { max-width: 1320px !important; }
+  #listingModal .modal-body { display: grid !important; grid-template-columns: minmax(0, 1.65fr) minmax(360px, 1fr) !important; grid-template-areas: "photo side" "info side"; grid-template-rows: auto 1fr; overflow-y: auto !important; overflow-x: hidden !important; }
+  #listingModal .modal-col-photo { grid-area: photo; order: 0 !important; border-right: none !important; overflow: visible !important; }
+  #listingModal .modal-col-info { grid-area: info; order: 0 !important; border-right: none !important; overflow: visible !important; }
+  #listingModal .modal-col-side { grid-area: side; order: 0 !important; position: sticky; top: 0; align-self: start; max-height: calc(90vh - 58px); overflow-y: auto !important; }
+  #listingModal .modal-main-img { aspect-ratio: 16 / 10 !important; max-height: 58vh !important; }
+}
+
 /* 사진 */
 #listingModal .modal-col-photo { background: #0b1220 !important; }
 #listingModal .modal-main-img { position: relative; overflow: hidden; background: #0b1220 !important; }
-#listingModal .modal-main-img::before { content: ""; position: absolute; inset: -30px; background-image: var(--m-bg, none); background-size: cover; background-position: center; filter: blur(28px) brightness(.55); transform: scale(1.1); }
+#listingModal .modal-main-img::before { content: ""; position: absolute; inset: -30px; background-image: var(--m-bg, none); background-size: cover; background-position: center; filter: blur(30px) brightness(.5); transform: scale(1.1); }
+#listingModal .modal-main-img::after { content: ""; position: absolute; inset: auto 0 0 0; height: 90px; background: linear-gradient(180deg, transparent, rgba(5,10,25,.55)); pointer-events: none; z-index: 1; }
 #listingModal .modal-main-img img { position: relative; z-index: 1; }
-#listingModal .modal-photo-count { position: absolute; right: 14px; bottom: 14px; z-index: 2; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 999px; letter-spacing: .03em; }
-#listingModal .modal-thumbs { background: #0b1220 !important; padding: 12px 14px !important; gap: 8px !important; }
-#listingModal .modal-thumbs img { border-radius: 8px !important; opacity: .55; border: 2px solid transparent !important; transition: opacity .15s; }
-#listingModal .modal-thumbs img:hover, #listingModal .modal-thumbs img.active { opacity: 1; border-color: #e6c364 !important; }
-/* 가운데: 매물 정보 */
-#listingModal .modal-col-info { padding: 26px 28px !important; background: #fff !important; }
-#listingModal .modal-section-title { font-size: 13px !important; font-weight: 800 !important; color: var(--m-navy) !important; letter-spacing: .02em; margin: 0 0 14px !important; padding-left: 10px; border-left: 3px solid var(--m-gold); line-height: 1.2; }
-#listingModal #modalInfoTable { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; width: 100%; border: none !important; }
+#listingModal .modal-photo-count { position: absolute; right: 16px; bottom: 14px; z-index: 2; background: rgba(10,15,30,.55); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.18); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; letter-spacing: .04em; }
+#listingModal .modal-thumbs { background: #0b1220 !important; padding: 12px 16px !important; gap: 8px !important; border-top: none !important; }
+#listingModal .modal-thumbs img { border-radius: 9px !important; opacity: .5; border: 2px solid transparent !important; transition: opacity .15s, transform .15s; }
+#listingModal .modal-thumbs img:hover { opacity: .9; transform: translateY(-1px); }
+#listingModal .modal-thumbs img.active { opacity: 1; border-color: var(--m-gold2) !important; }
+
+/* 매물 정보: 스펙 시트 */
+#listingModal .modal-col-info { padding: 30px 34px 36px !important; background: #fff !important; }
+#listingModal .modal-section-title { display: flex; align-items: center; gap: 10px; font-size: 15px !important; font-weight: 800 !important; color: var(--m-ink) !important; letter-spacing: -.01em; margin: 0 0 14px !important; padding: 0 !important; border: none !important; }
+#listingModal .modal-section-title::before { content: ""; width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(180deg,var(--m-gold2),var(--m-gold)); }
+#listingModal #modalInfoTable { display: grid !important; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0; width: 100%; border: 1px solid var(--m-line) !important; border-radius: 14px; overflow: hidden; background: #fff; }
 #listingModal #modalInfoTable tbody { display: contents; }
-#listingModal #modalInfoTable tr { display: flex !important; flex-direction: column; gap: 4px; background: var(--m-soft) !important; border: 1px solid var(--m-line); border-radius: 10px; padding: 12px 14px; }
+#listingModal #modalInfoTable tr { display: flex !important; flex-direction: column; gap: 5px; background: #fff !important; border: none; border-right: 1px solid var(--m-line); border-bottom: 1px solid var(--m-line); padding: 15px 18px; margin: -0px -1px -1px 0; }
 #listingModal #modalInfoTable td { padding: 0 !important; border: none !important; background: none !important; width: auto !important; }
-#listingModal #modalInfoTable .info-label { font-size: 11.5px !important; color: var(--m-sub) !important; font-weight: 600 !important; }
-#listingModal #modalInfoTable .info-value { font-size: 15px !important; color: var(--m-ink) !important; font-weight: 700 !important; }
-#listingModal .modal-change-note { margin: 12px 0 0 !important; padding: 10px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; color: #92400e !important; font-size: 11.5px !important; }
-#listingModal .modal-desc-section { margin-top: 26px !important; border-top: none !important; padding-top: 0 !important; }
-#listingModal .modal-desc { background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 12px !important; padding: 16px 18px !important; font-size: 14.5px !important; line-height: 1.9 !important; color: #1f2937 !important; }
-/* 오른쪽: 요약 */
-#listingModal .modal-col-side { background: #fbfcfe !important; border-left: 1px solid var(--m-line) !important; padding: 24px 22px !important; }
+#listingModal #modalInfoTable .info-label { font-size: 11.5px !important; color: var(--m-sub) !important; font-weight: 600 !important; letter-spacing: .02em; }
+#listingModal #modalInfoTable .info-value { font-size: 15.5px !important; color: var(--m-ink) !important; font-weight: 800 !important; letter-spacing: -.01em; }
+#listingModal .modal-change-note { display: flex; align-items: flex-start; gap: 7px; margin: 12px 2px 0 !important; padding: 0 !important; background: none !important; border: none !important; color: #94a3b8 !important; font-size: 12px !important; line-height: 1.6; }
+#listingModal .modal-change-note::before { content: "i"; flex: none; width: 15px; height: 15px; margin-top: 2px; border-radius: 50%; border: 1.3px solid #94a3b8; display: grid; place-items: center; font-size: 10px; font-weight: 800; font-style: italic; font-family: Georgia, serif; }
+
+/* 매물 설명 */
+#listingModal .modal-desc-section { margin-top: 32px !important; border-top: none !important; padding-top: 0 !important; }
+#listingModal .modal-desc { background: var(--m-soft) !important; border: 1px solid var(--m-line) !important; border-radius: 16px !important; padding: 20px 22px !important; font-size: 14.5px !important; line-height: 1.85 !important; color: #1f2937 !important; }
+#listingModal .modal-desc .md-li { position: relative; margin: 0; padding: 5px 0 5px 30px; }
+#listingModal .modal-desc .md-li::before { content: ""; position: absolute; left: 0; top: 9px; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg,var(--m-navy),var(--m-navy2)); }
+#listingModal .modal-desc .md-li::after { content: ""; position: absolute; left: 6px; top: 13px; width: 6px; height: 9px; border: solid var(--m-gold2); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+#listingModal .modal-desc .md-li + .md-li { border-top: 1px dashed #e3e8f0; }
+#listingModal .modal-desc .md-p { margin: 0 0 8px; }
+#listingModal .modal-desc .md-p:last-child { margin-bottom: 0; }
+
+/* 검색 키워드 (해시태그) */
+#listingModal .modal-seo-keywords { display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 22px; padding: 0 !important; background: none !important; border: none !important; color: inherit !important; }
+#listingModal .modal-seo-keywords[style*="none"] { display: none !important; }
+#listingModal .msk-h { font-size: 11.5px; font-weight: 700; color: #94a3b8; margin-right: 4px; }
+#listingModal .msk-tag { font-size: 12px; font-weight: 600; color: #475569; padding: 4px 10px; border-radius: 999px; background: #f1f4f9; border: 1px solid #e6ebf2; }
+
+/* 오른쪽 패널 */
+#listingModal .modal-col-side { background: #fff !important; border-left: 1px solid var(--m-line) !important; padding: 28px 26px 26px !important; display: flex !important; flex-direction: column; gap: 0 !important; }
+#listingModal .modal-summary { order: 1; }
+#listingModal .modal-price-area { order: 2; }
+#listingModal .modal-area-highlight { order: 3; }
+#listingModal .modal-contact { order: 4; }
+#listingModal .modal-tools { order: 5; }
+#listingModal .modal-agent { order: 6; }
+#listingModal .modal-inline-consult { order: 7; }
+#listingModal .modal-minimap-wrap { order: 8; }
+#listingModal .modal-minimap-wrap.is-off { display: none !important; }
 #listingModal .modal-badge { display: flex !important; flex-wrap: wrap; gap: 6px; }
-#listingModal .modal-badge > span { border-radius: 6px !important; font-size: 11.5px !important; font-weight: 700 !important; padding: 3px 8px !important; }
-#listingModal .modal-title { font-size: 22px !important; font-weight: 800 !important; color: var(--m-ink) !important; line-height: 1.4 !important; letter-spacing: -.02em; margin: 12px 0 6px !important; }
-#listingModal .modal-address { font-size: 13px !important; color: var(--m-sub) !important; }
-#listingModal .modal-address::before { content: "📍 "; }
-#listingModal .modal-price-area { background: #fff !important; border: 1px solid var(--m-line) !important; border-left: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 16px 18px !important; margin-top: 16px !important; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
-#listingModal .modal-price-row { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 2px !important; }
-#listingModal .modal-price-row + .modal-price-row { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--m-line); }
-#listingModal .price-label { background: none !important; padding: 0 !important; font-size: 12px !important; color: var(--m-sub) !important; font-weight: 600 !important; }
-#listingModal .price-value { font-size: 28px !important; font-weight: 800 !important; color: var(--m-navy) !important; letter-spacing: -.02em; }
-#listingModal .modal-area-highlight { background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 14px 18px !important; margin-top: 10px !important; }
-#listingModal .area-hl-label { font-size: 12px !important; color: var(--m-sub) !important; font-weight: 600 !important; }
+#listingModal .modal-badge > span { border-radius: 7px !important; font-size: 11.5px !important; font-weight: 800 !important; padding: 4px 9px !important; }
+#listingModal .modal-title { font-size: 24px !important; font-weight: 800 !important; color: var(--m-ink) !important; line-height: 1.38 !important; letter-spacing: -.035em; margin: 14px 0 8px !important; }
+#listingModal .modal-address { display: flex; align-items: center; gap: 6px; font-size: 13px !important; color: var(--m-sub) !important; }
+#listingModal .modal-address::before { content: ""; width: 14px; height: 14px; flex: none; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z'/%3E%3C/svg%3E") center/contain no-repeat; }
+
+/* 가격 카드 (프리미엄 다크) */
+#listingModal .modal-price-area { position: relative; overflow: hidden; margin-top: 20px !important; padding: 20px 22px !important; border: none !important; border-radius: 18px !important; color: #fff; background: radial-gradient(260px 140px at 100% 0%, rgba(201,168,76,.32), transparent 70%), linear-gradient(150deg,#071645 0%,var(--m-navy) 55%,var(--m-navy2) 100%) !important; box-shadow: 0 20px 40px -24px rgba(10,31,92,.75) !important; }
+#listingModal .modal-price-row { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 4px !important; }
+#listingModal .modal-price-row + .modal-price-row { margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,.18); }
+#listingModal .price-label { background: none !important; padding: 0 !important; font-size: 12px !important; color: #c7d2ea !important; font-weight: 700 !important; letter-spacing: .04em; }
+#listingModal .price-value { font-size: 32px !important; font-weight: 800 !important; color: #fff !important; letter-spacing: -.035em; line-height: 1.15; }
+#listingModal .modal-ppy { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); }
+#listingModal .modal-ppy span { font-size: 12px; color: #aebbdb; }
+#listingModal .modal-ppy b { font-size: 15px; font-weight: 800; color: var(--m-gold2); }
+
+/* 면적 */
+#listingModal .modal-area-highlight { margin-top: 10px !important; padding: 15px 18px !important; background: var(--m-soft) !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; }
+#listingModal .area-hl-label { font-size: 11.5px !important; color: var(--m-sub) !important; font-weight: 700 !important; }
 #listingModal .area-hl-control { align-items: flex-start !important; }
-#listingModal .area-hl-value { font-size: 17px !important; font-weight: 800 !important; color: var(--m-ink) !important; }
+#listingModal .area-hl-value { font-size: 16.5px !important; font-weight: 800 !important; color: var(--m-ink) !important; }
 #listingModal .area-hl-py { font-size: 13px !important; color: var(--m-sub) !important; }
-#listingModal .modal-agent { position: relative; background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 44px 18px 14px !important; margin-top: 10px !important; font-size: 12.5px !important; line-height: 1.7 !important; color: #4b5563 !important; }
-#listingModal .modal-agent::before { content: "담당 중개사무소"; position: absolute; left: 18px; top: 14px; font-size: 11px; font-weight: 700; color: var(--m-gold); letter-spacing: .04em; }
-#listingModal .modal-agent::after { content: ""; position: absolute; right: 16px; top: 10px; width: 92px; height: 22px; background: url("/images/hitoplogo.png") right center / contain no-repeat; }
-#listingModal .modal-agent strong { font-size: 14px !important; color: var(--m-ink) !important; }
-/* 버튼 */
-#listingModal .modal-contact { display: grid !important; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px 6px !important; margin-top: 14px !important; align-items: start; }
-#listingModal .modal-contact .modal-tel, #listingModal .modal-contact .modal-kakao-btn { grid-column: span 2; }
-#listingModal .modal-tel, #listingModal .modal-kakao-btn { height: 48px !important; min-height: 48px !important; border-radius: 10px !important; font-size: 14.5px !important; font-weight: 800 !important; }
-#listingModal .modal-tel { background: var(--m-navy) !important; color: #fff !important; }
-#listingModal .modal-contact .modal-print-btn, #listingModal .modal-contact .modal-copy-btn { width: 100% !important; height: 40px !important; border-radius: 10px !important; border: 1px solid var(--m-line) !important; background: #fff !important; margin-bottom: 16px !important; }
-#listingModal .modal-inquiry-jump { margin-top: 2px !important; height: 46px; border-radius: 10px !important; background: #fff !important; border: 1.5px solid var(--m-navy) !important; color: var(--m-navy) !important; font-weight: 800 !important; }
-#listingModal .modal-inquiry-jump:hover { background: #f2f5fb !important; }
-#listingModal .modal-minimap-wrap { margin-top: 16px !important; background: #fff; border: 1px solid var(--m-line); border-radius: 14px; padding: 12px; }
-#listingModal .modal-minimap-wrap h4 { font-size: 12px !important; color: var(--m-navy) !important; font-weight: 800 !important; margin: 2px 2px 10px !important; }
-#listingModal #modalBodyMap { border-radius: 10px; overflow: hidden; }
-#listingModal .modal-inline-consult { margin-top: 16px !important; background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 16px !important; }
-#listingModal .modal-consult-form strong { font-size: 14px; color: var(--m-ink); }
-#listingModal .modal-consult-form input, #listingModal .modal-consult-form textarea { border-radius: 8px !important; border: 1px solid var(--m-line) !important; background: var(--m-soft) !important; }
-#listingModal .modal-consult-form button { background: var(--m-navy) !important; border-radius: 8px !important; font-weight: 800 !important; }
-@media (max-width: 768px) {
+
+/* 문의 버튼: 전화문의 + 매물상담 */
+#listingModal .modal-contact { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin-top: 18px !important; align-items: stretch; }
+#listingModal .modal-contact .modal-tel, #listingModal .modal-consult-btn { grid-column: auto !important; display: inline-flex !important; align-items: center; justify-content: center; gap: 8px; height: 54px !important; min-height: 54px !important; margin: 0 !important; border-radius: 14px !important; font-size: 15.5px !important; font-weight: 800 !important; font-family: inherit; cursor: pointer; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+#listingModal .modal-contact .modal-tel svg, #listingModal .modal-consult-btn svg { width: 18px; height: 18px; }
+#listingModal .modal-contact .modal-tel { background: linear-gradient(135deg,#071645,var(--m-navy) 55%,var(--m-navy2)) !important; color: #fff !important; border: none !important; box-shadow: 0 12px 24px -14px rgba(10,31,92,.85); }
+#listingModal .modal-consult-btn { background: linear-gradient(135deg,#f3dd9a,#d9b65a) !important; color: #3d2c05 !important; border: none !important; box-shadow: 0 12px 24px -14px rgba(201,168,76,.9); }
+#listingModal .modal-contact .modal-tel:hover, #listingModal .modal-consult-btn:hover { transform: translateY(-1px); }
+#listingModal .modal-contact > :not(.modal-tel):not(.modal-consult-btn) { display: none !important; }
+
+/* 도구 버튼: 프린트 · 링크복사 · 공유 */
+#listingModal .modal-tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+#listingModal .modal-tool-btn { display: inline-flex !important; align-items: center; justify-content: center; gap: 6px; height: 42px !important; width: 100% !important; margin: 0 !important; border-radius: 12px !important; border: 1px solid var(--m-line) !important; background: #fff !important; color: #475569 !important; font-family: inherit; font-size: 12.5px !important; font-weight: 700 !important; cursor: pointer; transition: border-color .15s, color .15s, background .15s; }
+#listingModal .modal-tool-btn svg { width: 16px; height: 16px; }
+#listingModal .modal-tool-btn:hover { border-color: var(--m-navy) !important; color: var(--m-navy) !important; background: #f5f7fc !important; }
+#listingModal .modal-tool-btn::before, #listingModal .modal-tool-btn::after { display: none !important; }
+
+/* 중개사무소 카드 */
+#listingModal .modal-agent { position: relative; margin-top: 18px !important; padding: 16px 18px 15px 92px !important; min-height: 100px; background: var(--m-soft) !important; border: 1px solid var(--m-line) !important; border-radius: 16px !important; font-size: 12px !important; line-height: 1.7 !important; color: #64748b !important; display: flex !important; flex-direction: column; }
+#listingModal .modal-agent::before { content: ""; position: absolute; left: 14px; top: 16px; width: 64px; height: 64px; border-radius: 14px; background: url("/images/%ED%95%98%EC%9D%B4%ED%83%91%EB%B6%80%EB%8F%99%EC%82%B0.jpg") center / cover no-repeat, #0A1F5C; box-shadow: 0 6px 14px -8px rgba(10,31,92,.6); }
+#listingModal .modal-agent::after { content: "공인중개사"; position: absolute; right: 14px; top: 14px; width: auto; height: auto; background: #fff; border: 1px solid #ecdcae; color: #8a6a1c; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+#listingModal .modal-agent strong { font-size: 14px !important; color: var(--m-ink) !important; margin-bottom: 2px; padding-right: 70px; }
+
+/* 매물상담 폼 */
+#listingModal .modal-inline-consult { margin-top: 18px !important; background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 16px !important; padding: 18px !important; transition: box-shadow .3s, border-color .3s; }
+#listingModal .modal-inline-consult.is-focus { border-color: var(--m-gold) !important; box-shadow: 0 0 0 4px rgba(201,168,76,.18); }
+#listingModal .modal-consult-form strong { display: block; font-size: 15px; font-weight: 800; color: var(--m-ink); }
+#listingModal .modal-consult-form .mcf-sub { display: block; margin: 2px 0 12px; font-size: 12px; color: var(--m-sub); }
+#listingModal .modal-consult-form input, #listingModal .modal-consult-form textarea { border-radius: 10px !important; border: 1.5px solid #e2e8f0 !important; background: var(--m-soft) !important; font-family: inherit; }
+#listingModal .modal-consult-form input:focus, #listingModal .modal-consult-form textarea:focus { outline: none; border-color: var(--m-navy) !important; background: #fff !important; }
+#listingModal .modal-consult-form button { height: 46px; background: linear-gradient(135deg,#071645,var(--m-navy) 55%,var(--m-navy2)) !important; border-radius: 12px !important; font-weight: 800 !important; font-size: 14.5px !important; }
+
+/* ── 태블릿·휴대폰 ── */
+@media (max-width: 1024px) {
+  #listingModal .modal-col-side { border-left: none !important; padding: 22px 18px !important; }
+  #listingModal .modal-col-info { padding: 22px 18px 90px !important; }
   #listingModal #modalInfoTable { grid-template-columns: 1fr 1fr; }
-  #listingModal .modal-contact { grid-template-columns: 1fr 1fr; }
-  #listingModal .modal-contact .modal-print-btn, #listingModal .modal-contact .modal-copy-btn { width: 100% !important; }
-  #listingModal .modal-title { font-size: 19px !important; }
-  #listingModal .price-value { font-size: 24px !important; }
+  #listingModal .modal-title { font-size: 20px !important; }
+  #listingModal .price-value { font-size: 27px !important; }
+  /* 전화·매물상담 버튼을 화면 아래에 고정 */
+  #listingModal .modal-contact { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; margin: 0 !important; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.96); backdrop-filter: blur(10px); border-top: 1px solid var(--m-line); box-shadow: 0 -10px 24px -16px rgba(15,23,42,.35); }
+  #listingModal.hidden .modal-contact { display: none !important; }
+  #listingModal .modal-contact .modal-tel, #listingModal .modal-consult-btn { height: 50px !important; min-height: 50px !important; }
 }

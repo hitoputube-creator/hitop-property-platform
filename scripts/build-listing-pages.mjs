@@ -145,13 +145,32 @@ const stripTemplateSeo = (html) => html
   .replace(/\s*<meta\s+name=["']twitter:[^"']+["'][^>]*>/gi, '')
   .replace(/\s*<script\s+type=["']application\/ld\+json["'][\s\S]*?<\/script>/gi, '');
 
+// 검색 노출용 대표 키워드 (app.js SEO_KEYWORD_POOLS와 같은 값)
+const SEO_KEYWORD_POOLS = {
+  공장창고: ['파주공장창고매매', '파주공장창고임대', '파주공장매매', '파주창고매매', '파주공장임대', '파주창고임대'],
+  상가사무실: ['운정상가임대', '운정상가매매', '파주상가임대', '파주상가매매', '파주사무실임대', '운정사무실임대'],
+  토지: ['파주토지매매', '파주땅매매', '파주공장부지매매', '파주창고부지매매', '파주개발부지', '파주투자토지'],
+  주거용: ['운정아파트전세', '운정아파트매매', '파주아파트전세', '파주아파트매매', '운정오피스텔월세', '운정오피스텔전세'],
+  건물빌딩: ['파주건물매매', '파주빌딩매매', '운정건물매매', '운정빌딩매매', '파주근린생활시설매매', '파주상가주택매매'],
+};
+const pickSeoPool = (listing) => {
+  const c = `${listing.category1 || ''} ${listing.category2 || ''}`;
+  if (/건물|빌딩/.test(c)) return /상가주택|다가구/.test(c) ? SEO_KEYWORD_POOLS.주거용 : SEO_KEYWORD_POOLS.건물빌딩;
+  if (/공장|창고/.test(c)) return SEO_KEYWORD_POOLS.공장창고;
+  if (/상가|사무실/.test(c)) return SEO_KEYWORD_POOLS.상가사무실;
+  if (/토지/.test(c)) return SEO_KEYWORD_POOLS.토지;
+  if (/주거|아파트|오피스텔|주택/.test(c)) return SEO_KEYWORD_POOLS.주거용;
+  return [];
+};
+
 const injectStaticMetadata = (template, listing) => {
   const title = buildTitle(listing);
   const description = buildDescription(listing);
   const summary = buildSummary(listing);
   const image = listing.imageUrls.find(Boolean) || `${siteOrigin}/images/hitoplogo.png`;
   const url = getListingUrl(listing);
-  const keywords = [sanitizeSeoText(listing.address), listing.category1, listing.category2, listing.dealType, '하이탑부동산']
+  const seoPool = pickSeoPool(listing);
+  const keywords = [sanitizeSeoText(listing.address), listing.category1, listing.category2, listing.dealType, ...seoPool, '하이탑부동산']
     .filter(Boolean)
     .join(', ');
   const jsonLd = {
@@ -210,6 +229,7 @@ const injectStaticMetadata = (template, listing) => {
     '<section class="static-listing-seo" aria-label="매물 요약">',
     `  <h1>${escapeHtml(stripTags(listing.title || '하이탑부동산 매물'))}</h1>`,
     `  <p>${escapeHtml(summary || description)}</p>`,
+    ...(seoPool.length ? [`  <p class="static-listing-keywords">관련 키워드: ${seoPool.map(k => '#' + escapeHtml(k)).join(' ')}</p>`] : []),
     '</section>',
   ].join('\n      '));
   return html;
