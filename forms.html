@@ -55,31 +55,25 @@
       }
       .forms-notice strong { color:#0A1F5C; }
 
-      .forms-list { margin-top:22px; display:flex; flex-direction:column; gap:22px; }
-      .forms-group { background:#fff; border:0.5px solid #e2e6ed; border-radius:14px; overflow:hidden; }
-      .forms-group-title {
-        margin:0; padding:13px 20px; font-size:15px; font-weight:700; color:#0A1F5C;
-        background:#f8fafc; border-bottom:1px solid #e2e6ed; display:flex; align-items:center; gap:8px;
+      .forms-count { margin:24px 0 10px; font-size:14px; color:#475569; }
+      .forms-count b { color:#0A1F5C; }
+      .forms-table { width:100%; border-collapse:collapse; background:#fff; border-top:2px solid #0A1F5C; }
+      .forms-table th {
+        background:#f4f7fb; color:#0A1F5C; font-size:14px; font-weight:700; padding:12px 10px;
+        border-bottom:1px solid #d7dee8;
       }
-      .forms-group-title span { font-size:12px; font-weight:600; color:#94a3b8; }
-      .form-row {
-        display:grid; grid-template-columns:34px 1fr auto auto; align-items:center; gap:14px;
-        padding:13px 20px; border-bottom:1px solid #f1f5f9;
+      .forms-table td { padding:13px 10px; border-bottom:1px solid #e5e9f0; font-size:14px; color:#1e293b; }
+      .forms-table tr:hover td { background:#fafbfd; }
+      .forms-table .col-no { width:70px; text-align:center; color:#64748b; font-size:13px; }
+      .forms-table .col-file { width:90px; text-align:center; }
+      .forms-table .col-title a { color:#1e293b; text-decoration:none; }
+      .forms-table .col-title a:hover { color:#0A1F5C; text-decoration:underline; }
+      .file-icon {
+        display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
+        border-radius:6px; color:#0A1F5C; text-decoration:none; transition:background .15s;
       }
-      .form-row:last-child { border-bottom:none; }
-      .form-row:hover { background:#fafbfd; }
-      .form-no { font-size:13px; font-weight:700; color:#C9A84C; text-align:center; }
-      .form-name { min-width:0; }
-      .form-name h3 { font-size:15px; font-weight:700; color:#0A1F5C; margin:0 0 3px; line-height:1.45; }
-      .form-name p { font-size:12.5px; color:#64748b; margin:0; line-height:1.6; }
-      .form-name p b { color:#475569; font-weight:600; }
-      .form-meta { font-size:11px; color:#94a3b8; text-align:right; white-space:nowrap; line-height:1.6; }
-      .form-type { display:inline-block; font-weight:600; color:#64748b; background:#f1f5f9; border-radius:4px; padding:1px 6px; }
-      .form-get {
-        text-decoration:none; font-size:13px; font-weight:700; color:#fff; background:#0A1F5C;
-        padding:8px 14px; border-radius:7px; white-space:nowrap; transition:opacity .15s;
-      }
-      .form-get:hover { opacity:.88; }
+      .file-icon:hover { background:#e8eef8; }
+      .file-icon svg { width:20px; height:20px; fill:currentColor; }
       .forms-empty { text-align:center; color:#94a3b8; padding:50px 0; font-size:15px; }
 
       .forms-more {
@@ -99,10 +93,9 @@
       .forms-source a { color:#64748b; }
 
       @media (max-width:640px) {
-        .form-row { grid-template-columns:26px 1fr auto; gap:10px; padding:12px 14px; }
-        .form-meta { display:none; }
-        .form-get { padding:8px 11px; font-size:12px; }
-        .forms-group-title { padding:12px 14px; }
+        .forms-table .col-no { width:44px; }
+        .forms-table .col-file { width:56px; }
+        .forms-table td, .forms-table th { padding:12px 6px; font-size:13.5px; }
         .forms-more { padding:22px 18px; }
         .forms-more-btns, .forms-more a { width:100%; text-align:center; box-sizing:border-box; }
       }
@@ -156,11 +149,11 @@
     <section class="info-list-section">
       <div class="container">
         <div class="forms-notice">
-          <strong>안내</strong> · [받기]를 누르면 <strong>한국공인중개사협회</strong> 또는 <strong>국가법령정보센터</strong>의 해당 서식 페이지가 새 창으로 열리고, 그곳에서 파일을 내려받을 수 있습니다.
+          <strong>안내</strong> · 제목이나 첨부 아이콘을 누르면 <strong>한국공인중개사협회</strong> 또는 <strong>국가법령정보센터</strong>의 해당 서식 페이지가 새 창으로 열리고, 그곳에서 파일을 내려받을 수 있습니다.
           모든 서식은 <strong>참고용</strong>이며, 실제 계약 전에는 권리관계와 특약을 전문가와 꼭 확인하시기 바랍니다.
         </div>
 
-        <div class="forms-list" id="formsGrid"></div>
+        <div id="formsGrid"></div>
 
         <div class="forms-more">
           <div class="forms-more-btns">
@@ -334,31 +327,25 @@
           grid.innerHTML = '<p class="forms-empty">찾는 서식이 없습니다. 아래 상담으로 문의해 주세요.</p>';
           return;
         }
-        const groups = [...new Set(list.map(f => f.cat))];
-        let no = 0;
-        grid.innerHTML = groups.map(g => {
-          const rows = list.filter(f => f.cat === g);
-          return `
-          <section class="forms-group">
-            <h2 class="forms-group-title">${esc(g)} <span>${rows.length}건</span></h2>
-            ${rows.map(f => {
-              no++;
-              const href = f.url || (KAR + f.kar);
-              const src = f.src || '협회';
-              return `
-              <div class="form-row">
-                <span class="form-no">${no}</span>
-                <div class="form-name">
-                  <h3>${esc(f.title)}</h3>
-                  <p>${f.when}${f.tip ? ' · ' + esc(f.tip) : ''}</p>
-                </div>
-                <div class="form-meta"><span class="form-type">${esc(f.type)}</span><br>${esc(src)} ${esc(f.date)}</div>
-                <a class="form-get" href="${esc(href)}" target="_blank" rel="noopener noreferrer"
-                   data-track="form_get" data-form="${esc(f.title)}">받기 ↗</a>
-              </div>`;
+        const icon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z"/></svg>';
+        grid.innerHTML = `
+          <p class="forms-count">총 <b>${list.length}</b> 건</p>
+          <table class="forms-table">
+            <thead><tr><th class="col-no">번호</th><th>제목</th><th class="col-file">첨부</th></tr></thead>
+            <tbody>
+            ${list.map((f, i) => {
+              const href = esc(f.url || (KAR + f.kar));
+              const tipText = esc(strip(f.when));
+              return `<tr>
+                <td class="col-no">${i + 1}</td>
+                <td class="col-title"><a href="${href}" target="_blank" rel="noopener noreferrer" title="${tipText}"
+                    data-track="form_get" data-form="${esc(f.title)}">${esc(f.title)}</a></td>
+                <td class="col-file"><a class="file-icon" href="${href}" target="_blank" rel="noopener noreferrer"
+                    aria-label="${esc(f.title)} 받기" data-track="form_get" data-form="${esc(f.title)}">${icon}</a></td>
+              </tr>`;
             }).join('')}
-          </section>`;
-        }).join('');
+            </tbody>
+          </table>`;
       }
 
       /* 클릭 집계 (GA) */
