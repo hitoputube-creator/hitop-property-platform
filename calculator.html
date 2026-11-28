@@ -446,14 +446,19 @@
         const i = document.createElement('i'); i.className = 'f-ic'; i.innerHTML = u.includes('%') ? IC_PCT : IC_WON;
         f.prepend(i);
       });
+      // 만원 입력칸마다 아래에 억 단위 금액(노란 글씨) 표시
+      $$('.f-in input[inputmode="numeric"]').forEach(el => {
+        if ($(`.kor[data-for="${el.dataset.k}"]`)) return;
+        const k = document.createElement('small'); k.className = 'kor'; k.dataset.for = el.dataset.k;
+        el.closest('.f-in').after(k);
+      });
       const QUICK = { y_price: [10000, 30000, 50000, 100000], f_amount: [10000, 30000, 50000, 100000], c_jeon: [10000, 20000, 30000, 50000] };
       Object.entries(QUICK).forEach(([k, arr]) => {
         const el = inp(k); if (!el) return;
         const box = document.createElement('div'); box.className = 'quick';
         box.innerHTML = arr.map(v => `<button type="button" data-v="${v}">${v / 10000}억</button>`).join('');
         box.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; el.value = Number(b.dataset.v).toLocaleString('ko-KR'); el.dispatchEvent(new Event('input')); });
-        const row = el.closest('.f-row') || el.closest('div');
-        (row.querySelector('.kor') || el.closest('.f-in')).after(box);
+        ($(`.kor[data-for="${k}"]`) || el.closest('.f-in')).after(box);
       });
       const MAIN_IDS = new Set(['y_out_main', 'r_out_main', 'c_out_main', 'f_out_main']);
       const _anim = {};
