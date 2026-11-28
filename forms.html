@@ -55,32 +55,32 @@
       }
       .forms-notice strong { color:#0A1F5C; }
 
-      .forms-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:22px; }
-      .form-card {
-        background:#fff; border:0.5px solid #e2e6ed; border-radius:14px; padding:22px 20px 18px;
-        display:flex; flex-direction:column; transition:box-shadow .15s, transform .15s;
+      .forms-list { margin-top:22px; display:flex; flex-direction:column; gap:22px; }
+      .forms-group { background:#fff; border:0.5px solid #e2e6ed; border-radius:14px; overflow:hidden; }
+      .forms-group-title {
+        margin:0; padding:13px 20px; font-size:15px; font-weight:700; color:#0A1F5C;
+        background:#f8fafc; border-bottom:1px solid #e2e6ed; display:flex; align-items:center; gap:8px;
       }
-      .form-card:hover { box-shadow:0 6px 24px rgba(10,31,92,.12); transform:translateY(-2px); }
-      .form-card-top { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
-      .form-cat {
-        font-size:11px; font-weight:700; color:#C9A84C; background:#fdf6e3; border:1px solid #f0d897;
-        border-radius:4px; padding:2px 8px;
+      .forms-group-title span { font-size:12px; font-weight:600; color:#94a3b8; }
+      .form-row {
+        display:grid; grid-template-columns:34px 1fr auto auto; align-items:center; gap:14px;
+        padding:13px 20px; border-bottom:1px solid #f1f5f9;
       }
-      .form-type { font-size:11px; font-weight:600; color:#64748b; background:#f1f5f9; border-radius:4px; padding:2px 7px; }
-      .form-card h3 { font-size:16px; font-weight:700; color:#0A1F5C; margin:0 0 8px; line-height:1.45; }
-      .form-when { font-size:13px; color:#475569; line-height:1.7; margin:0 0 10px; flex:1; }
-      .form-when b { color:#0A1F5C; font-weight:700; }
-      .form-tip { font-size:12px; color:#92400e; background:#fffbeb; border-radius:6px; padding:7px 10px; margin:0 0 12px; line-height:1.6; }
-      .form-meta { font-size:11px; color:#94a3b8; margin:0 0 12px; }
-      .form-actions { display:flex; gap:8px; }
-      .form-btn {
-        flex:1; text-align:center; text-decoration:none; font-size:13px; font-weight:700;
-        padding:10px 8px; border-radius:8px; transition:opacity .15s;
+      .form-row:last-child { border-bottom:none; }
+      .form-row:hover { background:#fafbfd; }
+      .form-no { font-size:13px; font-weight:700; color:#C9A84C; text-align:center; }
+      .form-name { min-width:0; }
+      .form-name h3 { font-size:15px; font-weight:700; color:#0A1F5C; margin:0 0 3px; line-height:1.45; }
+      .form-name p { font-size:12.5px; color:#64748b; margin:0; line-height:1.6; }
+      .form-name p b { color:#475569; font-weight:600; }
+      .form-meta { font-size:11px; color:#94a3b8; text-align:right; white-space:nowrap; line-height:1.6; }
+      .form-type { display:inline-block; font-weight:600; color:#64748b; background:#f1f5f9; border-radius:4px; padding:1px 6px; }
+      .form-get {
+        text-decoration:none; font-size:13px; font-weight:700; color:#fff; background:#0A1F5C;
+        padding:8px 14px; border-radius:7px; white-space:nowrap; transition:opacity .15s;
       }
-      .form-btn:hover { opacity:.88; }
-      .form-btn-get { background:#0A1F5C; color:#fff; }
-      .form-btn-ask { background:#fff; color:#0A1F5C; border:1px solid #cbd5e1; }
-      .forms-empty { grid-column:1/-1; text-align:center; color:#94a3b8; padding:50px 0; font-size:15px; }
+      .form-get:hover { opacity:.88; }
+      .forms-empty { text-align:center; color:#94a3b8; padding:50px 0; font-size:15px; }
 
       .forms-more {
         margin-top:34px; background:#0A1F5C; border-radius:14px; padding:26px 24px; color:#fff;
@@ -98,9 +98,11 @@
       .forms-source { font-size:12px; color:#94a3b8; text-align:center; margin-top:18px; line-height:1.7; }
       .forms-source a { color:#64748b; }
 
-      @media (max-width:980px) { .forms-grid { grid-template-columns:repeat(2,1fr); } }
       @media (max-width:640px) {
-        .forms-grid { grid-template-columns:1fr; }
+        .form-row { grid-template-columns:26px 1fr auto; gap:10px; padding:12px 14px; }
+        .form-meta { display:none; }
+        .form-get { padding:8px 11px; font-size:12px; }
+        .forms-group-title { padding:12px 14px; }
         .forms-more { padding:22px 18px; }
         .forms-more-btns, .forms-more a { width:100%; text-align:center; box-sizing:border-box; }
       }
@@ -154,11 +156,11 @@
     <section class="info-list-section">
       <div class="container">
         <div class="forms-notice">
-          <strong>안내</strong> · [서식 받기]를 누르면 <strong>한국공인중개사협회</strong>의 해당 서식 페이지가 새 창으로 열리고, 그곳에서 파일을 내려받을 수 있습니다.
+          <strong>안내</strong> · [받기]를 누르면 <strong>한국공인중개사협회</strong> 또는 <strong>국가법령정보센터</strong>의 해당 서식 페이지가 새 창으로 열리고, 그곳에서 파일을 내려받을 수 있습니다.
           모든 서식은 <strong>참고용</strong>이며, 실제 계약 전에는 권리관계와 특약을 전문가와 꼭 확인하시기 바랍니다.
         </div>
 
-        <div class="forms-grid" id="formsGrid"></div>
+        <div class="forms-list" id="formsGrid"></div>
 
         <div class="forms-more">
           <div class="forms-more-btns">
@@ -169,8 +171,8 @@
         </div>
 
         <p class="forms-source">
-          서식 출처: <a href="https://www.kar.or.kr/pinfo/realtyformlist.asp" target="_blank" rel="noopener noreferrer">한국공인중개사협회 부동산관련서식</a> ·
-          법령 개정에 따라 서식이 바뀔 수 있으니 협회 페이지의 등록일을 확인해 주세요.
+          서식 출처: <a href="https://www.kar.or.kr/pinfo/realtyformlist.asp" target="_blank" rel="noopener noreferrer">한국공인중개사협회 부동산관련서식</a>, <a href="https://www.law.go.kr" target="_blank" rel="noopener noreferrer">국가법령정보센터</a> ·
+          법령 개정에 따라 서식이 바뀔 수 있으니 원문 페이지의 등록일·시행일을 확인해 주세요.
         </p>
       </div>
     </section>
@@ -221,6 +223,7 @@
       /*
        * ── 서식 목록 ──
        * 협회가 개정본을 새 글로 올리면 kar 번호(realtyform=번호)와 date만 바꾸면 됩니다.
+       * 협회에 없는 서식은 kar 대신 url·src를 적습니다 (예: 국가법령정보센터 서식).
        * 번호 확인: 협회 서식 페이지 주소 끝의 숫자 (예: ...realtyformview.asp?realtyform=391)
        */
       const KAR = 'https://www.kar.or.kr/pinfo/realtyformview.asp?realtyform=';
@@ -238,6 +241,8 @@
         { cat:'임대차', kar:86, type:'HWP', date:'2010-11-22', title:'부동산 전대차계약서',
           when:'빌린 공간을 <b>다시 다른 사람에게 빌려줄 때(전대)</b> 쓰는 계약서입니다.',
           tip:'전대는 임대인의 동의가 필요합니다. 동의서를 함께 받아 두세요.' },
+        { cat:'임대차', kar:335, type:'HWP', date:'2021-02-25', title:'계약갱신요구권 행사여부 확인서',
+          when:'기존 세입자가 <b>계약갱신요구권을 쓸지</b> 확인해 두는 서식입니다. 세입자가 있는 집을 사고팔 때 특히 중요합니다.' },
 
         // 매매
         { cat:'매매', kar:296, type:'HWP', date:'2017-06-16', title:'부동산 매매계약서',
@@ -281,12 +286,18 @@
         { cat:'임차인 보호', kar:392, type:'HWP', date:'2026-06-23', title:'상가건물 임대차 정보제공 요청서',
           when:'상가 임대차 계약 전에 <b>확정일자·선순위 임차인 현황</b>을 확인할 때 씁니다.' },
 
-        // 갱신
-        { cat:'갱신·영수', kar:335, type:'HWP', date:'2021-02-25', title:'계약갱신요구권 행사여부 확인서',
-          when:'기존 세입자가 <b>계약갱신요구권을 쓸지</b> 확인해 두는 서식입니다. 세입자가 있는 집을 사고팔 때 특히 중요합니다.' },
-        { cat:'갱신·영수', kar:390, type:'HWP', date:'2026-03-04', title:'영수증 서식',
+        // 영수·세금
+        { cat:'영수·세금', kar:390, type:'HWP', date:'2026-03-04', title:'영수증 서식',
           when:'<b>계약금·중도금·잔금·보증금</b>을 주고받았다는 증빙이 필요할 때 씁니다.',
           tip:'가능하면 계좌이체로 주고받고, 영수증에 금액과 날짜를 정확히 적어 두세요.' },
+
+        { cat:'영수·세금', url:'https://www.law.go.kr/법령별표서식/(부가가치세법시행규칙,서식14)', src:'국가법령정보센터',
+          type:'법정서식', date:'현행', title:'세금계산서',
+          when:'<b>과세사업자</b>가 상가·사무실·공장 임대료나 매매 대금 등에 대해 부가세를 포함해 발행하는 증빙입니다. 부가가치세법 시행규칙 별지 제14호서식입니다.',
+          tip:'실무에서는 대부분 홈택스 전자세금계산서로 발행합니다.' },
+        { cat:'영수·세금', url:'https://www.law.go.kr/법령별표서식/(소득세법시행규칙,서식28)', src:'국가법령정보센터',
+          type:'법정서식', date:'현행', title:'계산서',
+          when:'<b>면세사업자</b>가 발행하는 증빙입니다(예: 토지 공급 등 부가세가 없는 거래). 소득세법 시행규칙 별지 제28호서식입니다.' },
       ];
 
       const CATS = ['전체', ...new Set(FORMS.map(f => f.cat))];
@@ -323,23 +334,31 @@
           grid.innerHTML = '<p class="forms-empty">찾는 서식이 없습니다. 아래 상담으로 문의해 주세요.</p>';
           return;
         }
-        grid.innerHTML = list.map(f => `
-          <article class="form-card">
-            <div class="form-card-top">
-              <span class="form-cat">${esc(f.cat)}</span>
-              <span class="form-type">${esc(f.type)}</span>
-            </div>
-            <h3>${esc(f.title)}</h3>
-            <p class="form-when">${f.when}</p>
-            ${f.tip ? `<p class="form-tip">💡 ${esc(f.tip)}</p>` : ''}
-            <p class="form-meta">협회 등록일 ${esc(f.date)}</p>
-            <div class="form-actions">
-              <a class="form-btn form-btn-get" href="${KAR}${f.kar}" target="_blank" rel="noopener noreferrer"
-                 data-track="form_get" data-form="${esc(f.title)}">서식 받기 ↗</a>
-              <a class="form-btn form-btn-ask" href="tel:031-949-8969"
-                 data-track="form_ask" data-form="${esc(f.title)}">작성 상담</a>
-            </div>
-          </article>`).join('');
+        const groups = [...new Set(list.map(f => f.cat))];
+        let no = 0;
+        grid.innerHTML = groups.map(g => {
+          const rows = list.filter(f => f.cat === g);
+          return `
+          <section class="forms-group">
+            <h2 class="forms-group-title">${esc(g)} <span>${rows.length}건</span></h2>
+            ${rows.map(f => {
+              no++;
+              const href = f.url || (KAR + f.kar);
+              const src = f.src || '협회';
+              return `
+              <div class="form-row">
+                <span class="form-no">${no}</span>
+                <div class="form-name">
+                  <h3>${esc(f.title)}</h3>
+                  <p>${f.when}${f.tip ? ' · ' + esc(f.tip) : ''}</p>
+                </div>
+                <div class="form-meta"><span class="form-type">${esc(f.type)}</span><br>${esc(src)} ${esc(f.date)}</div>
+                <a class="form-get" href="${esc(href)}" target="_blank" rel="noopener noreferrer"
+                   data-track="form_get" data-form="${esc(f.title)}">받기 ↗</a>
+              </div>`;
+            }).join('')}
+          </section>`;
+        }).join('');
       }
 
       /* 클릭 집계 (GA) */
