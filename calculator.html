@@ -675,7 +675,7 @@
           const prev = BASE_RATE;
           applyRate(Number(j.rate), j.changed_on);
           const when = j.checked_at ? new Date(j.checked_at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-          set('rateStatus', (force && prev !== BASE_RATE ? `기준금리가 ${prev}% → ${BASE_RATE}%로 바뀌어 다시 계산했습니다. ` : '') + (when ? `한국은행 기준금리 ${when} 확인` : ''));
+          set('rateStatus', (force && prev !== BASE_RATE ? `기준금리가 ${prev}% → ${BASE_RATE}%로 바뀌어 다시 계산했습니다. ` : '') + (j.source === 'ecos' && when ? `한국은행 기준금리 ${when} 확인` : '등록된 기준금리로 계산합니다.'));
         } catch (e) {
           set('rateStatus', '지금은 금리를 불러오지 못해 마지막 확인 금리로 계산합니다.');
         } finally { btn.classList.remove('spin'); btn.disabled = false; }
