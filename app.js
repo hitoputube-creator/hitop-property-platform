@@ -2025,13 +2025,14 @@ const openModal = (item) => {
   try {
     const _pf = priceFields.find(f => f.money && item[f.key]);
     const _raw = _pf ? item[_pf.key] : (item.salePrice ?? item.price);
-    const _p0 = areaInfo && areaInfo.parts && areaInfo.parts[0];
+    const _parts = (areaInfo && areaInfo.parts) || [];
+    const _p0 = _parts.find(x => x.label === '공급') || (isExclusiveType ? null : _parts[0]);
     if (item.dealType === '매매' && _raw && _p0 && _p0.py > 0) {
       const _n = Number(String(_raw).replace(/[,\s]/g, ''));
       const _mw = _n >= 100000000 ? _n / 10000 : _n;
       if (_mw > 0) {
         const _per = Math.round(_mw / _p0.py);
-        const _lbl = _p0.label ? `${_p0.label} 기준` : '';
+        const _lbl = _p0.label === '공급' ? '분양평당 기준' : (_p0.label ? `${_p0.label} 기준` : '');
         document.getElementById('modalPriceArea').insertAdjacentHTML('beforeend',
           `<div class="modal-ppy"><span>평당가${_lbl ? ' · ' + _lbl : ''}</span><b>${_per.toLocaleString('ko-KR')}만원</b></div>`);
       }
