@@ -31,6 +31,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20261128-q1" />
+    <link rel="stylesheet" href="/modal-pro.css?v=1" />
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services,clusterer&autoload=false"></script>
 </head>
   <body data-page="listings" data-default-category="토지">
@@ -269,18 +270,18 @@
               <button id="modalPrintBtn" class="modal-print-btn" type="button">🖨 프린트</button>
             </div>
             <div class="modal-minimap-wrap" id="modalBodyMapWrap" style="display:none;">
-              <h4>📍 매물 위치</h4>
+              <h4>매물 위치</h4>
               <div id="modalBodyMap"></div>
             </div>
           </div>
           <!-- ③ 가운데: 매물정보 표 + 매물설명 (HTML상 3번째, 데스크톱은 CSS order로 2번째) -->
           <div class="modal-col-info">
             <div class="modal-info-section">
-              <h4 class="modal-section-title">📋 매물 정보</h4>
+              <h4 class="modal-section-title">매물 정보</h4>
               <table class="modal-info-table" id="modalInfoTable"></table>
             </div>
             <div class="modal-desc-section">
-              <h4 class="modal-section-title">📝 매물 설명</h4>
+              <h4 class="modal-section-title">매물 설명</h4>
               <div id="modalDesc" class="modal-desc"></div>
             </div>
           </div>
@@ -330,6 +331,6 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20261128-q1"></script>
+    <script src="app.js?v=20261128-mp1"></script>
   </body>
 </html>

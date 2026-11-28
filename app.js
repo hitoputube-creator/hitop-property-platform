@@ -1805,6 +1805,28 @@ const ensureModalActionButtons = (item = {}) => {
   };
 };
 
+// 상세 팝업 사진: 뒤 배경을 같은 사진으로 흐리게 채우고, 사진 순번(1/5)을 표시
+const hitopModalPhotoDecor = () => {
+  const wrap = document.querySelector('#listingModal .modal-main-img');
+  const img = document.getElementById('modalMainImg');
+  if (!wrap || !img) return;
+  const thumbs = () => [...document.querySelectorAll('#modalThumbs img')];
+  let badge = wrap.querySelector('.modal-photo-count');
+  if (!badge) { badge = document.createElement('span'); badge.className = 'modal-photo-count'; wrap.appendChild(badge); }
+  const sync = () => {
+    if (img.src) wrap.style.setProperty('--m-bg', `url("${img.src.replace(/"/g, '%22')}")`);
+    const list = thumbs();
+    const idx = Math.max(0, list.findIndex(t => t.src === img.src || t.classList.contains('active')));
+    badge.textContent = list.length > 1 ? `${idx + 1} / ${list.length}` : '';
+    badge.style.display = list.length > 1 ? '' : 'none';
+  };
+  if (!img.dataset.decorBound) {
+    img.dataset.decorBound = '1';
+    new MutationObserver(sync).observe(img, { attributes: true, attributeFilter: ['src'] });
+  }
+  sync();
+};
+
 const renderInlineConsultForm = (item = {}) => {
   const side = document.querySelector('#listingModal .modal-col-side');
   if (!side) return;
@@ -2201,6 +2223,7 @@ const openModal = (item) => {
   }
   ensureModalActionButtons(item);
   renderInlineConsultForm(item);
+  hitopModalPhotoDecor();
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';

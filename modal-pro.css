@@ -1,0 +1,73 @@
+/* ══ 매물 상세 팝업 — 전문 디자인 (2026-11-28) ══ */
+#listingModal { --m-navy:#0A1F5C; --m-ink:#111827; --m-sub:#6b7280; --m-line:#e6e9ef; --m-soft:#f6f8fb; --m-gold:#b8923a; backdrop-filter: blur(2px); }
+#listingModal .modal-box { border-radius: 18px !important; overflow: hidden !important; box-shadow: 0 40px 90px rgba(8,15,35,.45) !important; border: none !important; }
+/* 상단 바 */
+#listingModal .modal-header { height: 56px !important; padding: 0 22px !important; background: #fff !important; border-bottom: 1px solid var(--m-line) !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
+#listingModal .modal-id { font-size: 12px !important; color: var(--m-sub) !important; letter-spacing: .02em; display: inline-flex; align-items: center; gap: 8px; }
+#listingModal .modal-id strong { font-family: "Pretendard", sans-serif; font-size: 13px !important; color: var(--m-navy) !important; background: var(--m-soft); border: 1px solid var(--m-line); padding: 4px 10px; border-radius: 999px; letter-spacing: .04em; }
+#listingModal .badge-done { border-radius: 999px !important; padding: 4px 10px !important; font-size: 11.5px !important; font-weight: 700 !important; background: #ecfdf3 !important; color: #067647 !important; border: 1px solid #abefc6 !important; }
+#listingModal .modal-close { width: 36px !important; height: 36px !important; border-radius: 50% !important; border: 1px solid var(--m-line) !important; background: #fff !important; color: var(--m-ink) !important; font-size: 16px !important; display: grid !important; place-items: center !important; transition: background .15s; }
+#listingModal .modal-close:hover { background: var(--m-soft) !important; }
+/* 사진 */
+#listingModal .modal-col-photo { background: #0b1220 !important; }
+#listingModal .modal-main-img { position: relative; overflow: hidden; background: #0b1220 !important; }
+#listingModal .modal-main-img::before { content: ""; position: absolute; inset: -30px; background-image: var(--m-bg, none); background-size: cover; background-position: center; filter: blur(28px) brightness(.55); transform: scale(1.1); }
+#listingModal .modal-main-img img { position: relative; z-index: 1; }
+#listingModal .modal-photo-count { position: absolute; right: 14px; bottom: 14px; z-index: 2; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 999px; letter-spacing: .03em; }
+#listingModal .modal-thumbs { background: #0b1220 !important; padding: 12px 14px !important; gap: 8px !important; }
+#listingModal .modal-thumbs img { border-radius: 8px !important; opacity: .55; border: 2px solid transparent !important; transition: opacity .15s; }
+#listingModal .modal-thumbs img:hover, #listingModal .modal-thumbs img.active { opacity: 1; border-color: #e6c364 !important; }
+/* 가운데: 매물 정보 */
+#listingModal .modal-col-info { padding: 26px 28px !important; background: #fff !important; }
+#listingModal .modal-section-title { font-size: 13px !important; font-weight: 800 !important; color: var(--m-navy) !important; letter-spacing: .02em; margin: 0 0 14px !important; padding-left: 10px; border-left: 3px solid var(--m-gold); line-height: 1.2; }
+#listingModal #modalInfoTable { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; width: 100%; border: none !important; }
+#listingModal #modalInfoTable tbody { display: contents; }
+#listingModal #modalInfoTable tr { display: flex !important; flex-direction: column; gap: 4px; background: var(--m-soft) !important; border: 1px solid var(--m-line); border-radius: 10px; padding: 12px 14px; }
+#listingModal #modalInfoTable td { padding: 0 !important; border: none !important; background: none !important; width: auto !important; }
+#listingModal #modalInfoTable .info-label { font-size: 11.5px !important; color: var(--m-sub) !important; font-weight: 600 !important; }
+#listingModal #modalInfoTable .info-value { font-size: 15px !important; color: var(--m-ink) !important; font-weight: 700 !important; }
+#listingModal .modal-change-note { margin: 12px 0 0 !important; padding: 10px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; color: #92400e !important; font-size: 11.5px !important; }
+#listingModal .modal-desc-section { margin-top: 26px !important; border-top: none !important; padding-top: 0 !important; }
+#listingModal .modal-desc { background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 12px !important; padding: 16px 18px !important; font-size: 14.5px !important; line-height: 1.9 !important; color: #1f2937 !important; }
+/* 오른쪽: 요약 */
+#listingModal .modal-col-side { background: #fbfcfe !important; border-left: 1px solid var(--m-line) !important; padding: 24px 22px !important; }
+#listingModal .modal-badge { display: flex !important; flex-wrap: wrap; gap: 6px; }
+#listingModal .modal-badge > span { border-radius: 6px !important; font-size: 11.5px !important; font-weight: 700 !important; padding: 3px 8px !important; }
+#listingModal .modal-title { font-size: 22px !important; font-weight: 800 !important; color: var(--m-ink) !important; line-height: 1.4 !important; letter-spacing: -.02em; margin: 12px 0 6px !important; }
+#listingModal .modal-address { font-size: 13px !important; color: var(--m-sub) !important; }
+#listingModal .modal-address::before { content: "📍 "; }
+#listingModal .modal-price-area { background: #fff !important; border: 1px solid var(--m-line) !important; border-left: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 16px 18px !important; margin-top: 16px !important; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+#listingModal .modal-price-row { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 2px !important; }
+#listingModal .modal-price-row + .modal-price-row { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--m-line); }
+#listingModal .price-label { background: none !important; padding: 0 !important; font-size: 12px !important; color: var(--m-sub) !important; font-weight: 600 !important; }
+#listingModal .price-value { font-size: 28px !important; font-weight: 800 !important; color: var(--m-navy) !important; letter-spacing: -.02em; }
+#listingModal .modal-area-highlight { background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 14px 18px !important; margin-top: 10px !important; }
+#listingModal .area-hl-label { font-size: 12px !important; color: var(--m-sub) !important; font-weight: 600 !important; }
+#listingModal .area-hl-control { align-items: flex-start !important; }
+#listingModal .area-hl-value { font-size: 17px !important; font-weight: 800 !important; color: var(--m-ink) !important; }
+#listingModal .area-hl-py { font-size: 13px !important; color: var(--m-sub) !important; }
+#listingModal .modal-agent { position: relative; background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 44px 18px 14px !important; margin-top: 10px !important; font-size: 12.5px !important; line-height: 1.7 !important; color: #4b5563 !important; }
+#listingModal .modal-agent::before { content: "담당 중개사무소"; position: absolute; left: 18px; top: 14px; font-size: 11px; font-weight: 700; color: var(--m-gold); letter-spacing: .04em; }
+#listingModal .modal-agent::after { content: ""; position: absolute; right: 16px; top: 10px; width: 92px; height: 22px; background: url("/images/hitoplogo.png") right center / contain no-repeat; }
+#listingModal .modal-agent strong { font-size: 14px !important; color: var(--m-ink) !important; }
+/* 버튼 */
+#listingModal .modal-contact { display: grid !important; grid-template-columns: 1fr 1fr repeat(4, 44px); gap: 6px !important; margin-top: 14px !important; align-items: start; }
+#listingModal .modal-tel, #listingModal .modal-kakao-btn { height: 48px !important; min-height: 48px !important; border-radius: 10px !important; font-size: 14.5px !important; font-weight: 800 !important; }
+#listingModal .modal-tel { background: var(--m-navy) !important; color: #fff !important; }
+#listingModal .modal-contact .modal-print-btn, #listingModal .modal-contact .modal-copy-btn { width: 44px !important; height: 44px !important; border-radius: 10px !important; border: 1px solid var(--m-line) !important; background: #fff !important; margin-bottom: 16px !important; }
+#listingModal .modal-inquiry-jump { margin-top: 2px !important; height: 46px; border-radius: 10px !important; background: #fff !important; border: 1.5px solid var(--m-navy) !important; color: var(--m-navy) !important; font-weight: 800 !important; }
+#listingModal .modal-inquiry-jump:hover { background: #f2f5fb !important; }
+#listingModal .modal-minimap-wrap { margin-top: 16px !important; background: #fff; border: 1px solid var(--m-line); border-radius: 14px; padding: 12px; }
+#listingModal .modal-minimap-wrap h4 { font-size: 12px !important; color: var(--m-navy) !important; font-weight: 800 !important; margin: 2px 2px 10px !important; }
+#listingModal #modalBodyMap { border-radius: 10px; overflow: hidden; }
+#listingModal .modal-inline-consult { margin-top: 16px !important; background: #fff !important; border: 1px solid var(--m-line) !important; border-radius: 14px !important; padding: 16px !important; }
+#listingModal .modal-consult-form strong { font-size: 14px; color: var(--m-ink); }
+#listingModal .modal-consult-form input, #listingModal .modal-consult-form textarea { border-radius: 8px !important; border: 1px solid var(--m-line) !important; background: var(--m-soft) !important; }
+#listingModal .modal-consult-form button { background: var(--m-navy) !important; border-radius: 8px !important; font-weight: 800 !important; }
+@media (max-width: 768px) {
+  #listingModal #modalInfoTable { grid-template-columns: 1fr 1fr; }
+  #listingModal .modal-contact { grid-template-columns: 1fr 1fr; }
+  #listingModal .modal-contact .modal-print-btn, #listingModal .modal-contact .modal-copy-btn { width: 100% !important; }
+  #listingModal .modal-title { font-size: 19px !important; }
+  #listingModal .price-value { font-size: 24px !important; }
+}
