@@ -1,4 +1,35 @@
 console.log('app.js 로드됨!');
+
+// ── 한 번 로그인(SSO) ──
+// 1) 이 브라우저에 관리자 로그인이 이미 살아 있으면 탭마다 비밀번호를 다시 묻지 않는다.
+//    (실제 자료 권한은 Supabase 세션·RLS가 따로 검사한다.)
+// 2) 업무센터에서 넘어온 1회용 입장권(#sso=...)이 있으면 비밀번호 없이 로그인한다.
+(function hitopSsoBootstrap() {
+  const KEY = 'sb-xaxbkdnrzsghsabkdvzj-auth-token';
+  const ADMIN = 'hh720403@gmail.com';
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      const email = String((s && s.user && s.user.email) || '').toLowerCase();
+      if (email === ADMIN && s.refresh_token) sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+    }
+  } catch (_) {}
+  const m = location.hash.match(/[#&]sso=([^&]+)/);
+  if (!m) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  window.__hitopSsoPending = (async () => {
+    try {
+      const { supabase } = await import('./supabase-config.js');
+      const { data, error } = await supabase.auth.verifyOtp({ token_hash: decodeURIComponent(m[1]), type: 'email' });
+      const email = String((data && data.session && data.session.user && data.session.user.email) || '').toLowerCase();
+      if (!error && email === ADMIN) {
+        sessionStorage.setItem('hitopAdminLoggedIn', 'true');
+        if (document.getElementById('loginOverlay')) location.reload();
+      }
+    } catch (_) {}
+  })();
+})();
 const SUPABASE_LISTINGS_TABLE = 'listings';
 const SUPABASE_VISITORS_TABLE = 'visitors';
 // 공개(비로그인) 조회 전용 뷰 — owner_name/owner_phone*/quick_*/privateDetailAddress/drive_links/description 등
