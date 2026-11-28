@@ -10,16 +10,17 @@
 #listingModal .modal-close { width: 38px !important; height: 38px !important; border-radius: 50% !important; border: 1px solid var(--m-line) !important; background: #fff !important; color: var(--m-ink) !important; font-size: 16px !important; display: grid !important; place-items: center !important; transition: background .15s, transform .15s; }
 #listingModal .modal-close:hover { background: var(--m-soft) !important; transform: rotate(90deg); }
 
-/* ── 데스크톱: 왼쪽(사진+정보) / 오른쪽(가격·문의) 2단 ── */
+/* ── 데스크톱: 한 화면에 모두 보이게 (사진 | 정보 | 가격·문의) ── */
 @media (min-width: 1025px) {
-  #listingModal .modal-box { max-width: 1320px !important; }
-  #listingModal .modal-body { display: grid !important; grid-template-columns: minmax(0, 1.65fr) minmax(360px, 1fr) !important; grid-template-areas: "photo side" "info side"; grid-template-rows: auto 1fr; overflow-y: auto !important; overflow-x: hidden !important; }
-  #listingModal .modal-col-photo { grid-area: photo; order: 0 !important; border-right: none !important; overflow: visible !important; }
-  #listingModal .modal-col-info { grid-area: info; order: 0 !important; border-right: none !important; overflow: visible !important; }
-  #listingModal .modal-col-side { grid-area: side; order: 0 !important; position: sticky; top: 0; align-self: start; max-height: calc(90vh - 58px); overflow-y: auto !important; }
-  #listingModal .modal-main-img { aspect-ratio: 16 / 10 !important; max-height: 58vh !important; }
+  #listingModal .modal-box { max-width: 1480px !important; height: min(90vh, 860px) !important; max-height: 90vh !important; }
+  #listingModal .modal-body { display: grid !important; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(330px, .78fr) !important; grid-template-areas: none !important; overflow: hidden !important; flex: 1; min-height: 0; }
+  #listingModal .modal-col-photo { order: 1 !important; grid-area: auto !important; display: flex !important; flex-direction: column; min-height: 0; overflow: hidden !important; border-right: none !important; }
+  #listingModal .modal-main-img { flex: 1 1 auto; min-height: 0; aspect-ratio: auto !important; max-height: none !important; height: auto !important; }
+  #listingModal .modal-col-info { order: 2 !important; grid-area: auto !important; min-height: 0; overflow-y: auto !important; overflow-x: hidden !important; border-right: 1px solid var(--m-line) !important; scrollbar-width: thin; scrollbar-color: #d5dbe5 transparent; }
+  #listingModal .modal-col-info::-webkit-scrollbar { width: 6px; }
+  #listingModal .modal-col-info::-webkit-scrollbar-thumb { background: #d5dbe5; border-radius: 3px; }
+  #listingModal .modal-col-side { order: 3 !important; grid-area: auto !important; position: static !important; max-height: none !important; min-height: 0; overflow: hidden !important; border-left: none !important; padding: 22px 22px 18px !important; }
 }
-
 /* 사진 */
 #listingModal .modal-col-photo { background: #0b1220 !important; }
 #listingModal .modal-main-img { position: relative; overflow: hidden; background: #0b1220 !important; }
@@ -140,3 +141,26 @@
 }
 #listingModal .modal-col-side > * { flex-shrink: 0 !important; }
 #listingModal .modal-price-area { height: auto !important; overflow: visible !important; }
+
+@media (min-width: 1025px) {
+  #listingModal .modal-col-info { padding: 22px 24px 24px !important; }
+  #listingModal #modalInfoTable { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  #listingModal #modalInfoTable tr { padding: 11px 14px; }
+  #listingModal #modalInfoTable .info-value { font-size: 14.5px !important; }
+  #listingModal .modal-desc-section { margin-top: 20px !important; }
+  #listingModal .modal-desc { padding: 14px 16px !important; font-size: 14px !important; line-height: 1.7 !important; }
+  #listingModal .modal-desc .md-li { padding: 4px 0 4px 28px; }
+  #listingModal .modal-desc .md-li::before { top: 7px; }
+  #listingModal .modal-desc .md-li::after { top: 11px; }
+  #listingModal .modal-seo-keywords { margin-top: 14px; }
+  #listingModal .modal-title { font-size: 20px !important; margin: 10px 0 6px !important; }
+  #listingModal .modal-price-area { margin-top: 14px !important; padding: 16px 18px !important; }
+  #listingModal .price-value { font-size: 28px !important; }
+  #listingModal .modal-ppy { margin-top: 10px; padding-top: 9px; }
+  #listingModal .modal-area-highlight { padding: 11px 16px !important; margin-top: 8px !important; }
+  #listingModal .modal-contact { margin-top: 12px !important; }
+  #listingModal .modal-contact .modal-tel, #listingModal .modal-consult-btn { height: 48px !important; min-height: 48px !important; }
+  #listingModal .modal-tool-btn { height: 38px !important; }
+  #listingModal .modal-agent { margin-top: 12px !important; padding: 12px 14px 11px 78px !important; min-height: 0; font-size: 11.5px !important; line-height: 1.6 !important; }
+  #listingModal .modal-agent::before { left: 12px; top: 12px; width: 54px; height: 54px; border-radius: 12px; }
+}
