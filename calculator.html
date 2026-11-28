@@ -53,10 +53,18 @@
       .ch-hero h1 em { font-style:normal; background:linear-gradient(90deg,#f3dd9a,#C9A84C); -webkit-background-clip:text; background-clip:text; color:transparent; }
       .ch-hero p { margin:0; color:#c5d0ea; font-size:15px; }
       .ch-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
-      .ch-chips span { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); font-size:12.5px; color:#e3e9f7; backdrop-filter:blur(6px); }
+      .ch-chips > span { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); font-size:12.5px; color:#e3e9f7; backdrop-filter:blur(6px); }
       .ch-chips b { color:#fff; font-weight:800; }
       .ch-chips .dot { width:6px; height:6px; border-radius:50%; background:#4ade80; box-shadow:0 0 0 3px rgba(74,222,128,.2); }
 
+      .ch-chips em { font-style:normal; }
+      .ch-refresh { display:inline-flex; align-items:center; gap:7px; padding:7px 14px; border-radius:999px; border:1px solid rgba(230,199,110,.6); background:linear-gradient(135deg,rgba(230,199,110,.22),rgba(201,168,76,.12)); color:#f3dd9a; font-family:inherit; font-size:12.5px; font-weight:800; cursor:pointer; transition:background .15s, transform .15s; }
+      .ch-refresh:hover { background:rgba(230,199,110,.32); transform:translateY(-1px); }
+      .ch-refresh svg { width:14px; height:14px; }
+      .ch-refresh.spin svg { animation:rsp .8s linear infinite; }
+      .ch-refresh:disabled { opacity:.7; cursor:wait; }
+      @keyframes rsp { to { transform:rotate(360deg); } }
+      .ch-status { margin:10px 0 0 !important; font-size:12px !important; color:#9fb0d6 !important; min-height:16px; }
       /* ── 카드형 탭 ── */
       .ct-tabs { position:relative; z-index:2; margin-top:-72px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
       .ct-tab { text-align:left; border:1px solid var(--line); background:#fff; border-radius:16px; padding:18px 18px 16px; cursor:pointer; font-family:inherit; box-shadow:0 10px 30px -14px rgba(10,31,92,.25); transition:transform .18s, box-shadow .18s, border-color .18s, background .18s; display:grid; grid-template-columns:44px 1fr; column-gap:12px; align-items:center; }
@@ -211,10 +219,12 @@
         <h1>하이탑 <em>부동산 계산기</em></h1>
         <p>수익률·임대료 인상·전월세 전환·중개보수를 현행 법령 기준으로 바로 계산해 보세요.</p>
         <div class="ch-chips">
-          <span><i class="dot"></i>기준금리 <b id="chipBase">3.25%</b> · 2026.11.26</span>
+          <span><i class="dot"></i>기준금리 <b id="chipBase">3.25%</b> · <em id="chipDate">2026.11.26 변경</em></span>
           <span>주택 전환율 상한 <b id="chipHouse">5.25%</b></span>
           <span>상가 전환율 상한 <b id="chipShop">12%</b></span>
+          <button type="button" class="ch-refresh" id="rateRefresh" title="한국은행 기준금리를 다시 확인합니다"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg><span>현재 금리로 업데이트</span></button>
         </div>
+        <p class="ch-status" id="rateStatus"></p>
       </div>
     </section>
 
@@ -227,7 +237,7 @@
 
     <section class="info-list-section calc-section">
       <div class="container">
-        <p class="calc-basis">📌 적용 기준: 한국은행 기준금리 <b id="baseRateTxt">3.25</b>% (2026.11.26 결정) · 공인중개사법 시행규칙 중개보수 요율 (2021.10.19 개정) · 금액 단위 <b>만원</b></p>
+        <p class="calc-basis">📌 적용 기준: 한국은행 기준금리 <b id="baseRateTxt">3.25</b>% (<span id="baseRateDate">2026.11.26</span> 변경) · 공인중개사법 시행규칙 중개보수 요율 (2021.10.19 개정) · 금액 단위 <b>만원</b></p>
 
         <!-- 1. 상가 수익률 -->
         <div class="calc-panel active" data-panel="yield">
@@ -422,9 +432,10 @@
     <script>
     (function () {
       /* ── 기준값 (바뀌면 여기만 수정) ── */
-      const BASE_RATE = 3.25;                                  // 한국은행 기준금리 (2026.11.26)
-      const HOUSE_CONV = Math.min(10, BASE_RATE + 2);          // 주택임대차보호법 시행령 제9조: min(10%, 기준금리+2%p)
-      const SHOP_CONV  = Math.min(12, BASE_RATE * 4.5);        // 상가건물임대차보호법 시행령 제5조: min(12%, 기준금리×4.5)
+      let BASE_RATE = 3.25;                                    // 한국은행 기준금리 기본값 (불러오기 실패 시 사용)
+      let HOUSE_CONV = Math.min(10, BASE_RATE + 2);            // 주택임대차보호법 시행령 제9조: min(10%, 기준금리+2%p)
+      let SHOP_CONV  = Math.min(12, BASE_RATE * 4.5);          // 상가건물임대차보호법 시행령 제5조: min(12%, 기준금리×4.5)
+      const RATE_API = 'https://xaxbkdnrzsghsabkdvzj.supabase.co/functions/v1/base-rate';
 
       const $ = (s, r = document) => r.querySelector(s);
       const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -639,6 +650,36 @@
 
       function calcAll() { calcYield(); calcRaise(); calcConv(); calcFee(); }
       calcAll();
+
+      /* ── 기준금리 실시간 반영 ── */
+      const dot = (d) => d ? d.replace(/-/g, '.') : '';
+      function applyRate(rate, changedOn) {
+        BASE_RATE = rate;
+        HOUSE_CONV = r2(Math.min(10, rate + 2));
+        SHOP_CONV = r2(Math.min(12, rate * 4.5));
+        set('chipBase', r2(rate) + '%'); set('chipHouse', HOUSE_CONV + '%'); set('chipShop', SHOP_CONV + '%');
+        set('baseRateTxt', r2(rate));
+        if (changedOn) { set('chipDate', dot(changedOn) + ' 변경'); set('baseRateDate', dot(changedOn)); }
+        inp('r_conv').value = seg.r_type === 'house' ? HOUSE_CONV : SHOP_CONV;
+        inp('c_conv').value = seg.c_type === 'house' ? HOUSE_CONV : SHOP_CONV;
+        calcAll();
+      }
+      async function loadRate(force) {
+        const btn = $('#rateRefresh'); btn.classList.add('spin'); btn.disabled = true;
+        try {
+          const r = await fetch(RATE_API + (force ? '?refresh=1&t=' + Date.now() : ''), { cache: force ? 'no-store' : 'default' });
+          const j = await r.json();
+          if (!isFinite(j.rate)) throw 0;
+          const prev = BASE_RATE;
+          applyRate(Number(j.rate), j.changed_on);
+          const when = j.checked_at ? new Date(j.checked_at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          set('rateStatus', (force && prev !== BASE_RATE ? `기준금리가 ${prev}% → ${BASE_RATE}%로 바뀌어 다시 계산했습니다. ` : '') + (when ? `한국은행 기준금리 ${when} 확인` : ''));
+        } catch (e) {
+          set('rateStatus', '지금은 금리를 불러오지 못해 마지막 확인 금리로 계산합니다.');
+        } finally { btn.classList.remove('spin'); btn.disabled = false; }
+      }
+      $('#rateRefresh').addEventListener('click', () => loadRate(true));
+      loadRate(false);
     })();
     </script>
 
