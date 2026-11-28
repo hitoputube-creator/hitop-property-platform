@@ -1768,6 +1768,22 @@ const ensureModalActionButtons = (item = {}) => {
   shareBtn.title = '공유';
   shareBtn.onclick = () => shareListing(item);
   refreshFavoriteButtons();
+  // 문의 남기기: 아래쪽 매물 상담신청 폼으로 바로 이동
+  let jump = document.getElementById('modalInquiryJump');
+  if (!jump) {
+    jump = document.createElement('button');
+    jump.id = 'modalInquiryJump';
+    jump.type = 'button';
+    jump.className = 'modal-inquiry-jump';
+    jump.textContent = '✉️ 이 매물 문의 남기기';
+    contact.insertAdjacentElement('afterend', jump);
+  }
+  jump.onclick = () => {
+    const form = document.getElementById('modalInlineConsult');
+    if (!form) return;
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => document.getElementById('modalConsultName')?.focus(), 400);
+  };
 };
 
 const renderInlineConsultForm = (item = {}) => {
@@ -1954,7 +1970,7 @@ const openModal = (item) => {
     if (areaInfo) {
       const sideAreaM2 = isExclusiveType ? formatAreaSummaryM2(item) : (areaInfo.m2str || '-');
       const sideAreaPy = isExclusiveType ? formatAreaSummaryPy(item) : (areaInfo.py2str || areaInfo.pystr || '-');
-      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><div class="area-hl-control"><span class="area-hl-value" data-m2="${sideAreaM2}" data-py="${sideAreaPy}">${sideAreaM2}</span>${sideAreaM2 !== '-' ? '<button type="button" class="area-toggle-btn" id="modalAreaSummaryToggle" data-unit="m2">평</button>' : ''}</div></div>`;
+      areaHlEl.innerHTML = `<div class="area-hl-row"><span class="area-hl-label">면적정보</span><div class="area-hl-control"><span class="area-hl-value">${sideAreaM2}</span>${sideAreaPy && sideAreaPy !== '-' ? `<span class="area-hl-py">${sideAreaPy}</span>` : ''}</div></div>`;
       areaHlEl.style.display = '';
     } else {
       areaHlEl.innerHTML = '<div class="area-hl-row"><span class="area-hl-label">면적정보</span><span class="area-hl-value">-</span></div>';
@@ -1995,12 +2011,12 @@ const openModal = (item) => {
 
   const tableRows = [];
   const addRow = (label, value, cls) => {
-    const v = (value !== null && value !== undefined && value !== '') ? String(value) : null;
-    if (v) tableRows.push({ label, value: v, cls: cls || '' });
+    const v = (value !== null && value !== undefined && value !== '') ? String(value).trim() : null;
+    if (v && v !== '-' && v !== '—') tableRows.push({ label, value: v, cls: cls || '' }); // 빈 값(-)은 숨김
   };
   const propertyTypeLabel = getPropertyTypeLabel(item);
 
-  addRow('주소',    getDisplayAddress(item));
+  // 주소·금액·면적은 오른쪽 요약 박스에 크게 나오므로 표에서는 뺀다(중복 정리).
   addRow('매물종류', propertyTypeLabel);
   addRow('거래유형', item.dealType);
 
@@ -2011,9 +2027,7 @@ const openModal = (item) => {
   const sale = _fmtPrice(item.salePrice,                 false);
   const mgmt = item.managementFee;
   const prem = item.premium;
-  if (dep)  addRow('보증금', dep,  'info-price-row');
-  if (rent) addRow('월세',   rent, 'info-price-row');
-  if (sale && !dep) addRow('매매가', sale, 'info-price-row');
+  void dep; void rent; void sale;
   if (mgmt) addRow('관리비', mgmt, 'info-price-row');
   if (prem) addRow('권리금', prem, 'info-price-row');
 
@@ -2033,6 +2047,8 @@ const openModal = (item) => {
   addRow('용도지역', item.zoning      ?? item.zoningArea);
   addRow('주차대수', formatParkingCount(item.parkingCount ?? item.parkingSpaces ?? item.parking));
   addRow('사용승인일', item.approvalDate);
+  const _regDate = item.createdAt ? String(item.createdAt).slice(0, 10).replace(/-/g, '.') : '';
+  addRow('등록일', _regDate);
 
   let tableHTML = tableRows.map(r => {
     const isPrice = r.cls === 'info-price-row';
@@ -2045,11 +2061,21 @@ const openModal = (item) => {
   const fixedRows = tableRows.slice(0, 3).map(r => `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value">${r.value}</td></tr>`).join('');
   const priceRows = tableRows.slice(3, 3 + priceEndIdx).map(r => `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value info-price-value">${r.value}</td></tr>`).join('');
   const otherRows = tableRows.slice(3 + priceEndIdx).map(r => `<tr class="${r.cls}"><td class="info-label">${r.label}</td><td class="info-value">${r.value}</td></tr>`).join('');
-  tableHTML = fixedRows + priceRows + areaRowHTML + otherRows;
+  void areaRowHTML; void fixedRows; void priceRows; void otherRows;
+  // 표는 순서대로 그대로 (면적은 오른쪽 박스에 ㎡·평 함께 표시)
 
   const infoTableEl = document.getElementById('modalInfoTable');
   if (infoTableEl) {
     infoTableEl.innerHTML = tableHTML;
+    // 변동 가능 안내 (등록일 이후 조건 변경·거래 완료 가능)
+    let noteEl = document.getElementById('modalChangeNote');
+    if (!noteEl) {
+      noteEl = document.createElement('p');
+      noteEl.id = 'modalChangeNote';
+      noteEl.className = 'modal-change-note';
+      infoTableEl.insertAdjacentElement('afterend', noteEl);
+    }
+    noteEl.textContent = '※ 등록일 이후 가격·조건 등 변동사항이 있을 수 있으며, 거래가 완료되었을 수도 있습니다. 방문 전 전화로 꼭 확인해 주세요.';
     infoTableEl.querySelectorAll('tr').forEach(row => {
       const labelEl = row.querySelector('.info-label');
       const valueEl = row.querySelector('.info-value');
@@ -2132,8 +2158,8 @@ const openModal = (item) => {
   if (seoKeywordsEl) {
     const seoKeywords = getSeoKeywords(item, 6);
     if (seoKeywords.length) {
-      seoKeywordsEl.textContent = `검색 키워드: ${seoKeywords.join(' · ')}`;
-      seoKeywordsEl.style.display = '';
+      seoKeywordsEl.textContent = '';
+      seoKeywordsEl.style.display = 'none'; // 검색용 단어는 손님 화면에 보이지 않게
     } else {
       seoKeywordsEl.textContent = '';
       seoKeywordsEl.style.display = 'none';
