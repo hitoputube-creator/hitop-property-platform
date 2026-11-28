@@ -1780,12 +1780,13 @@ const ensureModalActionButtons = (item = {}) => {
     tel.dataset.iconed = '1';
     tel.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>전화문의';
   }
+  // 매물상담 → 홈페이지 상담 페이지(텔레그램 자동 알림)로 이동, 매물 정보 자동 입력
   consultBtn.onclick = () => {
-    const form = document.getElementById('modalInlineConsult');
-    if (!form) return;
-    form.classList.add('is-focus');
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => { document.getElementById('modalConsultName')?.focus(); form.classList.remove('is-focus'); }, 900);
+    const _no = getShortListingNo(item);
+    const listingTitle = [_no ? `No.${_no}` : '', item.title || ''].filter(Boolean).join(' ') || '매물';
+    const cat = String(getCategory1(item) || '');
+    const q = new URLSearchParams({ listing: listingTitle, cat });
+    location.href = `/write-consult.html?${q.toString()}`;
   };
   // 작은 도구 버튼 줄: 프린트 · 링크복사 · 공유
   let tools = document.getElementById('modalTools');
@@ -2268,7 +2269,7 @@ const openModal = (item) => {
     copyBtn.onclick = () => copyListingLink(item);
   }
   ensureModalActionButtons(item);
-  renderInlineConsultForm(item);
+  document.getElementById('modalInlineConsult')?.remove(); // 하단 매물상담 폼은 쓰지 않음
   hitopModalPhotoDecor();
 
   modal.classList.remove('hidden');

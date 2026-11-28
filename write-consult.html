@@ -382,7 +382,7 @@
       </div>
     </footer>
 
-    <script src="app.js?v=20261128-md4"></script>
+    <script src="app.js?v=20261128-md5"></script>
     <script type="module">
       import { supabase } from "./supabase-config.js";
 
@@ -493,6 +493,22 @@
         if (sub && !sub.value) sub.value = '매물 접수합니다';
         var c = document.getElementById('w-content');
         if (c && !c.value) c.value = '희망 가격(보증금/월세/매매가): \n면적: \n현재 상태(공실/임차 중 등): \n기타 내용: ';
+      })();
+    </script>
+    <script>
+      /* 매물상담: write-consult.html?listing=No.8054 ... (매물 상세 팝업의 매물상담 버튼) */
+      (function () {
+        var p = new URLSearchParams(location.search);
+        var listing = p.get('listing');
+        if (!listing || p.get('type') === 'sell') return;
+        var t = document.querySelector('.write-title'); if (t) t.textContent = '매물상담';
+        var n = document.querySelector('.write-notice'); if (n) n.textContent = '🔒 문의하신 매물 정보가 자동으로 들어가 있어요. 연락처만 남겨주시면 담당 공인중개사가 바로 연락드립니다.';
+        var l = document.getElementById('w-listing'); if (l) l.value = listing;
+        var s = document.getElementById('w-subject'); if (s && !s.value) s.value = '매물상담 - ' + listing;
+        var c = document.getElementById('w-content'); if (c && !c.value) c.value = listing + ' 매물 상담을 요청합니다.';
+        var cat = p.get('cat') || '';
+        var sel = document.getElementById('w-type');
+        if (sel) sel.value = /공장|창고/.test(cat) ? '공장·창고 상담' : /상가|사무실|건물|빌딩/.test(cat) ? '상가·빌딩 상담' : /토지/.test(cat) ? '토지·개발 상담' : /오피스텔|주거/.test(cat) ? '오피스텔 상담' : '기타 문의';
       })();
     </script>
   </body>
