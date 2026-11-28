@@ -8076,3 +8076,18 @@ body[data-page="listings"] .lp-cat-sub-item.is-empty { display: none !important;
 /* 사진 칸: 사진 비율(4:3)에 맞춰 위아래 빈 띠 줄이기 */
 #listingModal .modal-main-img { aspect-ratio: 4 / 3; height: auto !important; max-height: 70vh; }
 #listingModal .modal-main-img img { width: 100%; height: 100%; object-fit: contain; }
+/* 매물보기 사이드바: 블로그 위젯 */
+.lp-blog-widget { margin: 10px 12px 0; padding: 12px 14px; border: 1px solid #e2e6ed; border-radius: 12px; background: #fff; }
+.lp-blog-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.lp-blog-hd span { font-size: 13.5px; font-weight: 800; color: #0A1F5C; }
+.lp-blog-hd a { font-size: 12px; color: #03c75a; font-weight: 700; text-decoration: none; }
+.lp-blog-list { list-style: none; margin: 0; padding: 0; }
+.lp-blog-list li { border-top: 1px solid #f1f4f8; }
+.lp-blog-list li:first-child { border-top: none; }
+.lp-blog-list a { display: block; padding: 7px 0; text-decoration: none; }
+.lp-blog-list .t { display: block; font-size: 12.5px; color: #1e293b; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lp-blog-list a:hover .t { color: #0A1F5C; text-decoration: underline; }
+.lp-blog-list .d { display: block; font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.lp-blog-loading { font-size: 12px; color: #94a3b8; padding: 6px 0; }
+.lp-blog-go { display: block; margin-top: 8px; text-align: center; padding: 8px; border-radius: 8px; background: #03c75a; color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; }
+.lp-blog-go:hover { background: #02b351; }

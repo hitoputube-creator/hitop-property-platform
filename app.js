@@ -19,6 +19,33 @@ console.log('app.js 로드됨!');
   window.addEventListener('load', fit);
 })();
 
+// 매물보기 사이드바: 하이탑 블로그 최신글 위젯 (분류 페이지면 관련 글 먼저)
+(function hitopSidebarBlogWidget() {
+  const run = () => {
+    if (document.body.dataset.page !== 'listings') return;
+    const anchor = document.querySelector('.lp-sidebar .lp-catlist-section');
+    if (!anchor || document.getElementById('lpBlogWidget')) return;
+    const BLOG = 'https://blog.naver.com/newpajucity';
+    const box = document.createElement('div');
+    box.id = 'lpBlogWidget';
+    box.className = 'lp-sidebar-section lp-blog-widget';
+    box.innerHTML = '<div class="lp-blog-hd"><span>📝 하이탑 블로그</span><a href="' + BLOG + '" target="_blank" rel="noopener noreferrer">전체 ›</a></div><ul class="lp-blog-list"><li class="lp-blog-loading">불러오는 중…</li></ul><a class="lp-blog-go" href="' + BLOG + '" target="_blank" rel="noopener noreferrer">블로그 바로가기 →</a>';
+    anchor.insertAdjacentElement('afterend', box);
+    const page = location.pathname.split('/').pop();
+    const prefer = { 'factory-warehouse.html': /공장|창고/, 'commercial-office.html': /상가|사무실/, 'land.html': /토지|땅|농지/, 'residential.html': /아파트|오피스텔|주택|전세|월세/, 'building.html': /빌딩|건물/ }[page];
+    const esc = (t) => String(t || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    fetch('/blog-posts.json?v=' + new Date().toISOString().slice(0, 10)).then((r) => r.json()).then((d) => {
+      let posts = (d && d.posts) || [];
+      if (prefer) posts = posts.filter((p) => prefer.test(p.title)).concat(posts.filter((p) => !prefer.test(p.title)));
+      const top = posts.slice(0, 3);
+      const ul = box.querySelector('.lp-blog-list');
+      if (!top.length) { ul.innerHTML = ''; return; }
+      ul.innerHTML = top.map((p) => '<li><a href="' + BLOG + '/' + encodeURIComponent(p.id) + '" target="_blank" rel="noopener noreferrer"><span class="t">' + esc(p.title) + '</span><span class="d">' + esc(String(p.date || '').replace(/-/g, '.')) + '</span></a></li>').join('');
+    }).catch(() => { const ul = box.querySelector('.lp-blog-list'); if (ul) ul.innerHTML = ''; });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true }); else run();
+})();
+
 (function hitopSsoBootstrap() {
   const KEY = 'sb-xaxbkdnrzsghsabkdvzj-auth-token';
   const ADMIN = 'hh720403@gmail.com';
