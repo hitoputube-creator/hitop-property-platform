@@ -8050,3 +8050,12 @@ body[data-page="listings"] .lp-cat-sub-item.is-empty { display: none !important;
 .lp-panel-hd-right { display: inline-flex; align-items: center; gap: 10px; }
 .lp-sort-select { height: 28px; padding: 0 26px 0 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); color: #fff; font-size: 12.5px; font-weight: 600; font-family: inherit; cursor: pointer; }
 .lp-sort-select option { color: #0A1F5C; }
+/* 휴대폰: 검색칸을 줄 단위로 (검색어 / 종류·거래·검색 / 금액·평수) */
+@media (max-width: 768px) {
+  body[data-page="listings"] .lp-header-search { flex-wrap: wrap !important; gap: 6px !important; }
+  body[data-page="listings"] .lp-header-search input[type=text] { flex: 1 1 100% !important; width: 100% !important; min-width: 0 !important; height: 40px !important; }
+  body[data-page="listings"] .lp-header-search select { flex: 1 1 0 !important; min-width: 0 !important; width: auto !important; height: 40px !important; }
+  body[data-page="listings"] .lp-header-search .lp-search-submit { flex: 0 0 70px !important; height: 40px !important; }
+  body[data-page="listings"] .lp-range-filters { flex: 1 1 100% !important; display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; margin: 0 !important; }
+  body[data-page="listings"] .lp-range-filters input { width: 100% !important; min-width: 0 !important; height: 38px !important; font-size: 12.5px !important; padding: 0 8px !important; box-sizing: border-box !important; }
+}
