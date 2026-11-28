@@ -19,7 +19,7 @@ console.log('app.js 로드됨!');
   window.addEventListener('load', fit);
 })();
 
-// 매물보기 사이드바: 하이탑 블로그 바로가기 버튼
+// 매물보기 사이드바: 바로가기 버튼 (블로그 · 매물접수 · 하이탑 계산기)
 (function hitopSidebarBlogWidget() {
   const run = () => {
     if (document.body.dataset.page !== 'listings') return;
@@ -28,8 +28,11 @@ console.log('app.js 로드됨!');
     const BLOG = 'https://blog.naver.com/newpajucity';
     const box = document.createElement('div');
     box.id = 'lpBlogWidget';
-    box.className = 'lp-sidebar-section lp-blog-widget';
-    box.innerHTML = '<a class="lp-blog-go" href="' + BLOG + '" target="_blank" rel="noopener noreferrer"><span class="lp-blog-n">N</span><span class="lp-blog-txt"><b>하이탑 블로그</b><small>매물·부동산 정보 보러가기</small></span><span class="lp-blog-arrow">→</span></a>';
+    box.className = 'lp-quick-links';
+    box.innerHTML =
+      '<a class="lp-quick lp-quick-blog" href="' + BLOG + '" target="_blank" rel="noopener noreferrer"><span class="lp-quick-ico">N</span>하이탑 블로그<span class="lp-quick-arrow">›</span></a>' +
+      '<a class="lp-quick lp-quick-sell" href="/write-consult.html?type=sell"><span class="lp-quick-ico">🏢</span>매물접수<span class="lp-quick-arrow">›</span></a>' +
+      '<a class="lp-quick lp-quick-calc" href="https://hitoputube-creator.github.io/hitop-unified-calculator/" target="_blank" rel="noopener noreferrer"><span class="lp-quick-ico">🧮</span>하이탑 계산기<span class="lp-quick-arrow">›</span></a>';
     anchor.insertAdjacentElement('afterend', box);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true }); else run();
