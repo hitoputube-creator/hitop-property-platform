@@ -96,6 +96,14 @@
       .f-in > span { padding:0 14px 0 2px; font-size:13px; color:var(--mut); font-weight:700; }
       .kor { display:block; margin-top:6px; font-size:12px; color:#a9852e; font-weight:700; min-height:16px; text-align:right; }
       .f-hint { display:block; font-size:12px; color:#94a3b8; margin:6px 0 0; line-height:1.6; }
+      .f-extra { margin-top:22px; padding:18px 18px 14px; border-radius:14px; background:#fbf8ef; border:1.5px dashed #e3cf95; }
+      .f-extra-h { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+      .f-extra-h b { font-size:14px; font-weight:800; color:#8a6a1c; }
+      .f-extra-h b::before { content:"＋ "; }
+      .f-extra-h span { font-size:12px; color:#a08a55; }
+      .f-extra .f-in { background:#fff; }
+      .f-extra .f-ic { background:#f5ecd2; color:#8a6a1c; }
+      .f-extra .f-hint { color:#a08a55; }
       .quick { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
       .quick button { border:1px solid #dde3ee; background:#fff; color:#475569; font-family:inherit; font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px; cursor:pointer; transition:all .15s; }
       .quick button:hover { border-color:var(--nv); color:var(--nv); background:#f3f6fc; }
@@ -236,11 +244,14 @@
                 <div><label>대출금 <em>선택</em></label><div class="f-in"><input data-k="y_loan" inputmode="numeric" placeholder="0"><span>만원</span></div></div>
                 <div><label>대출금리 <em>선택</em></label><div class="f-in"><input data-k="y_loanRate" inputmode="decimal" placeholder="예: 4.5"><span>%</span></div></div>
               </div>
+              <div class="f-extra">
+              <div class="f-extra-h"><b>추가비용</b><span>참고용 · 수익률 계산에는 들어가지 않아요</span></div>
               <div class="f-row two">
-                <div><label>취득세 등 <em>추가비용 참고</em></label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div><small class="kor" id="y_taxAmt"></small></div>
-                <div><label>중개수수료 <em>추가비용 참고</em></label><div class="f-in"><input data-k="y_feeRate" inputmode="decimal" value="0.9"><span>%</span></div><small class="kor" id="y_feeAmt"></small></div>
+                <div><label>취득세 등</label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div><small class="kor" id="y_taxAmt"></small></div>
+                <div><label>중개수수료</label><div class="f-in"><input data-k="y_feeRate" inputmode="decimal" value="0.9"><span>%</span></div><small class="kor" id="y_feeAmt"></small></div>
               </div>
               <p class="f-hint">취득세: 상가·토지 4% + 지방교육세 0.4% + 농어촌특별세 0.2% = 4.6%<br>중개수수료: 상가 매매 법정 상한 0.9% 이내 협의 · 부가세 10% 포함해 계산</p>
+              </div>
             </div>
             <div class="calc-result" id="r_yield">
               <div class="r-main"><span>실투자 수익률</span><b id="y_out_main">-</b><div class="gauge" id="y_gauge" hidden><div class="gauge-bar"><i class="gauge-dot" id="y_gdot"></i></div><div class="gauge-lbl"><span>0%</span><span>5%</span><span>10% 이상</span></div></div></div>
