@@ -138,3 +138,5 @@
   #listingModal.hidden .modal-contact { display: none !important; }
   #listingModal .modal-contact .modal-tel, #listingModal .modal-consult-btn { height: 50px !important; min-height: 50px !important; }
 }
+#listingModal .modal-col-side > * { flex-shrink: 0 !important; }
+#listingModal .modal-price-area { height: auto !important; overflow: visible !important; }

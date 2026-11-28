@@ -2023,9 +2023,10 @@ const openModal = (item) => {
   // 평당가 (매매만, 첫 면적 기준: 상가·주거=전용, 건물=대지, 토지=토지)
   try {
     const _pf = priceFields.find(f => f.money && item[f.key]);
+    const _raw = _pf ? item[_pf.key] : (item.salePrice ?? item.price);
     const _p0 = areaInfo && areaInfo.parts && areaInfo.parts[0];
-    if (item.dealType === '매매' && _pf && _p0 && _p0.py > 0) {
-      const _n = Number(String(item[_pf.key]).replace(/[,\s]/g, ''));
+    if (item.dealType === '매매' && _raw && _p0 && _p0.py > 0) {
+      const _n = Number(String(_raw).replace(/[,\s]/g, ''));
       const _mw = _n >= 100000000 ? _n / 10000 : _n;
       if (_mw > 0) {
         const _per = Math.round(_mw / _p0.py);
