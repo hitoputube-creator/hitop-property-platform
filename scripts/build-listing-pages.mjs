@@ -226,6 +226,7 @@ const buildSitemap = (listings) => {
     '/building.html',
     '/about.html',
     '/info.html',
+    '/forms.html',
     '/unj3-land-map.html',
   ];
 
