@@ -8097,3 +8097,7 @@ body[data-page="listings"] .lp-cat-sub-item.is-empty { display: none !important;
   body[data-page="listings"] .site-footer-v2 .footer-v2-info { margin: 0 !important; font-size: 11px !important; gap: 0 !important; }
   body[data-page="listings"] .lp-sidebar { overflow: hidden !important; }
 }
+.lp-quick-kakao { background: #FEE500; color: #191919; }
+/* 대표번호 박스: 카카오 버튼은 위 바로가기로 옮김 → 번호만 하단에 */
+body[data-page="listings"] .phone-inquiry-box .lp-kakao-btn,
+body[data-page="listings"] .phone-inquiry-box .lp-kakao-btn + p { display: none !important; }

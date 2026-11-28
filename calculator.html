@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z8XP3W0Z8G"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Z8XP3W0Z8G');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="상가 수익률, 임대료 5% 인상 한도, 전월세 전환, 중개보수(복비)를 현행 기준금리와 법정 요율로 바로 계산하는 하이탑부동산 계산기입니다." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://hitoprealty.com/calculator.html" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="하이탑부동산" />
+    <meta property="og:title" content="부동산 계산기 | 하이탑부동산" />
+    <meta property="og:description" content="상가 수익률, 임대료 5% 인상 한도, 전월세 전환, 중개보수(복비)를 현행 기준금리와 법정 요율로 바로 계산하는 하이탑부동산 계산기입니다." />
+    <meta property="og:url" content="https://hitoprealty.com/calculator.html" />
+    <meta property="og:image" content="https://hitoprealty.com/images/hitoplogo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="부동산 계산기 | 하이탑부동산" />
+    <meta name="twitter:description" content="상가 수익률, 임대료 5% 인상 한도, 전월세 전환, 중개보수(복비)를 현행 기준금리와 법정 요율로 바로 계산하는 하이탑부동산 계산기입니다." />
+    <meta name="twitter:image" content="https://hitoprealty.com/images/hitoplogo.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"하이탑 부동산 계산기","url":"https://hitoprealty.com/calculator.html","applicationCategory":"FinanceApplication","provider":{"@id":"https://hitoprealty.com/#real-estate-agent","name":"하이탑부동산공인중개사사무소","telephone":"031-949-8969"}}</script>
+    <title>부동산 계산기 (수익률·임대료 인상·전월세 전환·중개보수) | 하이탑부동산</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=20261128-cal1" />
+    <style>
+      .top-bar { background:#0A1F5C; padding:6px 0; }
+      .top-bar .container { display:flex; justify-content:flex-end; align-items:center; gap:20px; }
+      .top-bar-hours { font-size:12px; color:#aab8d8; }
+      .top-bar-phone { font-size:12px; font-weight:600; color:#C9A84C; text-decoration:none; }
+      .top-bar-phone:hover { color:#e0c070; }
+      @media (max-width:768px) { .top-bar-hours { display:none; } }
+
+      .calc-section { padding-top: 28px; }
+      .calc-basis { font-size: 12.5px; color: #64748b; margin: 0 0 18px; }
+      .calc-basis b { color: #0A1F5C; }
+      .calc-panel { display: none; }
+      .calc-panel.active { display: block; }
+      .calc-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 20px; align-items: start; }
+      .calc-card, .calc-result { background: #fff; border: 1px solid #e2e6ed; border-radius: 16px; padding: 26px 26px 22px; }
+      .calc-card h2 { font-size: 20px; font-weight: 800; color: #0A1F5C; margin: 0 0 6px; letter-spacing: -.02em; }
+      .calc-desc { font-size: 13.5px; color: #64748b; margin: 0 0 20px; line-height: 1.6; }
+      .f-row { margin-bottom: 14px; }
+      .f-row.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .f-row label, .f-row.two label { display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; }
+      .f-row label em { font-style: normal; font-weight: 500; color: #94a3b8; font-size: 11.5px; margin-left: 4px; }
+      .f-in { display: flex; align-items: center; border: 1px solid #d6dde8; border-radius: 10px; background: #f8fafc; transition: border-color .15s, box-shadow .15s; }
+      .f-in:focus-within { border-color: #0A1F5C; box-shadow: 0 0 0 3px rgba(10,31,92,.08); background: #fff; }
+      .f-in input { flex: 1; min-width: 0; border: none; background: transparent; padding: 12px 14px; font-size: 16px; font-weight: 700; color: #0f172a; font-family: inherit; outline: none; text-align: right; }
+      .f-in input::placeholder { color: #b3bccb; font-weight: 500; font-size: 14px; }
+      .f-in span { padding: 0 14px 0 2px; font-size: 13px; color: #64748b; font-weight: 600; }
+      .kor { display: block; margin-top: 5px; font-size: 12px; color: #b8923a; font-weight: 700; min-height: 16px; text-align: right; }
+      .f-hint { display: block; font-size: 12px; color: #94a3b8; margin: 2px 0 0; line-height: 1.6; }
+      .seg { display: inline-flex; background: #f1f4f9; border-radius: 10px; padding: 4px; gap: 4px; margin: 0 8px 16px 0; flex-wrap: wrap; }
+      .seg button { border: none; background: transparent; padding: 9px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 700; color: #64748b; cursor: pointer; font-family: inherit; }
+      .seg button.on { background: #fff; color: #0A1F5C; box-shadow: 0 1px 3px rgba(15,23,42,.12); }
+      .seg.small button { padding: 7px 12px; font-size: 12.5px; }
+      .chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #475569; margin-top: 4px; cursor: pointer; }
+      .calc-result { position: sticky; top: 90px; background: linear-gradient(160deg, #0A1F5C 0%, #132c6e 100%); border: none; color: #fff; }
+      .r-main { padding-bottom: 18px; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.15); }
+      .r-main span { display: block; font-size: 13px; color: #c7d2ea; font-weight: 600; margin-bottom: 6px; }
+      .r-main b { font-size: 34px; font-weight: 800; letter-spacing: -.02em; color: #fff; }
+      .r-list { margin: 0; }
+      .r-list > div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 14px; }
+      .r-list dt { color: #aab8d8; }
+      .r-list dd { margin: 0; font-weight: 700; color: #fff; text-align: right; }
+      .r-list .sub dt, .r-list .sub dd { color: #e6c364; font-size: 13px; }
+      .r-note { margin: 14px 0 0; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.12); font-size: 12px; line-height: 1.7; color: #aab8d8; }
+      .calc-cta { margin-top: 26px; background: #fff; border: 1px solid #e2e6ed; border-left: 5px solid #C9A84C; border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+      .calc-cta b { display: block; font-size: 16px; color: #0A1F5C; margin-bottom: 4px; }
+      .calc-cta span { font-size: 13.5px; color: #64748b; }
+      .calc-cta-btns { display: flex; gap: 8px; }
+      .calc-cta-btns a { text-decoration: none; padding: 11px 18px; border-radius: 9px; font-weight: 800; font-size: 14px; }
+      .cb-tel { background: #0A1F5C; color: #fff; }
+      .cb-req { background: #fff; color: #0A1F5C; border: 1.5px solid #0A1F5C; }
+      .calc-disclaimer { font-size: 12px; color: #94a3b8; text-align: center; margin: 16px 0 0; }
+      @media (max-width: 900px) {
+        .calc-grid { grid-template-columns: 1fr; }
+        .calc-result { position: static; }
+      }
+      @media (max-width: 520px) {
+        .f-row.two { grid-template-columns: 1fr; }
+        .calc-card, .calc-result { padding: 20px 18px; }
+        .r-main b { font-size: 28px; }
+        .calc-cta-btns, .calc-cta-btns a { width: 100%; text-align: center; box-sizing: border-box; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="top-bar">
+      <div class="container">
+        <span class="top-bar-hours">📅 평일 10:00 ~ 19:00</span>
+        <a class="top-bar-phone" href="tel:031-949-8969">📞 031-949-8969</a>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="/">
+          <img src="/images/hitoplogo.png" alt="하이탑부동산" class="brand-logo" />
+        </a>
+        <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <a href="/#about">하이탑소개</a>
+          <a href="listings.html">매물보기</a>
+          <a href="info.html">부동산정보</a>
+          <a href="forms.html">서식모음</a>
+          <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
+          <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
+          <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
+          <a href="write-consult.html?type=sell">매도·매수 상담의뢰</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="info-page-hero calc-hero">
+      <div class="container">
+        <h1>하이탑 부동산 계산기</h1>
+        <p>수익률·임대료 인상·전월세 전환·중개보수를 현행 기준으로 바로 계산해 보세요.</p>
+      </div>
+    </section>
+
+    <div class="info-category-bar">
+      <div class="container" role="tablist" aria-label="계산기 종류">
+        <button class="info-cat-btn active" data-tab="yield" role="tab">상가 수익률</button>
+        <button class="info-cat-btn" data-tab="raise" role="tab">임대료 인상</button>
+        <button class="info-cat-btn" data-tab="conv" role="tab">전월세 전환</button>
+        <button class="info-cat-btn" data-tab="fee" role="tab">중개보수</button>
+      </div>
+    </div>
+
+    <section class="info-list-section calc-section">
+      <div class="container">
+        <p class="calc-basis">적용 기준: 한국은행 기준금리 <b id="baseRateTxt">3.25</b>% (2026.11.26 결정) · 공인중개사법 시행규칙 중개보수 요율 (2021.10.19 개정) · 금액 단위 <b>만원</b></p>
+
+        <!-- 1. 상가 수익률 -->
+        <div class="calc-panel active" data-panel="yield">
+          <div class="calc-grid">
+            <div class="calc-card">
+              <h2>상가 수익률</h2>
+              <p class="calc-desc">매매가·보증금·월세를 넣으면 실제 들어가는 돈 기준 수익률을 계산합니다.</p>
+              <div class="f-row"><label>매매가</label><div class="f-in"><input data-k="y_price" inputmode="numeric" placeholder="예: 50000"><span>만원</span></div><small class="kor" data-for="y_price"></small></div>
+              <div class="f-row two">
+                <div><label>보증금</label><div class="f-in"><input data-k="y_dep" inputmode="numeric" placeholder="예: 3000"><span>만원</span></div></div>
+                <div><label>월세</label><div class="f-in"><input data-k="y_rent" inputmode="numeric" placeholder="예: 200"><span>만원</span></div></div>
+              </div>
+              <div class="f-row two">
+                <div><label>대출금 <em>선택</em></label><div class="f-in"><input data-k="y_loan" inputmode="numeric" placeholder="0"><span>만원</span></div></div>
+                <div><label>대출금리 <em>선택</em></label><div class="f-in"><input data-k="y_loanRate" inputmode="decimal" placeholder="예: 4.5"><span>%</span></div></div>
+              </div>
+              <div class="f-row two">
+                <div><label>취득세 등</label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div></div>
+                <div><label>기타 비용 <em>선택</em></label><div class="f-in"><input data-k="y_etc" inputmode="numeric" placeholder="중개보수 등"><span>만원</span></div></div>
+              </div>
+              <p class="f-hint">상가·토지 취득세 4% + 지방교육세 0.4% + 농어촌특별세 0.2% = 4.6%</p>
+            </div>
+            <div class="calc-result" id="r_yield">
+              <div class="r-main"><span>실투자 수익률</span><b id="y_out_main">-</b></div>
+              <dl class="r-list">
+                <div><dt>연 임대수입 (월세×12)</dt><dd id="y_out_annual">-</dd></div>
+                <div><dt>대출이자 (연)</dt><dd id="y_out_interest">-</dd></div>
+                <div><dt>취득세 등</dt><dd id="y_out_tax">-</dd></div>
+                <div><dt>실투자금</dt><dd id="y_out_invest">-</dd></div>
+                <div class="sub"><dt>단순 수익률 (월세×12 ÷ (매매가−보증금))</dt><dd id="y_out_simple">-</dd></div>
+              </dl>
+              <p class="r-note">실투자금 = 매매가 + 취득세 등 + 기타 비용 − 보증금 − 대출금<br>실투자 수익률 = (연 임대수입 − 대출이자) ÷ 실투자금</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 임대료 인상 -->
+        <div class="calc-panel" data-panel="raise">
+          <div class="calc-grid">
+            <div class="calc-card">
+              <h2>임대료 인상 한도</h2>
+              <p class="calc-desc">재계약 시 법정 5% 인상 한도 안에서 올릴 수 있는 최대 월세를 계산합니다.</p>
+              <div class="seg" data-seg="r_type"><button class="on" data-v="house">주택</button><button data-v="shop">상가</button></div>
+              <div class="f-row two">
+                <div><label>현재 보증금</label><div class="f-in"><input data-k="r_dep" inputmode="numeric" placeholder="예: 5000"><span>만원</span></div></div>
+                <div><label>현재 월세</label><div class="f-in"><input data-k="r_rent" inputmode="numeric" placeholder="예: 100"><span>만원</span></div></div>
+              </div>
+              <div class="f-row two">
+                <div><label>변경 보증금 <em>그대로면 비움</em></label><div class="f-in"><input data-k="r_newDep" inputmode="numeric" placeholder="현재와 같음"><span>만원</span></div></div>
+                <div><label>인상률</label><div class="f-in"><input data-k="r_pct" inputmode="decimal" value="5"><span>%</span></div></div>
+              </div>
+              <div class="f-row"><label>적용 전환율</label><div class="f-in"><input data-k="r_conv" inputmode="decimal"><span>%</span></div><small class="f-hint" id="r_convHint"></small></div>
+            </div>
+            <div class="calc-result">
+              <div class="r-main"><span>인상 후 최대 월세</span><b id="r_out_main">-</b></div>
+              <dl class="r-list">
+                <div><dt>현재 환산보증금</dt><dd id="r_out_cur">-</dd></div>
+                <div><dt>인상 한도 환산보증금</dt><dd id="r_out_max">-</dd></div>
+                <div><dt>변경 보증금</dt><dd id="r_out_dep">-</dd></div>
+                <div><dt>월세 인상액</dt><dd id="r_out_diff">-</dd></div>
+              </dl>
+              <p class="r-note">환산보증금 = 보증금 + 월세 × 12 ÷ 전환율<br>최대 월세 = (환산보증금 × (1 + 인상률) − 변경 보증금) × 전환율 ÷ 12<br>※ 계약갱신·재계약 등 상황에 따라 적용이 달라질 수 있어 계약 전 상담을 권합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 전월세 전환 -->
+        <div class="calc-panel" data-panel="conv">
+          <div class="calc-grid">
+            <div class="calc-card">
+              <h2>전월세 전환</h2>
+              <p class="calc-desc">전세를 월세로, 월세를 전세로 바꿀 때의 금액을 계산합니다.</p>
+              <div class="seg" data-seg="c_dir"><button class="on" data-v="toWol">전세 → 월세</button><button data-v="toJeon">월세 → 전세</button></div>
+              <div class="seg small" data-seg="c_type"><button class="on" data-v="house">주택</button><button data-v="shop">상가</button></div>
+              <div class="c-toWol">
+                <div class="f-row two">
+                  <div><label>전세금</label><div class="f-in"><input data-k="c_jeon" inputmode="numeric" placeholder="예: 30000"><span>만원</span></div></div>
+                  <div><label>바꿀 보증금</label><div class="f-in"><input data-k="c_newDep" inputmode="numeric" placeholder="예: 5000"><span>만원</span></div></div>
+                </div>
+              </div>
+              <div class="c-toJeon" hidden>
+                <div class="f-row two">
+                  <div><label>현재 보증금</label><div class="f-in"><input data-k="c_dep" inputmode="numeric" placeholder="예: 5000"><span>만원</span></div></div>
+                  <div><label>현재 월세</label><div class="f-in"><input data-k="c_rent" inputmode="numeric" placeholder="예: 100"><span>만원</span></div></div>
+                </div>
+              </div>
+              <div class="f-row"><label>전환율</label><div class="f-in"><input data-k="c_conv" inputmode="decimal"><span>%</span></div><small class="f-hint" id="c_convHint"></small></div>
+            </div>
+            <div class="calc-result">
+              <div class="r-main"><span id="c_out_label">전환 월세</span><b id="c_out_main">-</b></div>
+              <dl class="r-list">
+                <div><dt id="c_out_l1">전환 대상 금액</dt><dd id="c_out_v1">-</dd></div>
+                <div><dt>적용 전환율</dt><dd id="c_out_v2">-</dd></div>
+              </dl>
+              <p class="r-note" id="c_note">월세 = (전세금 − 보증금) × 전환율 ÷ 12</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 중개보수 -->
+        <div class="calc-panel" data-panel="fee">
+          <div class="calc-grid">
+            <div class="calc-card">
+              <h2>중개보수 (복비)</h2>
+              <p class="calc-desc">법정 상한요율과 한도액을 적용한 중개보수 상한을 계산합니다.</p>
+              <div class="seg" data-seg="f_type"><button class="on" data-v="house">주택</button><button data-v="ofc">주거용 오피스텔</button><button data-v="etc">상가·토지·공장</button></div>
+              <div class="seg small" data-seg="f_deal"><button class="on" data-v="sale">매매·교환</button><button data-v="rent">임대차</button></div>
+              <div class="f-sale"><div class="f-row"><label>거래금액</label><div class="f-in"><input data-k="f_amount" inputmode="numeric" placeholder="예: 50000"><span>만원</span></div><small class="kor" data-for="f_amount"></small></div></div>
+              <div class="f-rent" hidden>
+                <div class="f-row two">
+                  <div><label>보증금</label><div class="f-in"><input data-k="f_dep" inputmode="numeric" placeholder="예: 3000"><span>만원</span></div></div>
+                  <div><label>월세</label><div class="f-in"><input data-k="f_rent" inputmode="numeric" placeholder="예: 150"><span>만원</span></div></div>
+                </div>
+              </div>
+              <div class="f-row" id="f_etcRateRow" hidden><label>협의 요율 <em>상한 0.9%</em></label><div class="f-in"><input data-k="f_etcRate" inputmode="decimal" value="0.9"><span>%</span></div></div>
+              <label class="chk"><input type="checkbox" data-k="f_vat" checked> 부가가치세 10% 포함 (일반과세자 기준)</label>
+            </div>
+            <div class="calc-result">
+              <div class="r-main"><span>중개보수 상한</span><b id="f_out_main">-</b></div>
+              <dl class="r-list">
+                <div><dt id="f_out_baseL">거래금액</dt><dd id="f_out_base">-</dd></div>
+                <div><dt>상한요율</dt><dd id="f_out_rate">-</dd></div>
+                <div><dt>한도액</dt><dd id="f_out_cap">-</dd></div>
+                <div><dt>중개보수 (부가세 전)</dt><dd id="f_out_fee">-</dd></div>
+                <div><dt>부가가치세</dt><dd id="f_out_vat">-</dd></div>
+              </dl>
+              <p class="r-note" id="f_note">중개보수는 상한 안에서 중개의뢰인과 협의해 정합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-cta">
+          <div><b>계산 결과가 실제 거래와 맞는지 궁금하신가요?</b><span>하이탑부동산이 조건을 확인해 정확히 안내해 드립니다.</span></div>
+          <div class="calc-cta-btns">
+            <a href="tel:031-949-8969" class="cb-tel">📞 031-949-8969</a>
+            <a href="write-consult.html?type=sell" class="cb-req">상담의뢰 →</a>
+          </div>
+        </div>
+        <p class="calc-disclaimer">본 계산기는 참고용이며 실제 세액·보수·임대료는 개별 조건(과세유형, 감면, 계약 내용 등)에 따라 달라질 수 있습니다.</p>
+      </div>
+    </section>
+
+    <footer class="site-footer-v2">
+      <div class="footer-v2-inner">
+        <div class="footer-v2-company">
+          <p class="footer-v2-name">하이탑부동산공인중개사사무소</p>
+          <div class="footer-v2-info">
+            <span>대표: 주현희</span>
+            <span>주소: 경기도 파주시 책향기로 830, 1층</span>
+            <span>전화: 031-949-8969</span>
+            <span>팩스: 031-944-1108</span>
+          </div>
+          <div class="footer-v2-info">
+            <span>사업자등록번호: 305-48-62183</span>
+            <span>중개사무소 등록번호: 41480-2016-00026</span>
+            <span>이메일: newpajucity@naver.com</span>
+          </div>
+          <p class="footer-v2-copy">Copyright © 2026 하이탑부동산. All rights reserved.</p>
+        </div>
+        <div class="footer-v2-divider"></div>
+        <div class="footer-v2-right">
+          <div class="footer-v2-btns">
+            <a class="fv2-btn fv2-tel" href="tel:031-949-8969"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>전화상담</a>
+            <a class="fv2-btn fv2-blog" href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>블로그</a>
+            <a class="fv2-btn fv2-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M12 3C7.03 3 3 6.36 3 10.5c0 2.64 1.57 4.96 3.94 6.35L5.98 20l3.7-2.15c.74.12 1.52.18 2.32.18 4.97 0 9-3.36 9-7.5S16.97 3 12 3z"/></svg>카카오 상담</a>
+            <a class="fv2-btn fv2-inquiry" href="write-consult.html?type=sell"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>상담의뢰</a>
+            <a class="fv2-btn fv2-youtube" href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>유튜브</a>
+          </div>
+          <a class="fv2-admin-btn" href="admin.html">관리자</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 햄버거 메뉴 -->
+    <script>
+      const _navToggle = document.querySelector('.nav-toggle');
+      const _navMenu   = document.querySelector('.nav-menu');
+      if (_navToggle && _navMenu) {
+        _navToggle.addEventListener('click', () => _navMenu.classList.toggle('open'));
+      }
+    </script>
+
+    <script src="app.js?v=20261128-cal1"></script>
+    <script>
+    (function () {
+      /* ── 기준값 (바뀌면 여기만 수정) ── */
+      const BASE_RATE = 3.25;                                  // 한국은행 기준금리 (2026.11.26)
+      const HOUSE_CONV = Math.min(10, BASE_RATE + 2);          // 주택임대차보호법 시행령 제9조: min(10%, 기준금리+2%p)
+      const SHOP_CONV  = Math.min(12, BASE_RATE * 4.5);        // 상가건물임대차보호법 시행령 제5조: min(12%, 기준금리×4.5)
+
+      const $ = (s, r = document) => r.querySelector(s);
+      const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+      const inp = (k) => $(`[data-k="${k}"]`);
+      const num = (k) => { const el = inp(k); if (!el) return 0; const v = parseFloat(String(el.value).replace(/,/g, '')); return isFinite(v) ? v : 0; };
+      const seg = {};
+      const r2 = (n) => Math.round(n * 100) / 100;
+
+      // 만원 → "1억 2,345만원"
+      const man = (m) => {
+        if (!isFinite(m) || m === 0) return '0원';
+        const neg = m < 0; m = Math.abs(m);
+        const eok = Math.floor(m / 10000), rest = Math.round(m - eok * 10000);
+        let s = '';
+        if (eok) s += eok.toLocaleString('ko-KR') + '억';
+        if (rest) s += (s ? ' ' : '') + rest.toLocaleString('ko-KR') + '만';
+        if (!s) s = (Math.round(m * 10000)).toLocaleString('ko-KR');
+        return (neg ? '-' : '') + s + '원';
+      };
+      // 원 → "123,000원"
+      const won = (w) => Math.round(w).toLocaleString('ko-KR') + '원';
+      const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+
+      // 숫자 입력: 천단위 쉼표 + 한글 금액 미리보기
+      $$('.f-in input').forEach(el => {
+        el.addEventListener('input', () => {
+          if (el.inputMode === 'numeric') {
+            const raw = el.value.replace(/[^\d]/g, '');
+            el.value = raw ? Number(raw).toLocaleString('ko-KR') : '';
+          }
+          const k = $(`.kor[data-for="${el.dataset.k}"]`);
+          if (k) k.textContent = num(el.dataset.k) ? man(num(el.dataset.k)) : '';
+          calcAll();
+        });
+      });
+      $$('input[type=checkbox][data-k]').forEach(el => el.addEventListener('change', calcAll));
+
+      // 선택 버튼
+      $$('.seg').forEach(g => {
+        seg[g.dataset.seg] = $('button.on', g).dataset.v;
+        g.addEventListener('click', e => {
+          const b = e.target.closest('button'); if (!b) return;
+          $$('button', g).forEach(x => x.classList.toggle('on', x === b));
+          seg[g.dataset.seg] = b.dataset.v;
+          if (g.dataset.seg === 'r_type') inp('r_conv').value = seg.r_type === 'house' ? HOUSE_CONV : SHOP_CONV;
+          if (g.dataset.seg === 'c_type') inp('c_conv').value = seg.c_type === 'house' ? HOUSE_CONV : SHOP_CONV;
+          calcAll();
+        });
+      });
+
+      // 탭
+      $$('.info-cat-btn[data-tab]').forEach(b => b.addEventListener('click', () => {
+        $$('.info-cat-btn[data-tab]').forEach(x => x.classList.toggle('active', x === b));
+        $$('.calc-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === b.dataset.tab));
+        history.replaceState(null, '', '#' + b.dataset.tab);
+      }));
+      const startTab = location.hash.slice(1);
+      if (startTab) { const b = $(`.info-cat-btn[data-tab="${startTab}"]`); if (b) b.click(); }
+
+      inp('r_conv').value = HOUSE_CONV;
+      inp('c_conv').value = HOUSE_CONV;
+      set('baseRateTxt', BASE_RATE);
+
+      /* 1. 상가 수익률 */
+      function calcYield() {
+        const price = num('y_price'), dep = num('y_dep'), rent = num('y_rent');
+        const loan = num('y_loan'), loanRate = num('y_loanRate'), taxRate = num('y_taxRate'), etc = num('y_etc');
+        if (!price || !rent) { ['y_out_main','y_out_annual','y_out_interest','y_out_tax','y_out_invest','y_out_simple'].forEach(i => set(i, '-')); return; }
+        const annual = rent * 12;
+        const interest = loan * loanRate / 100;
+        const tax = price * taxRate / 100;
+        const invest = price + tax + etc - dep - loan;
+        const yieldPct = invest > 0 ? (annual - interest) / invest * 100 : NaN;
+        const simple = price - dep > 0 ? annual / (price - dep) * 100 : NaN;
+        set('y_out_main', isFinite(yieldPct) ? yieldPct.toFixed(2) + '%' : '계산 불가');
+        set('y_out_annual', man(annual));
+        set('y_out_interest', interest ? man(interest) : '없음');
+        set('y_out_tax', man(tax));
+        set('y_out_invest', man(invest));
+        set('y_out_simple', isFinite(simple) ? simple.toFixed(2) + '%' : '-');
+      }
+
+      /* 2. 임대료 인상 */
+      function calcRaise() {
+        const isHouse = seg.r_type === 'house';
+        set('r_convHint', isHouse
+          ? `주택 법정 전환율 상한: 기준금리 ${BASE_RATE}% + 2%p = ${r2(HOUSE_CONV)}% (최대 10%)`
+          : `상가 법정 전환율 상한: 기준금리 ${BASE_RATE}% × 4.5 와 12% 중 낮은 값 = ${r2(SHOP_CONV)}%`);
+        const dep = num('r_dep'), rent = num('r_rent'), conv = num('r_conv'), pct = num('r_pct');
+        const newDep = inp('r_newDep').value.trim() ? num('r_newDep') : dep;
+        if ((!dep && !rent) || !conv) { ['r_out_main','r_out_cur','r_out_max','r_out_dep','r_out_diff'].forEach(i => set(i, '-')); return; }
+        const c = conv / 100;
+        const cur = dep + rent * 12 / c;
+        const max = cur * (1 + pct / 100);
+        const newRent = Math.max(0, (max - newDep) * c / 12);
+        set('r_out_main', won(newRent * 10000));
+        set('r_out_cur', man(cur));
+        set('r_out_max', man(max));
+        set('r_out_dep', man(newDep));
+        set('r_out_diff', (newRent - rent >= 0 ? '+' : '') + won((newRent - rent) * 10000));
+      }
+
+      /* 3. 전월세 전환 */
+      function calcConv() {
+        const toWol = seg.c_dir === 'toWol';
+        $('.c-toWol').hidden = !toWol; $('.c-toJeon').hidden = toWol;
+        const isHouse = seg.c_type === 'house';
+        set('c_convHint', isHouse ? `주택 법정 상한 ${r2(HOUSE_CONV)}% (기준금리 + 2%p)` : `상가 법정 상한 ${r2(SHOP_CONV)}%`);
+        const conv = num('c_conv'); const c = conv / 100;
+        set('c_out_v2', conv ? conv + '%' : '-');
+        if (toWol) {
+          set('c_out_label', '전환 월세'); set('c_out_l1', '전환 대상 (전세금 − 보증금)');
+          set('c_note', '월세 = (전세금 − 보증금) × 전환율 ÷ 12');
+          const base = num('c_jeon') - num('c_newDep');
+          if (!num('c_jeon') || !conv || base <= 0) { set('c_out_main', '-'); set('c_out_v1', '-'); return; }
+          set('c_out_v1', man(base)); set('c_out_main', won(base * c / 12 * 10000));
+        } else {
+          set('c_out_label', '전환 전세금'); set('c_out_l1', '월세 환산액 (월세 × 12 ÷ 전환율)');
+          set('c_note', '전세금 = 보증금 + 월세 × 12 ÷ 전환율');
+          const rent = num('c_rent');
+          if (!rent || !conv) { set('c_out_main', '-'); set('c_out_v1', '-'); return; }
+          const add = rent * 12 / c;
+          set('c_out_v1', man(add)); set('c_out_main', man(num('c_dep') + add));
+        }
+      }
+
+      /* 4. 중개보수 — 공인중개사법 시행규칙 별표1·2, 제20조 */
+      const HOUSE_SALE = [[5000, .006, 25], [20000, .005, 80], [90000, .004, null], [120000, .005, null], [150000, .006, null], [Infinity, .007, null]];
+      const HOUSE_RENT = [[5000, .005, 20], [10000, .004, 30], [60000, .003, null], [120000, .004, null], [150000, .005, null], [Infinity, .006, null]];
+      function calcFee() {
+        const type = seg.f_type, isRent = seg.f_deal === 'rent';
+        $('.f-sale').hidden = isRent; $('.f-rent').hidden = !isRent;
+        $('#f_etcRateRow').hidden = type !== 'etc';
+        let base;
+        if (isRent) {
+          const dep = num('f_dep'), rent = num('f_rent');
+          base = dep + rent * 100;
+          if (base < 5000) base = dep + rent * 70;            // 시행규칙 제20조⑤: 5천만원 미만이면 월세×70
+          set('f_out_baseL', '환산 거래금액 (보증금 + 월세×100, 5천만원 미만은 ×70)');
+        } else { base = num('f_amount'); set('f_out_baseL', '거래금액'); }
+        if (!base) { ['f_out_main','f_out_base','f_out_rate','f_out_cap','f_out_fee','f_out_vat'].forEach(i => set(i, '-')); return; }
+        let rate, cap = null;
+        if (type === 'house') { const t = (isRent ? HOUSE_RENT : HOUSE_SALE).find(([lim]) => base < lim); rate = t[1]; cap = t[2]; }
+        else if (type === 'ofc') rate = isRent ? .004 : .005;   // 전용 85㎡ 이하·부엌·화장실 등 요건 충족 시
+        else rate = Math.min(num('f_etcRate'), 0.9) / 100;
+        let fee = base * rate;                                   // 만원
+        if (cap != null) fee = Math.min(fee, cap);
+        const vat = $('[data-k="f_vat"]').checked ? fee * 0.1 : 0;
+        set('f_out_base', man(base));
+        set('f_out_rate', (rate * 100).toFixed(2).replace(/\.?0+$/, '') + '%');
+        set('f_out_cap', cap != null ? man(cap) : '없음');
+        set('f_out_fee', won(fee * 10000));
+        set('f_out_vat', vat ? won(vat * 10000) : '미포함');
+        set('f_out_main', won((fee + vat) * 10000));
+        set('f_note', type === 'ofc' ? '주거용 오피스텔(전용 85㎡ 이하, 부엌·화장실·목욕시설 등 갖춤) 기준입니다. 요건을 못 갖추면 0.9% 이내 협의입니다. 중개보수는 상한 안에서 협의해 정합니다.'
+          : type === 'etc' ? '주택 외 부동산은 0.9% 이내에서 중개의뢰인과 협의해 정합니다.' : '중개보수는 상한 안에서 중개의뢰인과 협의해 정합니다. 시·도 조례 요율 기준(경기도 동일).');
+      }
+
+      function calcAll() { calcYield(); calcRaise(); calcConv(); calcFee(); }
+      calcAll();
+    })();
+    </script>
+
+  </body>
+</html>

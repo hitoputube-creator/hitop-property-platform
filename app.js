@@ -32,7 +32,8 @@ console.log('app.js 로드됨!');
     box.innerHTML =
       '<a class="lp-quick lp-quick-blog" href="' + BLOG + '" target="_blank" rel="noopener noreferrer"><span class="lp-quick-ico">N</span>하이탑 블로그<span class="lp-quick-arrow">›</span></a>' +
       '<a class="lp-quick lp-quick-sell" href="/write-consult.html?type=sell"><span class="lp-quick-ico">🏢</span>매물접수<span class="lp-quick-arrow">›</span></a>' +
-      '<a class="lp-quick lp-quick-calc" href="https://hitoputube-creator.github.io/hitop-unified-calculator/" target="_blank" rel="noopener noreferrer"><span class="lp-quick-ico">🧮</span>하이탑 계산기<span class="lp-quick-arrow">›</span></a>';
+      '<a class="lp-quick lp-quick-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer"><span class="lp-quick-ico">💬</span>카카오 오픈채팅 상담<span class="lp-quick-arrow">›</span></a>' +
+      '<a class="lp-quick lp-quick-calc" href="/calculator.html"><span class="lp-quick-ico">🧮</span>하이탑 계산기<span class="lp-quick-arrow">›</span></a>';
     anchor.insertAdjacentElement('afterend', box);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true }); else run();
