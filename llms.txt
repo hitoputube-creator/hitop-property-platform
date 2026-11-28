@@ -11,7 +11,7 @@
 - [부동산정보](https://hitoprealty.com/info.html): 계약 전 확인해야 할 부동산 실전 정보 및 지역분석 콘텐츠
 - [하이탑소개](https://hitoprealty.com/#about): 하이탑부동산공인중개사사무소 소개
 - [상담신청](https://hitoprealty.com/contact.html): 매물·상담 문의 접수
-- [상담문의 게시판](https://hitoprealty.com/consult.html): 상담 문의 게시판
+- [매도·매수 상담의뢰](https://hitoprealty.com/write-consult.html?type=sell): 매도·임대 의뢰 및 매수·임차 상담 신청서
 - [공장·창고 전문관](https://hitoprealty.com/factory-warehouse.html): 파주·운정·탄현·월롱·광탄·조리 지역 공장·창고 임대·매매 매물 전문 페이지
 - [상가·사무실 전문관](https://hitoprealty.com/commercial-office.html): 파주 운정신도시(와동동) 상권 중심 상가·사무실 임대·매매 매물 전문 페이지
 - [토지 매물](https://hitoprealty.com/land.html): 파주·운정 지역 토지 매매 매물(개발부지, 공장부지, 창고부지, 상가부지, 단독택지) 페이지

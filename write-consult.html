@@ -212,6 +212,12 @@
       .write-done p { font-size:14px; color:#475569; line-height:1.8; margin:0 0 22px; }
       .write-done a { color:#0A1F5C; font-weight:700; }
       .write-done .write-done-btn { display:inline-block; background:#0A1F5C; color:#fff; padding:11px 26px; border-radius:8px; text-decoration:none; }
+          .mode-tabs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 22px; }
+      .mode-tab { display:flex; flex-direction:column; gap:3px; padding:14px 18px; border-radius:12px; background:#fff; border:1px solid #e2e6ed; color:#0A1F5C; font-size:15px; font-weight:800; text-decoration:none; transition:border-color .15s, box-shadow .15s; }
+      .mode-tab small { font-size:12.5px; font-weight:500; color:#64748b; }
+      .mode-tab:hover { border-color:#c3cde0; }
+      .mode-tab.on { border:2px solid #0A1F5C; box-shadow:0 6px 18px rgba(10,31,92,.12); }
+      .mode-tab.on small { color:#475569; }
     </style>
   </head>
   <body data-page="write-consult">
@@ -239,7 +245,7 @@
           <a href="https://blog.naver.com/newpajucity" target="_blank" rel="noopener noreferrer">블로그</a>
           <a href="https://cafe.naver.com/pajujjang" target="_blank" rel="noopener noreferrer">카페</a>
           <a href="https://www.youtube.com/@hitop_ai" target="_blank" rel="noopener noreferrer">유튜브</a>
-          <a href="consult.html">매도·매수 상담의뢰</a>
+          <a href="write-consult.html?type=sell">매도·매수 상담의뢰</a>
         </nav>
       </div>
     </header>
@@ -247,6 +253,21 @@
     <!-- 본문 -->
     <section class="write-section">
       <div class="container">
+
+        <div class="mode-tabs" role="tablist" aria-label="의뢰 종류">
+          <a class="mode-tab" data-mode="sell" href="write-consult.html?type=sell">🏢 매도·임대 의뢰<small>팔거나 임대하고 싶어요</small></a>
+          <a class="mode-tab" data-mode="buy" href="write-consult.html">🔍 매수·임차 상담<small>사거나 임차할 곳을 찾아요</small></a>
+        </div>
+        <script>
+          (function () {
+            var sell = new URLSearchParams(location.search).get('type') === 'sell';
+            document.querySelectorAll('.mode-tab').forEach(function (t) {
+              var on = (t.dataset.mode === 'sell') === sell;
+              t.classList.toggle('on', on);
+              t.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+          })();
+        </script>
 
         <div class="write-header">
           <div>
@@ -327,7 +348,7 @@
 
             <div class="btn-row">
               <button type="submit" class="btn-submit">의뢰서 보내기</button>
-              <a href="consult.html" class="btn-back">← 의뢰 선택으로</a>
+              
             </div>
 
           </form>
