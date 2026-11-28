@@ -128,8 +128,10 @@
       .r-list > div { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; font-size:13.5px; border-bottom:1px solid rgba(255,255,255,.06); }
       .r-list > div:last-child { border-bottom:none; }
       .r-list dt { color:#aab8d8; }
-      .r-list dd { margin:0; font-weight:800; color:#fff; text-align:right; font-variant-numeric:tabular-nums; }
+      .r-list dd { white-space:nowrap; margin:0; font-weight:800; color:#fff; text-align:right; font-variant-numeric:tabular-nums; }
       .r-list .sub dt, .r-list .sub dd { color:#e6c76e; font-size:12.5px; }
+      .r-extra { margin-top:12px; padding:6px 14px; border-radius:12px; background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.22); }
+      .r-extra .r-extra-h dt { color:#e6c76e; font-weight:700; font-size:12px; }
       .r-note { margin:14px 0 0; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,.05); font-size:11.5px; line-height:1.75; color:#a7b5d6; }
 
       /* ── 하단 상담 ── */
@@ -235,8 +237,8 @@
                 <div><label>대출금리 <em>선택</em></label><div class="f-in"><input data-k="y_loanRate" inputmode="decimal" placeholder="예: 4.5"><span>%</span></div></div>
               </div>
               <div class="f-row two">
-                <div><label>취득세 등</label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div></div>
-                <div><label>기타 비용 <em>선택</em></label><div class="f-in"><input data-k="y_etc" inputmode="numeric" placeholder="중개보수 등"><span>만원</span></div></div>
+                <div><label>취득세 등 <em>추가비용 참고</em></label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div></div>
+                <div><label>기타 비용 <em>추가비용 참고</em></label><div class="f-in"><input data-k="y_etc" inputmode="numeric" placeholder="중개보수 등"><span>만원</span></div></div>
               </div>
               <p class="f-hint">상가·토지 취득세 4% + 지방교육세 0.4% + 농어촌특별세 0.2% = 4.6%</p>
             </div>
@@ -245,11 +247,16 @@
               <dl class="r-list">
                 <div><dt>연 임대수입 (월세×12)</dt><dd id="y_out_annual">-</dd></div>
                 <div><dt>대출이자 (연)</dt><dd id="y_out_interest">-</dd></div>
-                <div><dt>취득세 등</dt><dd id="y_out_tax">-</dd></div>
                 <div><dt>실투자금</dt><dd id="y_out_invest">-</dd></div>
-                <div class="sub"><dt>단순 수익률 (월세×12 ÷ (매매가−보증금))</dt><dd id="y_out_simple">-</dd></div>
+                <div class="sub"><dt>단순 수익률 (대출 제외)</dt><dd id="y_out_simple">-</dd></div>
               </dl>
-              <p class="r-note">실투자금 = 매매가 + 취득세 등 + 기타 비용 − 보증금 − 대출금<br>실투자 수익률 = (연 임대수입 − 대출이자) ÷ 실투자금</p>
+              <dl class="r-list r-extra">
+                <div class="r-extra-h"><dt>추가비용 · 참고 (처음 한 번만)</dt><dd></dd></div>
+                <div><dt>취득세 등</dt><dd id="y_out_tax">-</dd></div>
+                <div><dt>기타 비용</dt><dd id="y_out_etc">-</dd></div>
+                <div><dt>총 필요자금</dt><dd id="y_out_total">-</dd></div>
+              </dl>
+              <p class="r-note">실투자금 = 매매가 − 보증금 − 대출금<br>총 필요자금 = 실투자금 + 취득세 등 + 기타 비용<br>실투자 수익률 = (연 임대수입 − 대출이자) ÷ 실투자금<br>※ 수익률은 매년 반복되는 수익 기준이라, 취득세·중개보수처럼 처음 한 번만 드는 비용은 넣지 않고 추가비용으로 따로 보여드립니다.</p>
             </div>
           </div>
         </div>
@@ -514,11 +521,11 @@
       function calcYield() {
         const price = num('y_price'), dep = num('y_dep'), rent = num('y_rent');
         const loan = num('y_loan'), loanRate = num('y_loanRate'), taxRate = num('y_taxRate'), etc = num('y_etc');
-        if (!price || !rent) { $('#y_gauge').hidden = true; ['y_out_main','y_out_annual','y_out_interest','y_out_tax','y_out_invest','y_out_simple'].forEach(i => set(i, '-')); return; }
+        if (!price || !rent) { $('#y_gauge').hidden = true; ['y_out_main','y_out_annual','y_out_interest','y_out_tax','y_out_invest','y_out_simple','y_out_etc','y_out_total'].forEach(i => set(i, '-')); return; }
         const annual = rent * 12;
         const interest = loan * loanRate / 100;
         const tax = price * taxRate / 100;
-        const invest = price + tax + etc - dep - loan;
+        const invest = price - dep - loan;
         const yieldPct = invest > 0 ? (annual - interest) / invest * 100 : NaN;
         const simple = price - dep > 0 ? annual / (price - dep) * 100 : NaN;
         set('y_out_main', isFinite(yieldPct) ? yieldPct.toFixed(2) + '%' : '계산 불가');
@@ -526,6 +533,8 @@
         set('y_out_interest', interest ? man(interest) : '없음');
         set('y_out_tax', man(tax));
         set('y_out_invest', man(invest));
+        set('y_out_etc', etc ? man(etc) : '없음');
+        set('y_out_total', man(invest + tax + etc));
         set('y_out_simple', isFinite(simple) ? simple.toFixed(2) + '%' : '-');
         $('#y_gauge').hidden = !isFinite(yieldPct);
         if (isFinite(yieldPct)) $('#y_gdot').style.left = Math.max(0, Math.min(100, yieldPct * 10)) + '%';
