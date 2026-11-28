@@ -9,7 +9,7 @@
 - [메인 페이지](https://hitoprealty.com/index.html): 하이탑부동산 소개 및 전체 서비스 안내
 - [매물 목록](https://hitoprealty.com/listings.html): 공장·창고, 상가·사무실, 토지, 주거용, 단독·전원주택, 건물·빌딩 매물을 종류·거래유형별로 검색
 - [부동산정보](https://hitoprealty.com/info.html): 계약 전 확인해야 할 부동산 실전 정보 및 지역분석 콘텐츠
-- [하이탑소개](https://hitoprealty.com/about.html): 하이탑부동산공인중개사사무소 소개
+- [하이탑소개](https://hitoprealty.com/#about): 하이탑부동산공인중개사사무소 소개
 - [상담신청](https://hitoprealty.com/contact.html): 매물·상담 문의 접수
 - [상담문의 게시판](https://hitoprealty.com/consult.html): 상담 문의 게시판
 - [공장·창고 전문관](https://hitoprealty.com/factory-warehouse.html): 파주·운정·탄현·월롱·광탄·조리 지역 공장·창고 임대·매매 매물 전문 페이지

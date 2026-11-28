@@ -28,27 +28,14 @@
     <meta name="twitter:image" content="https://hitoprealty.com/images/하이탑부동산.jpg" />
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://hitoprealty.com/#organization","name":"하이탑부동산공인중개사사무소","url":"https://hitoprealty.com","logo":"https://hitoprealty.com/images/hitoplogo.png","image":"https://hitoprealty.com/images/하이탑부동산.jpg","telephone":"031-949-8969","address":{"@type":"PostalAddress","streetAddress":"책향기로 830, 1층","addressLocality":"파주시","addressRegion":"경기도","addressCountry":"KR"},"sameAs":["https://blog.naver.com/newpajucity","https://cafe.naver.com/pajujjang","https://www.youtube.com/@hitop_ai"]},{"@type":"RealEstateAgent","@id":"https://hitoprealty.com/#real-estate-agent","name":"하이탑부동산공인중개사사무소","alternateName":"하이탑부동산","telephone":"031-949-8969","url":"https://hitoprealty.com","image":"https://hitoprealty.com/images/하이탑부동산.jpg","logo":"https://hitoprealty.com/images/hitoplogo.png","address":{"@type":"PostalAddress","streetAddress":"책향기로 830, 1층","addressLocality":"파주시","addressRegion":"경기도","addressCountry":"KR"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"10:00","closes":"19:00"}],"geo":{"@type":"GeoCoordinates","latitude":37.7094,"longitude":126.7693},"sameAs":["https://blog.naver.com/newpajucity","https://cafe.naver.com/pajujjang","https://www.youtube.com/@hitop_ai"]},{"@type":"WebSite","@id":"https://hitoprealty.com/#website","name":"하이탑부동산","url":"https://hitoprealty.com","publisher":{"@id":"https://hitoprealty.com/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://hitoprealty.com/listings.html?keyword={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"WebPage","@id":"https://hitoprealty.com/#webpage","url":"https://hitoprealty.com","name":"파주 부동산·공장·창고·상가·토지 | 하이탑부동산","description":"파주·운정 지역 공장·창고, 상가·사무실, 토지, 아파트·오피스텔 매물을 23년 현장 경험의 하이탑부동산에서 확인하세요.","isPartOf":{"@id":"https://hitoprealty.com/#website"},"about":{"@id":"https://hitoprealty.com/#real-estate-agent"}}]}</script>
     <title>파주 부동산·공장·창고·상가·토지 | 하이탑부동산</title>
-    <link rel="stylesheet" href="style.css?v=20261128-brand" />
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cf11ac4a1f56654aa6b7f66b7b0d05f&libraries=services&autoload=false"></script>
+    <link rel="stylesheet" href="style.css?v=20261128-brand2" />
     <style>
       .top-bar { background: #0A1F5C; padding: 6px 0; }
       .top-bar .container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
       .top-bar-hours { font-size: 12px; color: #aab8d8; }
       .top-bar-phone { font-size: 12px; font-weight: 600; color: #C9A84C; text-decoration: none; }
       .top-bar-phone:hover { color: #e0c070; }
-
-      /* 업무센터와 동일한 HT 원형 브랜드 아이덴티티 */
-      .brand.brand-unified { display: inline-flex; align-items: center; gap: 12px; color: #0d1b3e; }
-      .hitop-brand-mark {
-        width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%;
-        display: grid; place-items: center; box-sizing: border-box;
-        border: 1px solid rgba(216,184,74,.82);
-        background: linear-gradient(145deg,#0d1b3e,#142847);
-        color: #e6c364; font-size: 13px; font-weight: 900; letter-spacing: .2px;
-        box-shadow: 0 0 0 4px rgba(216,184,74,.08), inset 0 1px 0 rgba(255,255,255,.12);
-      }
-      .hitop-brand-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
-      .hitop-brand-title { color: #0d1b3e; font-size: 19px; font-weight: 850; letter-spacing: -.35px; white-space: nowrap; }
-      .hitop-brand-sub { margin-top: 3px; color: #6f7f93; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
 
       /* 카테고리 탭 */
       .category-tab-bar { background: #fff; border-bottom: 1px solid #e5e8ed; }
@@ -144,9 +131,134 @@
         .top-bar-hours { display: none; }
         .info-contact-wrap { grid-template-columns: 1fr; gap: 32px 0; }
         .divider-line { height: 1px; width: 100%; }
-        .hitop-brand-mark { width: 38px; height: 38px; flex-basis: 38px; }
-        .hitop-brand-title { font-size: 17px; }
-        .hitop-brand-sub { font-size: 10.5px; }
+      }
+      :root { --ab-navy:#0A1F5C; --ab-navy2:#15376f; --ab-gold:#C9A84C; --ab-ink:#1e293b; --ab-sub:#64748b; --ab-line:#e2e6ed; --ab-soft:#f4f6fa; }
+      .ab-eyebrow { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.08em; color:var(--ab-gold); margin-bottom:12px; }
+      .ab-h2 { font-size:28px; font-weight:800; color:var(--ab-navy); margin:0 0 10px; line-height:1.35; letter-spacing:-.02em; }
+      .ab-lead { font-size:15px; color:var(--ab-sub); margin:0; line-height:1.8; }
+      .ab-sec { padding:84px 0; }
+      .ab-sec-head { text-align:center; max-width:640px; margin:0 auto 44px; }
+      .ab-btn { display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:10px; font-size:15px; font-weight:700; text-decoration:none; transition:transform .15s, box-shadow .15s, background .15s; }
+      .ab-btn:hover { transform:translateY(-2px); }
+      .ab-btn-gold { background:var(--ab-gold); color:var(--ab-navy); box-shadow:0 8px 24px rgba(201,168,76,.35); }
+      .ab-btn-line { background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.35); }
+      .ab-btn-line:hover { background:rgba(255,255,255,.16); }
+
+      /* 1. 첫 화면 */
+      .ab-hero { position:relative; overflow:hidden; background:radial-gradient(1200px 500px at 85% -10%, #1d4590 0%, transparent 60%), linear-gradient(135deg, var(--ab-navy) 0%, #0d2a6e 100%); color:#fff; }
+      .ab-hero::after { content:""; position:absolute; inset:auto -120px -160px auto; width:420px; height:420px; border-radius:50%; border:1px solid rgba(201,168,76,.25); }
+      .ab-hero-inner { display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; padding:88px 0 96px; position:relative; z-index:1; }
+      .ab-hero h1 { font-size:46px; line-height:1.25; font-weight:800; letter-spacing:-.03em; margin:0 0 20px; }
+      .ab-hero h1 em { font-style:normal; color:var(--ab-gold); }
+      .ab-hero p { font-size:16px; line-height:1.85; color:#c7d2ea; margin:0 0 32px; max-width:480px; }
+      .ab-hero-btns { display:flex; gap:12px; flex-wrap:wrap; }
+      .ab-hero-photo { position:relative; }
+      .ab-hero-photo img { width:100%; height:460px; object-fit:cover; object-position:72% center; border-radius:20px; display:block; box-shadow:0 30px 60px rgba(0,0,0,.35); }
+      .ab-hero-badge { position:absolute; left:-22px; bottom:28px; background:#fff; color:var(--ab-navy); border-radius:14px; padding:14px 18px; box-shadow:0 16px 40px rgba(0,0,0,.25); display:flex; align-items:center; gap:12px; }
+      .ab-hero-badge b { font-size:30px; font-weight:800; line-height:1; }
+      .ab-hero-badge span { font-size:12px; color:var(--ab-sub); line-height:1.5; }
+
+      /* 2. 숫자 카드 */
+      .ab-stats { margin-top:-46px; position:relative; z-index:2; }
+      .ab-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); background:#fff; border-radius:18px; box-shadow:0 18px 50px rgba(10,31,92,.12); overflow:hidden; }
+      .ab-stat { padding:28px 24px; border-right:1px solid var(--ab-line); }
+      .ab-stat:last-child { border-right:none; }
+      .ab-stat-num { font-size:26px; font-weight:800; color:var(--ab-navy); letter-spacing:-.02em; display:block; margin-bottom:6px; }
+      .ab-stat-num small { font-size:15px; font-weight:700; margin-left:2px; }
+      .ab-stat-label { font-size:13px; color:var(--ab-sub); line-height:1.6; }
+
+      /* 3. 인사말 */
+      .ab-greet-wrap { display:grid; grid-template-columns:.9fr 1.1fr; gap:64px; align-items:start; }
+      .ab-greet-quote { font-size:26px; font-weight:800; color:var(--ab-navy); line-height:1.55; letter-spacing:-.02em; margin:0; position:relative; padding-top:36px; }
+      .ab-greet-quote::before { content:"\201C"; position:absolute; top:-18px; left:-4px; font-size:84px; color:var(--ab-gold); font-family:Georgia, serif; line-height:1; }
+      .ab-greet-body p { font-size:15.5px; color:#374151; line-height:2; margin:0 0 18px; }
+      .ab-greet-sign { margin-top:26px; padding-top:20px; border-top:1px solid var(--ab-line); display:flex; align-items:center; gap:14px; }
+      .ab-greet-sign .mark { width:46px; height:46px; border-radius:12px; background:#fff; border:1px solid #d6deea; box-shadow:0 2px 8px rgba(13,27,62,.10); display:grid; place-items:center; }
+      .ab-greet-sign .mark img { width:80%; height:80%; object-fit:contain; }
+      .ab-greet-sign b { display:block; font-size:15px; color:var(--ab-navy); }
+      .ab-greet-sign span { font-size:13px; color:var(--ab-sub); }
+
+      /* 4. 전문 분야 */
+      .ab-fields { background:var(--ab-soft); }
+      .ab-field-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+      .ab-field { background:#fff; border:1px solid var(--ab-line); border-radius:16px; padding:28px 24px; text-decoration:none; display:flex; flex-direction:column; transition:transform .18s, box-shadow .18s, border-color .18s; }
+      .ab-field:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(10,31,92,.12); border-color:#cdd6e6; }
+      .ab-field-ico { width:52px; height:52px; border-radius:14px; background:#eef2fa; display:grid; place-items:center; margin-bottom:18px; }
+      .ab-field-ico svg { width:26px; height:26px; stroke:var(--ab-navy); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+      .ab-field h3 { font-size:18px; font-weight:800; color:var(--ab-navy); margin:0 0 8px; }
+      .ab-field p { font-size:13.5px; color:var(--ab-sub); line-height:1.75; margin:0 0 18px; flex:1; }
+      .ab-field-go { font-size:13px; font-weight:700; color:var(--ab-gold); }
+
+      /* 5. 진행 순서 */
+      .ab-steps { display:grid; grid-template-columns:repeat(5,1fr); gap:0; counter-reset:step; }
+      .ab-step { position:relative; padding:0 18px; text-align:center; }
+      .ab-step:not(:last-child)::after { content:""; position:absolute; top:30px; left:calc(50% + 38px); right:calc(-50% + 38px); border-top:2px dashed #cfd7e6; }
+      .ab-step-num { width:60px; height:60px; border-radius:50%; margin:0 auto 18px; display:grid; place-items:center; font-size:20px; font-weight:800; color:#fff; background:var(--ab-navy); box-shadow:0 0 0 6px #eef2fa; }
+      .ab-step:last-child .ab-step-num { background:var(--ab-gold); color:var(--ab-navy); }
+      .ab-step h3 { font-size:16px; font-weight:800; color:var(--ab-navy); margin:0 0 8px; }
+      .ab-step p { font-size:13px; color:var(--ab-sub); line-height:1.7; margin:0; }
+
+      /* 6. 오시는 길 */
+      .ab-location { background:var(--ab-soft); }
+      .location-wrap { display:grid; grid-template-columns:1fr 1.5fr; gap:28px; align-items:stretch; }
+      .location-info { background:#fff; border-radius:16px; border:1px solid var(--ab-line); overflow:hidden; }
+      .location-row { padding:16px 22px; border-bottom:1px solid #eef0f4; display:grid; grid-template-columns:70px 1fr; gap:12px; align-items:start; }
+      .location-row:last-child { border-bottom:none; }
+      .location-row-label { font-size:12.5px; font-weight:700; color:#94a3b8; padding-top:2px; }
+      .location-row-value { font-size:14px; color:var(--ab-ink); line-height:1.7; }
+      .location-row-value a { color:var(--ab-navy); text-decoration:none; font-weight:700; }
+      #kakaoMap { width:100%; min-height:380px; height:100%; border-radius:16px; border:1px solid var(--ab-line); display:block; }
+
+      /* 7. 상담 바 */
+      .ab-cta { padding:0 0 84px; background:var(--ab-soft); }
+      .ab-cta-box { background:linear-gradient(120deg, var(--ab-navy) 0%, var(--ab-navy2) 100%); border-radius:22px; padding:44px 48px; color:#fff; display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; }
+      .ab-cta-box h2 { font-size:26px; font-weight:800; margin:0 0 8px; letter-spacing:-.02em; }
+      .ab-cta-box p { margin:0; color:#c7d2ea; font-size:14.5px; }
+      .ab-cta-btns { display:flex; gap:10px; flex-wrap:wrap; }
+      .ab-btn-kakao { background:#FEE500; color:#191919; }
+
+      @media (max-width: 980px) {
+        .ab-hero-inner { grid-template-columns:1fr; gap:40px; padding:64px 0 90px; }
+        .ab-hero h1 { font-size:36px; }
+        .ab-hero-badge { left:16px; }
+        .ab-hero-photo img { height:340px; }
+        .ab-stats-grid, .ab-field-grid { grid-template-columns:repeat(2,1fr); }
+        .ab-stat:nth-child(2) { border-right:none; }
+        .ab-stat:nth-child(-n+2) { border-bottom:1px solid var(--ab-line); }
+        .ab-greet-wrap, .location-wrap { grid-template-columns:1fr; gap:32px; }
+        .ab-steps { grid-template-columns:1fr; gap:22px; max-width:460px; margin:0 auto; }
+        .ab-step { display:grid; grid-template-columns:60px 1fr; gap:4px 18px; text-align:left; padding:0; }
+        .ab-step-num { grid-row:span 2; margin:0; }
+        .ab-step h3 { align-self:end; margin:0; }
+        .ab-step:not(:last-child)::after { top:66px; bottom:-22px; left:29px; right:auto; border-top:none; border-left:2px dashed #cfd7e6; }
+      }
+      @media (max-width: 640px) {
+        .top-bar-hours { display:none; }
+        .ab-sec { padding:60px 0; }
+        .ab-hero h1 { font-size:30px; }
+        .ab-hero p { font-size:15px; }
+        .ab-h2 { font-size:23px; }
+        .ab-greet-quote { font-size:21px; }
+        .ab-stat { padding:22px 18px; }
+        .ab-stat-num { font-size:22px; }
+        .ab-field-grid { grid-template-columns:1fr; }
+        .ab-cta-box { padding:32px 24px; }
+        .ab-cta-box h2 { font-size:21px; }
+        .ab-btn { width:100%; justify-content:center; box-sizing:border-box; }
+        .ab-hero-btns, .ab-cta-btns { width:100%; }
+      }
+      /* 메인 페이지용 소개 */
+      .ab-intro { padding:84px 0; background:#fff; }
+      .ab-intro-wrap { display:grid; grid-template-columns:.95fr 1.05fr; gap:60px; align-items:center; }
+      .ab-intro-photo { position:relative; }
+      .ab-intro-photo img { width:100%; height:440px; object-fit:cover; object-position:72% center; border-radius:20px; display:block; box-shadow:0 24px 50px rgba(10,31,92,.18); }
+      .ab-intro-photo .ab-hero-badge { left:-18px; bottom:24px; }
+      .ab-stats.ab-stats-flat { margin-top:36px; }
+      .ab-stats-flat .ab-stats-grid { box-shadow:none; border:1px solid var(--ab-line); }
+      @media (max-width: 980px) {
+        .ab-intro-wrap { grid-template-columns:1fr; gap:36px; }
+        .ab-intro-photo img { height:320px; }
+        .ab-intro-photo .ab-hero-badge { left:14px; }
       }
     </style>
       <style>
@@ -167,7 +279,7 @@
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="brand brand-unified" href="/" aria-label="하이탑부동산 홈">
-          <span class="hitop-brand-mark" aria-hidden="true">HT</span>
+          <span class="hitop-brand-mark" aria-hidden="true"><img src="/images/hitop-mark.png" alt="" width="36" height="36" /></span>
           <span class="hitop-brand-copy">
             <span class="hitop-brand-title">하이탑부동산</span>
             <span class="hitop-brand-sub">파주·운정 부동산 전문</span>
@@ -175,7 +287,7 @@
         </a>
         <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
         <nav class="nav-menu" aria-label="메인 메뉴">
-          <a href="about.html">하이탑소개</a>
+          <a href="/#about">하이탑소개</a>
           <a href="listings.html">매물보기</a>
           <a href="info.html">부동산정보</a>
           <a href="forms.html">서식모음</a>
@@ -258,26 +370,97 @@
       </section>
 
 
-      <section id="about" class="info-contact-section">
+      <!-- 하이탑부동산 소개 (소개 페이지를 메인에 합침) -->
+      <section id="about" class="ab-intro">
         <div class="container">
-          <div class="info-contact-wrap">
-            <div class="info-block">
-              <h2>하이탑부동산 소개</h2>
-              <p>하이탑부동산은 산업·상업 부동산 중개 경험을 바탕으로 고객 중심의 맞춤형 컨설팅을 제공합니다. 복잡한 거래 과정을 투명하게 안내하고, 신뢰를 최우선으로 합니다.</p>
+          <div class="ab-intro-wrap">
+            <div class="ab-intro-photo">
+              <img src="images/하이탑부동산.jpg" alt="하이탑부동산 사무소 간판 (운정 월드스퀘어 1층)" width="1400" height="1050" loading="lazy" />
+              <div class="ab-hero-badge"><b>23</b><span>년<br>파주 현장 경력</span></div>
             </div>
-            <div class="divider-line"></div>
-            <div id="contact" class="contact-block">
-              <h2>대표전화</h2>
-              <a class="contact-phone" href="tel:031-949-8969">031-949-8969</a>
-              <p class="contact-hours">📅 평일 10:00 ~ 19:00 · 주말·공휴일 휴무</p>
-              <div class="contact-btns">
-                <a class="btn-tel" href="tel:031-949-8969">전화 문의</a>
-                <a class="btn-kakao-new" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer">카카오톡 문의</a>
-              </div>
+            <div>
+              <span class="ab-eyebrow">ABOUT HITOP</span>
+              <h2 class="ab-h2">파주를 가장 잘 아는<br>부부 공인중개사</h2>
+          <div class="ab-greet-body">
+            <p>안녕하세요, 하이탑부동산입니다. 저희는 제13회·제15회 공인중개사 자격을 취득한 부부 중개사입니다.</p>
+            <p>파주에서 태어나 파주에서 자란 남편과 함께 23년간 파주 곳곳을 발로 뛰며 현장을 익혔습니다. 서류에는 나오지 않는 길, 땅, 건물의 사정까지 직접 확인하고 안내해 드리는 것이 저희의 방식입니다.</p>
+            <p>공장·창고·토지·상가처럼 복잡한 거래일수록 권리관계와 조건을 꼼꼼히 살펴 투명하게 설명드리겠습니다. 처음 상담부터 잔금 이후까지, 하이탑부동산이 고객님 곁에 있겠습니다.</p>
+            <div class="ab-greet-sign">
+              <span class="mark"><img src="/images/hitop-mark.png" alt="" width="34" height="34" /></span>
+              <div><b>하이탑부동산공인중개사사무소</b><span>대표 공인중개사 주현희</span></div>
+            </div>
+          </div>
+
+          </div>
+          </div>
+          <section class="ab-stats ab-stats-flat">
+            <div class="ab-stats-grid">
+            <div class="ab-stat"><span class="ab-stat-num">23<small>년</small></span><span class="ab-stat-label">파주 부동산<br>현장 경력</span></div>
+            <div class="ab-stat"><span class="ab-stat-num">2<small>인</small></span><span class="ab-stat-label">부부 공인중개사<br>제13회 · 제15회 자격</span></div>
+            <div class="ab-stat"><span class="ab-stat-num">파주</span><span class="ab-stat-label">본토박이가 아는<br>지역 구석구석</span></div>
+            <div class="ab-stat"><span class="ab-stat-num">4<small>분야</small></span><span class="ab-stat-label">공장·창고 · 토지<br>상가 · 주거</span></div>
+          </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 5. 거래 진행 순서 -->
+      <section class="ab-sec">
+        <div class="container">
+          <div class="ab-sec-head">
+            <span class="ab-eyebrow">PROCESS</span>
+            <h2 class="ab-h2">이렇게 진행됩니다</h2>
+            <p class="ab-lead">처음 상담부터 잔금 이후까지 한 사람이 끝까지 책임집니다.</p>
+          </div>
+          <div class="ab-steps">
+            <div class="ab-step"><span class="ab-step-num">1</span><h3>상담</h3><p>원하시는 조건과<br>예산을 듣습니다</p></div>
+            <div class="ab-step"><span class="ab-step-num">2</span><h3>현장 확인</h3><p>매물을 직접 보고<br>주변까지 살핍니다</p></div>
+            <div class="ab-step"><span class="ab-step-num">3</span><h3>권리·서류 분석</h3><p>등기·대장·규제를<br>꼼꼼히 확인합니다</p></div>
+            <div class="ab-step"><span class="ab-step-num">4</span><h3>계약</h3><p>조건과 특약을<br>투명하게 안내합니다</p></div>
+            <div class="ab-step"><span class="ab-step-num">5</span><h3>잔금·사후관리</h3><p>잔금 이후 궁금한 점도<br>계속 도와드립니다</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. 오시는 길 -->
+      <section id="contact" class="ab-sec ab-location">
+        <div class="container">
+          <div class="ab-sec-head">
+            <span class="ab-eyebrow">LOCATION</span>
+            <h2 class="ab-h2">오시는 길</h2>
+            <p class="ab-lead">경의중앙선 운정역 중심상업지역, 운정 스타필드 부근입니다.</p>
+          </div>
+          <div class="location-wrap">
+            <div class="location-info">
+              <div class="location-row"><span class="location-row-label">주소</span><span class="location-row-value">경기도 파주시 책향기로 830, 1층<br>하이탑부동산공인중개사사무소</span></div>
+              <div class="location-row"><span class="location-row-label">전화</span><span class="location-row-value"><a href="tel:031-949-8969">031-949-8969</a></span></div>
+              <div class="location-row"><span class="location-row-label">팩스</span><span class="location-row-value">031-944-1108</span></div>
+              <div class="location-row"><span class="location-row-label">이메일</span><span class="location-row-value"><a href="mailto:newpajucity@naver.com">newpajucity@naver.com</a></span></div>
+              <div class="location-row"><span class="location-row-label">영업시간</span><span class="location-row-value">평일 10:00 ~ 19:00<br>일요일 휴무</span></div>
+              <div class="location-row"><span class="location-row-label">교통</span><span class="location-row-value">운정역 중심상업지역 내<br>운정 스타필드 부근</span></div>
+            </div>
+            <div id="kakaoMap"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. 상담 바 -->
+      <section class="ab-cta">
+        <div class="container">
+          <div class="ab-cta-box">
+            <div>
+              <h2>어떤 부동산이든 편하게 물어보세요</h2>
+              <p>매도·임대 의뢰부터 매수 상담까지, 확인 후 바로 연락드립니다.</p>
+            </div>
+            <div class="ab-cta-btns">
+              <a class="ab-btn ab-btn-gold" href="tel:031-949-8969">📞 031-949-8969</a>
+              <a class="ab-btn ab-btn-kakao" href="https://open.kakao.com/o/snAYglwi" target="_blank" rel="noopener noreferrer">💬 카카오 상담</a>
+              <a class="ab-btn ab-btn-line" href="consult.html">상담의뢰 →</a>
             </div>
           </div>
         </div>
       </section>
+
     </main>
 
     <footer class="site-footer-v2">
@@ -310,6 +493,31 @@
         </div>
       </div>
     </footer>
+    <script>
+      window.addEventListener('load', function() {
+        kakao.maps.load(function() {
+          var container = document.getElementById('kakaoMap');
+          var geocoder = new kakao.maps.services.Geocoder();
+          geocoder.addressSearch('경기도 파주시 책향기로 830', function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+              var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+              var map = new kakao.maps.Map(container, { center: coords, level: 3 });
+              var marker = new kakao.maps.Marker({ position: coords });
+              marker.setMap(map);
+              var infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="padding:8px 12px;font-size:13px;font-weight:600;color:#0A1F5C;">하이탑부동산</div>'
+              });
+              infowindow.open(map, marker);
+            } else {
+              var coords = new kakao.maps.LatLng(37.7094, 126.7693);
+              var map = new kakao.maps.Map(container, { center: coords, level: 3 });
+              var marker = new kakao.maps.Marker({ position: coords });
+              marker.setMap(map);
+            }
+          });
+        });
+      });
+    </script>
     <script src="app.js?v=20261128-sso"></script>
   </body>
 </html>
