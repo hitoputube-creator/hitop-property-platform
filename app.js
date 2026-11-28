@@ -1798,13 +1798,13 @@ const renderInlineConsultForm = (item = {}) => {
   }
   box.innerHTML = `
     <form id="modalConsultForm" class="modal-consult-form">
-      <strong>매물 상담신청</strong>
+      <strong>매물상담</strong>
       <div class="modal-consult-grid">
         <input id="modalConsultName" type="text" placeholder="이름" autocomplete="name" />
         <input id="modalConsultPhone" type="tel" placeholder="연락처" autocomplete="tel" />
       </div>
       <textarea id="modalConsultMessage" rows="3" placeholder="문의 내용을 남겨주세요."></textarea>
-      <button type="submit">상담신청</button>
+      <button type="submit">매물상담 보내기</button>
     </form>
   `;
   box.querySelector('#modalConsultForm')?.addEventListener('submit', async (e) => {
@@ -1836,7 +1836,7 @@ const renderInlineConsultForm = (item = {}) => {
         listing_id: getListingPrintId(item)
       });
       e.target.reset();
-      showSiteToast('상담신청이 접수되었습니다.');
+      showSiteToast('매물상담이 접수되었습니다. 확인 후 연락드리겠습니다.');
     } catch (err) {
       console.error('Listing consultation failed:', err);
       showSiteToast('상담신청 저장에 실패했습니다.');
