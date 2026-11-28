@@ -164,6 +164,38 @@
       .cb-req { background:rgba(255,255,255,.1); color:#fff; border:1.5px solid rgba(255,255,255,.4); backdrop-filter:blur(4px); }
       .calc-disclaimer { font-size:12px; color:#94a3b8; text-align:center; margin:18px 0 0; }
 
+      /* ── 폴더형 카드 + 컴팩트 ── */
+      .calc-card { padding:24px 24px 20px; display:flex; flex-direction:column; }
+      .calc-card h2 { font-size:19px; }
+      .calc-desc { margin:0 0 6px; font-size:13px; }
+      .fold { position:relative; margin-top:30px; padding:16px 16px 4px; background:#f8fafd; border:1px solid #e1e7f0; border-radius:0 14px 14px 14px; }
+      .fold-tab { position:absolute; top:-25px; left:-1px; height:25px; display:flex; align-items:center; gap:6px; padding:0 14px; background:#f8fafd; border:1px solid #e1e7f0; border-bottom:none; border-radius:10px 10px 0 0; font-size:12.5px; font-weight:800; color:var(--nv); letter-spacing:-.01em; }
+      .fold-tab::after { content:""; position:absolute; left:0; right:0; bottom:-2px; height:3px; background:inherit; }
+      .fold-tab em { font-style:normal; font-weight:600; font-size:11px; color:#94a3b8; }
+      .fold-extra, .fold-extra .fold-tab { background:#fbf7ec; border-color:#ecdcae; }
+      .fold-extra .fold-tab { color:#8a6a1c; } .fold-extra .fold-tab em { color:#b39a5c; }
+      .fold .f-row { margin-bottom:12px; }
+      .fold .f-row.two { margin-bottom:12px; }
+      .fold .f-row.two > div .f-row { margin:0; }
+      .fold label { margin-bottom:5px !important; }
+      .fold .f-in { background:#fff; }
+      .fold-extra .f-ic { background:#f5ecd2; color:#8a6a1c; }
+      .fold .f-in input { padding:10px 10px; font-size:16px; }
+      .fold .f-ic { width:30px; height:30px; }
+      .f-in .kor { margin:0 0 0 8px; min-height:0; font-size:11.5px; white-space:nowrap; text-align:left; flex:none; }
+      .f-in .kor:empty { display:none; }
+      .f-row.two .f-ic { display:none; }
+      .f-row.two .f-in .kor { margin-left:12px; }
+      .f-in input { min-width:64px; }
+      label.has-quick { display:flex !important; align-items:center; justify-content:space-between; gap:8px; }
+      label.has-quick .quick { margin:0; }
+      label.has-quick .quick button { padding:3px 9px; font-size:11px; }
+      .tip { display:inline-grid; place-items:center; width:15px; height:15px; border-radius:50%; background:#e2e8f0; color:#64748b; font-size:10px; font-style:normal; font-weight:800; cursor:help; margin-left:3px; }
+      .fold .f-hint { margin:0 0 12px; font-size:11.5px; color:#a08a55; }
+      .calc-grid { align-items:stretch; }
+      .calc-card > .seg { align-self:flex-start; }
+      .calc-result { padding:24px 26px 20px; }
+      .r-list > div { padding:8px 0; }
       @media (max-width:980px) {
         .ct-tabs { grid-template-columns:repeat(2,1fr); }
       }
@@ -247,22 +279,28 @@
             <div class="calc-card">
               <h2>상가 수익률</h2>
               <p class="calc-desc">매매가·보증금·월세를 넣으면 실제 들어가는 돈 기준 수익률을 계산합니다.</p>
-              <div class="f-row"><label>매매가</label><div class="f-in"><input data-k="y_price" inputmode="numeric" placeholder="예: 50000"><span>만원</span></div><small class="kor" data-for="y_price"></small></div>
-              <div class="f-row two">
-                <div><label>보증금</label><div class="f-in"><input data-k="y_dep" inputmode="numeric" placeholder="예: 3000"><span>만원</span></div></div>
-                <div><label>월세</label><div class="f-in"><input data-k="y_rent" inputmode="numeric" placeholder="예: 200"><span>만원</span></div></div>
+              <div class="fold">
+                <span class="fold-tab">매물 조건</span>
+                <div class="f-row"><label>매매가</label><div class="f-in"><input data-k="y_price" inputmode="numeric" placeholder="예: 50000"><span>만원</span></div></div>
+                <div class="f-row two">
+                  <div><label>보증금</label><div class="f-in"><input data-k="y_dep" inputmode="numeric" placeholder="예: 3000"><span>만원</span></div></div>
+                  <div><label>월세</label><div class="f-in"><input data-k="y_rent" inputmode="numeric" placeholder="예: 200"><span>만원</span></div></div>
+                </div>
               </div>
-              <div class="f-row two">
-                <div><label>대출금 <em>선택</em></label><div class="f-in"><input data-k="y_loan" inputmode="numeric" placeholder="0"><span>만원</span></div></div>
-                <div><label>대출금리 <em>선택</em></label><div class="f-in"><input data-k="y_loanRate" inputmode="decimal" placeholder="예: 4.5"><span>%</span></div></div>
+              <div class="fold">
+                <span class="fold-tab">대출 <em>선택</em></span>
+                <div class="f-row two">
+                  <div><label>대출금</label><div class="f-in"><input data-k="y_loan" inputmode="numeric" placeholder="0"><span>만원</span></div></div>
+                  <div><label>대출금리</label><div class="f-in"><input data-k="y_loanRate" inputmode="decimal" placeholder="예: 4.5"><span>%</span></div></div>
+                </div>
               </div>
-              <div class="f-extra">
-              <div class="f-extra-h"><b>추가비용</b><span>참고용 · 수익률 계산에는 들어가지 않아요</span></div>
-              <div class="f-row two">
-                <div><label>취득세 등</label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div><small class="kor" id="y_taxAmt"></small></div>
-                <div><label>중개수수료</label><div class="f-in"><input data-k="y_feeRate" inputmode="decimal" value="0.9"><span>%</span></div><small class="kor" id="y_feeAmt"></small></div>
-              </div>
-              <p class="f-hint">취득세: 상가·토지 4% + 지방교육세 0.4% + 농어촌특별세 0.2% = 4.6%<br>중개수수료: 상가 매매 법정 상한 0.9% 이내 협의 · 부가세 10% 포함해 계산</p>
+              <div class="fold fold-extra">
+                <span class="fold-tab">추가비용 <em>수익률 미포함 · 참고</em></span>
+                <div class="f-row two">
+                  <div><label>취득세 등 <i class="tip" title="상가·토지 취득세 4% + 지방교육세 0.4% + 농어촌특별세 0.2% = 4.6%">?</i></label><div class="f-in"><input data-k="y_taxRate" inputmode="decimal" value="4.6"><span>%</span></div><small class="kor" id="y_taxAmt"></small></div>
+                  <div><label>중개수수료 <i class="tip" title="상가 매매 법정 상한 0.9% 이내 협의 · 부가세 10% 포함 계산">?</i></label><div class="f-in"><input data-k="y_feeRate" inputmode="decimal" value="0.9"><span>%</span></div><small class="kor" id="y_feeAmt"></small></div>
+                </div>
+                <p class="f-hint">취득세 4.6% = 취득세 4% + 지방교육세 0.4% + 농특세 0.2% · 중개수수료는 상한 0.9%, 부가세 포함</p>
               </div>
             </div>
             <div class="calc-result" id="r_yield">
@@ -476,13 +514,16 @@
         const k = document.createElement('small'); k.className = 'kor'; k.dataset.for = el.dataset.k;
         el.closest('.f-in').after(k);
       });
+      // 금액 표시를 입력칸 안쪽(왼쪽)으로 옮겨 세로 공간 절약
+      $$('.kor').forEach(k => { const f = k.previousElementSibling; if (f && f.classList.contains('f-in')) f.insertBefore(k, f.querySelector('input')); });
       const QUICK = { y_price: [10000, 30000, 50000, 100000], f_amount: [10000, 30000, 50000, 100000], c_jeon: [10000, 20000, 30000, 50000] };
       Object.entries(QUICK).forEach(([k, arr]) => {
         const el = inp(k); if (!el) return;
         const box = document.createElement('div'); box.className = 'quick';
         box.innerHTML = arr.map(v => `<button type="button" data-v="${v}">${v / 10000}억</button>`).join('');
         box.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; el.value = Number(b.dataset.v).toLocaleString('ko-KR'); el.dispatchEvent(new Event('input')); });
-        ($(`.kor[data-for="${k}"]`) || el.closest('.f-in')).after(box);
+        const lab = el.closest('.f-in').parentElement.querySelector('label');
+        if (lab) { lab.classList.add('has-quick'); lab.append(box); } else el.closest('.f-in').after(box);
       });
       const MAIN_IDS = new Set(['y_out_main', 'r_out_main', 'c_out_main', 'f_out_main']);
       const _anim = {};
@@ -550,7 +591,7 @@
       function calcYield() {
         const price = num('y_price'), dep = num('y_dep'), rent = num('y_rent');
         const loan = num('y_loan'), loanRate = num('y_loanRate'), taxRate = num('y_taxRate'), feeRate = Math.min(num('y_feeRate'), 0.9);
-        if (!price || !rent) { $('#y_gauge').hidden = true; set('y_taxAmt', price ? '= ' + man(Math.round(price * taxRate / 100)) : ''); set('y_feeAmt', price ? '= ' + man(Math.round(price * feeRate / 100 * 1.1)) + ' (부가세 포함)' : ''); ['y_out_main','y_out_annual','y_out_interest','y_out_tax','y_out_invest','y_out_simple','y_out_etc','y_out_total'].forEach(i => set(i, '-')); return; }
+        if (!price || !rent) { $('#y_gauge').hidden = true; set('y_taxAmt', price ? '= ' + man(Math.round(price * taxRate / 100)) : ''); set('y_feeAmt', price ? '= ' + man(Math.round(price * feeRate / 100 * 1.1)) : ''); ['y_out_main','y_out_annual','y_out_interest','y_out_tax','y_out_invest','y_out_simple','y_out_etc','y_out_total'].forEach(i => set(i, '-')); return; }
         const annual = rent * 12;
         const interest = loan * loanRate / 100;
         const tax = price * taxRate / 100;
@@ -565,7 +606,7 @@
         set('y_out_invest', man(invest));
         set('y_out_etc', etc ? man(Math.round(etc)) : '없음');
         set('y_taxAmt', price ? '= ' + man(Math.round(tax)) : '');
-        set('y_feeAmt', price ? '= ' + man(Math.round(etc)) + ' (부가세 포함)' : '');
+        set('y_feeAmt', price ? '= ' + man(Math.round(etc)) : '');
         set('y_out_total', man(Math.round(invest + tax + etc)));
         set('y_out_simple', isFinite(simple) ? simple.toFixed(2) + '%' : '-');
         $('#y_gauge').hidden = !isFinite(yieldPct);
